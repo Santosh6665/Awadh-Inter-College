@@ -12,7 +12,7 @@ export function Footer() {
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
                 <CollegeLogo className="h-8 w-8 text-primary" />
-                <span className="text-xl font-bold">Awadh Inter College</span>
+                <span className="text-xl font-bold">Awadh Narayan Pratap Lal Intermediate College</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               A center for academic excellence and holistic development since 1965.
@@ -48,7 +48,7 @@ export function Footer() {
             <div className="space-y-2 text-sm text-muted-foreground">
               <div className="flex items-start gap-2">
                 <MapPin className="mt-1 h-4 w-4 flex-shrink-0" />
-                <span>123 Education Lane, Knowledge City, State, 123456</span>
+                <span>Ghosiyari Bazar Marg, Ghosiyari Bazar, Daniawar, Basti, Uttar Pradesh – 272148</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="h-4 w-4 flex-shrink-0" />
@@ -63,7 +63,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t pt-6 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Awadh Inter College. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Awadh Narayan Pratap Lal Intermediate College. All rights reserved.</p>
         </div>
       </div>
     </footer>
