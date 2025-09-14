@@ -43,6 +43,30 @@ export default function LoginPage() {
     }
   }, []);
 
+  const formatPhoneNumber = (number: string) => {
+    // 1. Remove all non-digit characters
+    const digitsOnly = number.replace(/\D/g, '');
+
+    // 2. Check if it starts with '+91' or '91'. If so, remove '91' to avoid duplication.
+    let numberWithoutCountryCode = digitsOnly;
+    if (digitsOnly.startsWith('91')) {
+      numberWithoutCountryCode = digitsOnly.substring(2);
+    }
+    
+    // 3. If the number is 10 digits long, prepend '+91'
+    if (numberWithoutCountryCode.length === 10) {
+      return `+91${numberWithoutCountryCode}`;
+    }
+
+    // 4. Handle numbers that might already include the plus
+    if (number.startsWith('+')) {
+      return `+${digitsOnly}`
+    }
+
+    return number; // Return original if it doesn't fit expected formats
+  };
+
+
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phoneNumber.trim()) {
@@ -55,9 +79,11 @@ export default function LoginPage() {
     }
     setLoading(true);
 
+    const formattedPhoneNumber = formatPhoneNumber(phoneNumber);
+
     try {
       const verifier = window.recaptchaVerifier!;
-      const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, verifier);
+      const confirmationResult = await signInWithPhoneNumber(auth, formattedPhoneNumber, verifier);
       window.confirmationResult = confirmationResult;
       setOtpSent(true);
       toast({
@@ -66,9 +92,13 @@ export default function LoginPage() {
       });
     } catch (error: any) {
       console.error('Error sending OTP:', error);
+      let description = 'Please check the phone number or try again later.';
+      if (error.code === 'auth/invalid-phone-number') {
+        description = `Invalid phone number format: ${formattedPhoneNumber}. Please use a valid format like +91xxxxxxxxxx.`;
+      }
       toast({
         title: 'Failed to Send OTP',
-        description: 'Please check the phone number or try again later.',
+        description: description,
         variant: 'destructive',
       });
     } finally {
