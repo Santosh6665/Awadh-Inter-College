@@ -71,6 +71,44 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section id="about-us" className="py-12 md:py-20 bg-muted px-4 sm:px-6 md:px-8">
+          <div className="container mx-auto text-center">
+            <h3 className="text-3xl font-bold text-center mb-10">About Our School</h3>
+             <Card className="text-left max-w-4xl mx-auto">
+                <CardHeader>
+                    <div className="overflow-hidden rounded-lg">
+                        <Image 
+                        src="https://picsum.photos/seed/abouthistory/1200/400"
+                        alt="School Building"
+                        width={1200}
+                        height={400}
+                        className="object-cover w-full h-auto"
+                        data-ai-hint="school building"
+                        />
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <h4 className="text-2xl font-semibold mb-4 text-center">Our History</h4>
+                    <div className="prose max-w-none text-muted-foreground space-y-4">
+                        <p>
+                            Founded in 1965, Awadh Narayan Pratap Lal Intermediate College started as a small institution with a grand vision: to provide high-quality education to the local community and empower the youth with knowledge and values. Over the decades, we have grown in both size and stature, becoming a premier center for learning in the region.
+                        </p>
+                        <p>
+                            Our journey has been marked by a relentless pursuit of academic excellence, a commitment to holistic student development, and a spirit of innovation. We have continuously adapted our curriculum and infrastructure to meet the evolving needs of education, ensuring our students are well-prepared for the challenges of the future.
+                        </p>
+                        <p>
+                            Today, ANP Inter College stands as a testament to the enduring power of education to transform lives. We are proud of our rich history and the thousands of alumni who have gone on to make significant contributions in various fields across the globe. As we look to the future, we remain dedicated to our founding principles and committed to shaping the next generation of leaders.
+                        </p>
+                        <div className="text-center">
+                            <Button asChild variant="outline">
+                                <Link href="/about">Learn More</Link>
+                            </Button>
+                        </div>
+                    </div>
+                </CardContent>
+             </Card>
+          </div>
+        </section>
         
         <section id="vision-mission" className="py-12 md:py-20 bg-background px-4 sm:px-6 md:px-8">
           <div className="container mx-auto text-center">
