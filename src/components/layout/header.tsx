@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -29,11 +29,14 @@ const navLinks = [
 
 export function Header() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
@@ -42,6 +45,14 @@ export function Header() {
     await signOut(auth);
     router.push('/');
   };
+
+  const isDashboard = pathname.startsWith('/dashboard') || pathname.startsWith('/teacher/dashboard');
+  const getDashboardPath = () => {
+    if (pathname.startsWith('/teacher')) {
+      return '/teacher/dashboard';
+    }
+    return '/dashboard';
+  }
 
   return (
     <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6 shadow-sm">
@@ -63,7 +74,7 @@ export function Header() {
         ))}
       </nav>
       <div className="flex items-center gap-2 ml-auto md:ml-0">
-        {user ? (
+        {loading ? null : user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">
@@ -77,7 +88,7 @@ export function Header() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+              <DropdownMenuItem onClick={() => router.push(getDashboardPath())}>
                 <User className="mr-2 h-4 w-4" />
                 <span>Dashboard</span>
               </DropdownMenuItem>
@@ -88,14 +99,16 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <>
-            <Button asChild variant="ghost">
-              <Link href="/login">Login</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/signup">Sign Up</Link>
-            </Button>
-          </>
+          !isDashboard && (
+            <>
+              <Button asChild variant="ghost">
+                <Link href="/login">Login</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/signup">Sign Up</Link>
+              </Button>
+            </>
+          )
         )}
         <Sheet>
           <SheetTrigger asChild>
