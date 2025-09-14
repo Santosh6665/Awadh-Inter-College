@@ -30,7 +30,7 @@ const prompt = ai.definePrompt({
   name: 'aiFAQAssistantPrompt',
   input: {schema: AiFAQAssistantInputSchema},
   output: {schema: AiFAQAssistantOutputSchema},
-  prompt: `You are a helpful AI assistant that answers frequently asked questions about college life at Awadh Narayan Pratap Lal Intermediate College.
+  prompt: `You are a helpful AI assistant that answers frequently asked questions about college life at Awadh Inter College.
   Use the provided context to answer the question.
   If you don't know the answer, say you do not know.
 

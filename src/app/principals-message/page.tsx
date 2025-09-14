@@ -25,15 +25,15 @@ export default function PrincipalsMessagePage() {
                     </div>
                     <div className="text-center md:text-left">
                         <h2 className="text-2xl font-bold">Dr. Evelyn Reed</h2>
-                        <p className="text-muted-foreground">Principal, ANP Inter College</p>
+                        <p className="text-muted-foreground">Principal, Awadh Inter College</p>
                     </div>
                 </div>
                 <div className="prose max-w-none text-muted-foreground">
                     <p>
-                        Welcome to ANP Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.
+                        Welcome to Awadh Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.
                     </p>
                     <p>
-                        At ANP, we strive to create an atmosphere of respect and inclusion, where each student is valued as an individual. We are dedicated to the academic, social, and emotional growth of our students, and we work in partnership with our parents and community to help our students achieve their full potential.
+                        At Awadh, we strive to create an atmosphere of respect and inclusion, where each student is valued as an individual. We are dedicated to the academic, social, and emotional growth of our students, and we work in partnership with our parents and community to help our students achieve their full potential.
                     </p>
                      <p>
                         I am honored to lead such a remarkable institution and look forward to working with you to make this academic year a success.

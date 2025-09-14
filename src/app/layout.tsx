@@ -4,8 +4,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'ANP Inter College',
-  description: 'A digital information hub for Awadh Narayan Pratap Lal Intermediate College.',
+  title: 'Awadh Inter College',
+  description: 'A digital information hub for Awadh Inter College.',
 };
 
 export default function RootLayout({

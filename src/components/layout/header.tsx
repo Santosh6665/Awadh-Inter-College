@@ -70,7 +70,7 @@ export function Header() {
       <Link href="/" className="flex items-center gap-2">
         <CollegeLogo className="h-8 w-8 text-primary" />
         <h1 className="font-headline text-xl font-bold tracking-tight text-primary hidden sm:block">
-          ANP Inter College
+          Awadh Inter College
         </h1>
       </Link>
       <nav className="hidden md:flex items-center gap-6 ml-auto">

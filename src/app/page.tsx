@@ -91,13 +91,13 @@ export default function HomePage() {
                     <h4 className="text-2xl font-semibold mb-4 text-center">Our History</h4>
                     <div className="prose max-w-none text-muted-foreground space-y-4">
                         <p>
-                            Founded in 1965, Awadh Narayan Pratap Lal Intermediate College started as a small institution with a grand vision: to provide high-quality education to the local community and empower the youth with knowledge and values. Over the decades, we have grown in both size and stature, becoming a premier center for learning in the region.
+                            Founded in 1965, Awadh Inter College started as a small institution with a grand vision: to provide high-quality education to the local community and empower the youth with knowledge and values. Over the decades, we have grown in both size and stature, becoming a premier center for learning in the region.
                         </p>
                         <p>
                             Our journey has been marked by a relentless pursuit of academic excellence, a commitment to holistic student development, and a spirit of innovation. We have continuously adapted our curriculum and infrastructure to meet the evolving needs of education, ensuring our students are well-prepared for the challenges of the future.
                         </p>
                         <p>
-                            Today, ANP Inter College stands as a testament to the enduring power of education to transform lives. We are proud of our rich history and the thousands of alumni who have gone on to make significant contributions in various fields across the globe. As we look to the future, we remain dedicated to our founding principles and committed to shaping the next generation of leaders.
+                            Today, Awadh Inter College stands as a testament to the enduring power of education to transform lives. We are proud of our rich history and the thousands of alumni who have gone on to make significant contributions in various fields across the globe. As we look to the future, we remain dedicated to our founding principles and committed to shaping the next generation of leaders.
                         </p>
                         <div className="text-center">
                             <Button asChild variant="outline">
@@ -160,10 +160,10 @@ export default function HomePage() {
                       </div>
                       <div className="text-center md:text-left">
                           <h2 className="text-2xl font-bold">Dr. Evelyn Reed</h2>
-                          <p className="text-muted-foreground">Principal, ANP Inter College</p>
+                          <p className="text-muted-foreground">Principal, Awadh Inter College</p>
                            <div className="prose max-w-none text-muted-foreground mt-4">
                               <p>
-                                  Welcome to ANP Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.
+                                  Welcome to Awadh Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.
                               </p>
                           </div>
                       </div>
@@ -266,7 +266,7 @@ export default function HomePage() {
                       <div>
                         <h3 className="text-lg font-semibold">Email</h3>
                         <p className="text-muted-foreground">
-                          info@anpcollege.edu
+                          info@awadhcollege.edu
                         </p>
                       </div>
                     </div>
