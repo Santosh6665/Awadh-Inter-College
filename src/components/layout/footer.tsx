@@ -15,9 +15,6 @@ export function Footer() {
             <Link href="/admissions" className="text-muted-foreground hover:text-foreground">
               Admissions
             </Link>
-             <Link href="/principals-message" className="text-muted-foreground hover:text-foreground">
-              Principal's Message
-            </Link>
             <Link href="/gallery" className="text-muted-foreground hover:text-foreground">
               Gallery
             </Link>

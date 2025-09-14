@@ -23,7 +23,6 @@ import { useRouter, usePathname } from 'next/navigation';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/admissions', label: 'Admissions' },
-  { href: '/principals-message', label: "Principal's Message" },
   { href: '/gallery', label: 'Gallery' },
   { href: '/notices', label: 'Notices' },
 ];
