@@ -86,7 +86,7 @@ export function Header() {
         {loading ? null : user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full border">
+              <Button variant="secondary" size="icon" className="rounded-full border-2 border-foreground">
                 <Avatar>
                   <AvatarImage src={user.photoURL || ''} alt={user.displayName || user.email || ''} />
                   <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
