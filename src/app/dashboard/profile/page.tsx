@@ -45,9 +45,17 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-48">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>Student Profile</CardTitle>
+                <CardDescription>View and manage your personal information.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="flex justify-center items-center h-48">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+            </CardContent>
+       </Card>
     );
   }
 

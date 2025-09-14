@@ -1,0 +1,46 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+    // Helper function to check if a user is an admin
+    // In a real app, this would check a 'roles' collection or custom claims
+    function isAdmin() {
+      // For this project, we'll assume a specific UID is the admin.
+      // Replace 'ADMIN_UID_HERE' with an actual admin user's UID from Firebase Authentication.
+      return request.auth.uid == "ADMIN_UID_HERE";
+    }
+
+    // Students can read their own data, Admins can read/write all student data
+    match /students/{studentId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // Teachers can read their own data, Admins can read/write all teacher data
+    match /teachers/{teacherId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // Authenticated users can read attendance, Admins/Teachers can write
+    match /attendance/{recordId} {
+      allow read: if request.auth != null;
+      // In a real app, you'd check if the user is a teacher of the specific student.
+      allow write: if isAdmin(); 
+    }
+
+    // Authenticated users can read books, Admins can write
+    match /books/{bookId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    
+    // Authenticated users can read bus routes, Admins can write
+     match /busRoutes/{routeId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+  }
+}
