@@ -1,4 +1,4 @@
-import type { NewsArticle, CalendarEvent, FacultyMember, ResourceLink } from './types';
+import type { NewsArticle, CalendarEvent } from './types';
 
 export const newsFeed: NewsArticle[] = [
   {
@@ -39,63 +39,5 @@ export const calendarEvents: CalendarEvent[] = [
     date: new Date(2024, 9, 2),
     title: 'Gandhi Jayanti',
     description: 'Holiday on account of Gandhi Jayanti.',
-  },
-];
-
-export const facultyDirectory: FacultyMember[] = [
-  {
-    id: 'f1',
-    name: 'Dr. Ramesh Sharma',
-    department: 'Physics',
-    title: 'Head of Department',
-    email: 'ramesh.sharma@anpcollege.edu',
-    phone: '+91-9876543210',
-  },
-  {
-    id: 'f2',
-    name: 'Mrs. Sunita Verma',
-    department: 'Chemistry',
-    title: 'Senior Lecturer',
-    email: 'sunita.verma@anpcollege.edu',
-    phone: '+91-9876543211',
-  },
-  {
-    id: 'f3',
-    name: 'Mr. Anil Kumar',
-    department: 'Mathematics',
-    title: 'Lecturer',
-    email: 'anil.kumar@anpcollege.edu',
-    phone: '+91-9876543212',
-  },
-  {
-    id: 'f4',
-    name: 'Dr. Priya Singh',
-    department: 'Biology',
-    title: 'Lecturer',
-    email: 'priya.singh@anpcollege.edu',
-    phone: '+91-9876543213',
-  },
-];
-
-export const resourceLinks: ResourceLink[] = [
-  {
-    id: 'r1',
-    title: 'Academic Calendar 2024-25',
-    url: '#',
-  },
-  {
-    id: 'r2',
-    title: 'Examination Timetable',
-    url: '#',
-  },
-  {
-    id: 'r3',
-    title: 'Student Handbook',
-    url: '#',
-  },
-  {
-    id: 'r4',
-    title: 'Library Portal',
-    url: '#',
   },
 ];

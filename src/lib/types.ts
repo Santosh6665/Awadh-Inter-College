@@ -11,18 +11,3 @@ export type CalendarEvent = {
   title: string;
   description: string;
 };
-
-export type FacultyMember = {
-  id: string;
-  name: string;
-  department: string;
-  title: string;
-  email: string;
-  phone: string;
-};
-
-export type ResourceLink = {
-  id: string;
-  title: string;
-  url: string;
-};
