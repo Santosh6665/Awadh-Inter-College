@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,39 +9,109 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { handleLogin } from '@/app/actions';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { RecaptchaVerifier, signInWithPhoneNumber, type ConfirmationResult } from 'firebase/auth';
+import { auth } from '@/lib/firebase/firebase';
+
+// Add a global declaration for window.recaptchaVerifier if it doesn't exist
+declare global {
+  interface Window {
+    recaptchaVerifier?: RecaptchaVerifier;
+    confirmationResult?: ConfirmationResult;
+  }
+}
 
 export default function LoginPage() {
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
-  const onLogin = async (e: React.FormEvent) => {
+  useEffect(() => {
+    // This effect ensures the reCAPTCHA is rendered only on the client-side
+    // and only once.
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+        callback: () => {
+          // reCAPTCHA solved, allow signInWithPhoneNumber.
+        },
+      });
+    }
+  }, []);
+
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!phoneNumber.trim()) {
+      toast({
+        title: 'Phone Number Required',
+        description: 'Please enter a valid phone number.',
+        variant: 'destructive',
+      });
+      return;
+    }
     setLoading(true);
 
-    const result = await handleLogin(identifier, password);
+    try {
+      const verifier = window.recaptchaVerifier!;
+      const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, verifier);
+      window.confirmationResult = confirmationResult;
+      setOtpSent(true);
+      toast({
+        title: 'OTP Sent',
+        description: 'Please check your phone for the verification code.',
+      });
+    } catch (error: any) {
+      console.error('Error sending OTP:', error);
+      toast({
+        title: 'Failed to Send OTP',
+        description: 'Please check the phone number or try again later.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    if (result.success) {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!otp.trim()) {
+      toast({
+        title: 'OTP Required',
+        description: 'Please enter the OTP you received.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const confirmationResult = window.confirmationResult;
+      if (!confirmationResult) {
+        throw new Error('No confirmation result found. Please request OTP again.');
+      }
+      await confirmationResult.confirm(otp);
       toast({
         title: 'Login Successful',
         description: 'Welcome back!',
       });
-      // Redirect to a dashboard or home page after successful login
       router.push('/');
-    } else {
+    } catch (error: any) {
+      console.error('Error verifying OTP:', error);
       toast({
         title: 'Login Failed',
-        description: result.error,
+        description: 'The OTP is invalid or has expired. Please try again.',
         variant: 'destructive',
       });
+       // Reset state to allow user to try again
+      setOtpSent(false);
+      setOtp('');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -52,38 +122,54 @@ export default function LoginPage() {
           <CardHeader>
             <CardTitle className="text-2xl">Login</CardTitle>
             <CardDescription>
-              Enter your email or phone number and password to access your dashboard.
+              {otpSent
+                ? 'Enter the OTP sent to your phone.'
+                : 'Enter your phone number to receive an OTP.'}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={onLogin} className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="identifier">Email or Phone Number</Label>
-                <Input
-                  id="identifier"
-                  type="text"
-                  placeholder="name@example.com or +1234567890"
-                  required
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  disabled={loading}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
-                />
-              </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? <Loader2 className="animate-spin" /> : 'Sign in'}
-              </Button>
-            </form>
+            {!otpSent ? (
+              <form onSubmit={handleSendOtp} className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="+91 12345 67890"
+                    required
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? <Loader2 className="animate-spin" /> : 'Send OTP'}
+                </Button>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyOtp} className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="otp">One-Time Password</Label>
+                  <Input
+                    id="otp"
+                    type="text"
+                    placeholder="Enter your 6-digit OTP"
+                    required
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    disabled={loading}
+                    maxLength={6}
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? <Loader2 className="animate-spin" /> : 'Verify OTP & Sign in'}
+                </Button>
+                 <Button variant="link" size="sm" onClick={() => setOtpSent(false)} disabled={loading}>
+                  Use a different phone number
+                </Button>
+              </form>
+            )}
+            <div id="recaptcha-container" className="mt-4"></div>
           </CardContent>
         </Card>
       </main>
