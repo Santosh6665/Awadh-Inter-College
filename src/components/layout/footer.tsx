@@ -21,10 +21,10 @@ export function Footer() {
               Notices
             </Link>
             <Link href="/login" className="text-muted-foreground hover:text-foreground">
-              Login
+              Student Login
             </Link>
-            <Link href="/signup" className="text-muted-foreground hover:text-foreground">
-              Sign Up
+            <Link href="/teacher/login" className="text-muted-foreground hover:text-foreground">
+              Teacher Login
             </Link>
           </nav>
           <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} ANP Inter College. All rights reserved.</p>
