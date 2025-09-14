@@ -173,6 +173,36 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section id="founder-message" className="py-12 md:py-20 bg-background px-4 sm:px-6 md:px-8">
+          <div className="container mx-auto">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-3xl text-center">Our Founder's Vision</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                  <div className="flex flex-col md:flex-row items-center gap-8">
+                      <div className="flex-shrink-0">
+                          <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
+                              <AvatarImage src="https://picsum.photos/seed/founder/300" alt="Founder's Photo" data-ai-hint="founder portrait" />
+                              <AvatarFallback>F</AvatarFallback>
+                          </Avatar>
+                      </div>
+                      <div className="text-center md:text-left">
+                           <div className="prose max-w-none text-muted-foreground">
+                              <p>
+                                The Awad Inter College School Management System (SMS) is initiated and conceptualized by the Founder of Awad Inter College, who envisioned a digital platform to streamline administrative, academic, and communication processes.
+                              </p>
+                               <p>
+                                The Founder’s mission is to modernize the institution’s operations, provide transparency for parents, empower teachers with digital tools, and improve the overall learning experience for students.
+                               </p>
+                          </div>
+                      </div>
+                  </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
 
         <section className="bg-background py-12 md:py-20 px-4 sm:px-6 md:px-8">
           <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
