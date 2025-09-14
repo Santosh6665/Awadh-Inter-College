@@ -53,6 +53,15 @@ export function Header() {
     }
     return '/dashboard';
   }
+  
+  const getProfilePath = () => {
+    if (pathname.startsWith('/teacher')) {
+      // Assuming teachers might have a different profile page in the future
+      return '/teacher/dashboard/profile'; 
+    }
+    return '/dashboard/profile';
+  }
+
 
   return (
     <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6 shadow-sm">
@@ -91,6 +100,10 @@ export function Header() {
               <DropdownMenuItem onClick={() => router.push(getDashboardPath())}>
                 <User className="mr-2 h-4 w-4" />
                 <span>Dashboard</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push(getProfilePath())}>
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
