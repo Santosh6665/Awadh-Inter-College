@@ -38,7 +38,7 @@ export default function DashboardLayout({
       if (currentUser) {
         setUser(currentUser);
       } else {
-        router.push('/login');
+        router.push('/student/login');
       }
       setLoading(false);
     });
@@ -49,7 +49,7 @@ export default function DashboardLayout({
     try {
       await signOut(auth);
       toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
-      router.push('/login');
+      router.push('/student/login');
     } catch (error) {
       toast({ title: 'Logout Failed', description: 'Could not log you out. Please try again.', variant: 'destructive' });
     }

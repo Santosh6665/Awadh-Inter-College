@@ -20,7 +20,7 @@ export function Footer() {
             <Link href="/notices" className="text-muted-foreground hover:text-foreground">
               Notices
             </Link>
-            <Link href="/login" className="text-muted-foreground hover:text-foreground">
+            <Link href="/student/login" className="text-muted-foreground hover:text-foreground">
               Student Login
             </Link>
             <Link href="/teacher/login" className="text-muted-foreground hover:text-foreground">

@@ -126,7 +126,7 @@ export function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left">
-            <SheetHeader>
+             <SheetHeader>
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             </SheetHeader>
             <nav className="grid gap-6 text-lg font-medium mt-8">
