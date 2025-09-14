@@ -12,6 +12,8 @@ import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useIsMobile } from '@/hooks/use-mobile';
+
 
 const carouselImages = [
   { src: "/images/hero-1.jpg", alt: "College Campus", hint: "college campus" },
@@ -27,6 +29,7 @@ export default function HomePage() {
   );
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
   const [isPrincipalMessageExpanded, setIsPrincipalMessageExpanded] = useState(false);
+  const isMobile = useIsMobile();
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -171,7 +174,7 @@ export default function HomePage() {
                               <p>
                                   Welcome to Awadh Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.
                               </p>
-                               {isPrincipalMessageExpanded && (
+                               {((isMobile && isPrincipalMessageExpanded) || !isMobile) && (
                                 <>
                                   <p>
                                     At Awadh, we strive to create an atmosphere of respect and inclusion, where each student is valued as an individual. We are dedicated to the academic, social, and emotional growth of our students, and we work in partnership with our parents and community to help our students achieve their full potential.
@@ -181,11 +184,13 @@ export default function HomePage() {
                                   </p>
                                 </>
                               )}
-                              <div className="text-center md:text-left">
-                                <Button variant="outline" onClick={() => setIsPrincipalMessageExpanded(!isPrincipalMessageExpanded)}>
-                                  {isPrincipalMessageExpanded ? 'Read Less' : 'Learn More'}
-                                </Button>
-                              </div>
+                              {isMobile && (
+                                <div className="text-center md:text-left">
+                                  <Button variant="outline" onClick={() => setIsPrincipalMessageExpanded(!isPrincipalMessageExpanded)}>
+                                    {isPrincipalMessageExpanded ? 'Read Less' : 'Learn More'}
+                                  </Button>
+                                </div>
+                              )}
                           </div>
                       </div>
                   </div>
