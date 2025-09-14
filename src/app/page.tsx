@@ -57,9 +57,6 @@ export default function HomePage() {
             <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2" />
           </Carousel>
           <div className="container mx-auto text-center mt-8">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight">
-              Awadh Narayan Pratap Lal Intermediate College
-            </h2>
             <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
               A center for academic excellence and holistic development.
             </p>
