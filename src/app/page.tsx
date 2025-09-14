@@ -22,14 +22,14 @@ const carouselImages = [
 
 export default function HomePage() {
    const plugin = React.useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: true })
+    Autoplay({ delay: 1000, stopOnInteraction: true })
   );
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex-1">
-        <section className="w-full py-12 md:py-20">
+        <section className="w-full pt-1">
           <div className="container mx-auto">
             <Carousel
               plugins={[plugin.current]}
