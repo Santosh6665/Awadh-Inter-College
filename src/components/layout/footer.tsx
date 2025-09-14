@@ -23,6 +23,9 @@ export function Footer() {
             <Link href="/login" className="text-muted-foreground hover:text-foreground">
               Login
             </Link>
+            <Link href="/signup" className="text-muted-foreground hover:text-foreground">
+              Sign Up
+            </Link>
           </nav>
           <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} ANP Inter College. All rights reserved.</p>
         </div>

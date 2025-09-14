@@ -11,23 +11,23 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !password.trim()) {
+    if (password.length < 6) {
       toast({
-        title: 'Email and Password Required',
-        description: 'Please enter both your email and password.',
+        title: 'Password Too Short',
+        description: 'Password must be at least 6 characters long.',
         variant: 'destructive',
       });
       return;
@@ -35,22 +35,24 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
       toast({
-        title: 'Login Successful',
-        description: 'Welcome back!',
+        title: 'Account Created',
+        description: "You've successfully signed up! Please login.",
       });
-      router.push('/');
+      router.push('/login');
     } catch (error: any) {
-      console.error('Error signing in:', error);
+      console.error('Error signing up:', error);
       let description = 'An unexpected error occurred. Please try again.';
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-        description = 'Invalid email or password. Please check your credentials and try again.';
+      if (error.code === 'auth/email-already-in-use') {
+        description = 'This email is already registered. Please try logging in.';
       } else if (error.code === 'auth/invalid-email') {
-        description = 'The email address is not valid.';
+        description = 'Please enter a valid email address.';
+      } else if (error.code === 'auth/weak-password') {
+        description = 'The password is too weak. Please choose a stronger one.';
       }
       toast({
-        title: 'Login Failed',
+        title: 'Signup Failed',
         description,
         variant: 'destructive',
       });
@@ -65,19 +67,19 @@ export default function LoginPage() {
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8">
         <Card className="w-full max-w-sm">
           <CardHeader>
-            <CardTitle className="text-2xl">Login</CardTitle>
+            <CardTitle className="text-2xl">Sign Up</CardTitle>
             <CardDescription>
-              Enter your email below to login to your account.
+              Enter your information to create an account.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="grid gap-4">
+            <form onSubmit={handleSignup} className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="name@example.com"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -89,6 +91,7 @@ export default function LoginPage() {
                 <Input
                   id="password"
                   type="password"
+                  placeholder="••••••••"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -96,13 +99,13 @@ export default function LoginPage() {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? <Loader2 className="animate-spin" /> : 'Sign In'}
+                {loading ? <Loader2 className="animate-spin" /> : 'Create an account'}
               </Button>
             </form>
             <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{' '}
-              <Link href="/signup" className="underline">
-                Sign up
+              Already have an account?{' '}
+              <Link href="/login" className="underline">
+                Sign in
               </Link>
             </div>
           </CardContent>

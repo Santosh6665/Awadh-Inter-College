@@ -31,9 +31,12 @@ export function Header() {
           </Link>
         ))}
       </nav>
-      <div className="flex items-center gap-4 ml-auto md:ml-0">
-        <Button asChild>
+      <div className="flex items-center gap-2 ml-auto md:ml-0">
+        <Button asChild variant="ghost">
           <Link href="/login">Login</Link>
+        </Button>
+        <Button asChild>
+          <Link href="/signup">Sign Up</Link>
         </Button>
         <Sheet>
           <SheetTrigger asChild>
@@ -53,6 +56,18 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
+               <Link
+                href="/login"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Login
+              </Link>
+               <Link
+                href="/signup"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Sign Up
+              </Link>
             </nav>
           </SheetContent>
         </Sheet>
