@@ -2,7 +2,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Camera, Info, LogIn } from 'lucide-react';
+import { BookOpen, Camera, Info, LogIn, Target, Zap } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -40,8 +40,42 @@ export default function HomePage() {
             </p>
           </div>
         </section>
+        
+        <section id="vision-mission" className="py-12 md:py-20 bg-muted px-4 sm:px-6 md:px-8">
+          <div className="container mx-auto text-center">
+            <h3 className="text-3xl font-bold text-center mb-10">Our Vision & Mission</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              <Card className="text-left">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="text-accent" />
+                    Our Vision
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    To be a leading institution in providing quality education, empowering students with knowledge, skills, and values to become responsible global citizens and leaders of tomorrow.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="text-left">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Zap className="text-accent" />
+                    Our Mission
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    To create a dynamic and inclusive learning environment that fosters academic excellence, critical thinking, and holistic development through innovative teaching and a commitment to lifelong learning.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
 
-        <section className="bg-muted py-12 md:py-20 px-4 sm:px-6 md:px-8">
+        <section className="bg-background py-12 md:py-20 px-4 sm:px-6 md:px-8">
           <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <Card>
               <CardHeader>
