@@ -70,14 +70,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="about" className="py-12 md:py-20 px-4 sm:px-6 md:px-8 bg-muted">
-          <div className="container mx-auto">
-            <h3 className="text-3xl font-bold text-center mb-8">About Our College</h3>
-            <p className="max-w-3xl mx-auto text-center text-muted-foreground">
-              Founded with a vision to provide quality education, ANP Inter College has been a cornerstone of learning in the community. We are dedicated to nurturing young minds, fostering critical thinking, and preparing students for a successful future. Our experienced faculty and state-of-the-art facilities provide an ideal environment for growth and discovery.
-            </p>
-          </div>
-        </section>
         
         <section id="vision-mission" className="py-12 md:py-20 bg-background px-4 sm:px-6 md:px-8">
           <div className="container mx-auto text-center">
