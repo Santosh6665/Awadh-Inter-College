@@ -1,4 +1,5 @@
 
+
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, query, where, writeBatch } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Student, AttendanceRecord } from '../types';
