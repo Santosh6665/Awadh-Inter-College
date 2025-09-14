@@ -3,7 +3,7 @@
 
 import { CollegeLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, User, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth';
@@ -129,6 +129,9 @@ export function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left">
+            <SheetHeader>
+              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+            </SheetHeader>
             <nav className="grid gap-6 text-lg font-medium mt-8">
               {navLinks.map((link) => (
                 <Link
