@@ -12,7 +12,7 @@ export function Footer() {
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
                 <CollegeLogo className="h-8 w-8 text-primary" />
-                <span className="text-xl font-bold">Awadh Narayan Pratap Lal Intermediate College</span>
+                <span className="text-xl font-bold">Awadh Inter College</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               A center for academic excellence and holistic development since 1965.
@@ -63,7 +63,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t pt-6 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Awadh Narayan Pratap Lal Intermediate College. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Awadh Inter College. All rights reserved.</p>
         </div>
       </div>
     </footer>
