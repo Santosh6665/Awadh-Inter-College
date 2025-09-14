@@ -29,14 +29,15 @@ export default function HomePage() {
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex-1">
-        <section className="w-full">
-            <Carousel
+        <section className="w-full relative mt-1">
+           <Carousel
               plugins={[plugin.current]}
               className="w-full"
               onMouseEnter={plugin.current.stop}
               onMouseLeave={plugin.current.reset}
               opts={{
                 loop: true,
+                duration: 50,
               }}
             >
               <CarouselContent>
@@ -49,6 +50,7 @@ export default function HomePage() {
                         height={400}
                         className="object-cover w-full h-64 md:h-[400px]"
                         data-ai-hint={image.hint}
+                        priority={index === 0}
                       />
                   </CarouselItem>
                 ))}
