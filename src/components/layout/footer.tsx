@@ -1,3 +1,4 @@
+
 import { CollegeLogo } from '@/components/icons';
 import Link from 'next/link';
 
@@ -13,6 +14,9 @@ export function Footer() {
           <nav className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm">
             <Link href="/admissions" className="text-muted-foreground hover:text-foreground">
               Admissions
+            </Link>
+             <Link href="/principals-message" className="text-muted-foreground hover:text-foreground">
+              Principal's Message
             </Link>
             <Link href="/gallery" className="text-muted-foreground hover:text-foreground">
               Gallery
