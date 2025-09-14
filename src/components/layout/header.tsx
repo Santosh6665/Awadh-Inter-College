@@ -141,7 +141,7 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
-              {!user && (
+              {!user && !isDashboard && (
                 <>
                   <Link
                     href="/login"
