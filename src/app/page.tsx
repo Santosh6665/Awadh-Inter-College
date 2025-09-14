@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, 'useState } from 'react';
+import React, { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
