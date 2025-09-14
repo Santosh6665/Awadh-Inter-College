@@ -27,6 +27,15 @@ export type Student = {
     photoUrl?: string;
 };
 
+export type Teacher = {
+    id: string;
+    name: string;
+    email: string;
+    subject: string;
+    phone: string;
+    photoUrl?: string;
+};
+
 export type AttendanceRecord = {
     studentId: string;
     date: string; // YYYY-MM-DD
