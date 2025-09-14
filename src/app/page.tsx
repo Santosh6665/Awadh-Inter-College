@@ -29,40 +29,42 @@ export default function HomePage() {
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex-1">
-        <section className="relative w-full py-12 md:py-20">
-          <Carousel
-            plugins={[plugin.current]}
-            className="w-full max-w-4xl mx-auto"
-            onMouseEnter={plugin.current.stop}
-            onMouseLeave={plugin.current.reset}
-            opts={{
-              loop: true,
-            }}
-          >
-            <CarouselContent>
-              {carouselImages.map((image, index) => (
-                <CarouselItem key={index}>
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      width={1200}
-                      height={600}
-                      className="object-cover w-full aspect-video rounded-lg"
-                      data-ai-hint={image.hint}
-                    />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="absolute left-[-50px] top-1/2 -translate-y-1/2" />
-            <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2" />
-          </Carousel>
-          <div className="container mx-auto text-center mt-8">
-            <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
-              A center for academic excellence and holistic development.
-            </p>
-            <Button asChild className="mt-8">
-              <Link href="/admissions">Apply for Admission</Link>
-            </Button>
+        <section className="w-full py-12 md:py-20">
+          <div className="container mx-auto">
+            <Carousel
+              plugins={[plugin.current]}
+              className="w-full max-w-4xl mx-auto"
+              onMouseEnter={plugin.current.stop}
+              onMouseLeave={plugin.current.reset}
+              opts={{
+                loop: true,
+              }}
+            >
+              <CarouselContent>
+                {carouselImages.map((image, index) => (
+                  <CarouselItem key={index}>
+                      <Image
+                        src={image.src}
+                        alt={image.alt}
+                        width={1200}
+                        height={600}
+                        className="object-cover w-full aspect-video rounded-lg"
+                        data-ai-hint={image.hint}
+                      />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2" />
+              <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2" />
+            </Carousel>
+            <div className="text-center mt-8">
+              <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
+                A center for academic excellence and holistic development.
+              </p>
+              <Button asChild className="mt-8">
+                <Link href="/admissions">Apply for Admission</Link>
+              </Button>
+            </div>
           </div>
         </section>
 
