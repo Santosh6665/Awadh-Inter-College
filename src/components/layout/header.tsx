@@ -120,7 +120,7 @@ export function Header() {
         )}
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="md:hidden">
+            <Button variant="ghost" size="icon" className="md:hidden hover:bg-transparent">
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
