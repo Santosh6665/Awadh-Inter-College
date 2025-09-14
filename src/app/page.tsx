@@ -13,11 +13,11 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Autoplay from 'embla-carousel-autoplay';
 
 const carouselImages = [
-  { src: "https://picsum.photos/seed/1/1200/600", alt: "College Campus", hint: "college campus" },
-  { src: "https://picsum.photos/seed/2/1200/600", alt: "Students learning in a classroom", hint: "students classroom" },
-  { src: "https://picsum.photos/seed/3/1200/600", alt: "University library with students", hint: "university library" },
-  { src: "https://picsum.photos/seed/4/1200/600", alt: "Graduation ceremony", hint: "graduation ceremony" },
-  { src: "https://picsum.photos/seed/5/1200/600", alt: "Students participating in a sports event", hint: "students sports" },
+  { src: "https://picsum.photos/seed/1/1200/400", alt: "College Campus", hint: "college campus" },
+  { src: "https://picsum.photos/seed/2/1200/400", alt: "Students learning in a classroom", hint: "students classroom" },
+  { src: "https://picsum.photos/seed/3/1200/400", alt: "University library with students", hint: "university library" },
+  { src: "https://picsum.photos/seed/4/1200/400", alt: "Graduation ceremony", hint: "graduation ceremony" },
+  { src: "https://picsum.photos/seed/5/1200/400", alt: "Students participating in a sports event", hint: "students sports" },
 ];
 
 export default function HomePage() {
@@ -47,8 +47,8 @@ export default function HomePage() {
                         src={image.src}
                         alt={image.alt}
                         width={1200}
-                        height={600}
-                        className="object-cover w-full aspect-video rounded-lg"
+                        height={400}
+                        className="object-cover w-full h-64 md:h-[400px] rounded-lg"
                         data-ai-hint={image.hint}
                       />
                   </CarouselItem>
