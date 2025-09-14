@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, 'useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
@@ -174,7 +174,7 @@ export default function HomePage() {
                               <p>
                                   Welcome to Awadh Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.
                               </p>
-                               {((isMobile && isPrincipalMessageExpanded) || !isMobile) && (
+                               {isPrincipalMessageExpanded && (
                                 <>
                                   <p>
                                     At Awadh, we strive to create an atmosphere of respect and inclusion, where each student is valued as an individual. We are dedicated to the academic, social, and emotional growth of our students, and we work in partnership with our parents and community to help our students achieve their full potential.
@@ -184,13 +184,11 @@ export default function HomePage() {
                                   </p>
                                 </>
                               )}
-                              {isMobile && (
-                                <div className="text-center md:text-left">
-                                  <Button variant="outline" onClick={() => setIsPrincipalMessageExpanded(!isPrincipalMessageExpanded)}>
-                                    {isPrincipalMessageExpanded ? 'Read Less' : 'Learn More'}
-                                  </Button>
-                                </div>
-                              )}
+                              <div className="text-center md:text-left">
+                                <Button variant="outline" onClick={() => setIsPrincipalMessageExpanded(!isPrincipalMessageExpanded)}>
+                                  {isPrincipalMessageExpanded ? 'Read Less' : 'Learn More'}
+                                </Button>
+                              </div>
                           </div>
                       </div>
                   </div>
