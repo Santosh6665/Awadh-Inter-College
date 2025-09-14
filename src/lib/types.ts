@@ -1,4 +1,5 @@
 
+
 export type NewsArticle = {
   id: string;
   title: string;
@@ -25,6 +26,8 @@ export type Student = {
     fatherName: string;
     address: string;
     photoUrl?: string;
+    feeStatus?: 'Paid' | 'Due' | 'Overdue';
+    amountDue?: number;
 };
 
 export type Teacher = {
