@@ -26,6 +26,7 @@ export default function HomePage() {
     Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true, stopOnLastSnap: false })
   );
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
+  const [isPrincipalMessageExpanded, setIsPrincipalMessageExpanded] = useState(false);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -166,10 +167,25 @@ export default function HomePage() {
                       <div className="text-center md:text-left">
                           <h2 className="text-2xl font-bold">Dr. Evelyn Reed</h2>
                           <p className="text-muted-foreground">Principal, Awadh Inter College</p>
-                           <div className="prose max-w-none text-muted-foreground mt-4">
+                           <div className="prose max-w-none text-muted-foreground mt-4 space-y-4">
                               <p>
                                   Welcome to Awadh Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.
                               </p>
+                               {isPrincipalMessageExpanded && (
+                                <>
+                                  <p>
+                                    At Awadh, we strive to create an atmosphere of respect and inclusion, where each student is valued as an individual. We are dedicated to the academic, social, and emotional growth of our students, and we work in partnership with our parents and community to help our students achieve their full potential.
+                                  </p>
+                                  <p>
+                                    I am honored to lead such a remarkable institution and look forward to working with you to make this academic year a success.
+                                  </p>
+                                </>
+                              )}
+                              <div className="text-center md:text-left">
+                                <Button variant="outline" onClick={() => setIsPrincipalMessageExpanded(!isPrincipalMessageExpanded)}>
+                                  {isPrincipalMessageExpanded ? 'Read Less' : 'Learn More'}
+                                </Button>
+                              </div>
                           </div>
                       </div>
                   </div>
