@@ -5,12 +5,13 @@ import React from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Camera, Info, LogIn, Target, Zap } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const carouselImages = [
   { src: "https://picsum.photos/seed/1/1200/400", alt: "College Campus", hint: "college campus" },
@@ -22,7 +23,7 @@ const carouselImages = [
 
 export default function HomePage() {
    const plugin = React.useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: false, stopOnMouseEnter: true })
+    Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true, stopOnLastSnap: false })
   );
 
   return (
@@ -37,7 +38,7 @@ export default function HomePage() {
               onMouseLeave={plugin.current.play}
               opts={{
                 loop: true,
-                duration: 50,
+                duration: 60,
               }}
             >
               <CarouselContent>
@@ -105,7 +106,37 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="bg-muted py-12 md:py-20 px-4 sm:px-6 md:px-8">
+        <section id="principal-message" className="py-12 md:py-20 bg-muted px-4 sm:px-6 md:px-8">
+          <div className="container mx-auto">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-3xl text-center">A Message from the Principal</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                  <div className="flex flex-col md:flex-row items-center gap-8">
+                      <div className="flex-shrink-0">
+                          <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
+                              <AvatarImage src="https://picsum.photos/seed/principal/300" alt="Principal's Photo" data-ai-hint="principal portrait" />
+                              <AvatarFallback>P</AvatarFallback>
+                          </Avatar>
+                      </div>
+                      <div className="text-center md:text-left">
+                          <h2 className="text-2xl font-bold">Dr. Evelyn Reed</h2>
+                          <p className="text-muted-foreground">Principal, ANP Inter College</p>
+                           <div className="prose max-w-none text-muted-foreground mt-4">
+                              <p>
+                                  Welcome to ANP Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.
+                              </p>
+                          </div>
+                      </div>
+                  </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+
+        <section className="bg-background py-12 md:py-20 px-4 sm:px-6 md:px-8">
           <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <Card>
               <CardHeader>
