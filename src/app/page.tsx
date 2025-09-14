@@ -22,7 +22,7 @@ const carouselImages = [
 
 export default function HomePage() {
    const plugin = React.useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: true })
+    Autoplay({ delay: 4000, stopOnInteraction: false, stopOnMouseEnter: true })
   );
 
   return (
@@ -34,7 +34,7 @@ export default function HomePage() {
               plugins={[plugin.current]}
               className="w-full"
               onMouseEnter={plugin.current.stop}
-              onMouseLeave={plugin.current.reset}
+              onMouseLeave={plugin.current.play}
               opts={{
                 loop: true,
                 duration: 50,
