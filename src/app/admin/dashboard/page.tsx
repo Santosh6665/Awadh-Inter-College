@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, UserPlus, FileText, BarChart2, Library, Bus, Hotel } from 'lucide-react';
+import { Users, UserPlus, FileText, BarChart2, Library, Bus } from 'lucide-react';
 import Link from 'next/link';
 
 const overviewItems = [
@@ -10,7 +10,6 @@ const overviewItems = [
     { title: "Overall Results", value: "92.5%", description: "pass percentage", icon: BarChart2, href: "/admin/dashboard/results" },
     { title: "Library Books", value: "5,420", description: "books available", icon: Library, href: "/admin/dashboard/library" },
     { title: "Transport Routes", value: "12", description: "buses in operation", icon: Bus, href: "/admin/dashboard/transport" },
-    { title: "Hostel Occupancy", value: "85%", description: "rooms filled", icon: Hotel, href: "/admin/dashboard/hostel" },
 ];
 
 export default function AdminDashboardPage() {

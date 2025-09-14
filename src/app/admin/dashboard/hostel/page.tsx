@@ -6,10 +6,10 @@ export default function ManageHostelPage() {
     <Card>
       <CardHeader>
         <CardTitle>Manage Hostel</CardTitle>
-        <CardDescription>Manage room allocations, resident information, and hostel facilities.</CardDescription>
+        <CardDescription>This feature is not currently available.</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Hostel management features will be available here soon.</p>
+        <p>Hostel management features have been removed.</p>
       </CardContent>
     </Card>
   );
