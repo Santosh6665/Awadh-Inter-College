@@ -38,17 +38,19 @@ export default function AdminDashboardPage() {
                 </Card>
                </Link>
             ))}
-             <Card className="lg:col-span-4 hover:bg-muted/50 transition-colors">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Generate Reports</CardTitle>
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-muted-foreground">
-                        Create and download detailed reports for admissions, financials, and academic performance.
-                    </p>
-                </CardContent>
-            </Card>
+             <Link href="/admin/dashboard/reports" className="lg:col-span-4">
+              <Card className="hover:bg-muted/50 transition-colors">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Generate Reports</CardTitle>
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                          Create and download detailed reports for admissions, financials, and academic performance.
+                      </p>
+                  </CardContent>
+              </Card>
+            </Link>
           </div>
         </CardContent>
       </Card>

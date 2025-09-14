@@ -10,7 +10,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Home, Users, UserPlus, FileText, BarChart2, Library, Bus, LogOut, Loader2 } from 'lucide-react';
+import { Home, Users, UserPlus, FileText, BarChart2, Library, Bus, LogOut, Loader2, Send, FilePieChart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const navItems = [
@@ -21,6 +21,8 @@ const navItems = [
   { href: '/admin/dashboard/results', label: 'Manage Results', icon: BarChart2 },
   { href: '/admin/dashboard/library', label: 'Manage Library', icon: Library },
   { href: '/admin/dashboard/transport', label: 'Manage Transport', icon: Bus },
+  { href: '/admin/dashboard/communication', label: 'Communication', icon: Send },
+  { href: '/admin/dashboard/reports', label: 'Reports', icon: FilePieChart },
 ];
 
 export default function AdminDashboardLayout({
