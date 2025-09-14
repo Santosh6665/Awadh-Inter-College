@@ -20,28 +20,30 @@ export function Footer() {
           </div>
 
           {/* Combined Column for Links and Portals */}
-          <div className="md:col-span-2 grid grid-cols-2 gap-8">
-             {/* Quick Links */}
-            <div className="space-y-4">
-              <h4 className="font-semibold">Quick Links</h4>
-              <nav className="flex flex-col space-y-2 text-sm">
-                <Link href="/about" className="text-muted-foreground hover:text-foreground">About Us</Link>
-                <Link href="/admissions" className="text-muted-foreground hover:text-foreground">Admissions</Link>
-                <Link href="/gallery" className="text-muted-foreground hover:text-foreground">Gallery</Link>
-                <Link href="/notices" className="text-muted-foreground hover:text-foreground">Notices</Link>
-                <Link href="/#contact" className="text-muted-foreground hover:text-foreground">Contact Us</Link>
-              </nav>
-            </div>
+          <div className="md:col-span-2">
+            <div className="grid grid-cols-2 gap-8">
+              {/* Quick Links */}
+              <div className="space-y-4">
+                <h4 className="font-semibold">Quick Links</h4>
+                <nav className="flex flex-col space-y-2 text-sm">
+                  <Link href="/about" className="text-muted-foreground hover:text-foreground">About Us</Link>
+                  <Link href="/admissions" className="text-muted-foreground hover:text-foreground">Admissions</Link>
+                  <Link href="/gallery" className="text-muted-foreground hover:text-foreground">Gallery</Link>
+                  <Link href="/notices" className="text-muted-foreground hover:text-foreground">Notices</Link>
+                  <Link href="/#contact" className="text-muted-foreground hover:text-foreground">Contact Us</Link>
+                </nav>
+              </div>
 
-            {/* Portals */}
-            <div className="space-y-4">
-              <h4 className="font-semibold">Portals</h4>
-              <nav className="flex flex-col space-y-2 text-sm">
-                <Link href="/student/login" className="text-muted-foreground hover:text-foreground">Student Login</Link>
-                <Link href="/parent/login" className="text-muted-foreground hover:text-foreground">Parent Login</Link>
-                <Link href="/teacher/login" className="text-muted-foreground hover:text-foreground">Teacher Login</Link>
-                <Link href="/admin/login" className="text-muted-foreground hover:text-foreground">Admin Login</Link>
-              </nav>
+              {/* Portals */}
+              <div className="space-y-4">
+                <h4 className="font-semibold">Portals</h4>
+                <nav className="flex flex-col space-y-2 text-sm">
+                  <Link href="/student/login" className="text-muted-foreground hover:text-foreground">Student Login</Link>
+                  <Link href="/parent/login" className="text-muted-foreground hover:text-foreground">Parent Login</Link>
+                  <Link href="/teacher/login" className="text-muted-foreground hover:text-foreground">Teacher Login</Link>
+                  <Link href="/admin/login" className="text-muted-foreground hover:text-foreground">Admin Login</Link>
+                </nav>
+              </div>
             </div>
           </div>
           
