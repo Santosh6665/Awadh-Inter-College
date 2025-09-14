@@ -1,3 +1,7 @@
+
+'use client';
+
+import React from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
@@ -5,20 +9,46 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Camera, Info, LogIn, Target, Zap } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
+
+const carouselImages = [
+  { src: "https://picsum.photos/seed/1/1200/800", alt: "College Campus", hint: "college campus" },
+  { src: "https://picsum.photos/seed/2/1200/800", alt: "Students learning in a classroom", hint: "students classroom" },
+  { src: "https://picsum.photos/seed/3/1200/800", alt: "University library with students", hint: "university library" },
+  { src: "https://picsum.photos/seed/4/1200/800", alt: "Graduation ceremony", hint: "graduation ceremony" },
+  { src: "https://picsum.photos/seed/5/1200/800", alt: "Students participating in a sports event", hint: "students sports" },
+];
 
 export default function HomePage() {
+   const plugin = React.useRef(
+    Autoplay({ delay: 2000, stopOnInteraction: true })
+  );
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex-1">
         <section className="relative h-[60vh] w-full">
-          <Image
-            src="https://picsum.photos/seed/1/1200/800"
-            alt="College Campus"
-            fill
-            className="object-cover"
-            data-ai-hint="college campus"
-          />
+           <Carousel
+            plugins={[plugin.current]}
+            className="w-full h-full"
+            onMouseEnter={plugin.current.stop}
+            onMouseLeave={plugin.current.reset}
+          >
+            <CarouselContent className="h-full">
+              {carouselImages.map((image, index) => (
+                <CarouselItem key={index} className="h-full">
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    fill
+                    className="object-cover"
+                    data-ai-hint={image.hint}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
           <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white p-4">
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight">
               Awadh Narayan Pratap Lal Intermediate College
