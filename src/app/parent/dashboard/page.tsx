@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart2, FileText } from 'lucide-react';
+import { BarChart2, FileText, MessageSquare, Bell } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ParentDashboardPage() {
@@ -14,7 +14,7 @@ export default function ParentDashboardPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Link href="/parent/dashboard/progress">
               <Card className="hover:bg-muted/50 transition-colors">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -39,15 +39,38 @@ export default function ParentDashboardPage() {
                 </CardContent>
               </Card>
             </Link>
+             <Link href="/parent/dashboard/contact">
+              <Card className="hover:bg-muted/50 transition-colors">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Contact Teachers</CardTitle>
+                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                   <p className="text-sm text-muted-foreground pt-3">
+                    Have questions? Send a message directly to your child's teachers.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </CardContent>
       </Card>
        <Card>
           <CardHeader>
-            <CardTitle>Announcements for Parents</CardTitle>
+             <CardTitle className="flex items-center gap-2">
+                <Bell className="h-5 w-5" />
+                Notifications & Reminders
+            </CardTitle>
           </CardHeader>
           <CardContent>
-             <p>Important announcements will be displayed here.</p>
+             <ul className="space-y-2 text-sm list-disc list-inside">
+                <li>
+                    <span className="font-semibold">Fee Reminder:</span> The tuition fee for September is due by the 10th.
+                </li>
+                <li>
+                    <span className="font-semibold">Results Published:</span> Mid-term examination results are now available to view.
+                </li>
+             </ul>
           </CardContent>
         </Card>
     </div>

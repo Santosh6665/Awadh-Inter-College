@@ -10,13 +10,14 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Home, BarChart2, FileText, LogOut, Loader2 } from 'lucide-react';
+import { Home, BarChart2, FileText, LogOut, Loader2, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const navItems = [
   { href: '/parent/dashboard', label: 'Dashboard', icon: Home },
   { href: '/parent/dashboard/progress', label: 'Academic Progress', icon: BarChart2 },
   { href: '/parent/dashboard/fees', label: 'Fee Payment', icon: FileText },
+  { href: '/parent/dashboard/contact', label: 'Contact Teachers', icon: MessageSquare },
 ];
 
 export default function ParentDashboardLayout({
