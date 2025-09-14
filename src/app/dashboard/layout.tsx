@@ -10,7 +10,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Home, User as UserIcon, BarChart2, CheckSquare, FileText, LogOut, Loader2, CalendarDays } from 'lucide-react';
+import { Home, User as UserIcon, BarChart2, CheckSquare, FileText, LogOut, Loader2, CalendarDays, BookCheck, Bell } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const navItems = [
@@ -20,6 +20,8 @@ const navItems = [
   { href: '/dashboard/attendance', label: 'Attendance', icon: CheckSquare },
   { href: '/dashboard/fees', label: 'Fee Receipts', icon: FileText },
   { href: '/dashboard/timetable', label: 'Timetable', icon: CalendarDays },
+  { href: '/dashboard/assignments', label: 'Assignments', icon: BookCheck },
+  { href: '/dashboard/notices', label: 'Notices & Calendar', icon: Bell },
 ];
 
 export default function DashboardLayout({
