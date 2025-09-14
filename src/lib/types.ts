@@ -53,3 +53,20 @@ export type AttendanceRecord = {
     date: string; // YYYY-MM-DD
     status: 'Present' | 'Absent' | 'Late';
 };
+
+export type Book = {
+    id: string;
+    title: string;
+    author: string;
+    status: 'Available' | 'Issued';
+    issuedTo?: string; // Student ID
+    issuedToName?: string;
+};
+
+export type BusRoute = {
+    id: string;
+    routeNumber: string;
+    driverName: string;
+    driverPhone: string;
+    capacity: number;
+};

@@ -2,11 +2,14 @@
 
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, query, where, writeBatch } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Student, Teacher, AttendanceRecord } from '../types';
+import type { Student, Teacher, AttendanceRecord, Book, BusRoute } from '../types';
 
 const studentsCollection = collection(db, 'students');
 const teachersCollection = collection(db, 'teachers');
 const attendanceCollection = collection(db, 'attendance');
+const booksCollection = collection(db, 'books');
+const busRoutesCollection = collection(db, 'busRoutes');
+
 
 // Student Functions
 export async function addStudent(student: Omit<Student, 'id'>): Promise<Student> {
@@ -106,4 +109,41 @@ export async function getAttendanceForStudent(studentId: string): Promise<Attend
   const q = query(attendanceCollection, where("studentId", "==", studentId));
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map(doc => doc.data() as AttendanceRecord);
+}
+
+// Library Functions
+export async function addBook(book: Omit<Book, 'id'>): Promise<Book> {
+  const docRef = await addDoc(booksCollection, book);
+  return { id: docRef.id, ...book };
+}
+
+export async function getBooks(): Promise<Book[]> {
+  const snapshot = await getDocs(booksCollection);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Book));
+}
+
+export async function updateBook(id: string, book: Partial<Book>): Promise<void> {
+  const bookDoc = doc(db, 'books', id);
+  await updateDoc(bookDoc, book);
+}
+
+// Transport Functions
+export async function addBusRoute(route: Omit<BusRoute, 'id'>): Promise<BusRoute> {
+    const docRef = await addDoc(busRoutesCollection, route);
+    return { id: docRef.id, ...route };
+}
+
+export async function getBusRoutes(): Promise<BusRoute[]> {
+    const snapshot = await getDocs(busRoutesCollection);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as BusRoute));
+}
+
+export async function updateBusRoute(id: string, route: Partial<BusRoute>): Promise<void> {
+    const routeDoc = doc(db, 'busRoutes', id);
+    await updateDoc(routeDoc, route);
+}
+
+export async function deleteBusRoute(id: string): Promise<void> {
+    const routeDoc = doc(db, 'busRoutes', id);
+    await deleteDoc(routeDoc);
 }
