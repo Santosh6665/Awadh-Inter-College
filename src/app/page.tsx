@@ -29,6 +29,7 @@ export default function HomePage() {
   );
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
   const [isPrincipalMessageExpanded, setIsPrincipalMessageExpanded] = useState(false);
+  const [isFounderMessageExpanded, setIsFounderMessageExpanded] = useState(false);
   const isMobile = useIsMobile();
 
   return (
@@ -212,13 +213,20 @@ export default function HomePage() {
                           </Avatar>
                       </div>
                       <div className="text-center md:text-left">
-                           <div className="prose max-w-none text-muted-foreground">
+                           <div className="prose max-w-none text-muted-foreground space-y-4">
                               <p>
                                 The Awad Inter College School Management System (SMS) is initiated and conceptualized by the Founder of Awad Inter College, who envisioned a digital platform to streamline administrative, academic, and communication processes.
                               </p>
-                               <p>
+                               {isFounderMessageExpanded && (
+                                <p>
                                 The Founder’s mission is to modernize the institution’s operations, provide transparency for parents, empower teachers with digital tools, and improve the overall learning experience for students.
                                </p>
+                               )}
+                                <div className="text-center md:text-left">
+                                    <Button variant="outline" onClick={() => setIsFounderMessageExpanded(!isFounderMessageExpanded)}>
+                                    {isFounderMessageExpanded ? 'Read Less' : 'Learn More'}
+                                    </Button>
+                                </div>
                           </div>
                       </div>
                   </div>
