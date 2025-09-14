@@ -13,6 +13,7 @@ import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
+import Link from 'next/link';
 
 export default function ParentLoginPage() {
   const [email, setEmail] = useState('');
@@ -85,7 +86,15 @@ export default function ParentLoginPage() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                 <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                   <Link
+                    href="/forgot-password"
+                    className="ml-auto inline-block text-sm underline"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
                 <Input
                   id="password"
                   type="password"

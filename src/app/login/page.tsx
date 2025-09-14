@@ -26,8 +26,8 @@ export default function LoginPage() {
     e.preventDefault();
     if (!email.trim() || !password.trim()) {
       toast({
-        title: 'Email and Password Required',
-        description: 'Please enter both your email and password.',
+        title: 'Email/Roll Number and Password Required',
+        description: 'Please enter your credentials.',
         variant: 'destructive',
       });
       return;
@@ -35,7 +35,11 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      // For demonstration, we assume if it's not an email, it's a roll number that maps to an email.
+      // In a real app, you would look up the roll number in your database to get the student's email.
+      const loginEmail = email.includes('@') ? email : `${email}@example.com`;
+
+      await signInWithEmailAndPassword(auth, loginEmail, password);
       toast({
         title: 'Login Successful',
         description: 'Welcome back!',
@@ -45,9 +49,9 @@ export default function LoginPage() {
       console.error('Error signing in:', error);
       let description = 'An unexpected error occurred. Please try again.';
       if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-        description = 'Invalid email or password. Please check your credentials and try again.';
+        description = 'Invalid credentials. Please check your details and try again.';
       } else if (error.code === 'auth/invalid-email') {
-        description = 'The email address is not valid.';
+        description = 'The email address or roll number format is not valid.';
       }
       toast({
         title: 'Login Failed',
@@ -67,17 +71,17 @@ export default function LoginPage() {
           <CardHeader>
             <CardTitle className="text-2xl">Login</CardTitle>
             <CardDescription>
-              Enter your email below to login to your account.
+              Enter your email or roll number below to login.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Email or Roll Number</Label>
                 <Input
                   id="email"
-                  type="email"
-                  placeholder="m@example.com"
+                  type="text"
+                  placeholder="m@example.com or 101"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -85,7 +89,15 @@ export default function LoginPage() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                   <Link
+                    href="/forgot-password"
+                    className="ml-auto inline-block text-sm underline"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
                 <Input
                   id="password"
                   type="password"

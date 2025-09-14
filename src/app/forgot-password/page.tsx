@@ -10,24 +10,21 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
 import Link from 'next/link';
 
-export default function AdminLoginPage() {
+export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !password.trim()) {
+    if (!email.trim()) {
       toast({
-        title: 'Email and Password Required',
-        description: 'Please enter both your email and password.',
+        title: 'Email Required',
+        description: 'Please enter your email address.',
         variant: 'destructive',
       });
       return;
@@ -35,23 +32,22 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      // In a real app, you would have role-based access control.
-      await signInWithEmailAndPassword(auth, email, password);
+      await sendPasswordResetEmail(auth, email);
       toast({
-        title: 'Login Successful',
-        description: 'Welcome back, Admin!',
+        title: 'Password Reset Email Sent',
+        description: 'Please check your inbox for instructions to reset your password.',
       });
-      router.push('/admin/dashboard');
+      setEmail('');
     } catch (error: any) {
-      console.error('Error signing in:', error);
+      console.error('Error sending password reset email:', error);
       let description = 'An unexpected error occurred. Please try again.';
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-        description = 'Invalid email or password. Please check your credentials and try again.';
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+        description = 'No account found with that email address.';
       } else if (error.code === 'auth/invalid-email') {
         description = 'The email address is not valid.';
       }
       toast({
-        title: 'Login Failed',
+        title: 'Request Failed',
         description,
         variant: 'destructive',
       });
@@ -66,48 +62,35 @@ export default function AdminLoginPage() {
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8">
         <Card className="w-full max-w-sm">
           <CardHeader>
-            <CardTitle className="text-2xl">Admin Login</CardTitle>
+            <CardTitle className="text-2xl">Forgot Password</CardTitle>
             <CardDescription>
-              Enter your credentials to access the admin panel.
+              Enter your email and we will send you a link to reset your password.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="grid gap-4">
+            <form onSubmit={handleResetPassword} className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@example.com"
+                  placeholder="name@example.com"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
                 />
               </div>
-              <div className="grid gap-2">
-                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                   <Link
-                    href="/forgot-password"
-                    className="ml-auto inline-block text-sm underline"
-                  >
-                    Forgot your password?
-                  </Link>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
-                />
-              </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? <Loader2 className="animate-spin" /> : 'Sign In'}
+                {loading ? <Loader2 className="animate-spin" /> : 'Send Reset Link'}
               </Button>
             </form>
+            <div className="mt-4 text-center text-sm">
+              Remember your password?{' '}
+              <Link href="/login" className="underline">
+                Sign in
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </main>
