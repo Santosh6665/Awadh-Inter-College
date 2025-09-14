@@ -22,7 +22,7 @@ const carouselImages = [
 
 export default function HomePage() {
    const plugin = React.useRef(
-    Autoplay({ delay: 1000, stopOnInteraction: true })
+    Autoplay({ delay: 2000, stopOnInteraction: true })
   );
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
