@@ -116,9 +116,6 @@ export function Header() {
             <Button asChild variant="ghost">
               <Link href="/login">Login</Link>
             </Button>
-            <Button asChild>
-              <Link href="/signup">Sign Up</Link>
-            </Button>
           </div>
         )}
         <Sheet>
@@ -149,12 +146,6 @@ export function Header() {
                     className="text-muted-foreground transition-colors hover:text-foreground"
                   >
                     Login
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    Sign Up
                   </Link>
                 </>
               )}
