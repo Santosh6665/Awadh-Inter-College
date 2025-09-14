@@ -41,7 +41,7 @@ export default function HomePage() {
           >
             <CarouselContent className="h-full">
               {carouselImages.map((image, index) => (
-                <CarouselItem key={index} className="h-full">
+                <CarouselItem key={index} className="h-full relative">
                   <Image
                     src={image.src}
                     alt={image.alt}
