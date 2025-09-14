@@ -12,6 +12,9 @@ export function Footer() {
             <span className="font-bold text-lg">ANP Inter College</span>
           </div>
           <nav className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm">
+            <Link href="/about" className="text-muted-foreground hover:text-foreground">
+              About Us
+            </Link>
             <Link href="/admissions" className="text-muted-foreground hover:text-foreground">
               Admissions
             </Link>

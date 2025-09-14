@@ -22,6 +22,7 @@ import { useRouter, usePathname } from 'next/navigation';
 
 const navLinks = [
   { href: '/', label: 'Home' },
+  { href: '/about', label: 'About Us' },
   { href: '/admissions', label: 'Admissions' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/notices', label: 'Notices' },
@@ -87,7 +88,7 @@ export function Header() {
         {loading ? null : user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full border-2 border-foreground">
+              <Button variant="secondary" size="icon" className="rounded-full border-2 border-black">
                 <Avatar>
                   <AvatarImage src={user.photoURL || ''} alt={user.displayName || user.email || ''} />
                   <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
