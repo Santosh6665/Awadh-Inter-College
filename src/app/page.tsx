@@ -78,7 +78,7 @@ export default function HomePage() {
                 <CardHeader>
                     <div className="overflow-hidden rounded-lg">
                         <Image 
-                        src="https://picsum.photos/seed/abouthistory/1200/400"
+                        src="/images/about-us.jpg"
                         alt="School Building"
                         width={1200}
                         height={400}
