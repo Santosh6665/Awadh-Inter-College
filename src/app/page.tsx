@@ -29,8 +29,7 @@ export default function HomePage() {
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex-1">
-        <section className="w-full py-1">
-          <div className="container mx-auto px-0">
+        <section className="w-full">
             <Carousel
               plugins={[plugin.current]}
               className="w-full"
@@ -48,7 +47,7 @@ export default function HomePage() {
                         alt={image.alt}
                         width={1200}
                         height={400}
-                        className="object-cover w-full h-64 md:h-[400px] rounded-lg"
+                        className="object-cover w-full h-64 md:h-[400px]"
                         data-ai-hint={image.hint}
                       />
                   </CarouselItem>
@@ -57,6 +56,7 @@ export default function HomePage() {
               <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2" />
               <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2" />
             </Carousel>
+          <div className="container mx-auto">
             <div className="text-center mt-8">
               <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
                 A center for academic excellence and holistic development.
