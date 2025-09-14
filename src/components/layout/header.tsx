@@ -112,16 +112,14 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          !isDashboard && (
-            <>
-              <Button asChild variant="ghost">
-                <Link href="/login">Login</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/signup">Sign Up</Link>
-              </Button>
-            </>
-          )
+          <div className="hidden md:flex items-center gap-2">
+            <Button asChild variant="ghost">
+              <Link href="/login">Login</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/signup">Sign Up</Link>
+            </Button>
+          </div>
         )}
         <Sheet>
           <SheetTrigger asChild>
@@ -141,7 +139,7 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
-              {!user && !isDashboard && (
+              {!user && (
                 <>
                   <Link
                     href="/login"
