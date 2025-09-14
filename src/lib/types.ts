@@ -26,3 +26,9 @@ export type Student = {
     address: string;
     photoUrl?: string;
 };
+
+export type AttendanceRecord = {
+    studentId: string;
+    date: string; // YYYY-MM-DD
+    status: 'Present' | 'Absent' | 'Late';
+};

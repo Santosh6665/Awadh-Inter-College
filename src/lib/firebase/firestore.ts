@@ -1,9 +1,10 @@
 
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, query, where, writeBatch } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Student } from '../types';
+import type { Student, AttendanceRecord } from '../types';
 
 const studentsCollection = collection(db, 'students');
+const attendanceCollection = collection(db, 'attendance');
 
 export async function addStudent(student: Omit<Student, 'id'>): Promise<Student> {
   const docRef = await addDoc(studentsCollection, student);
@@ -43,4 +44,27 @@ export async function updateStudent(id: string, student: Partial<Student>): Prom
 export async function deleteStudent(id: string): Promise<void> {
   const studentDoc = doc(db, 'students', id);
   await deleteDoc(studentDoc);
+}
+
+
+export async function saveAttendance(records: { studentId: string, status: 'Present' | 'Absent' | 'Late' }[], date: string) {
+  const batch = writeBatch(db);
+
+  records.forEach(record => {
+    // Create a unique ID for each attendance record to avoid overwriting
+    const docId = `${date}_${record.studentId}`;
+    const docRef = doc(attendanceCollection, docId);
+    batch.set(docRef, {
+      ...record,
+      date,
+    });
+  });
+
+  await batch.commit();
+}
+
+export async function getAttendanceForDate(date: string): Promise<AttendanceRecord[]> {
+  const q = query(attendanceCollection, where("date", "==", date));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map(doc => doc.data() as AttendanceRecord);
 }
