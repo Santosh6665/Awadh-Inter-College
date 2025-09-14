@@ -13,11 +13,11 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Autoplay from 'embla-carousel-autoplay';
 
 const carouselImages = [
-  { src: "https://picsum.photos/seed/1/1200/800", alt: "College Campus", hint: "college campus" },
-  { src: "https://picsum.photos/seed/2/1200/800", alt: "Students learning in a classroom", hint: "students classroom" },
-  { src: "https://picsum.photos/seed/3/1200/800", alt: "University library with students", hint: "university library" },
-  { src: "https://picsum.photos/seed/4/1200/800", alt: "Graduation ceremony", hint: "graduation ceremony" },
-  { src: "https://picsum.photos/seed/5/1200/800", alt: "Students participating in a sports event", hint: "students sports" },
+  { src: "https://picsum.photos/seed/1/1200/600", alt: "College Campus", hint: "college campus" },
+  { src: "https://picsum.photos/seed/2/1200/600", alt: "Students learning in a classroom", hint: "students classroom" },
+  { src: "https://picsum.photos/seed/3/1200/600", alt: "University library with students", hint: "university library" },
+  { src: "https://picsum.photos/seed/4/1200/600", alt: "Graduation ceremony", hint: "graduation ceremony" },
+  { src: "https://picsum.photos/seed/5/1200/600", alt: "Students participating in a sports event", hint: "students sports" },
 ];
 
 export default function HomePage() {
@@ -29,37 +29,38 @@ export default function HomePage() {
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex-1">
-        <section className="relative h-[60vh] w-full">
-           <Carousel
+        <section className="relative w-full py-12 md:py-20">
+          <Carousel
             plugins={[plugin.current]}
-            className="w-full h-full"
+            className="w-full max-w-4xl mx-auto"
             onMouseEnter={plugin.current.stop}
             onMouseLeave={plugin.current.reset}
             opts={{
               loop: true,
             }}
           >
-            <CarouselContent className="h-full">
+            <CarouselContent>
               {carouselImages.map((image, index) => (
-                <CarouselItem key={index} className="h-full relative">
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={image.hint}
-                  />
+                <CarouselItem key={index}>
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      width={1200}
+                      height={600}
+                      className="object-cover w-full aspect-video rounded-lg"
+                      data-ai-hint={image.hint}
+                    />
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-white bg-black/30 hover:bg-black/50 border-none" />
-            <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 text-white bg-black/30 hover:bg-black/50 border-none" />
+            <CarouselPrevious className="absolute left-[-50px] top-1/2 -translate-y-1/2" />
+            <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2" />
           </Carousel>
-          <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white p-4">
+          <div className="container mx-auto text-center mt-8">
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight">
               Awadh Narayan Pratap Lal Intermediate College
             </h2>
-            <p className="mt-4 max-w-2xl text-lg md:text-xl">
+            <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
               A center for academic excellence and holistic development.
             </p>
             <Button asChild className="mt-8">
@@ -68,7 +69,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="about" className="py-12 md:py-20 px-4 sm:px-6 md:px-8">
+        <section id="about" className="py-12 md:py-20 px-4 sm:px-6 md:px-8 bg-muted">
           <div className="container mx-auto">
             <h3 className="text-3xl font-bold text-center mb-8">About Our College</h3>
             <p className="max-w-3xl mx-auto text-center text-muted-foreground">
@@ -77,7 +78,7 @@ export default function HomePage() {
           </div>
         </section>
         
-        <section id="vision-mission" className="py-12 md:py-20 bg-muted px-4 sm:px-6 md:px-8">
+        <section id="vision-mission" className="py-12 md:py-20 bg-background px-4 sm:px-6 md:px-8">
           <div className="container mx-auto text-center">
             <h3 className="text-3xl font-bold text-center mb-10">Our Vision & Mission</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -111,7 +112,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="bg-background py-12 md:py-20 px-4 sm:px-6 md:px-8">
+        <section className="bg-muted py-12 md:py-20 px-4 sm:px-6 md:px-8">
           <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <Card>
               <CardHeader>
