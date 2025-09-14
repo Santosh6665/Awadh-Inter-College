@@ -278,7 +278,7 @@ export default function HomePage() {
                       <div>
                         <h3 className="text-lg font-semibold">Address</h3>
                         <p className="text-muted-foreground">
-                          123 Education Lane, Knowledge City, State, 123456
+                          Ghosiyari Bazar Marg, Ghosiyari Bazar, Daniawar, Basti, Uttar Pradesh – 272148
                         </p>
                       </div>
                     </div>
@@ -287,7 +287,7 @@ export default function HomePage() {
                       <div>
                         <h3 className="text-lg font-semibold">Phone</h3>
                         <p className="text-muted-foreground">
-                          +91 123 456 7890
+                          +91 6393071946
                         </p>
                       </div>
                     </div>
