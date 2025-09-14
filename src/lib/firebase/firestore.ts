@@ -68,3 +68,9 @@ export async function getAttendanceForDate(date: string): Promise<AttendanceReco
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map(doc => doc.data() as AttendanceRecord);
 }
+
+export async function getAttendanceForStudent(studentId: string): Promise<AttendanceRecord[]> {
+  const q = query(attendanceCollection, where("studentId", "==", studentId));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map(doc => doc.data() as AttendanceRecord);
+}
