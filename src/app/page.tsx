@@ -33,7 +33,7 @@ export default function HomePage() {
           <div className="container mx-auto">
             <Carousel
               plugins={[plugin.current]}
-              className="w-full max-w-4xl mx-auto"
+              className="w-full"
               onMouseEnter={plugin.current.stop}
               onMouseLeave={plugin.current.reset}
               opts={{
