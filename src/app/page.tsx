@@ -22,7 +22,7 @@ const carouselImages = [
 
 export default function HomePage() {
    const plugin = React.useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: true })
+    Autoplay({ delay: 4000, stopOnInteraction: true })
   );
 
   return (
