@@ -213,7 +213,9 @@ export default function HomePage() {
                           </Avatar>
                       </div>
                       <div className="text-center md:text-left">
-                           <div className="prose max-w-none text-muted-foreground space-y-4">
+                           <h2 className="text-2xl font-bold">Mr. Arjun Singh</h2>
+                           <p className="text-muted-foreground">Founder, Awadh Inter College</p>
+                           <div className="prose max-w-none text-muted-foreground mt-4 space-y-4">
                               <p>
                                 The Awad Inter College School Management System (SMS) is initiated and conceptualized by the Founder of Awad Inter College, who envisioned a digital platform to streamline administrative, academic, and communication processes.
                               </p>
