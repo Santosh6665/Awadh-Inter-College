@@ -10,7 +10,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Home, Users, CheckSquare, ClipboardList, BarChart2, LogOut, Loader2 } from 'lucide-react';
+import { Home, Users, CheckSquare, ClipboardList, BarChart2, LogOut, Loader2, Calendar, FilePlus, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const navItems = [
@@ -19,6 +19,9 @@ const navItems = [
   { href: '/teacher/dashboard/attendance', label: 'Manage Attendance', icon: CheckSquare },
   { href: '/teacher/dashboard/assignments', label: 'Manage Assignments', icon: ClipboardList },
   { href: '/teacher/dashboard/results', label: 'Manage Results', icon: BarChart2 },
+  { href: '/teacher/dashboard/timetable', label: 'My Timetable', icon: Calendar },
+  { href: '/teacher/dashboard/exams', label: 'Create Exams', icon: FilePlus },
+  { href: '/teacher/dashboard/announcements', label: 'Send Announcements', icon: Send },
 ];
 
 export default function TeacherDashboardLayout({
