@@ -3,6 +3,7 @@ import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
+import { AdmissionForm } from '@/components/admissions/admission-form';
 
 const admissionSteps = [
     "Submit the online application form with all required documents.",
@@ -18,15 +19,15 @@ export default function AdmissionsPage() {
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
-        <div className="container mx-auto">
+        <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
           <Card>
             <CardHeader>
-              <CardTitle className="text-3xl">Admissions</CardTitle>
+              <CardTitle className="text-3xl">Admissions Process</CardTitle>
               <CardDescription>Join our community of learners and innovators.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-8">
               <section>
-                <h2 className="text-2xl font-semibold mb-4">Admission Process</h2>
+                <h2 className="text-2xl font-semibold mb-4">Steps to Apply</h2>
                 <ul className="space-y-3">
                   {admissionSteps.map((step, index) => (
                     <li key={index} className="flex items-start">
@@ -52,10 +53,15 @@ export default function AdmissionsPage() {
                     <li>Entrance Test Date: April 25th, 2025</li>
                 </ul>
               </section>
-
-              <div className="text-center pt-4">
-                 <Button size="lg">Download Admission Form</Button>
-              </div>
+            </CardContent>
+          </Card>
+           <Card>
+            <CardHeader>
+              <CardTitle className="text-3xl">Online Application Form</CardTitle>
+              <CardDescription>Fill out the form below to begin your application.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <AdmissionForm />
             </CardContent>
           </Card>
         </div>
