@@ -303,7 +303,7 @@ export default function HomePage() {
                   </div>
                   <div className="rounded-lg overflow-hidden">
                      <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3430.485188819077!2d76.77941791513079!3d30.704648681647413!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390fecca1d6c0001%3A0x2a8b90c64b49463a!2sChandigarh!5e0!3m2!1sen!2sin!4v1677842698064!5m2!1sen!2sin"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113947.88601614902!2d82.8249903!3d27.0345786!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3996d52f5f17ae31%3A0xd62c60629abe5491!2s2WM4%2BRXR%2C%20Nikhoria%2C%20Uttar%20Pradesh%20272153!5e0!3m2!1sen!2sin!4v1719504547926!5m2!1sen!2sin"
                         width="100%"
                         height="300"
                         style={{ border: 0 }}
