@@ -68,7 +68,7 @@ export function Header() {
       <Link href="/" className="flex items-center gap-2">
         <CollegeLogo className="h-8 w-8 text-primary" />
         <h1 className="font-headline text-xl font-bold tracking-tight text-primary hidden sm:block">
-          ANP Inter College Hub
+          ANP Inter College
         </h1>
       </Link>
       <nav className="hidden md:flex items-center gap-6 ml-auto">
@@ -140,14 +140,14 @@ export function Header() {
                 </Link>
               ))}
               {!user && (
-                <>
+                
                   <Link
                     href="/login"
                     className="text-muted-foreground transition-colors hover:text-foreground"
                   >
                     Login
                   </Link>
-                </>
+                
               )}
             </nav>
           </SheetContent>
