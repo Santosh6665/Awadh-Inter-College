@@ -14,6 +14,14 @@ export type CalendarEvent = {
   description: string;
 };
 
+export type Marks = {
+  physics?: number;
+  chemistry?: number;
+  maths?: number;
+  english?: number;
+  computerScience?: number;
+};
+
 export type Student = {
     id: string;
     name: string;
@@ -28,6 +36,7 @@ export type Student = {
     photoUrl?: string;
     feeStatus?: 'Paid' | 'Due' | 'Overdue';
     amountDue?: number;
+    marks?: Marks;
 };
 
 export type Teacher = {
