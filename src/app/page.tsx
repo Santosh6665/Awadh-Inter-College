@@ -6,7 +6,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Camera, Info, LogIn, Target, Zap } from 'lucide-react';
+import { BookOpen, Camera, Info, LogIn, Target, Zap, Phone, Mail, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -192,6 +192,64 @@ export default function HomePage() {
             </Card>
           </div>
         </section>
+        
+        <section id="contact" className="py-12 md:py-20 bg-muted px-4 sm:px-6 md:px-8">
+          <div className="container mx-auto">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-3xl text-center">Contact Us</CardTitle>
+                <CardDescription className="text-center">
+                  We'd love to hear from you. Reach out to us with any questions.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-6">
+                    <div className="flex items-start gap-4">
+                      <MapPin className="h-6 w-6 text-accent mt-1" />
+                      <div>
+                        <h3 className="text-lg font-semibold">Address</h3>
+                        <p className="text-muted-foreground">
+                          123 Education Lane, Knowledge City, State, 123456
+                        </p>
+                      </div>
+                    </div>
+                     <div className="flex items-start gap-4">
+                      <Phone className="h-6 w-6 text-accent mt-1" />
+                      <div>
+                        <h3 className="text-lg font-semibold">Phone</h3>
+                        <p className="text-muted-foreground">
+                          +91 123 456 7890
+                        </p>
+                      </div>
+                    </div>
+                     <div className="flex items-start gap-4">
+                      <Mail className="h-6 w-6 text-accent mt-1" />
+                      <div>
+                        <h3 className="text-lg font-semibold">Email</h3>
+                        <p className="text-muted-foreground">
+                          info@anpcollege.edu
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="rounded-lg overflow-hidden">
+                     <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3430.485188819077!2d76.77941791513079!3d30.704648681647413!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390fecca1d6c0001%3A0x2a8b90c64b49463a!2sChandigarh!5e0!3m2!1sen!2sin!4v1677842698064!5m2!1sen!2sin"
+                        width="100%"
+                        height="300"
+                        style={{ border: 0 }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                      ></iframe>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
       </main>
       <Footer />
     </div>
