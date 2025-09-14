@@ -55,8 +55,8 @@ export default function HomePage() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2" />
-              <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2" />
+              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 hover:bg-primary hover:text-primary-foreground" />
+              <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 hover:bg-primary hover:text-primary-foreground" />
             </Carousel>
           <div className="container mx-auto">
             <div className="text-center mt-8">
