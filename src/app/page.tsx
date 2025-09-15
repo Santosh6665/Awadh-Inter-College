@@ -177,7 +177,7 @@ export default function HomePage() {
                   <div className="flex flex-col md:flex-row items-center gap-8">
                       <div className="flex-shrink-0">
                           <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
-                              <AvatarImage src="https://picsum.photos/seed/principal/300" alt="Principal's Photo" data-ai-hint="principal portrait" />
+                              <AvatarImage src="/images/principal.jpg" alt="Principal's Photo" data-ai-hint="principal portrait" />
                               <AvatarFallback>P</AvatarFallback>
                           </Avatar>
                       </div>
