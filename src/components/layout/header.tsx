@@ -100,6 +100,12 @@ export function Header() {
                 
             )}
             </nav>
+             <div className="mt-auto pt-6 text-center text-xs text-muted-foreground">
+                <p>© {new Date().getFullYear()} Awadh Inter College. All rights reserved.</p>
+                <p className="mt-2">
+                    For technical support, contact our IT Team at <a href="mailto:santoshx.dev@gmail.com" className="underline hover:text-foreground">santoshx.dev@gmail.com</a>
+                </p>
+            </div>
           </SheetContent>
         </Sheet>
         <Link href="/" className="hidden items-center gap-2 md:flex">
