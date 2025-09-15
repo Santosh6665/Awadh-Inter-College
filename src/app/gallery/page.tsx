@@ -15,7 +15,6 @@ const galleryImages = [
   { id: 8, src: "/images/gallery-8.jpg", alt: "Computer Lab", hint: "computer lab" },
   { id: 9, src: "/images/gallery-9.jpg", alt: "School Auditorium", hint: "school auditorium" },
   { id: 10, src: "/images/gallery-10.jpg", alt: "Outdoor activity", hint: "outdoor activity" },
-  { id: 11, src: "/images/gallery-11.jpg", alt: "Group discussion", hint: "group discussion" },
 ];
 
 export default function GalleryPage() {
