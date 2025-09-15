@@ -8,8 +8,8 @@ export function Footer() {
     <footer className="border-t bg-card text-card-foreground">
       <div className="container mx-auto px-6 py-8 md:px-8">
         {/* Mobile View */}
-        <div className="grid grid-cols-1 gap-8 md:hidden">
-          <div className="space-y-4 text-center">
+        <div className="grid grid-cols-1 gap-8 text-center md:hidden">
+          <div className="space-y-4">
             <Link href="/" className="flex items-center justify-center gap-2">
                 <CollegeLogo className="h-8 w-8 text-primary" />
                 <span className="text-xl font-bold">Awadh Inter College</span>
@@ -18,7 +18,7 @@ export function Footer() {
               A center for academic excellence and holistic development since 1965.
             </p>
           </div>
-           <div className="space-y-4 text-center">
+           <div className="space-y-4">
                 <h4 className="font-semibold">Portals</h4>
                 <nav className="flex flex-col space-y-2 text-sm">
                   <Link href="/student/login" className="text-muted-foreground hover:text-foreground">Student Login</Link>
