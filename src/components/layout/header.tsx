@@ -1,7 +1,6 @@
 
 'use client';
 
-import { CollegeLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, User, LogOut } from 'lucide-react';
@@ -103,8 +102,7 @@ export function Header() {
           </SheetContent>
         </Sheet>
         <Link href="/" className="hidden items-center gap-2 md:flex">
-            <CollegeLogo className="h-8 w-8 text-primary" />
-            <h1 className="font-headline text-xl font-bold tracking-tight text-primary hidden sm:block">
+            <h1 className="font-headline text-xl font-bold tracking-tight text-primary">
             Awadh Inter College
             </h1>
         </Link>
@@ -112,7 +110,9 @@ export function Header() {
       
       <div className="flex items-center md:hidden">
         <Link href="/" className="flex items-center gap-2">
-            <CollegeLogo className="h-8 w-8 text-primary" />
+            <h1 className="font-headline text-lg font-bold tracking-tight text-primary">
+                Awadh Inter College
+            </h1>
         </Link>
       </div>
 
