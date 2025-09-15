@@ -102,7 +102,7 @@ export default function HomePage() {
                         src="/images/about-school.jpg"
                         alt="School Building"
                         width={1200}
-                        height={400}
+                        height={300}
                         className="object-cover w-full h-auto"
                         data-ai-hint="school building"
                         />
