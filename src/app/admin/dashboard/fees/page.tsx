@@ -74,7 +74,7 @@ export default function ManageFeesPage() {
         feeStatus: newAmountDue <= 0 ? 'Paid' : 'Due',
       };
 
-      await updateStudent(selectedStudent.id, {...selectedStudent, ...updatedData});
+      await updateStudent(selectedStudent.id, updatedData);
       toast({
         title: 'Payment Recorded',
         description: `Successfully recorded payment for ${selectedStudent.name}.`,

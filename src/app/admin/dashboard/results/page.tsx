@@ -66,7 +66,7 @@ export default function ManageResultsPage() {
     if (!selectedStudent) return;
     setIsSubmitting(true);
     try {
-        const updatedStudentData = { ...selectedStudent, marks };
+        const updatedStudentData: Partial<Student> = { marks };
         await updateStudent(selectedStudent.id, updatedStudentData);
         toast({
             title: 'Marks Saved',

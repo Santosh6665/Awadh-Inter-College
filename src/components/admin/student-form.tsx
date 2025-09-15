@@ -63,7 +63,7 @@ export function StudentForm({ student }: StudentFormProps) {
     setLoading(true);
     try {
       if (student) {
-        await updateStudent(student.id, { ...student, ...data });
+        await updateStudent(student.id, data);
         toast({
           title: 'Student Updated',
           description: 'The student record has been successfully updated.',
@@ -76,6 +76,7 @@ export function StudentForm({ student }: StudentFormProps) {
         });
       }
       router.push('/admin/dashboard/students');
+      router.refresh(); // Ensures the student list is updated
     } catch (error) {
       console.error("Failed to save student:", error);
       toast({

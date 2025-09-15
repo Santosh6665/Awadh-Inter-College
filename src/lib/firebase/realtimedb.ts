@@ -49,9 +49,9 @@ export async function getStudentByEmail(email: string): Promise<Student | null> 
     return null;
 }
 
-export async function updateStudent(id: string, student: Student): Promise<void> {
+export async function updateStudent(id: string, studentData: Partial<Student>): Promise<void> {
   const studentRef = ref(db, `students/${id}`);
-  await set(studentRef, student);
+  await update(studentRef, studentData);
 }
 
 export async function deleteStudent(id: string): Promise<void> {
@@ -84,7 +84,6 @@ export async function getTeacher(id: string): Promise<Teacher | null> {
 
 export async function updateTeacher(id: string, teacher: Partial<Teacher>): Promise<void> {
   const teacherRef = ref(db, `teachers/${id}`);
-  // Use update to avoid overwriting the whole object if not all fields are present
   await update(teacherRef, teacher);
 }
 
@@ -151,9 +150,9 @@ export async function getBusRoutes(): Promise<BusRoute[]> {
     return snapshot.exists() ? snapshotToArray(snapshot) : [];
 }
 
-export async function updateBusRoute(id: string, route: Omit<BusRoute, 'id'>): Promise<void> {
+export async function updateBusRoute(id: string, route: Partial<BusRoute>): Promise<void> {
     const routeRef = ref(db, `busRoutes/${id}`);
-    await set(routeRef, route);
+    await update(routeRef, route);
 }
 
 export async function deleteBusRoute(id: string): Promise<void> {
