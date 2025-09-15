@@ -29,6 +29,7 @@ export default function HomePage() {
   );
   const [isHistoryExpanded, setIsHistoryExpanded] = React.useState(false);
   const [isPrincipalMessageExpanded, setIsPrincipalMessageExpanded] = React.useState(false);
+  const [isFounderMessageExpanded, setIsFounderMessageExpanded] = React.useState(false);
   
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -195,7 +196,7 @@ export default function HomePage() {
                                     I am honored to lead such a remarkable institution and look forward to working with you to make this academic year a success.
                                   </p>
                                 
-                              {!isPrincipalMessageExpanded && <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent" />}
+                              {!isPrincipalMessageExpanded && <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-card to-transparent" />}
                           </div>
                           <div className="text-center md:text-left">
                              <Button variant="link" onClick={() => setIsPrincipalMessageExpanded(!isPrincipalMessageExpanded)}>
@@ -226,16 +227,18 @@ export default function HomePage() {
                       <div className="text-center md:text-left">
                            <h2 className="text-2xl font-bold">Mr. Arjun Singh</h2>
                            <p className="text-muted-foreground">Founder, Awadh Inter College</p>
-                           <div className="prose max-w-none text-muted-foreground mt-4 space-y-4">
+                           <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isFounderMessageExpanded && "max-h-40")}>
                               <p>
                                 The Awad Inter College School Management System (SMS) is initiated and conceptualized by the Founder of Awad Inter College, who envisioned a digital platform to streamline administrative, academic, and communication processes.
                                 The Founder’s mission is to modernize the institution’s operations, provide transparency for parents, empower teachers with digital tools, and improve the overall learning experience for students.
                               </p>
-                               
-                                <div className="text-center md:text-left">
-                                    
-                                </div>
-                          </div>
+                              {!isFounderMessageExpanded && <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-card to-transparent" />}
+                            </div>
+                            <div className="text-center md:text-left">
+                               <Button variant="link" onClick={() => setIsFounderMessageExpanded(!isFounderMessageExpanded)}>
+                                  {isFounderMessageExpanded ? 'Read Less' : 'Read More'}
+                              </Button>
+                            </div>
                       </div>
                   </div>
               </CardContent>
@@ -290,9 +293,9 @@ export default function HomePage() {
                 <CardTitle className="flex items-center gap-2">
                   <BookOpen className="text-accent" /> Notices
                 </CardTitle>
+                <CardDescription>Stay updated with the latest school announcements.</CardDescription>
               </CardHeader>
               <CardContent>
-                <p>Stay updated with the latest school announcements.</p>
                  <Button variant="outline" asChild className="mt-4">
                   <Link href="/notices">Check Notices</Link>
                 </Button>
