@@ -18,6 +18,7 @@ const galleryImages = [
 ];
 
 export default function GalleryPage() {
+  const cacheBuster = `?t=${new Date().getTime()}`;
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
@@ -33,7 +34,7 @@ export default function GalleryPage() {
                 {galleryImages.map(image => (
                   <div key={image.id} className="overflow-hidden rounded-lg group">
                     <Image 
-                      src={image.src} 
+                      src={`${image.src}${cacheBuster}`} 
                       alt={image.alt}
                       width={600}
                       height={400}
