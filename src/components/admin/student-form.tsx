@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { addStudent, updateStudent } from '@/lib/firebase/firestore';
+import { addStudent, updateStudent } from '@/lib/firebase/realtimedb';
 import type { Student } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 
@@ -76,6 +76,7 @@ export function StudentForm({ student }: StudentFormProps) {
         });
       }
       router.push('/admin/dashboard/students');
+      router.refresh();
     } catch (error) {
       toast({
         title: 'An error occurred',

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getStudents, updateStudent } from '@/lib/firebase/firestore';
+import { getStudents, updateStudent } from '@/lib/firebase/realtimedb';
 import type { Student } from '@/lib/types';
 import { Loader2, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -74,7 +74,7 @@ export default function ManageFeesPage() {
         feeStatus: newAmountDue <= 0 ? 'Paid' : 'Due',
       };
 
-      await updateStudent(selectedStudent.id, updatedData);
+      await updateStudent(selectedStudent.id, {...selectedStudent, ...updatedData});
       toast({
         title: 'Payment Recorded',
         description: `Successfully recorded payment for ${selectedStudent.name}.`,

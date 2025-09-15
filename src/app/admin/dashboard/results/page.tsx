@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getStudents, updateStudent } from '@/lib/firebase/firestore';
+import { getStudents, updateStudent } from '@/lib/firebase/realtimedb';
 import type { Student } from '@/lib/types';
 import { Loader2, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -72,7 +72,7 @@ export default function ManageResultsPage() {
     if (!selectedStudent) return;
     setIsSubmitting(true);
     try {
-        await updateStudent(selectedStudent.id, { marks });
+        await updateStudent(selectedStudent.id, { ...selectedStudent, marks });
         toast({
             title: 'Marks Saved',
             description: `Successfully saved marks for ${selectedStudent.name}.`,

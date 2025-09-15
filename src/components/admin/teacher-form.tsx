@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { addTeacher, updateTeacher } from '@/lib/firebase/firestore';
+import { addTeacher, updateTeacher } from '@/lib/firebase/realtimedb';
 import type { Teacher } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 

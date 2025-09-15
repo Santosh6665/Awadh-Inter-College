@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getTeachers, deleteTeacher } from '@/lib/firebase/firestore';
+import { getTeachers, deleteTeacher } from '@/lib/firebase/realtimedb';
 import type { Teacher } from '@/lib/types';
 import { Loader2, PlusCircle, MoreHorizontal, Trash2, Edit } from 'lucide-react';
 import {

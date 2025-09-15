@@ -9,7 +9,7 @@ import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
-import { getStudentByEmail } from '@/lib/firebase/firestore';
+import { getStudentByEmail } from '@/lib/firebase/realtimedb';
 import type { Student, Marks } from '@/lib/types';
 
 export default function ResultsPage() {

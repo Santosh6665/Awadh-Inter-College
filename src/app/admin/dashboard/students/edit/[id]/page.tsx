@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { StudentForm } from '@/components/admin/student-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { getStudent } from '@/lib/firebase/firestore';
+import { getStudent } from '@/lib/firebase/realtimedb';
 import type { Student } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
