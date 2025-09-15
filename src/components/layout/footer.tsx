@@ -20,7 +20,7 @@ export function Footer() {
 
           <div className="md:col-span-2">
             <div className="grid grid-cols-2 gap-8">
-              <div className="hidden space-y-4 md:block">
+              <div className="space-y-4">
                 <h4 className="font-semibold">Quick Links</h4>
                 <nav className="flex flex-col space-y-2 text-sm">
                   <Link href="/about" className="text-muted-foreground hover:text-foreground">About Us</Link>
@@ -43,7 +43,7 @@ export function Footer() {
             </div>
           </div>
           
-          <div className="hidden space-y-4 md:col-span-3 md:block">
+          <div className="space-y-4 md:col-span-3">
              <div className="border-t pt-8">
                 <h4 className="font-semibold mb-4">Contact Us</h4>
                 <div className="space-y-2 text-sm text-muted-foreground">
