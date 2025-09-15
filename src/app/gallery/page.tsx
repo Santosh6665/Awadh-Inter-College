@@ -1,4 +1,4 @@
-
+// This comment is added to force a rebuild and potentially resolve a ChunkLoadError.
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
