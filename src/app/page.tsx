@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 
 
 const carouselImages = [
@@ -26,6 +27,7 @@ export default function HomePage() {
    const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true, stopOnLastSnap: false })
   );
+  const [isHistoryExpanded, setIsHistoryExpanded] = React.useState(false);
   
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -106,21 +108,23 @@ export default function HomePage() {
                 </CardHeader>
                 <CardContent>
                     <h4 className="text-2xl font-semibold mb-4 text-center">Our History</h4>
-                    <div className="prose max-w-none text-muted-foreground space-y-4">
+                    <div className={cn("prose max-w-none text-muted-foreground space-y-4 relative overflow-hidden", !isHistoryExpanded && "max-h-40")}>
                         <p>
                             Founded in 1965, Awadh Inter College started as a small institution with a grand vision: to provide high-quality education to the local community and empower the youth with knowledge and values. Over the decades, we have grown in both size and stature, becoming a premier center for learning in the region.
                         </p>
                         
-                                <p>
-                                    Our journey has been marked by a relentless pursuit of academic excellence, a commitment to holistic student development, and a spirit of innovation. We have continuously adapted our curriculum and infrastructure to meet the evolving needs of education, ensuring our students are well-prepared for the challenges of the future.
-                                </p>
-                                <p>
-                                    Today, Awadh Inter College stands as a testament to the enduring power of education to transform lives. We are proud of our rich history and the thousands of alumni who have gone on to make significant contributions in various fields across the globe. As we look to the future, we remain dedicated to our founding principles and committed to shaping the next generation of leaders.
-                                </p>
-                           
-                        <div className="text-center">
-                            
-                        </div>
+                        <p>
+                            Our journey has been marked by a relentless pursuit of academic excellence, a commitment to holistic student development, and a spirit of innovation. We have continuously adapted our curriculum and infrastructure to meet the evolving needs of education, ensuring our students are well-prepared for the challenges of the future.
+                        </p>
+                        <p>
+                            Today, Awadh Inter College stands as a testament to the enduring power of education to transform lives. We are proud of our rich history and the thousands of alumni who have gone on to make significant contributions in various fields across the globe. As we look to the future, we remain dedicated to our founding principles and committed to shaping the next generation of leaders.
+                        </p>
+                        {!isHistoryExpanded && <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-card to-transparent" />}
+                    </div>
+                    <div className="text-center mt-4">
+                       <Button variant="link" onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}>
+                            {isHistoryExpanded ? 'Read Less' : 'Read More'}
+                       </Button>
                     </div>
                 </CardContent>
              </Card>
@@ -355,3 +359,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+    
