@@ -67,7 +67,7 @@ export default function HomePage() {
             </Carousel>
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
             <div className="container mx-auto">
-                <Card className="max-w-md mx-auto bg-card/80 backdrop-blur-sm text-center p-6">
+                <Card className="max-w-md mx-auto bg-card/60 backdrop-blur-sm text-center p-6">
                     <h2 className="text-3xl md:text-4xl font-bold text-card-foreground">
                         Learning with Excellence, Living with Purpose.
                     </h2>
