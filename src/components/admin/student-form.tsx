@@ -63,7 +63,8 @@ export function StudentForm({ student }: StudentFormProps) {
     setLoading(true);
     try {
       if (student) {
-        await updateStudent(student.id, data);
+        // The updateStudent function in realtimedb expects the full object.
+        await updateStudent(student.id, { ...student, ...data });
         toast({
           title: 'Student Updated',
           description: 'The student record has been successfully updated.',
@@ -75,15 +76,17 @@ export function StudentForm({ student }: StudentFormProps) {
           description: 'A new student has been successfully added.',
         });
       }
+      // Redirect after the operation is successful
       router.push('/admin/dashboard/students');
-      router.refresh();
+      router.refresh(); // Ask Next.js to refresh server components
     } catch (error) {
+      console.error("Failed to save student:", error);
       toast({
         title: 'An error occurred',
         description: 'Could not save the student data. Please try again.',
         variant: 'destructive',
       });
-      setLoading(false);
+      setLoading(false); // Ensure loading is stopped on error
     }
   }
 
