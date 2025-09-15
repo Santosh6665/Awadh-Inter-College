@@ -68,7 +68,7 @@ export default function HomePage() {
           <div className="container mx-auto">
             <div className="text-center mt-8">
               <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
-                A center for academic excellence and holistic development.
+                Learning with Excellence, Living with Purpose.
               </p>
               <Button asChild className="mt-8">
                 <Link href="/admissions">Apply for Admission</Link>
