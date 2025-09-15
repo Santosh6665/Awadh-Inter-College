@@ -11,6 +11,11 @@ const galleryImages = [
   { id: 4, src: "/images/gallery-4.jpg", alt: "Sports Day Event", hint: "sports event" },
   { id: 5, src: "/images/gallery-5.jpg", alt: "Classroom Session", hint: "classroom students" },
   { id: 6, src: "/images/gallery-6.jpg", alt: "Annual Function", hint: "college event" },
+  { id: 7, src: "/images/gallery-7.jpg", alt: "Art Competition", hint: "art competition" },
+  { id: 8, src: "/images/gallery-8.jpg", alt: "Computer Lab", hint: "computer lab" },
+  { id: 9, src: "/images/gallery-9.jpg", alt: "School Auditorium", hint: "school auditorium" },
+  { id: 10, src: "/images/gallery-10.jpg", alt: "Outdoor activity", hint: "outdoor activity" },
+  { id: 11, src: "/images/gallery-11.jpg", alt: "Group discussion", hint: "group discussion" },
 ];
 
 export default function GalleryPage() {
