@@ -75,7 +75,7 @@ export function Header() {
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="flex flex-col p-6">
+          <SheetContent side="left" className="flex flex-col p-6 bg-white">
              <SheetHeader>
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             </SheetHeader>
