@@ -76,7 +76,6 @@ export function StudentForm({ student }: StudentFormProps) {
         });
       }
       router.push('/admin/dashboard/students');
-      router.refresh();
     } catch (error) {
       toast({
         title: 'An error occurred',
