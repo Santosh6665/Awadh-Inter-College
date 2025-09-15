@@ -15,11 +15,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 
 const carouselImages = [
-  { src: "/images/hero-1.jpg", alt: "College Campus", hint: "college campus" },
-  { src: "/images/hero-2.jpg", alt: "Students learning in a classroom", hint: "students classroom" },
-  { src: "/images/hero-3.jpg", alt: "University library with students", hint: "university library" },
-  { src: "/images/hero-4.jpg", alt: "Graduation ceremony", hint: "graduation ceremony" },
-  { src: "/images/hero-5.jpg", alt: "Students participating in a sports event", hint: "students sports" },
+  { src: "https://picsum.photos/seed/hero1/1200/400", alt: "College Campus", hint: "college campus" },
+  { src: "https://picsum.photos/seed/hero2/1200/400", alt: "Students learning in a classroom", hint: "students classroom" },
+  { src: "https://picsum.photos/seed/hero3/1200/400", alt: "University library with students", hint: "university library" },
+  { src: "https://picsum.photos/seed/hero4/1200/400", alt: "Graduation ceremony", hint: "graduation ceremony" },
+  { src: "https://picsum.photos/seed/hero5/1200/400", alt: "Students participating in a sports event", hint: "students sports" },
 ];
 
 export default function HomePage() {
@@ -60,9 +60,9 @@ export default function HomePage() {
               <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 hover:bg-primary hover:text-primary-foreground" />
               <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 hover:bg-primary hover:text-primary-foreground" />
             </Carousel>
-          <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center p-4">
             <div className="container mx-auto">
-                <Card className="max-w-md mx-auto bg-black/40 backdrop-blur-sm text-center p-6 text-white border-white/20">
+                <Card className="max-w-sm md:max-w-2xl mx-auto bg-black/40 backdrop-blur-sm text-center p-6 text-white border-white/20">
                     <h2 className="text-3xl md:text-4xl font-bold">
                         Awadh Inter College
                     </h2>
@@ -84,7 +84,7 @@ export default function HomePage() {
                 <CardHeader>
                     <div className="overflow-hidden rounded-lg">
                         <Image 
-                        src="/images/about-us.jpg"
+                        src="https://picsum.photos/seed/about/1200/400"
                         alt="School Building"
                         width={1200}
                         height={400}
@@ -160,7 +160,7 @@ export default function HomePage() {
                   <div className="flex flex-col md:flex-row items-center gap-8">
                       <div className="flex-shrink-0">
                           <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
-                              <AvatarImage src="/images/principal.jpg" alt="Principal's Photo" data-ai-hint="principal portrait" />
+                              <AvatarImage src="https://picsum.photos/seed/principal/300" alt="Principal's Photo" data-ai-hint="principal portrait" />
                               <AvatarFallback>P</AvatarFallback>
                           </Avatar>
                       </div>
@@ -200,7 +200,7 @@ export default function HomePage() {
                   <div className="flex flex-col md:flex-row items-center gap-8">
                       <div className="flex-shrink-0">
                           <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
-                              <AvatarImage src="/images/founder.jpg" alt="Founder's Photo" data-ai-hint="founder portrait" />
+                              <AvatarImage src="https://picsum.photos/seed/founder/300" alt="Founder's Photo" data-ai-hint="founder portrait" />
                               <AvatarFallback>F</AvatarFallback>
                           </Avatar>
                       </div>
@@ -344,5 +344,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-    
