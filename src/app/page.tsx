@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
@@ -26,10 +26,7 @@ export default function HomePage() {
    const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true, stopOnLastSnap: false })
   );
-  const [isAboutExpanded, setIsAboutExpanded] = useState(false);
-  const [isPrincipalMessageExpanded, setIsPrincipalMessageExpanded] = useState(false);
-  const [isFounderMessageExpanded, setIsFounderMessageExpanded] = useState(false);
-
+  
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
@@ -70,7 +67,7 @@ export default function HomePage() {
                         Awadh Inter College
                     </h2>
                     <p className="mt-4 text-white/80">
-                        Empowering Minds, Enriching Lives.
+                        Learning with Excellence, Living with Purpose.
                     </p>
                     <Button asChild size="lg" className="mt-8">
                         <Link href="/admissions">Apply for Admission</Link>
@@ -102,20 +99,16 @@ export default function HomePage() {
                         <p>
                             Founded in 1965, Awadh Inter College started as a small institution with a grand vision: to provide high-quality education to the local community and empower the youth with knowledge and values. Over the decades, we have grown in both size and stature, becoming a premier center for learning in the region.
                         </p>
-                        {isAboutExpanded && (
-                            <>
+                        
                                 <p>
                                     Our journey has been marked by a relentless pursuit of academic excellence, a commitment to holistic student development, and a spirit of innovation. We have continuously adapted our curriculum and infrastructure to meet the evolving needs of education, ensuring our students are well-prepared for the challenges of the future.
                                 </p>
                                 <p>
                                     Today, Awadh Inter College stands as a testament to the enduring power of education to transform lives. We are proud of our rich history and the thousands of alumni who have gone on to make significant contributions in various fields across the globe. As we look to the future, we remain dedicated to our founding principles and committed to shaping the next generation of leaders.
                                 </p>
-                            </>
-                        )}
+                           
                         <div className="text-center">
-                            <Button variant="outline" onClick={() => setIsAboutExpanded(!isAboutExpanded)}>
-                                {isAboutExpanded ? 'Read Less' : 'Learn More'}
-                            </Button>
+                            
                         </div>
                     </div>
                 </CardContent>
@@ -178,20 +171,16 @@ export default function HomePage() {
                               <p>
                                   Welcome to Awadh Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.
                               </p>
-                               {isPrincipalMessageExpanded && (
-                                <>
+                                
                                   <p>
                                     At Awadh, we strive to create an atmosphere of respect and inclusion, where each student is valued as an individual. We are dedicated to the academic, social, and emotional growth of our students, and we work in partnership with our parents and community to help our students achieve their full potential.
                                   </p>
                                   <p>
                                     I am honored to lead such a remarkable institution and look forward to working with you to make this academic year a success.
                                   </p>
-                                </>
-                              )}
+                                
                               <div className="text-center md:text-left">
-                                <Button variant="outline" onClick={() => setIsPrincipalMessageExpanded(!isPrincipalMessageExpanded)}>
-                                  {isPrincipalMessageExpanded ? 'Read Less' : 'Learn More'}
-                                </Button>
+                                
                               </div>
                           </div>
                       </div>
@@ -221,16 +210,11 @@ export default function HomePage() {
                            <div className="prose max-w-none text-muted-foreground mt-4 space-y-4">
                               <p>
                                 The Awad Inter College School Management System (SMS) is initiated and conceptualized by the Founder of Awad Inter College, who envisioned a digital platform to streamline administrative, academic, and communication processes.
-                              </p>
-                               {isFounderMessageExpanded && (
-                                <p>
                                 The Founder’s mission is to modernize the institution’s operations, provide transparency for parents, empower teachers with digital tools, and improve the overall learning experience for students.
-                               </p>
-                               )}
+                              </p>
+                               
                                 <div className="text-center md:text-left">
-                                    <Button variant="outline" onClick={() => setIsFounderMessageExpanded(!isFounderMessageExpanded)}>
-                                    {isFounderMessageExpanded ? 'Read Less' : 'Learn More'}
-                                    </Button>
+                                    
                                 </div>
                           </div>
                       </div>
