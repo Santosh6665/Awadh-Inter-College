@@ -28,6 +28,7 @@ export default function HomePage() {
     Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true, stopOnLastSnap: false })
   );
   const [isHistoryExpanded, setIsHistoryExpanded] = React.useState(false);
+  const [isPrincipalMessageExpanded, setIsPrincipalMessageExpanded] = React.useState(false);
   
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -182,7 +183,7 @@ export default function HomePage() {
                       <div className="text-center md:text-left">
                           <h2 className="text-2xl font-bold">Dr. Evelyn Reed</h2>
                           <p className="text-muted-foreground">Principal, Awadh Inter College</p>
-                           <div className="prose max-w-none text-muted-foreground mt-4 space-y-4">
+                           <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isPrincipalMessageExpanded && "max-h-40")}>
                               <p>
                                   Welcome to Awadh Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.
                               </p>
@@ -194,9 +195,12 @@ export default function HomePage() {
                                     I am honored to lead such a remarkable institution and look forward to working with you to make this academic year a success.
                                   </p>
                                 
-                              <div className="text-center md:text-left">
-                                
-                              </div>
+                              {!isPrincipalMessageExpanded && <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent" />}
+                          </div>
+                          <div className="text-center md:text-left">
+                             <Button variant="link" onClick={() => setIsPrincipalMessageExpanded(!isPrincipalMessageExpanded)}>
+                                {isPrincipalMessageExpanded ? 'Read Less' : 'Read More'}
+                            </Button>
                           </div>
                       </div>
                   </div>
@@ -359,5 +363,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-    
