@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, User, LogOut } from 'lucide-react';
+import { Menu, User, LogOut, Mail, MapPin, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
@@ -19,6 +19,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useRouter, usePathname } from 'next/navigation';
 import { CollegeLogo } from '@/components/icons';
+import { Separator } from '../ui/separator';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -75,31 +76,57 @@ export function Header() {
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left">
+          <SheetContent side="left" className="flex flex-col">
              <SheetHeader>
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             </SheetHeader>
-            <nav className="grid gap-6 text-lg font-medium mt-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  {link.label}
-                </Link>
-              ))}
-              {!user && (
-                
-                  <Link
-                    href="/login"
+            <div className="flex-grow overflow-y-auto">
+                <nav className="grid gap-6 text-lg font-medium mt-8">
+                {navLinks.map((link) => (
+                    <Link
+                    key={link.href}
+                    href={link.href}
                     className="text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    Login
-                  </Link>
-                
-              )}
-            </nav>
+                    >
+                    {link.label}
+                    </Link>
+                ))}
+                {!user && (
+                    
+                    <Link
+                        href="/login"
+                        className="text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                        Login
+                    </Link>
+                    
+                )}
+                </nav>
+                <Separator className="my-6" />
+                <div className="space-y-4">
+                    <h4 className="font-semibold text-lg">Contact Us</h4>
+                    <div className="space-y-2 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-2">
+                        <MapPin className="mt-1 h-4 w-4 flex-shrink-0" />
+                        <span>Ghosiyari Bazar Marg, Ghosiyari Bazar, Daniawar, Basti, Uttar Pradesh – 272148</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 flex-shrink-0" />
+                        <span>+91 6393071946</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 flex-shrink-0" />
+                        <span>info@awadhcollege.edu</span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+             <div className="mt-auto border-t pt-6 text-center text-sm text-muted-foreground">
+              <p>© {new Date().getFullYear()} Awadh Inter College.</p>
+               <p className="mt-2">
+                Support: <a href="mailto:santoshx.dev@gmail.com" className="underline hover:text-foreground">santoshx.dev@gmail.com</a>
+              </p>
+            </div>
           </SheetContent>
         </Sheet>
         <Link href="/" className="hidden items-center gap-2 md:flex">
