@@ -1,16 +1,71 @@
 
+'use client';
+
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart2, FileText, MessageSquare, Bell } from 'lucide-react';
+import { BarChart2, FileText, MessageSquare, Bell, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '@/lib/firebase/firebase';
+import { getStudentByEmail } from '@/lib/firebase/realtimedb';
+import type { Student } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ParentDashboardPage() {
+  const [student, setStudent] = useState<Student | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser?.email) {
+        try {
+          const studentData = await getStudentByEmail(currentUser.email);
+          if (studentData) {
+            setStudent(studentData);
+          } else {
+            toast({
+              title: 'Student Not Found',
+              description: 'Could not find a student profile associated with your account.',
+              variant: 'destructive',
+            });
+          }
+        } catch (error) {
+          toast({
+            title: 'Error fetching data',
+            description: 'Could not load your child\'s information.',
+            variant: 'destructive',
+          });
+        }
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [toast]);
+
+  const getAverageMarks = () => {
+    if (!student?.marks) return 0;
+    const marks = Object.values(student.marks).filter(m => typeof m === 'number') as number[];
+    if (marks.length === 0) return 0;
+    const total = marks.reduce((sum, mark) => sum + mark, 0);
+    return Math.round(total / marks.length);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-48">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-8">
       <Card>
         <CardHeader>
           <CardTitle>Welcome, Parent!</CardTitle>
           <CardDescription>
-            Here is a quick overview of your child's information.
+            Here is a quick overview of your child, {student?.name || 'N/A'}'s information.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -22,7 +77,7 @@ export default function ParentDashboardPage() {
                   <BarChart2 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">85%</div>
+                  <div className="text-2xl font-bold">{getAverageMarks()}%</div>
                   <p className="text-xs text-muted-foreground">Overall grade</p>
                 </CardContent>
               </Card>
@@ -34,8 +89,8 @@ export default function ParentDashboardPage() {
                   <FileText className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">₹1,250</div>
-                  <p className="text-xs text-muted-foreground">Due by 30th August</p>
+                  <div className="text-2xl font-bold">₹{student?.amountDue || 0}</div>
+                  <p className="text-xs text-muted-foreground">Status: {student?.feeStatus || 'N/A'}</p>
                 </CardContent>
               </Card>
             </Link>
