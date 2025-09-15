@@ -12,7 +12,6 @@ import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 
 const carouselImages = [
@@ -30,7 +29,6 @@ export default function HomePage() {
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
   const [isPrincipalMessageExpanded, setIsPrincipalMessageExpanded] = useState(false);
   const [isFounderMessageExpanded, setIsFounderMessageExpanded] = useState(false);
-  const isMobile = useIsMobile();
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -67,11 +65,11 @@ export default function HomePage() {
             </Carousel>
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
             <div className="container mx-auto">
-                <Card className="max-w-md mx-auto bg-card/60 backdrop-blur-sm text-center p-6">
-                    <h2 className="text-3xl md:text-4xl font-bold text-card-foreground">
+                <Card className="max-w-md mx-auto bg-black/40 backdrop-blur-sm text-center p-6 text-white border-white/20">
+                    <h2 className="text-3xl md:text-4xl font-bold">
                         Learning with Excellence, Living with Purpose.
                     </h2>
-                    <p className="mt-4 text-card-foreground/80">
+                    <p className="mt-4 text-white/80">
                         Empowering Minds, Enriching Lives.
                     </p>
                     <Button asChild size="lg" className="mt-8">
