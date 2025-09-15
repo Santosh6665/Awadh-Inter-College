@@ -63,7 +63,8 @@ export function StudentForm({ student }: StudentFormProps) {
     setLoading(true);
     try {
       if (student) {
-        // The updateStudent function in realtimedb expects the full object.
+        // The updateStudent function in realtimedb now expects the full object.
+        // We merge existing student data with the new form data.
         await updateStudent(student.id, { ...student, ...data });
         toast({
           title: 'Student Updated',
@@ -78,7 +79,7 @@ export function StudentForm({ student }: StudentFormProps) {
       }
       // Redirect after the operation is successful
       router.push('/admin/dashboard/students');
-      router.refresh(); // Ask Next.js to refresh server components
+      router.refresh(); 
     } catch (error) {
       console.error("Failed to save student:", error);
       toast({
@@ -86,7 +87,9 @@ export function StudentForm({ student }: StudentFormProps) {
         description: 'Could not save the student data. Please try again.',
         variant: 'destructive',
       });
-      setLoading(false); // Ensure loading is stopped on error
+    } finally {
+        // This block will always run, ensuring the loading state is turned off.
+        setLoading(false);
     }
   }
 
