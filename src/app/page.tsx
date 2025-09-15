@@ -15,11 +15,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 
 const carouselImages = [
-  { src: "https://picsum.photos/seed/hero1/1200/400", alt: "College Campus", hint: "college campus" },
-  { src: "https://picsum.photos/seed/hero2/1200/400", alt: "Students learning in a classroom", hint: "students classroom" },
-  { src: "https://picsum.photos/seed/hero3/1200/400", alt: "University library with students", hint: "university library" },
-  { src: "https://picsum.photos/seed/hero4/1200/400", alt: "Graduation ceremony", hint: "graduation ceremony" },
-  { src: "https://picsum.photos/seed/hero5/1200/400", alt: "Students participating in a sports event", hint: "students sports" },
+  { src: "/images/hero-1.jpg", alt: "College Campus", hint: "college campus" },
+  { src: "/images/hero-2.jpg", alt: "Students learning in a classroom", hint: "students classroom" },
+  { src: "/images/hero-3.jpg", alt: "University library with students", hint: "university library" },
+  { src: "/images/hero-4.jpg", alt: "Graduation ceremony", hint: "graduation ceremony" },
+  { src: "/images/hero-5.jpg", alt: "Students participating in a sports event", hint: "students sports" },
 ];
 
 export default function HomePage() {
