@@ -21,14 +21,8 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import type { Marks } from '@/lib/types';
 
-export type Marks = {
-  physics?: number;
-  chemistry?: number;
-  maths?: number;
-  english?: number;
-  computerScience?: number;
-};
 
 export default function ManageResultsPage() {
   const [students, setStudents] = useState<Student[]>([]);
@@ -72,7 +66,8 @@ export default function ManageResultsPage() {
     if (!selectedStudent) return;
     setIsSubmitting(true);
     try {
-        await updateStudent(selectedStudent.id, { ...selectedStudent, marks });
+        const updatedStudentData = { ...selectedStudent, marks };
+        await updateStudent(selectedStudent.id, updatedStudentData);
         toast({
             title: 'Marks Saved',
             description: `Successfully saved marks for ${selectedStudent.name}.`,

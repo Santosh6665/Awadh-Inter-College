@@ -1,5 +1,6 @@
+
 import { db } from './firebase';
-import { ref, push, get, set, remove, query, orderByChild, equalTo } from 'firebase/database';
+import { ref, push, get, set, remove, query, orderByChild, equalTo, update } from 'firebase/database';
 import type { Student, Teacher, AttendanceRecord, Book, BusRoute } from '../types';
 
 // Helper to convert snapshot to array
@@ -48,7 +49,7 @@ export async function getStudentByEmail(email: string): Promise<Student | null> 
     return null;
 }
 
-export async function updateStudent(id: string, student: Partial<Student>): Promise<void> {
+export async function updateStudent(id: string, student: Student): Promise<void> {
   const studentRef = ref(db, `students/${id}`);
   await set(studentRef, student);
 }
@@ -83,7 +84,8 @@ export async function getTeacher(id: string): Promise<Teacher | null> {
 
 export async function updateTeacher(id: string, teacher: Partial<Teacher>): Promise<void> {
   const teacherRef = ref(db, `teachers/${id}`);
-  await set(teacherRef, teacher);
+  // Use update to avoid overwriting the whole object if not all fields are present
+  await update(teacherRef, teacher);
 }
 
 export async function deleteTeacher(id: string): Promise<void> {
@@ -97,9 +99,9 @@ export async function saveAttendance(records: { studentId: string, status: 'Pres
   const updates: { [key: string]: any } = {};
   records.forEach(record => {
     const docId = `${date}_${record.studentId}`;
-    updates[`/attendance/${docId}`] = { ...record, date };
+    updates[`/attendance/${docId}`] = { ...record, date, studentId: record.studentId };
   });
-  await set(ref(db), { ...ref(db), ...updates });
+  await update(ref(db), updates);
 }
 
 export async function getAttendanceForDate(date: string): Promise<AttendanceRecord[]> {
@@ -130,13 +132,9 @@ export async function getBooks(): Promise<Book[]> {
   return snapshot.exists() ? snapshotToArray(snapshot) : [];
 }
 
-export async function updateBook(id: string, book: Partial<Book>): Promise<void> {
+export async function updateBook(id: string, bookUpdate: Partial<Book>): Promise<void> {
   const bookRef = ref(db, `books/${id}`);
-  const snapshot = await get(bookRef);
-  if (snapshot.exists()) {
-    const existingBook = snapshot.val();
-    await set(bookRef, { ...existingBook, ...book });
-  }
+  await update(bookRef, bookUpdate);
 }
 
 // Transport Functions
@@ -153,13 +151,9 @@ export async function getBusRoutes(): Promise<BusRoute[]> {
     return snapshot.exists() ? snapshotToArray(snapshot) : [];
 }
 
-export async function updateBusRoute(id: string, route: Partial<BusRoute>): Promise<void> {
+export async function updateBusRoute(id: string, route: Omit<BusRoute, 'id'>): Promise<void> {
     const routeRef = ref(db, `busRoutes/${id}`);
-    const snapshot = await get(routeRef);
-    if(snapshot.exists()) {
-        const existingRoute = snapshot.val();
-        await set(routeRef, {...existingRoute, ...route});
-    }
+    await set(routeRef, route);
 }
 
 export async function deleteBusRoute(id: string): Promise<void> {
