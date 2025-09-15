@@ -76,11 +76,11 @@ export function Header() {
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="flex flex-col">
-             <SheetHeader>
+          <SheetContent side="left" className="flex flex-col p-0">
+             <SheetHeader className="p-6">
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             </SheetHeader>
-            <div className="flex-grow overflow-y-auto">
+            <div className="flex-grow overflow-y-auto px-6">
                 <nav className="grid gap-6 text-lg font-medium mt-8">
                 {navLinks.map((link) => (
                     <Link
@@ -102,7 +102,18 @@ export function Header() {
                     
                 )}
                 </nav>
-                <Separator className="my-6" />
+            </div>
+             <div className="mt-auto border-t bg-card text-card-foreground p-6">
+                <div className="space-y-4">
+                    <h4 className="font-semibold text-lg">Quick Links</h4>
+                     <nav className="flex flex-col space-y-2 text-sm">
+                        <Link href="/about" className="text-muted-foreground hover:text-foreground">About Us</Link>
+                        <Link href="/admissions" className="text-muted-foreground hover:text-foreground">Admissions</Link>
+                        <Link href="/gallery" className="text-muted-foreground hover:text-foreground">Gallery</Link>
+                        <Link href="/notices" className="text-muted-foreground hover:text-foreground">Notices</Link>
+                     </nav>
+                </div>
+                 <Separator className="my-6" />
                 <div className="space-y-4">
                     <h4 className="font-semibold text-lg">Contact Us</h4>
                     <div className="space-y-2 text-sm text-muted-foreground">
@@ -120,12 +131,12 @@ export function Header() {
                     </div>
                     </div>
                 </div>
-            </div>
-             <div className="mt-auto border-t pt-6 text-center text-sm text-muted-foreground">
-              <p>© {new Date().getFullYear()} Awadh Inter College.</p>
-               <p className="mt-2">
-                Support: <a href="mailto:santoshx.dev@gmail.com" className="underline hover:text-foreground">santoshx.dev@gmail.com</a>
-              </p>
+                 <div className="mt-8 border-t pt-6 text-center text-sm text-muted-foreground">
+                    <p>© {new Date().getFullYear()} Awadh Inter College. All rights reserved.</p>
+                    <p className="mt-2">
+                        For technical support, contact our IT Team at <a href="mailto:santoshx.dev@gmail.com" className="underline hover:text-foreground">santoshx.dev@gmail.com</a>
+                    </p>
+                </div>
             </div>
           </SheetContent>
         </Sheet>
