@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useRouter, usePathname } from 'next/navigation';
+import { CollegeLogo } from '@/components/icons';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -102,6 +103,7 @@ export function Header() {
           </SheetContent>
         </Sheet>
         <Link href="/" className="hidden items-center gap-2 md:flex">
+            <CollegeLogo className="h-6 w-6 text-primary" />
             <h1 className="font-headline text-xl font-bold tracking-tight text-primary">
             Awadh Inter College
             </h1>
@@ -110,6 +112,7 @@ export function Header() {
       
       <div className="flex items-center md:hidden">
         <Link href="/" className="flex items-center gap-2">
+            <CollegeLogo className="h-6 w-6 text-primary" />
             <h1 className="font-headline text-lg font-bold tracking-tight text-primary">
                 Awadh Inter College
             </h1>
