@@ -83,7 +83,8 @@ export function StudentForm({ student }: StudentFormProps) {
         description: 'Could not save the student data. Please try again.',
         variant: 'destructive',
       });
-      setLoading(false);
+    } finally {
+        setLoading(false);
     }
   }
 
