@@ -65,14 +65,19 @@ export default function HomePage() {
               <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 hover:bg-primary hover:text-primary-foreground" />
               <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 hover:bg-primary hover:text-primary-foreground" />
             </Carousel>
-          <div className="container mx-auto">
-            <div className="text-center mt-8">
-              <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
-                Learning with Excellence, Living with Purpose.
-              </p>
-              <Button asChild className="mt-8">
-                <Link href="/admissions">Apply for Admission</Link>
-              </Button>
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+            <div className="container mx-auto">
+                <Card className="max-w-md mx-auto bg-card/80 backdrop-blur-sm text-center p-6">
+                    <h2 className="text-3xl md:text-4xl font-bold text-card-foreground">
+                        Learning with Excellence, Living with Purpose.
+                    </h2>
+                    <p className="mt-4 text-card-foreground/80">
+                        Empowering Minds, Enriching Lives.
+                    </p>
+                    <Button asChild size="lg" className="mt-8">
+                        <Link href="/admissions">Apply for Admission</Link>
+                    </Button>
+                </Card>
             </div>
           </div>
         </section>
