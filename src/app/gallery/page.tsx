@@ -1,15 +1,16 @@
+
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 
 const galleryImages = [
-  { id: 1, src: "https://picsum.photos/seed/campus/600/400", alt: "College Campus View", hint: "college campus" },
-  { id: 2, src: "https://picsum.photos/seed/library/600/400", alt: "Students in Library", hint: "students library" },
-  { id: 3, src: "https://picsum.photos/seed/lab/600/400", alt: "Science Lab", hint: "science lab" },
-  { id: 4, src: "https://picsum.photos/seed/sports/600/400", alt: "Sports Day Event", hint: "sports event" },
-  { id: 5, src: "https://picsum.photos/seed/classroom/600/400", alt: "Classroom Session", hint: "classroom students" },
-  { id: 6, src: "https://picsum.photos/seed/event/600/400", alt: "Annual Function", hint: "college event" },
+  { id: 1, src: "/images/gallery-1.jpg", alt: "College Campus View", hint: "college campus" },
+  { id: 2, src: "/images/gallery-2.jpg", alt: "Students in Library", hint: "students library" },
+  { id: 3, src: "/images/gallery-3.jpg", alt: "Science Lab", hint: "science lab" },
+  { id: 4, src: "/images/gallery-4.jpg", alt: "Sports Day Event", hint: "sports event" },
+  { id: 5, src: "/images/gallery-5.jpg", alt: "Classroom Session", hint: "classroom students" },
+  { id: 6, src: "/images/gallery-6.jpg", alt: "Annual Function", hint: "college event" },
 ];
 
 export default function GalleryPage() {
