@@ -82,7 +82,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-center gap-4">
                     <Megaphone className="h-5 w-5 text-primary" />
                     <p className="text-sm font-medium">
-                        Admissions for the 2025-2026 session are now open. <Link href="/admissions" className="underline hover:text-primary">Apply Now!</Link>
+                        Admissions for the 2025-2026 session are now open. <Link href="/admissions" className="underline text-blue-600 hover:text-primary">Apply Now!</Link>
                     </p>
                 </div>
             </div>
