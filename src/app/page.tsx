@@ -6,7 +6,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Camera, Info, LogIn, Target, Zap, Phone, Mail, MapPin } from 'lucide-react';
+import { BookOpen, Camera, Info, LogIn, Target, Zap, Phone, Mail, MapPin, Megaphone } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -62,7 +62,7 @@ export default function HomePage() {
             </Carousel>
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center p-4">
             <div className="container mx-auto">
-                <Card className="max-w-xs md:max-w-2xl mx-auto bg-black/40 backdrop-blur-sm text-center p-6 text-white border-white/20">
+                <Card className="max-w-xs md:max-w-2xl mx-auto bg-black/60 backdrop-blur-sm text-center p-6 text-white border-white/20">
                     <h2 className="text-3xl md:text-4xl font-bold">
                         Awadh Inter College
                     </h2>
@@ -75,6 +75,17 @@ export default function HomePage() {
                 </Card>
             </div>
           </div>
+        </section>
+
+        <section className="bg-secondary text-secondary-foreground py-3">
+            <div className="container mx-auto">
+                <div className="flex items-center justify-center gap-4">
+                    <Megaphone className="h-5 w-5 text-primary" />
+                    <p className="text-sm font-medium">
+                        Admissions for the 2025-2026 session are now open. <Link href="/admissions" className="underline hover:text-primary">Apply Now!</Link>
+                    </p>
+                </div>
+            </div>
         </section>
 
         <section id="about-us" className="py-12 md:py-20 bg-card px-4 sm:px-6 md:px-8">
