@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getStudents } from '@/lib/firebase/realtimedb';
+import { getStudents, updateStudent } from '@/lib/firebase/realtimedb';
 import type { Student } from '@/lib/types';
 import { Loader2, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -15,62 +15,88 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter
+  DialogFooter,
+  DialogClose,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import type { Marks } from '@/lib/types';
 
-type Marks = {
-  physics?: number;
-  chemistry?: number;
-  maths?: number;
-  english?: number;
-};
 
 export default function ManageResultsPage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [marks, setMarks] = useState<Marks>({});
   const { toast } = useToast();
 
+  const fetchStudents = async () => {
+    setLoading(true);
+    try {
+      const studentList = await getStudents();
+      setStudents(studentList);
+    } catch (error) {
+      toast({
+        title: 'Error fetching students',
+        description: 'Could not load student data. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchStudents = async () => {
-      try {
-        const studentList = await getStudents();
-        setStudents(studentList);
-      } catch (error) {
-        toast({
-          title: 'Error fetching students',
-          description: 'Could not load student data. Please try again.',
-          variant: 'destructive',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchStudents();
-  }, [toast]);
+  }, []);
 
   const handleOpenDialog = (student: Student) => {
     setSelectedStudent(student);
-    // In a real app, you would fetch existing marks for the student
-    setMarks({ physics: 88, chemistry: 92, maths: 76, english: 85 });
+    setMarks(student.marks || {});
+  };
+  
+  const handleMarkChange = (subject: keyof Marks, value: string) => {
+    const numValue = value === '' ? undefined : Number(value);
+    setMarks(prev => ({ ...prev, [subject]: numValue }));
   };
 
-  const handleSaveChanges = () => {
-     toast({
-        title: 'Marks Saved',
-        description: `Successfully saved marks for ${selectedStudent?.name}.`
-    });
-    // Here you would save the marks to your database
-  }
+  const handleSaveChanges = async () => {
+    if (!selectedStudent) return;
+    setIsSubmitting(true);
+    try {
+        const updatedStudentData: Partial<Student> = { marks };
+        await updateStudent(selectedStudent.id, updatedStudentData);
+        toast({
+            title: 'Marks Saved',
+            description: `Successfully saved marks for ${selectedStudent.name}.`,
+        });
+        fetchStudents(); // Refresh data
+    } catch (error) {
+        toast({
+            title: 'Error Saving Marks',
+            description: 'Could not save the marks. Please try again.',
+            variant: 'destructive',
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
+  };
+
+  const subjects: {key: keyof Marks; label: string}[] = [
+    { key: 'physics', label: 'Physics' },
+    { key: 'chemistry', label: 'Chemistry' },
+    { key: 'maths', label: 'Mathematics' },
+    { key: 'english', label: 'English' },
+    { key: 'computerScience', label: 'Computer Science' },
+  ]
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Manage Results</CardTitle>
-        <CardDescription>Enter and publish student examination results for the mid-term exams.</CardDescription>
+        <CardTitle>Manage Exam Results</CardTitle>
+        <CardDescription>Enter, view, and update student marks for examinations.</CardDescription>
       </CardHeader>
       <CardContent>
         {loading ? (
@@ -78,60 +104,67 @@ export default function ManageResultsPage() {
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Roll No.</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Class</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {students.map((student) => (
-                <TableRow key={student.id}>
-                  <TableCell>{student.rollNumber}</TableCell>
-                  <TableCell>{student.name}</TableCell>
-                  <TableCell>{student.class} - {student.section}</TableCell>
-                  <TableCell className="text-right">
-                    <Dialog>
+          <Dialog>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Roll No.</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Class</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {students.map((student) => (
+                  <TableRow key={student.id}>
+                    <TableCell>{student.rollNumber}</TableCell>
+                    <TableCell>{student.name}</TableCell>
+                    <TableCell>{student.class} - {student.section}</TableCell>
+                    <TableCell className="text-right">
                       <DialogTrigger asChild>
                         <Button variant="outline" onClick={() => handleOpenDialog(student)}>
-                          <Edit className="mr-2 h-4 w-4" /> Enter Marks
+                          <Edit className="mr-2 h-4 w-4" /> Manage Marks
                         </Button>
                       </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Enter Marks for {selectedStudent?.name}</DialogTitle>
-                        </DialogHeader>
-                        <div className="grid gap-4 py-4">
-                           <div className="grid grid-cols-2 items-center gap-4">
-                                <Label htmlFor="physics">Physics</Label>
-                                <Input id="physics" type="number" value={marks.physics || ''} onChange={(e) => setMarks(prev => ({ ...prev, physics: +e.target.value }))} />
-                           </div>
-                           <div className="grid grid-cols-2 items-center gap-4">
-                                <Label htmlFor="chemistry">Chemistry</Label>
-                                <Input id="chemistry" type="number" value={marks.chemistry || ''} onChange={(e) => setMarks(prev => ({ ...prev, chemistry: +e.target.value }))} />
-                           </div>
-                           <div className="grid grid-cols-2 items-center gap-4">
-                                <Label htmlFor="maths">Mathematics</Label>
-                                <Input id="maths" type="number" value={marks.maths || ''} onChange={(e) => setMarks(prev => ({ ...prev, maths: +e.target.value }))} />
-                           </div>
-                           <div className="grid grid-cols-2 items-center gap-4">
-                                <Label htmlFor="english">English</Label>
-                                <Input id="english" type="number" value={marks.english || ''} onChange={(e) => setMarks(prev => ({ ...prev, english: +e.target.value }))} />
-                           </div>
-                        </div>
-                        <DialogFooter>
-                            <Button onClick={handleSaveChanges}>Save Changes</Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Enter Marks for {selectedStudent?.name}</DialogTitle>
+                <DialogDescription>
+                    Update the scores for each subject below.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                {subjects.map(subject => (
+                   <div key={subject.key} className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor={subject.key} className="text-right">{subject.label}</Label>
+                        <Input 
+                            id={subject.key}
+                            type="number"
+                            value={marks[subject.key] || ''}
+                            onChange={(e) => handleMarkChange(subject.key, e.target.value)}
+                            className="col-span-3"
+                         />
+                   </div>
+                ))}
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                 <DialogClose asChild>
+                    <Button onClick={handleSaveChanges} disabled={isSubmitting}>
+                      {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Save Changes
+                    </Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         )}
       </CardContent>
     </Card>

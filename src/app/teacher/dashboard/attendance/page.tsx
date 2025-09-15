@@ -68,7 +68,7 @@ export default function ManageAttendancePage() {
       await saveAttendance(recordsToSave, today);
       toast({
         title: 'Attendance Saved',
-        description: `Attendance for ${format(new Date(), 'MMMM do, yyyy')} has been saved successfully.`,
+        description: `Attendance for ${format(new Date(), 'MMMM do, yy-yy')} has been saved successfully.`,
       });
     } catch (error) {
       toast({
