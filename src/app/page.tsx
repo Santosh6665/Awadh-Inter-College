@@ -67,7 +67,7 @@ export default function HomePage() {
             <div className="container mx-auto">
                 <Card className="max-w-md mx-auto bg-black/40 backdrop-blur-sm text-center p-6 text-white border-white/20">
                     <h2 className="text-3xl md:text-4xl font-bold">
-                        Learning with Excellence, Living with Purpose.
+                        Awadh Inter College
                     </h2>
                     <p className="mt-4 text-white/80">
                         Empowering Minds, Enriching Lives.
@@ -360,3 +360,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+    
