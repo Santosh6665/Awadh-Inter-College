@@ -1,8 +1,12 @@
 
+'use client';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { useState } from 'react';
+import type { DateRange } from 'react-day-picker';
 
 const notices = [
   {
@@ -20,6 +24,8 @@ const notices = [
 ];
 
 export default function NoticesCalendarPage() {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2">
@@ -58,6 +64,8 @@ export default function NoticesCalendarPage() {
             <CardContent>
                 <Calendar
                     mode="single"
+                    selected={date}
+                    onSelect={setDate}
                     className="rounded-md"
                 />
                  <div className="mt-4 space-y-2 text-sm">

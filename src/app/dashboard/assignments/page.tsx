@@ -1,9 +1,12 @@
 
+'use client';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Download, Upload } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 
 const assignments = [
   {
@@ -30,6 +33,15 @@ const assignments = [
 ];
 
 export default function AssignmentsPage() {
+    const { toast } = useToast();
+
+    const handleAction = (title: string) => {
+        toast({
+            title: 'Feature Not Available',
+            description: `${title} functionality is not yet implemented.`,
+        });
+    };
+
     const getBadgeVariant = (status: string) => {
         switch (status) {
         case 'Pending':
@@ -42,7 +54,6 @@ export default function AssignmentsPage() {
             return 'outline';
         }
     };
-
 
   return (
     <Card>
@@ -73,12 +84,12 @@ export default function AssignmentsPage() {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right space-x-2">
-                    <Button variant="outline" size="icon">
+                    <Button variant="outline" size="icon" onClick={() => handleAction('Download')}>
                         <Download className="h-4 w-4" />
                         <span className="sr-only">Download Assignment</span>
                     </Button>
                     {assignment.status === 'Pending' && (
-                        <Button variant="outline" size="icon">
+                        <Button variant="outline" size="icon" onClick={() => handleAction('Upload')}>
                             <Upload className="h-4 w-4" />
                             <span className="sr-only">Upload Submission</span>
                         </Button>
