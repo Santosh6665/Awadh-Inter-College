@@ -66,14 +66,57 @@ export function Header() {
 
 
   return (
-    <header className="sticky top-0 z-50 flex h-14 items-center gap-4 border-b bg-card px-4 md:px-6 shadow-sm">
-      <Link href="/" className="flex items-center gap-2">
-        <CollegeLogo className="h-8 w-8 text-primary" />
-        <h1 className="font-headline text-xl font-bold tracking-tight text-primary hidden sm:block">
-          Awadh Inter College
-        </h1>
-      </Link>
-      <nav className="hidden md:flex items-center gap-6 ml-auto">
+    <header className="sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm">
+      <div className="flex items-center gap-2">
+         <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="md:hidden hover:bg-transparent hover:text-primary">
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle navigation menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left">
+             <SheetHeader>
+              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+            </SheetHeader>
+            <nav className="grid gap-6 text-lg font-medium mt-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {link.label}
+                </Link>
+              ))}
+              {!user && (
+                
+                  <Link
+                    href="/login"
+                    className="text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    Login
+                  </Link>
+                
+              )}
+            </nav>
+          </SheetContent>
+        </Sheet>
+        <Link href="/" className="hidden items-center gap-2 md:flex">
+            <CollegeLogo className="h-8 w-8 text-primary" />
+            <h1 className="font-headline text-xl font-bold tracking-tight text-primary hidden sm:block">
+            Awadh Inter College
+            </h1>
+        </Link>
+      </div>
+      
+      <div className="flex items-center md:hidden">
+        <Link href="/" className="flex items-center gap-2">
+            <CollegeLogo className="h-8 w-8 text-primary" />
+        </Link>
+      </div>
+
+      <nav className="hidden md:flex items-center gap-6">
         {navLinks.map((link) => (
           <Link
             key={link.href}
@@ -84,7 +127,8 @@ export function Header() {
           </Link>
         ))}
       </nav>
-      <div className="flex items-center gap-2 ml-auto md:ml-0">
+      
+      <div className="flex items-center gap-2">
         {loading ? null : user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -120,40 +164,6 @@ export function Header() {
             </Button>
           </div>
         )}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden hover:bg-transparent hover:text-primary">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle navigation menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left">
-             <SheetHeader>
-              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-            </SheetHeader>
-            <nav className="grid gap-6 text-lg font-medium mt-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  {link.label}
-                </Link>
-              ))}
-              {!user && (
-                
-                  <Link
-                    href="/login"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    Login
-                  </Link>
-                
-              )}
-            </nav>
-          </SheetContent>
-        </Sheet>
       </div>
     </header>
   );
