@@ -5,7 +5,7 @@ import React from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { BookOpen, Camera, Info, LogIn, Target, Zap, Phone, Mail, MapPin, Megaphone } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -77,7 +77,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="bg-secondary text-secondary-foreground py-3">
+        <section className="bg-muted text-muted-foreground py-3">
             <div className="container mx-auto">
                 <div className="flex items-center justify-center gap-4">
                     <Megaphone className="h-5 w-5 text-primary" />
