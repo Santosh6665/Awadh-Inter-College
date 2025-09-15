@@ -10,9 +10,9 @@ body {
   :root {
     --background: 194 92% 95%; /* Dimly Blue */
     --foreground: 215 28% 18%;
-    --card: 194 92% 95%; /* Dimly Blue */
+    --card: 0 0% 100%; /* White */
     --card-foreground: 215 28% 18%;
-    --popover: 194 92% 95%; /* Dimly Blue */
+    --popover: 0 0% 100%; /* White */
     --popover-foreground: 215 28% 18%;
     --primary: 7 100% 50%; /* Brightly Orange */
     --primary-foreground: 210 40% 98%;
