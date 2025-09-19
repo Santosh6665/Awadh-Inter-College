@@ -51,7 +51,7 @@ export function AdmissionForm() {
   async function onSubmit(data: AdmissionFormValues) {
     setLoading(true);
     try {
-      const schoolPhoneNumber = '919839864196'; // Country code + phone number
+      const schoolPhoneNumber = '8810989286'; // Country code + phone number
 
       const message = `
 *New Admission Application*
