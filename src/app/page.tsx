@@ -30,6 +30,7 @@ export default function HomePage() {
   const [isHistoryExpanded, setIsHistoryExpanded] = React.useState(false);
   const [isPrincipalMessageExpanded, setIsPrincipalMessageExpanded] = React.useState(false);
   const [isFounderMessageExpanded, setIsFounderMessageExpanded] = React.useState(false);
+  const [isDirectorMessageExpanded, setIsDirectorMessageExpanded] = React.useState(false);
   
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -237,6 +238,44 @@ export default function HomePage() {
                             <div className="text-center md:text-left">
                                <Button variant="link" onClick={() => setIsFounderMessageExpanded(!isFounderMessageExpanded)}>
                                   {isFounderMessageExpanded ? 'Read Less' : 'Read More'}
+                              </Button>
+                            </div>
+                      </div>
+                  </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        <section id="director-message" className="py-12 bg-muted px-4 sm:px-6 md:px-8">
+          <div className="container mx-auto">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-3xl text-center">A Message from the Director</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                  <div className="flex flex-col md:flex-row items-center gap-8">
+                      <div className="flex-shrink-0">
+                          <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
+                              <AvatarImage src="/images/director.jpg" alt="Director's Photo" data-ai-hint="director portrait" />
+                              <AvatarFallback>D</AvatarFallback>
+                          </Avatar>
+                      </div>
+                      <div className="text-center md:text-left">
+                           <h2 className="text-2xl font-bold">Dr. Alan Grant</h2>
+                           <p className="text-muted-foreground">Director, Awadh Inter College</p>
+                           <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isDirectorMessageExpanded && "max-h-40")}>
+                              <p>
+                                As the Director of Awadh Inter College, it is my pleasure to welcome you to our vibrant community. We are dedicated to fostering an environment of academic rigor, innovation, and holistic development. Our goal is to empower every student to reach their full potential and become a leader in their chosen field.
+                              </p>
+                               <p>
+                                We believe in a balanced approach to education, one that combines strong academics with enriching extracurricular activities. Our faculty is committed to providing personalized attention and mentorship, ensuring that each student's journey is both challenging and rewarding. Together, we are building a legacy of excellence.
+                              </p>
+                              {!isDirectorMessageExpanded && <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-card to-transparent" />}
+                            </div>
+                            <div className="text-center md:text-left">
+                               <Button variant="link" onClick={() => setIsDirectorMessageExpanded(!isDirectorMessageExpanded)}>
+                                  {isDirectorMessageExpanded ? 'Read Less' : 'Read More'}
                               </Button>
                             </div>
                       </div>
