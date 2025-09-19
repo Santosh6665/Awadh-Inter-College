@@ -51,7 +51,7 @@ export function AdmissionForm() {
   async function onSubmit(data: AdmissionFormValues) {
     setLoading(true);
     try {
-      const schoolPhoneNumber = '916393071946'; // Replace with your school's WhatsApp number
+      const schoolPhoneNumber = '919839864196'; // Country code + phone number
 
       const message = `
 *New Admission Application*
