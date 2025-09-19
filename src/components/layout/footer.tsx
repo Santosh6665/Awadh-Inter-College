@@ -53,11 +53,11 @@ export function Footer() {
                 </div>
                 <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4 flex-shrink-0" />
-                    <span>+91 6393071946</span>
+                    <a href="tel:+916393071946" className="hover:underline">+91 6393071946</a>
                 </div>
                 <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4 flex-shrink-0" />
-                    <span>info@awadhcollege.edu</span>
+                    <a href="mailto:info@awadhcollege.edu" className="hover:underline">info@awadhcollege.edu</a>
                 </div>
                 </div>
             </div>

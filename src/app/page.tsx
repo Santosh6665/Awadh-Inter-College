@@ -467,18 +467,18 @@ export default function HomePage() {
                       <Phone className="h-6 w-6 text-accent mt-1" />
                       <div>
                         <h3 className="text-lg font-semibold">Phone</h3>
-                        <p className="text-muted-foreground">
+                        <a href="tel:+916393071946" className="text-muted-foreground hover:underline">
                           +91 6393071946
-                        </p>
+                        </a>
                       </div>
                     </div>
                      <div className="flex items-start gap-4">
                       <Mail className="h-6 w-6 text-accent mt-1" />
                       <div>
                         <h3 className="text-lg font-semibold">Email</h3>
-                        <p className="text-muted-foreground">
+                        <a href="mailto:info@awadhcollege.edu" className="text-muted-foreground hover:underline">
                           info@awadhcollege.edu
-                        </p>
+                        </a>
                       </div>
                     </div>
                   </div>
