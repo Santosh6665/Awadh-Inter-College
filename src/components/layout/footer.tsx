@@ -49,7 +49,7 @@ export function Footer() {
                 <div className="space-y-2 text-sm text-muted-foreground">
                 <div className="flex items-start gap-2">
                     <MapPin className="mt-1 h-4 w-4 flex-shrink-0" />
-                    <span>Ghosiyari Bazar Marg, Ghosiyari Bazar, Daniawar, Basti, Uttar Pradesh – 272148</span>
+                    <span>Ghosiyari Bazar, Daniawar, Basti, Uttar Pradesh – 272148</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4 flex-shrink-0" />
