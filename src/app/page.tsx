@@ -270,19 +270,19 @@ export default function HomePage() {
         <section id="principal-message" className="py-12 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
-              <CardHeader>
-                <CardTitle className="text-3xl text-center">A Message from the Principal</CardTitle>
+              <CardHeader className="p-4 md:p-6">
+                <CardTitle className="text-2xl md:text-3xl text-center">A Message from the Principal</CardTitle>
               </CardHeader>
-              <CardContent>
-                  <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
+              <CardContent className="p-4 md:p-6">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                       <div className="flex-shrink-0">
-                          <Avatar className="h-32 w-32 md:h-48 md:w-48 border-4 border-primary shadow-lg">
+                          <Avatar className="h-24 w-24 md:h-48 md:w-48 border-4 border-primary shadow-lg">
                               <AvatarImage src="/images/principal.jpg" alt="Principal's Photo" data-ai-hint="principal portrait" />
                               <AvatarFallback>S</AvatarFallback>
                           </Avatar>
                       </div>
                       <div className="text-center md:text-left">
-                          <h2 className="text-2xl font-bold">Shivam Srivastav</h2>
+                          <h2 className="text-xl md:text-2xl font-bold">Shivam Srivastav</h2>
                           <p className="text-muted-foreground">Principal, Awadh Inter College</p>
                            <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isPrincipalMessageExpanded && "max-h-40")}>
                               <p>
@@ -313,19 +313,19 @@ export default function HomePage() {
         <section id="founder-message" className="py-12 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
-              <CardHeader>
-                <CardTitle className="text-3xl text-center">Our Founder's Vision</CardTitle>
+              <CardHeader className="p-4 md:p-6">
+                <CardTitle className="text-2xl md:text-3xl text-center">Our Founder's Vision</CardTitle>
               </CardHeader>
-              <CardContent>
-                  <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
+              <CardContent className="p-4 md:p-6">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                       <div className="flex-shrink-0">
-                          <Avatar className="h-32 w-32 md:h-48 md:w-48 border-4 border-primary shadow-lg">
+                          <Avatar className="h-24 w-24 md:h-48 md:w-48 border-4 border-primary shadow-lg">
                               <AvatarImage src="/images/founder.jpg" alt="Founder's Photo" data-ai-hint="founder portrait" />
                               <AvatarFallback>M</AvatarFallback>
                           </Avatar>
                       </div>
                       <div className="text-center md:text-left">
-                           <h2 className="text-2xl font-bold">Mr. Pratap Lal Srivastav</h2>
+                           <h2 className="text-xl md:text-2xl font-bold">Mr. Pratap Lal Srivastav</h2>
                            <p className="text-muted-foreground">Founder, Awadh Inter College</p>
                            <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isFounderMessageExpanded && "max-h-40")}>
                               <p>
@@ -349,19 +349,19 @@ export default function HomePage() {
         <section id="director-message" className="py-12 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
-              <CardHeader>
-                <CardTitle className="text-3xl text-center">A Message from the Director</CardTitle>
+              <CardHeader className="p-4 md:p-6">
+                <CardTitle className="text-2xl md:text-3xl text-center">A Message from the Director</CardTitle>
               </CardHeader>
-              <CardContent>
-                  <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
+              <CardContent className="p-4 md:p-6">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                       <div className="flex-shrink-0">
-                          <Avatar className="h-32 w-32 md:h-48 md:w-48 border-4 border-primary shadow-lg">
+                          <Avatar className="h-24 w-24 md:h-48 md:w-48 border-4 border-primary shadow-lg">
                               <AvatarImage src="/images/director.jpg" alt="Director's Photo" data-ai-hint="director portrait" />
                               <AvatarFallback>M</AvatarFallback>
                           </Avatar>
                       </div>
                       <div className="text-center md:text-left">
-                           <h2 className="text-2xl font-bold">Mrs. Asha Srivastav</h2>
+                           <h2 className="text-xl md:text-2xl font-bold">Mrs. Asha Srivastav</h2>
                            <p className="text-muted-foreground">Director, Awadh Inter College</p>
                            <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isDirectorMessageExpanded && "max-h-40")}>
                               <p>
