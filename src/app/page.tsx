@@ -174,17 +174,17 @@ export default function HomePage() {
         <section id="features" className="py-12 md:py-20 bg-background px-4 sm:px-6 md:px-8">
             <div className="container mx-auto">
                 <h3 className="text-3xl font-bold text-center mb-10">Why Choose Awadh Inter College?</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {features.map((feature, index) => (
                         <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                             <CardHeader>
-                                <div className="mx-auto bg-primary/10 text-primary rounded-full w-16 h-16 flex items-center justify-center">
-                                    <feature.icon className="h-8 w-8" />
+                                <div className="mx-auto bg-primary/10 text-primary rounded-full w-14 h-14 flex items-center justify-center">
+                                    <feature.icon className="h-7 w-7" />
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <h4 className="text-xl font-semibold mb-2">{feature.title}</h4>
-                                <p className="text-muted-foreground">{feature.description}</p>
+                                <h4 className="text-lg font-semibold mb-2">{feature.title}</h4>
+                                <p className="text-muted-foreground text-sm">{feature.description}</p>
                             </CardContent>
                         </Card>
                     ))}
