@@ -442,7 +442,7 @@ export default function HomePage() {
           </div>
         </section>
         
-        <section id="contact" className="py-12 md:py-20 bg-muted px-4 sm:px-6 md:px-8">
+        <section id="contact" className="py-12 md:py-20 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
               <CardHeader>
