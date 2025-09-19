@@ -145,7 +145,7 @@ export default function HomePage() {
             </Carousel>
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center p-4">
             <div className="container mx-auto">
-                <Card className="max-w-xs md:max-w-2xl mx-auto bg-black/40 backdrop-blur-sm text-center p-6 text-white border-white/20">
+                <Card className="max-w-xs md:max-w-2xl mx-auto bg-black/20 backdrop-blur-sm text-center p-6 text-white border-white/20">
                     <h2 className="text-3xl md:text-4xl font-bold">
                         Awadh Inter College
                     </h2>
@@ -386,7 +386,7 @@ export default function HomePage() {
 
 
         <section className="bg-background py-12 md:py-20 px-4 sm:px-6 md:px-8">
-          <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
