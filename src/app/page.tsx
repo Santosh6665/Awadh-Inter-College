@@ -273,10 +273,10 @@ export default function HomePage() {
               <CardHeader>
                 <CardTitle className="text-3xl text-center">A Message from the Principal</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-8">
-                  <div className="flex flex-col md:flex-row items-center gap-8">
+              <CardContent>
+                  <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                       <div className="flex-shrink-0">
-                          <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
+                          <Avatar className="h-32 w-32 md:h-48 md:w-48 border-4 border-primary shadow-lg">
                               <AvatarImage src="/images/principal.jpg" alt="Principal's Photo" data-ai-hint="principal portrait" />
                               <AvatarFallback>S</AvatarFallback>
                           </Avatar>
@@ -316,10 +316,10 @@ export default function HomePage() {
               <CardHeader>
                 <CardTitle className="text-3xl text-center">Our Founder's Vision</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-8">
-                  <div className="flex flex-col md:flex-row items-center gap-8">
+              <CardContent>
+                  <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                       <div className="flex-shrink-0">
-                          <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
+                          <Avatar className="h-32 w-32 md:h-48 md:w-48 border-4 border-primary shadow-lg">
                               <AvatarImage src="/images/founder.jpg" alt="Founder's Photo" data-ai-hint="founder portrait" />
                               <AvatarFallback>M</AvatarFallback>
                           </Avatar>
@@ -352,10 +352,10 @@ export default function HomePage() {
               <CardHeader>
                 <CardTitle className="text-3xl text-center">A Message from the Director</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-8">
-                  <div className="flex flex-col md:flex-row items-center gap-8">
+              <CardContent>
+                  <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                       <div className="flex-shrink-0">
-                          <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
+                          <Avatar className="h-32 w-32 md:h-48 md:w-48 border-4 border-primary shadow-lg">
                               <AvatarImage src="/images/director.jpg" alt="Director's Photo" data-ai-hint="director portrait" />
                               <AvatarFallback>M</AvatarFallback>
                           </Avatar>
