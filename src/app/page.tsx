@@ -267,7 +267,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="principal-message" className="py-12 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
+        <section id="principal-message" className="py-6 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
               <CardHeader className="p-4 md:p-6">
@@ -310,7 +310,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="founder-message" className="py-12 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
+        <section id="founder-message" className="py-6 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
               <CardHeader className="p-4 md:p-6">
@@ -346,7 +346,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="director-message" className="py-12 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
+        <section id="director-message" className="py-6 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
               <CardHeader className="p-4 md:p-6">
