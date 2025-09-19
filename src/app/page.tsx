@@ -67,7 +67,7 @@ export default function HomePage() {
             </Carousel>
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center p-4">
             <div className="container mx-auto">
-                <Card className="max-w-xs md:max-w-2xl mx-auto bg-black/60 backdrop-blur-sm text-center p-6 text-white border-white/20">
+                <Card className="max-w-xs md:max-w-2xl mx-auto bg-black/40 backdrop-blur-sm text-center p-6 text-white border-white/20">
                     <h2 className="text-3xl md:text-4xl font-bold">
                         Awadh Inter College
                     </h2>
