@@ -145,7 +145,7 @@ export default function HomePage() {
             </Carousel>
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center p-4">
             <div className="container mx-auto">
-                <Card className="max-w-xs md:max-w-2xl mx-auto bg-black/20 backdrop-blur-sm text-center p-6 text-white border-white/20">
+                <Card className="max-w-xs md:max-w-2xl mx-auto bg-black/40 backdrop-blur-sm text-center p-6 text-white border-white/20">
                     <h2 className="text-3xl md:text-4xl font-bold">
                         Awadh Inter College
                     </h2>
@@ -174,7 +174,7 @@ export default function HomePage() {
         <section id="features" className="py-12 md:py-20 bg-background px-4 sm:px-6 md:px-8">
             <div className="container mx-auto">
                 <h3 className="text-3xl font-bold text-center mb-10">Why Choose Awadh Inter College?</h3>
-                <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
                     {features.map((feature, index) => (
                         <Card key={index} className="text-center hover:shadow-lg transition-shadow flex flex-col">
                             <CardHeader className="p-4 pb-2">
@@ -225,7 +225,7 @@ export default function HomePage() {
                     </div>
                     <div className="text-center mt-4">
                        <Button variant="link" onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}>
-                            {isHistoryExpanded ? 'Read Less' : 'Read Less'}
+                            {isHistoryExpanded ? 'Read Less' : 'Read More'}
                        </Button>
                     </div>
                 </CardContent>
@@ -267,7 +267,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="principal-message" className="pt-12 bg-muted px-4 sm:px-6 md:px-8">
+        <section id="principal-message" className="py-12 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
               <CardHeader>
@@ -310,7 +310,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="founder-message" className="py-12 bg-muted px-4 sm:px-6 md:px-8">
+        <section id="founder-message" className="py-12 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
               <CardHeader>
@@ -346,7 +346,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="director-message" className="py-12 bg-muted px-4 sm:px-6 md:px-8">
+        <section id="director-message" className="py-12 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
               <CardHeader>
