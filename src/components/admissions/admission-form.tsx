@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { addStudent } from '@/lib/firebase/realtimedb';
 import { Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
@@ -52,22 +51,33 @@ export function AdmissionForm() {
   async function onSubmit(data: AdmissionFormValues) {
     setLoading(true);
     try {
-      // In a real application, you might want a separate 'applications' collection
-      // For this app, we'll add them as students with a default roll number/section.
-      await addStudent({
-        ...data,
-        rollNumber: 'N/A',
-        section: 'N/A',
-      });
+      const schoolPhoneNumber = '916393071946'; // Replace with your school's WhatsApp number
+
+      const message = `
+*New Admission Application*
+
+*Name:* ${data.name}
+*Email:* ${data.email}
+*Date of Birth:* ${data.dob}
+*Phone:* ${data.phone}
+*Father's Name:* ${data.fatherName}
+*Address:* ${data.address}
+*Desired Class:* ${data.class}
+      `.trim();
+
+      const whatsappUrl = `https://wa.me/${schoolPhoneNumber}?text=${encodeURIComponent(message)}`;
+      
+      window.open(whatsappUrl, '_blank');
+
       toast({
-        title: 'Application Submitted',
-        description: 'Thank you! Your admission form has been received.',
+        title: 'Application Ready',
+        description: 'Your application details have been prepared for WhatsApp.',
       });
       form.reset();
     } catch (error) {
       toast({
         title: 'An error occurred',
-        description: 'Could not submit your application. Please try again.',
+        description: 'Could not prepare your application. Please try again.',
         variant: 'destructive',
       });
     } finally {
