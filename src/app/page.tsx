@@ -6,7 +6,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { BookOpen, Camera, Info, LogIn, Target, Zap, Phone, Mail, MapPin, Megaphone } from 'lucide-react';
+import { BookOpen, Camera, Info, LogIn, Target, Zap, Phone, Mail, MapPin, Megaphone, Users, FlaskConical, Library, Trophy, BrainCircuit, ScreenShare } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -21,6 +21,39 @@ const carouselImages = [
   { src: "/images/hero-3.jpg", alt: "University library with students", hint: "university library" },
   { src: "/images/hero-4.jpg", alt: "Graduation ceremony", hint: "graduation ceremony" },
   { src: "/images/hero-5.jpg", alt: "Students participating in a sports event", hint: "students sports" },
+];
+
+const features = [
+    {
+        icon: Users,
+        title: "Experienced Faculty",
+        description: "Our team of dedicated and experienced educators is committed to nurturing students' potential.",
+    },
+    {
+        icon: FlaskConical,
+        title: "Modern Labs",
+        description: "State-of-the-art science and computer labs to provide hands-on learning experiences.",
+    },
+    {
+        icon: Library,
+        title: "Vast Library",
+        description: "A comprehensive collection of books, journals, and digital resources to support academic growth.",
+    },
+    {
+        icon: Trophy,
+        title: "Sports Facilities",
+        description: "Encouraging physical fitness and teamwork through a wide range of sports and activities.",
+    },
+    {
+        icon: BrainCircuit,
+        title: "Holistic Development",
+        description: "Focusing on both academic excellence and co-curricular activities for all-round development.",
+    },
+    {
+        icon: ScreenShare,
+        title: "Smart Classrooms",
+        description: "Interactive and technology-enabled classrooms to make learning more engaging and effective.",
+    },
 ];
 
 export default function HomePage() {
@@ -82,6 +115,27 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section id="features" className="py-12 md:py-20 bg-background px-4 sm:px-6 md:px-8">
+            <div className="container mx-auto">
+                <h3 className="text-3xl font-bold text-center mb-10">Why Choose Awadh Inter College?</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {features.map((feature, index) => (
+                        <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+                            <CardHeader>
+                                <div className="mx-auto bg-primary/10 text-primary rounded-full w-16 h-16 flex items-center justify-center">
+                                    <feature.icon className="h-8 w-8" />
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <h4 className="text-xl font-semibold mb-2">{feature.title}</h4>
+                                <p className="text-muted-foreground">{feature.description}</p>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+        </section>
+
         <section className="bg-muted text-muted-foreground py-3">
             <div className="container mx-auto">
                 <div className="flex items-center justify-center gap-4">
@@ -126,7 +180,7 @@ export default function HomePage() {
                     </div>
                     <div className="text-center mt-4">
                        <Button variant="link" onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}>
-                            {isHistoryExpanded ? 'Read Less' : 'Read More'}
+                            {isHistoryExpanded ? 'Read Less' : 'Read Less'}
                        </Button>
                     </div>
                 </CardContent>
@@ -405,3 +459,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+    
