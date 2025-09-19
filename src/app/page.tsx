@@ -276,7 +276,7 @@ export default function HomePage() {
               <CardContent className="p-4 md:p-6">
                   <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                       <div className="flex-shrink-0">
-                          <Avatar className="h-24 w-24 md:h-48 md:w-48 border-4 border-primary shadow-lg">
+                          <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-primary shadow-lg">
                               <AvatarImage src="/images/principal.jpg" alt="Principal's Photo" data-ai-hint="principal portrait" />
                               <AvatarFallback>S</AvatarFallback>
                           </Avatar>
@@ -284,7 +284,7 @@ export default function HomePage() {
                       <div className="text-center md:text-left">
                           <h2 className="text-xl md:text-2xl font-bold">Shivam Srivastav</h2>
                           <p className="text-muted-foreground">Principal, Awadh Inter College</p>
-                           <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isPrincipalMessageExpanded && "max-h-40")}>
+                           <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isPrincipalMessageExpanded && "max-h-24")}>
                               <p>
                                   Welcome to Awadh Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.
                               </p>
@@ -319,7 +319,7 @@ export default function HomePage() {
               <CardContent className="p-4 md:p-6">
                   <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                       <div className="flex-shrink-0">
-                          <Avatar className="h-24 w-24 md:h-48 md:w-48 border-4 border-primary shadow-lg">
+                          <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-primary shadow-lg">
                               <AvatarImage src="/images/founder.jpg" alt="Founder's Photo" data-ai-hint="founder portrait" />
                               <AvatarFallback>M</AvatarFallback>
                           </Avatar>
@@ -327,7 +327,7 @@ export default function HomePage() {
                       <div className="text-center md:text-left">
                            <h2 className="text-xl md:text-2xl font-bold">Mr. Pratap Lal Srivastav</h2>
                            <p className="text-muted-foreground">Founder, Awadh Inter College</p>
-                           <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isFounderMessageExpanded && "max-h-40")}>
+                           <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isFounderMessageExpanded && "max-h-24")}>
                               <p>
                                 The Awad Inter College School Management System (SMS) is initiated and conceptualized by the Founder of Awad Inter College, who envisioned a digital platform to streamline administrative, academic, and communication processes.
                                 The Founder’s mission is to modernize the institution’s operations, provide transparency for parents, empower teachers with digital tools, and improve the overall learning experience for students.
@@ -355,7 +355,7 @@ export default function HomePage() {
               <CardContent className="p-4 md:p-6">
                   <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                       <div className="flex-shrink-0">
-                          <Avatar className="h-24 w-24 md:h-48 md:w-48 border-4 border-primary shadow-lg">
+                          <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-primary shadow-lg">
                               <AvatarImage src="/images/director.jpg" alt="Director's Photo" data-ai-hint="director portrait" />
                               <AvatarFallback>M</AvatarFallback>
                           </Avatar>
@@ -363,7 +363,7 @@ export default function HomePage() {
                       <div className="text-center md:text-left">
                            <h2 className="text-xl md:text-2xl font-bold">Mrs. Asha Srivastav</h2>
                            <p className="text-muted-foreground">Director, Awadh Inter College</p>
-                           <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isDirectorMessageExpanded && "max-h-40")}>
+                           <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isDirectorMessageExpanded && "max-h-24")}>
                               <p>
                                 As the Director of Awadh Inter College, it is my pleasure to welcome you to our vibrant community. We are dedicated to fostering an environment of academic rigor, innovation, and holistic development. Our goal is to empower every student to reach their full potential and become a leader in their chosen field.
                               </p>
