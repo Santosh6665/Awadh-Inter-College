@@ -192,7 +192,7 @@ export default function HomePage() {
             </div>
         </section>
 
-        <section id="about-us" className="py-6 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
+        <section id="about-us" className="py-2 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto text-center">
             <h3 className="text-3xl font-bold text-center mb-6">About Our School</h3>
              <Card className="text-left max-w-5xl mx-auto">
@@ -202,7 +202,7 @@ export default function HomePage() {
                         src="/images/about-school.jpg"
                         alt="School Building"
                         width={1200}
-                        height={300}
+                        height={200}
                         className="object-cover w-full h-auto"
                         data-ai-hint="school building"
                         />
@@ -324,7 +324,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="principal-message" className="py-6 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
+        <section id="principal-message" className="py-2 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
               <CardHeader className="p-4 md:p-6">
@@ -367,7 +367,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="founder-message" className="py-6 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
+        <section id="founder-message" className="py-2 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
               <CardHeader className="p-4 md:p-6">
@@ -403,7 +403,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="director-message" className="py-6 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
+        <section id="director-message" className="py-2 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
               <CardHeader className="p-4 md:p-6">
