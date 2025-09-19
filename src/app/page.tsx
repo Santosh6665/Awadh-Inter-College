@@ -232,6 +232,63 @@ export default function HomePage() {
              </Card>
           </div>
         </section>
+
+        <section className="bg-background py-12 md:py-20 px-4 sm:px-6 md:px-8">
+          <div className="container mx-auto grid grid-cols-2 gap-2 md:grid-cols-2 md:gap-8">
+            <Card>
+              <CardHeader className="p-4">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <LogIn className="text-accent" /> Portals
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 pt-0">
+                <p className="text-sm">Access for students, parents, and faculty.</p>
+                <Button variant="outline" asChild className="mt-4">
+                  <Link href="/login">Login Now</Link>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="p-4">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Info className="text-accent" /> Admissions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 pt-0">
+                <p className="text-sm">Learn about our admission process and criteria.</p>
+                 <Button variant="outline" asChild className="mt-4">
+                  <Link href="/admissions">Learn More</Link>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="p-4">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Camera className="text-accent" /> Gallery
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 pt-0">
+                <p className="text-sm">Explore moments and events from our campus life.</p>
+                 <Button variant="outline" asChild className="mt-4">
+                  <Link href="/gallery">View Gallery</Link>
+                </Button>
+              </CardContent>
+            </Card>
+             <Card>
+              <CardHeader className="p-4">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <BookOpen className="text-accent" /> Notices
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 pt-0">
+                <p className="text-sm">Stay updated with the latest school announcements.</p>
+                 <Button variant="outline" asChild className="mt-4">
+                  <Link href="/notices">Check Notices</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
         
         <section id="vision-mission" className="py-12 md:py-20 bg-background px-4 sm:px-6 md:px-8">
           <div className="container mx-auto text-center">
@@ -384,64 +441,6 @@ export default function HomePage() {
           </div>
         </section>
 
-
-        <section className="bg-background py-12 md:py-20 px-4 sm:px-6 md:px-8">
-          <div className="container mx-auto grid grid-cols-2 gap-2 md:grid-cols-2 md:gap-8">
-            <Card>
-              <CardHeader className="p-4">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <LogIn className="text-accent" /> Portals
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <p className="text-sm">Access for students, parents, and faculty.</p>
-                <Button variant="outline" asChild className="mt-4">
-                  <Link href="/login">Login Now</Link>
-                </Button>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="p-4">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Info className="text-accent" /> Admissions
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <p className="text-sm">Learn about our admission process and criteria.</p>
-                 <Button variant="outline" asChild className="mt-4">
-                  <Link href="/admissions">Learn More</Link>
-                </Button>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="p-4">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Camera className="text-accent" /> Gallery
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <p className="text-sm">Explore moments and events from our campus life.</p>
-                 <Button variant="outline" asChild className="mt-4">
-                  <Link href="/gallery">View Gallery</Link>
-                </Button>
-              </CardContent>
-            </Card>
-             <Card>
-              <CardHeader className="p-4">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <BookOpen className="text-accent" /> Notices
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <p className="text-sm">Stay updated with the latest school announcements.</p>
-                 <Button variant="outline" asChild className="mt-4">
-                  <Link href="/notices">Check Notices</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-        
         <section id="contact" className="py-12 md:py-20 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card>
