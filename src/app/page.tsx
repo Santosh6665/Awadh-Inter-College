@@ -6,7 +6,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { BookOpen, Camera, Info, LogIn, Target, Zap, Phone, Mail, MapPin, Megaphone, Users, FlaskConical, Library, Trophy, BrainCircuit, ScreenShare } from 'lucide-react';
+import { BookOpen, Camera, Info, LogIn, Target, Zap, Phone, Mail, MapPin, Megaphone, Users, FlaskConical, Library, Trophy, BrainCircuit, ScreenShare, HandHeart, Computer, Video, Wifi, ZapIcon, UserCheck, Wind, Droplets, Medal, BookCheck, LineChart, Award, GraduationCap } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -25,34 +25,79 @@ const carouselImages = [
 
 const features = [
     {
-        icon: Users,
-        title: "Experienced Faculty",
-        description: "Our team of dedicated and experienced educators is committed to nurturing students' potential.",
+        icon: HandHeart,
+        title: "Support for Underprivileged",
+        description: "Free education for poor and underprivileged children.",
     },
     {
-        icon: FlaskConical,
-        title: "Modern Labs",
-        description: "State-of-the-art science and computer labs to provide hands-on learning experiences.",
-    },
-    {
-        icon: Library,
-        title: "Vast Library",
-        description: "A comprehensive collection of books, journals, and digital resources to support academic growth.",
-    },
-    {
-        icon: Trophy,
-        title: "Sports Facilities",
-        description: "Encouraging physical fitness and teamwork through a wide range of sports and activities.",
-    },
-    {
-        icon: BrainCircuit,
-        title: "Holistic Development",
-        description: "Focusing on both academic excellence and co-curricular activities for all-round development.",
+        icon: Computer,
+        title: "Modern Computer Lab",
+        description: "State-of-the-art computer lab and dedicated computer classes.",
     },
     {
         icon: ScreenShare,
         title: "Smart Classrooms",
-        description: "Interactive and technology-enabled classrooms to make learning more engaging and effective.",
+        description: "Interactive learning with smart classrooms equipped with projectors.",
+    },
+     {
+        icon: Video,
+        title: "CCTV Surveillance",
+        description: "Continuous monitoring of every child through a campus-wide CCTV network.",
+    },
+    {
+        icon: Wifi,
+        title: "Wi-Fi Enabled Campus",
+        description: "Seamless internet connectivity throughout the college campus.",
+    },
+    {
+        icon: ZapIcon,
+        title: "Uninterrupted Power Supply",
+        description: "Reliable power with solar energy and generator backup.",
+    },
+    {
+        icon: UserCheck,
+        title: "Experienced Teachers",
+        description: "High-quality teaching by our team of trained and experienced educators.",
+    },
+     {
+        icon: Wind,
+        title: "Healthy Environment",
+        description: "Clean, safe, and well-ventilated classrooms for a conducive learning atmosphere.",
+    },
+     {
+        icon: Droplets,
+        title: "Hygienic Facilities",
+        description: "Separate and clean washrooms for both boys and girls.",
+    },
+     {
+        icon: Trophy,
+        title: "Co-Curricular Activities",
+        description: "Special arrangements for sports and cultural activities for all students.",
+    },
+     {
+        icon: Users,
+        title: "Parent-Teacher Meetings",
+        description: "Monthly PTMs to ensure strong parent-teacher collaboration.",
+    },
+      {
+        icon: BookCheck,
+        title: "Continuous Assessment",
+        description: "Weekly tests are conducted for continuous academic improvement.",
+    },
+      {
+        icon: LineChart,
+        title: "Proven Success",
+        description: "A consistent 100% success rate in board examinations.",
+    },
+     {
+        icon: Award,
+        title: "Navodaya Preparation",
+        description: "Free Navodaya Entrance Exam preparation for Class 5th students.",
+    },
+     {
+        icon: GraduationCap,
+        title: "Holistic Development",
+        description: "Focusing on both academic excellence and co-curricular activities for all-round development.",
     },
 ];
 
