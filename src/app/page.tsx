@@ -232,7 +232,7 @@ export default function HomePage() {
              </Card>
           </div>
         </section>
-        
+
         <section className="bg-background py-12 md:py-20 px-4 sm:px-6 md:px-8">
           <div className="container mx-auto grid grid-cols-2 gap-2 md:grid-cols-2 md:gap-8">
             <Card>
@@ -441,7 +441,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="contact" className="py-12 md:py-20 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
+        <section id="contact" className="py-6 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card className="overflow-hidden">
               <CardHeader className="p-4 md:p-6">
@@ -480,7 +480,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
-                <div className="w-full h-full">
+                <div className="w-full h-full p-2">
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113947.88601614902!2d82.8249903!3d27.0345786!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3996d52f5f17ae31%3A0xd62c60629abe5491!2s2WM4%2BRXR%2C%20Nikhoria%2C%20Uttar%20Pradesh%20272153!5e0!3m2!1sen!2sin!4v1719504547926!5m2!1sen!2sin"
                     width="100%"
