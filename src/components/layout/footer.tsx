@@ -14,7 +14,7 @@ export function Footer() {
                 <span className="text-xl font-bold">Awadh Inter College</span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              A center for academic excellence and holistic development since 1965.
+              A center for academic excellence and holistic development since 2012.
             </p>
           </div>
 

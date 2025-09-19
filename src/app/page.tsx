@@ -113,7 +113,7 @@ export default function HomePage() {
                     <h4 className="text-2xl font-semibold mb-4 text-center">Our History</h4>
                     <div className={cn("prose max-w-none text-muted-foreground space-y-4 relative overflow-hidden", !isHistoryExpanded && "max-h-40")}>
                         <p>
-                            Founded in 1965, Awadh Inter College started as a small institution with a grand vision: to provide high-quality education to the local community and empower the youth with knowledge and values. Over the decades, we have grown in both size and stature, becoming a premier center for learning in the region.
+                            Founded in 2012, Awadh Inter College started as a small institution with a grand vision: to provide high-quality education to the local community and empower the youth with knowledge and values. Over the decades, we have grown in both size and stature, becoming a premier center for learning in the region.
                         </p>
                         
                         <p>
@@ -179,11 +179,11 @@ export default function HomePage() {
                       <div className="flex-shrink-0">
                           <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
                               <AvatarImage src="/images/principal.jpg" alt="Principal's Photo" data-ai-hint="principal portrait" />
-                              <AvatarFallback>P</AvatarFallback>
+                              <AvatarFallback>S</AvatarFallback>
                           </Avatar>
                       </div>
                       <div className="text-center md:text-left">
-                          <h2 className="text-2xl font-bold">Dr. Evelyn Reed</h2>
+                          <h2 className="text-2xl font-bold">Shivam Srivastav</h2>
                           <p className="text-muted-foreground">Principal, Awadh Inter College</p>
                            <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isPrincipalMessageExpanded && "max-h-40")}>
                               <p>
@@ -222,11 +222,11 @@ export default function HomePage() {
                       <div className="flex-shrink-0">
                           <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
                               <AvatarImage src="/images/founder.jpg" alt="Founder's Photo" data-ai-hint="founder portrait" />
-                              <AvatarFallback>F</AvatarFallback>
+                              <AvatarFallback>M</AvatarFallback>
                           </Avatar>
                       </div>
                       <div className="text-center md:text-left">
-                           <h2 className="text-2xl font-bold">Mr. Arjun Singh</h2>
+                           <h2 className="text-2xl font-bold">Mr. Pratap Lal Srivastav</h2>
                            <p className="text-muted-foreground">Founder, Awadh Inter College</p>
                            <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isFounderMessageExpanded && "max-h-40")}>
                               <p>
@@ -258,11 +258,11 @@ export default function HomePage() {
                       <div className="flex-shrink-0">
                           <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
                               <AvatarImage src="/images/director.jpg" alt="Director's Photo" data-ai-hint="director portrait" />
-                              <AvatarFallback>D</AvatarFallback>
+                              <AvatarFallback>M</AvatarFallback>
                           </Avatar>
                       </div>
                       <div className="text-center md:text-left">
-                           <h2 className="text-2xl font-bold">Dr. Alan Grant</h2>
+                           <h2 className="text-2xl font-bold">Mrs. Asha Srivastav</h2>
                            <p className="text-muted-foreground">Director, Awadh Inter College</p>
                            <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isDirectorMessageExpanded && "max-h-40")}>
                               <p>

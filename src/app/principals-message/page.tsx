@@ -20,11 +20,11 @@ export default function PrincipalsMessagePage() {
                     <div className="flex-shrink-0">
                         <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
                             <AvatarImage src="https://picsum.photos/seed/principal/300" alt="Principal's Photo" data-ai-hint="principal portrait" />
-                            <AvatarFallback>P</AvatarFallback>
+                            <AvatarFallback>S</AvatarFallback>
                         </Avatar>
                     </div>
                     <div className="text-center md:text-left">
-                        <h2 className="text-2xl font-bold">Dr. Evelyn Reed</h2>
+                        <h2 className="text-2xl font-bold">Shivam Srivastav</h2>
                         <p className="text-muted-foreground">Principal, Awadh Inter College</p>
                     </div>
                 </div>
