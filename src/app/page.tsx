@@ -236,7 +236,7 @@ export default function HomePage() {
         <section id="vision-mission" className="py-12 md:py-20 bg-background px-4 sm:px-6 md:px-8">
           <div className="container mx-auto text-center">
             <h3 className="text-3xl font-bold text-center mb-10">Our Vision &amp; Mission</h3>
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               <Card className="text-left">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
