@@ -6,7 +6,7 @@ import { Mail, MapPin, Phone } from 'lucide-react';
 export function Footer() {
   return (
     <footer className="border-t bg-card text-card-foreground">
-      <div className="container mx-auto px-6 py-4 md:px-8">
+      <div className="container mx-auto px-6 py-2 md:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div className="space-y-4 md:col-span-1">
             <Link href="/" className="flex items-center gap-2">
@@ -49,7 +49,7 @@ export function Footer() {
                 <div className="space-y-2 text-sm text-muted-foreground">
                 <div className="flex items-start gap-2">
                     <MapPin className="mt-1 h-4 w-4 flex-shrink-0" />
-                    <span>Ghosiyari Bazar, Daniawar, Basti, Uttar Pradesh – 272148</span>
+                    <span>Ghosiyari bazar, bansi, Siddharth Nagar, 272148</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4 flex-shrink-0" />

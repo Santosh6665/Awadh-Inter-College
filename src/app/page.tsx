@@ -457,7 +457,7 @@ export default function HomePage() {
                     <div>
                       <h3 className="text-lg font-semibold">Address</h3>
                       <p className="text-muted-foreground">
-                        Ghosiyari Bazar, Daniawar, Basti, Uttar Pradesh – 272148
+                        Ghosiyari bazar, bansi, Siddharth Nagar, 272148
                       </p>
                     </div>
                   </div>
