@@ -443,57 +443,55 @@ export default function HomePage() {
 
         <section id="contact" className="py-12 md:py-20 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
-            <Card>
+            <Card className="overflow-hidden">
               <CardHeader>
                 <CardTitle className="text-3xl text-center">Contact Us</CardTitle>
                 <CardDescription className="text-center">
                   We'd love to hear from you. Reach out to us with any questions.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-6">
-                    <div className="flex items-start gap-4">
-                      <MapPin className="h-6 w-6 text-accent mt-1" />
-                      <div>
-                        <h3 className="text-lg font-semibold">Address</h3>
-                        <p className="text-muted-foreground">
-                          Ghosiyari Bazar, Daniawar, Basti, Uttar Pradesh – 272148
-                        </p>
-                      </div>
-                    </div>
-                     <div className="flex items-start gap-4">
-                      <Phone className="h-6 w-6 text-accent mt-1" />
-                      <div>
-                        <h3 className="text-lg font-semibold">Phone</h3>
-                        <a href="tel:+916393071946" className="text-muted-foreground hover:underline">
-                          +91 6393071946
-                        </a>
-                      </div>
-                    </div>
-                     <div className="flex items-start gap-4">
-                      <Mail className="h-6 w-6 text-accent mt-1" />
-                      <div>
-                        <h3 className="text-lg font-semibold">Email</h3>
-                        <a href="mailto:info@awadhcollege.edu" className="text-muted-foreground hover:underline">
-                          info@awadhcollege.edu
-                        </a>
-                      </div>
+              <div className="grid grid-cols-1 md:grid-cols-2">
+                <div className="p-6 space-y-6">
+                  <div className="flex items-start gap-4">
+                    <MapPin className="h-6 w-6 text-accent mt-1" />
+                    <div>
+                      <h3 className="text-lg font-semibold">Address</h3>
+                      <p className="text-muted-foreground">
+                        Ghosiyari Bazar, Daniawar, Basti, Uttar Pradesh – 272148
+                      </p>
                     </div>
                   </div>
-                  <div className="rounded-lg overflow-hidden">
-                     <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113947.88601614902!2d82.8249903!3d27.0345786!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3996d52f5f17ae31%3A0xd62c60629abe5491!2s2WM4%2BRXR%2C%20Nikhoria%2C%20Uttar%20Pradesh%20272153!5e0!3m2!1sen!2sin!4v1719504547926!5m2!1sen!2sin"
-                        width="100%"
-                        height="300"
-                        style={{ border: 0 }}
-                        allowFullScreen
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                      ></iframe>
+                  <div className="flex items-start gap-4">
+                    <Phone className="h-6 w-6 text-accent mt-1" />
+                    <div>
+                      <h3 className="text-lg font-semibold">Phone</h3>
+                      <a href="tel:+916393071946" className="text-muted-foreground hover:underline">
+                        +91 6393071946
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <Mail className="h-6 w-6 text-accent mt-1" />
+                    <div>
+                      <h3 className="text-lg font-semibold">Email</h3>
+                      <a href="mailto:info@awadhcollege.edu" className="text-muted-foreground hover:underline">
+                        info@awadhcollege.edu
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </CardContent>
+                <div>
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113947.88601614902!2d82.8249903!3d27.0345786!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3996d52f5f17ae31%3A0xd62c60629abe5491!2s2WM4%2BRXR%2C%20Nikhoria%2C%20Uttar%20Pradesh%20272153!5e0!3m2!1sen!2sin!4v1719504547926!5m2!1sen!2sin"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, minHeight: '300px' }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
+                </div>
+              </div>
             </Card>
           </div>
         </section>
