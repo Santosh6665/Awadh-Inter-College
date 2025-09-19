@@ -177,14 +177,14 @@ export default function HomePage() {
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-1 sm:gap-2">
                     {features.map((feature, index) => (
                         <Card key={index} className="text-center hover:shadow-lg transition-shadow flex flex-col">
-                            <CardHeader className="p-4 pb-2">
-                                <div className="mx-auto bg-primary/10 text-primary rounded-full w-10 h-10 flex items-center justify-center">
-                                    <feature.icon className="h-5 w-5" />
+                            <CardHeader className="p-2 pb-1">
+                                <div className="mx-auto bg-primary/10 text-primary rounded-full w-8 h-8 flex items-center justify-center">
+                                    <feature.icon className="h-4 w-4" />
                                 </div>
                             </CardHeader>
-                            <CardContent className="p-4 pt-2 flex-grow">
-                                <h4 className="text-xs font-semibold mb-1">{feature.title}</h4>
-                                <p className="text-muted-foreground text-xs leading-snug">{feature.description}</p>
+                            <CardContent className="p-2 pt-1 flex-grow">
+                                <h4 className="text-[10px] sm:text-xs font-semibold mb-1">{feature.title}</h4>
+                                <p className="text-muted-foreground text-[9px] sm:text-[10px] leading-tight sm:leading-snug">{feature.description}</p>
                             </CardContent>
                         </Card>
                     ))}
@@ -386,54 +386,54 @@ export default function HomePage() {
 
 
         <section className="bg-background py-12 md:py-20 px-4 sm:px-6 md:px-8">
-          <div className="container mx-auto grid grid-cols-2 gap-8">
+          <div className="container mx-auto grid grid-cols-2 gap-2 md:grid-cols-2 md:gap-8">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+              <CardHeader className="p-4">
+                <CardTitle className="flex items-center gap-2 text-base">
                   <LogIn className="text-accent" /> Portals
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p>Access for students, parents, and faculty.</p>
+              <CardContent className="p-4 pt-0">
+                <p className="text-sm">Access for students, parents, and faculty.</p>
                 <Button variant="outline" asChild className="mt-4">
                   <Link href="/login">Login Now</Link>
                 </Button>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+              <CardHeader className="p-4">
+                <CardTitle className="flex items-center gap-2 text-base">
                   <Info className="text-accent" /> Admissions
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p>Learn about our admission process and criteria.</p>
+              <CardContent className="p-4 pt-0">
+                <p className="text-sm">Learn about our admission process and criteria.</p>
                  <Button variant="outline" asChild className="mt-4">
                   <Link href="/admissions">Learn More</Link>
                 </Button>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+              <CardHeader className="p-4">
+                <CardTitle className="flex items-center gap-2 text-base">
                   <Camera className="text-accent" /> Gallery
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p>Explore moments and events from our campus life.</p>
+              <CardContent className="p-4 pt-0">
+                <p className="text-sm">Explore moments and events from our campus life.</p>
                  <Button variant="outline" asChild className="mt-4">
                   <Link href="/gallery">View Gallery</Link>
                 </Button>
               </CardContent>
             </Card>
              <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+              <CardHeader className="p-4">
+                <CardTitle className="flex items-center gap-2 text-base">
                   <BookOpen className="text-accent" /> Notices
                 </CardTitle>
-                <CardDescription>Stay updated with the latest school announcements.</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 pt-0">
+                <p className="text-sm">Stay updated with the latest school announcements.</p>
                  <Button variant="outline" asChild className="mt-4">
                   <Link href="/notices">Check Notices</Link>
                 </Button>
