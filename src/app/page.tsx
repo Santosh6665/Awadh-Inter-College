@@ -174,7 +174,7 @@ export default function HomePage() {
         <section id="features" className="py-12 md:py-20 bg-background px-4 sm:px-6 md:px-8">
             <div className="container mx-auto">
                 <h3 className="text-3xl font-bold text-center mb-10">Why Choose Awadh Inter College?</h3>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-1 sm:gap-2">
                     {features.map((feature, index) => (
                         <Card key={index} className="text-center hover:shadow-lg transition-shadow flex flex-col">
                             <CardHeader className="p-4 pb-2">
