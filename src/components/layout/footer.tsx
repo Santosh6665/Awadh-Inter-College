@@ -6,7 +6,7 @@ import { Mail, MapPin, Phone } from 'lucide-react';
 export function Footer() {
   return (
     <footer className="border-t bg-card text-card-foreground">
-      <div className="container mx-auto px-6 py-6 md:px-8">
+      <div className="container mx-auto px-6 py-4 md:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div className="space-y-4 md:col-span-1">
             <Link href="/" className="flex items-center gap-2">
@@ -44,7 +44,7 @@ export function Footer() {
           </div>
           
           <div className="space-y-4 md:col-span-3">
-             <div className="border-t pt-6">
+             <div className="border-t pt-4">
                 <h4 className="font-semibold mb-4">Contact Us</h4>
                 <div className="space-y-2 text-sm text-muted-foreground">
                 <div className="flex items-start gap-2">
@@ -64,7 +64,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-6 border-t pt-6 text-center text-sm text-muted-foreground">
+        <div className="mt-4 border-t pt-4 text-center text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} Awadh Inter College. All rights reserved.</p>
           <p className="mt-2">
             For technical support, contact our IT Team at <a href="mailto:santoshx.dev@gmail.com" className="underline hover:text-foreground">santoshx.dev@gmail.com</a>
