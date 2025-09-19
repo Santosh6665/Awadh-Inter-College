@@ -386,7 +386,7 @@ export default function HomePage() {
 
 
         <section className="bg-background py-12 md:py-20 px-4 sm:px-6 md:px-8">
-          <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="container mx-auto grid grid-cols-2 gap-8">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
