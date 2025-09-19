@@ -160,6 +160,17 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section className="bg-muted text-muted-foreground py-3">
+            <div className="container mx-auto">
+                <div className="flex items-center justify-center gap-4">
+                    <Megaphone className="h-5 w-5 text-primary" />
+                    <p className="text-sm font-medium">
+                        Admissions for the 2025-2026 session are now open. <Link href="/admissions" className="underline text-blue-600 hover:text-primary">Apply Now!</Link>
+                    </p>
+                </div>
+            </div>
+        </section>
+        
         <section id="features" className="py-12 md:py-20 bg-background px-4 sm:px-6 md:px-8">
             <div className="container mx-auto">
                 <h3 className="text-3xl font-bold text-center mb-10">Why Choose Awadh Inter College?</h3>
@@ -177,17 +188,6 @@ export default function HomePage() {
                             </CardContent>
                         </Card>
                     ))}
-                </div>
-            </div>
-        </section>
-
-        <section className="bg-muted text-muted-foreground py-3">
-            <div className="container mx-auto">
-                <div className="flex items-center justify-center gap-4">
-                    <Megaphone className="h-5 w-5 text-primary" />
-                    <p className="text-sm font-medium">
-                        Admissions for the 2025-2026 session are now open. <Link href="/admissions" className="underline text-blue-600 hover:text-primary">Apply Now!</Link>
-                    </p>
                 </div>
             </div>
         </section>
@@ -504,5 +504,7 @@ export default function HomePage() {
     </div>
   );
 }
+
+    
 
     
