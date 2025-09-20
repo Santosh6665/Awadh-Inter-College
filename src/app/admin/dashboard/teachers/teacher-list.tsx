@@ -112,8 +112,8 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
                   <TableHead>Name</TableHead>
                   <TableHead className="hidden md:table-cell">Email</TableHead>
                   <TableHead>Subject</TableHead>
+                  <TableHead className="hidden lg:table-cell">Qualification</TableHead>
                   <TableHead className="hidden md:table-cell">Phone</TableHead>
-                  <TableHead className="hidden lg:table-cell">Date of Birth</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -124,10 +124,8 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
                       <TableCell>{teacher.name}</TableCell>
                       <TableCell className="hidden md:table-cell">{teacher.email}</TableCell>
                       <TableCell>{teacher.subject}</TableCell>
+                      <TableCell className="hidden lg:table-cell">{teacher.qualification ?? 'N/A'}</TableCell>
                       <TableCell className="hidden md:table-cell">{teacher.phone}</TableCell>
-                      <TableCell className="hidden lg:table-cell">
-                        {teacher.dob ? new Date(teacher.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' }) : 'N/A'}
-                      </TableCell>
                       <TableCell className="text-right">
                          <DropdownMenu>
                           <DropdownMenuTrigger asChild>

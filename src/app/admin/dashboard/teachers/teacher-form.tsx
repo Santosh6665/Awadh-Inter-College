@@ -98,9 +98,15 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
               <Input id="phone" name="phone" type="tel" defaultValue={teacher?.phone} />
             </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="dob">Date of Birth</Label>
-            <Input id="dob" name="dob" type="date" defaultValue={formattedDob} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+                <Label htmlFor="dob">Date of Birth</Label>
+                <Input id="dob" name="dob" type="date" defaultValue={formattedDob} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="qualification">Qualification</Label>
+              <Input id="qualification" name="qualification" defaultValue={teacher?.qualification} />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsOpen(false)}>

@@ -12,6 +12,7 @@ const TeacherSchema = z.object({
   subject: z.string().min(2, 'Subject is required.'),
   phone: z.string().min(10, 'Phone number must be at least 10 digits.'),
   dob: z.string().optional(),
+  qualification: z.string().optional(),
 });
 
 export type TeacherFormState = {
