@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader } from '@/components/ui/table';
 import Link from 'next/link';
 import { SetPasswordDialog } from './set-password-dialog';
+import { calculatePercentage, calculateGrade } from '@/lib/result-utils';
 
 interface StudentDashboardProps {
   student: Student;
@@ -23,7 +24,12 @@ export function StudentDashboard({ student, forcePasswordReset }: StudentDashboa
     }
     return name.substring(0, 2);
   };
-  
+
+  const percentage = calculatePercentage(student.marks);
+  const grade = calculateGrade(percentage);
+
+  const hasMarks = student.marks && Object.values(student.marks).some(mark => mark !== null && mark !== undefined);
+
   return (
     <>
       <SetPasswordDialog isOpen={forcePasswordReset} studentId={student.id} />
@@ -105,7 +111,46 @@ export function StudentDashboard({ student, forcePasswordReset }: StudentDashboa
                           <CardDescription>Your performance in recent exams.</CardDescription>
                       </CardHeader>
                       <CardContent>
-                          <p className="text-muted-foreground">No exam results available at the moment.</p>
+                          {hasMarks ? (
+                              <div className="space-y-4">
+                                  <Table>
+                                      <TableHeader>
+                                          <TableRow>
+                                              <TableHead>Subject</TableHead>
+                                              <TableHead className="text-right">Marks (out of 100)</TableHead>
+                                          </TableRow>
+                                      </TableHeader>
+                                      <TableBody>
+                                          <TableRow>
+                                              <TableCell>Physics</TableCell>
+                                              <TableCell className="text-right">{student.marks?.physics ?? 'N/A'}</TableCell>
+                                          </TableRow>
+                                           <TableRow>
+                                              <TableCell>Chemistry</TableCell>
+                                              <TableCell className="text-right">{student.marks?.chemistry ?? 'N/A'}</TableCell>
+                                          </TableRow>
+                                           <TableRow>
+                                              <TableCell>Maths</TableCell>
+                                              <TableCell className="text-right">{student.marks?.maths ?? 'N/A'}</TableCell>
+                                          </TableRow>
+                                           <TableRow>
+                                              <TableCell>English</TableCell>
+                                              <TableCell className="text-right">{student.marks?.english ?? 'N/A'}</TableCell>
+                                          </TableRow>
+                                           <TableRow>
+                                              <TableCell>Computer Science</TableCell>
+                                              <TableCell className="text-right">{student.marks?.computerScience ?? 'N/A'}</TableCell>
+                                          </TableRow>
+                                      </TableBody>
+                                  </Table>
+                                  <div className="flex justify-end gap-8 font-bold pr-4">
+                                      <span>Percentage: {percentage?.toFixed(2)}%</span>
+                                      <span>Grade: {grade}</span>
+                                  </div>
+                              </div>
+                          ) : (
+                            <p className="text-muted-foreground">No exam results available at the moment.</p>
+                          )}
                       </CardContent>
                   </Card>
               </TabsContent>
