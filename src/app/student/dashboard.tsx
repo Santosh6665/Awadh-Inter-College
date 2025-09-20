@@ -63,18 +63,16 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
 
   const attendancePercentage = useMemo(() => {
     if (attendance.length === 0) return 'N/A';
-    const presentDays = attendance.filter(a => a.status === 'present' || a.status === 'late').length;
+    const presentDays = attendance.filter(a => a.status === 'present').length;
     return `${((presentDays / attendance.length) * 100).toFixed(2)}%`;
   }, [attendance]);
 
-  const getAttendanceStatusIcon = (status: 'present' | 'absent' | 'late') => {
+  const getAttendanceStatusIcon = (status: 'present' | 'absent') => {
     switch (status) {
       case 'present':
         return <CheckCircle className="h-5 w-5 text-green-500" />;
       case 'absent':
         return <XCircle className="h-5 w-5 text-red-500" />;
-      case 'late':
-        return <Clock className="h-5 w-5 text-yellow-500" />;
     }
   };
 
@@ -136,7 +134,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
           </CardHeader>
           <CardContent className="p-4 md:p-6 pt-0">
             <Tabs defaultValue="profile" className="w-full">
-               <TabsList className="w-full justify-start print-hidden mb-4 overflow-x-auto whitespace-nowrap">
+               <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-nowrap">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="results">Exam Results</TabsTrigger>
                 <TabsTrigger value="attendance">Attendance</TabsTrigger>

@@ -18,7 +18,7 @@ export async function getAttendanceByDate(date: string) {
   }
 }
 
-export async function setAttendance(studentId: string, date: string, status: 'present' | 'absent' | 'late') {
+export async function setAttendance(studentId: string, date: string, status: 'present' | 'absent') {
   try {
     const attendanceDocRef = firestore.collection('attendance').doc(date);
     await attendanceDocRef.set({

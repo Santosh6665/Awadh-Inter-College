@@ -88,7 +88,7 @@ export type BusRoute = {
 
 export type AttendanceRecord = {
   date: string;
-  status: 'present' | 'absent' | 'late';
+  status: 'present' | 'absent';
 };
 
 export type Notice = {

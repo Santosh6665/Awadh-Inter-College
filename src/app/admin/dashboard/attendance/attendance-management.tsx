@@ -24,7 +24,7 @@ import { cn } from '@/lib/utils';
 import { getAttendanceByDate, setAttendance as setAttendanceAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
 
-type AttendanceStatus = 'present' | 'absent' | 'late';
+type AttendanceStatus = 'present' | 'absent';
 type AttendanceData = {
   [studentId: string]: { status: AttendanceStatus };
 };
@@ -95,10 +95,9 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
       
     const present = attendanceValues.filter(a => a?.status === 'present').length;
     const absent = attendanceValues.filter(a => a?.status === 'absent').length;
-    const late = attendanceValues.filter(a => a?.status === 'late').length;
     const total = filteredStudents.length;
-    const percentage = total > 0 ? ((present + late) / total) * 100 : 0;
-    return { present, absent, late, percentage };
+    const percentage = total > 0 ? (present / total) * 100 : 0;
+    return { present, absent, percentage };
   }, [attendance, filteredStudents]);
 
 
@@ -151,7 +150,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
           />
         </div>
         <div className="mt-4 text-sm text-muted-foreground">
-          <strong>Summary for filtered students:</strong> Present: {attendanceSummary.present} | Absent: {attendanceSummary.absent} | Late: {attendanceSummary.late} | 
+          <strong>Summary for filtered students:</strong> Present: {attendanceSummary.present} | Absent: {attendanceSummary.absent} | 
           <strong> Attendance: {attendanceSummary.percentage.toFixed(2)}%</strong>
         </div>
       </CardHeader>
@@ -192,10 +191,6 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="absent" id={`absent-${student.id}`} />
                             <Label htmlFor={`absent-${student.id}`}>Absent</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="late" id={`late-${student.id}`} />
-                            <Label htmlFor={`late-${student.id}`}>Late</Label>
                           </div>
                         </RadioGroup>
                       </TableCell>
