@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { Student } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -34,6 +34,39 @@ export function ResultsManagement({ students }: { students: Student[] }) {
     const classMatch = classFilter ? student.class === classFilter : true;
     return nameMatch && classMatch;
   });
+
+  const studentRanks = useMemo(() => {
+    const ranks = new Map<string, number>();
+    const studentsWithPercentage = students
+      .map(student => ({
+        ...student,
+        percentage: calculatePercentage(student.marks),
+      }))
+      .filter(s => s.percentage !== null);
+
+    const studentsByClass = studentsWithPercentage.reduce((acc, student) => {
+      if (!acc[student.class]) {
+        acc[student.class] = [];
+      }
+      acc[student.class].push(student);
+      return acc;
+    }, {} as Record<string, typeof studentsWithPercentage>);
+
+    for (const className in studentsByClass) {
+      const classStudents = studentsByClass[className];
+      classStudents.sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0));
+      
+      let rank = 1;
+      for (let i = 0; i < classStudents.length; i++) {
+        if (i > 0 && classStudents[i].percentage < classStudents[i - 1].percentage) {
+          rank = i + 1;
+        }
+        ranks.set(classStudents[i].id, rank);
+      }
+    }
+    return ranks;
+  }, [students]);
+
 
   return (
     <>
@@ -78,6 +111,7 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                   <TableHead>Comp. Sci.</TableHead>
                   <TableHead>Percentage</TableHead>
                   <TableHead>Grade</TableHead>
+                  <TableHead>Rank</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -86,6 +120,7 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                   filteredStudents.map((student) => {
                     const percentage = calculatePercentage(student.marks);
                     const grade = calculateGrade(percentage);
+                    const rank = studentRanks.get(student.id);
                     return (
                         <TableRow key={student.id}>
                             <TableCell>{student.rollNumber}</TableCell>
@@ -98,6 +133,7 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                             <TableCell>{student.marks?.computerScience ?? 'N/A'}</TableCell>
                             <TableCell>{percentage !== null ? `${percentage.toFixed(2)}%` : 'N/A'}</TableCell>
                             <TableCell>{grade}</TableCell>
+                            <TableCell>{rank ?? 'N/A'}</TableCell>
                             <TableCell className="text-right">
                                 <Button variant="ghost" size="icon" onClick={() => handleEdit(student)}>
                                     <Edit className="h-4 w-4" />
@@ -108,7 +144,7 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={11} className="text-center">
+                    <TableCell colSpan={12} className="text-center">
                       No students found.
                     </TableCell>
                   </TableRow>
