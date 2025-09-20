@@ -91,7 +91,7 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="rollNumber">Roll No.</Label>
-            <Input id="rollNumber" name="rollNumber" defaultValue={student?.rollNumber} disabled={isEditing} />
+            <Input id="rollNumber" name="rollNumber" defaultValue={student?.rollNumber} readOnly={isEditing} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
              <div className="space-y-2">
