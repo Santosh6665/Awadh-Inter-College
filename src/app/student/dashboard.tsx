@@ -132,7 +132,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                 </div>
             </div>
           </CardHeader>
-          <CardContent className="p-4 md:p-6 pt-0">
+          <CardContent className="pt-0">
             <Tabs defaultValue="profile" className="w-full">
                <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-nowrap">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
@@ -189,7 +189,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
               </TabsContent>
                <TabsContent value="results" className="mt-4">
                   <Card id="result-card" className="border-2 shadow-lg">
-                      <CardHeader className="p-4 bg-muted/30">
+                      <CardHeader className="p-4 bg-muted/30 print-p-4">
                           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="flex items-center gap-4">
                                 <CollegeLogo className="h-16 w-16 text-primary" />
@@ -211,10 +211,10 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                             <Badge variant="secondary" className="text-base font-bold tracking-wider">🎓 STUDENT RESULT CARD</Badge>
                           </div>
                       </CardHeader>
-                      <CardContent className="p-4 md:p-6 space-y-6">
+                      <CardContent className="p-4 md:p-6 space-y-6 print-p-4">
                           {hasMarks ? (
                               <>
-                                  <div className="border rounded-lg p-4">
+                                  <div className="border rounded-lg p-4 print-p-4">
                                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><User className="h-5 w-5 text-primary"/> 🧑‍🎓 Student Details</h3>
                                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2 text-sm">
                                         <div><strong>Name:</strong> {student.name}</div>
@@ -224,7 +224,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                       </div>
                                   </div>
 
-                                  <div className="border rounded-lg p-4">
+                                  <div className="border rounded-lg p-4 print-p-4">
                                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><BookOpen className="h-5 w-5 text-primary" /> 📘 Academic Performance</h3>
                                       <Table>
                                           <TableHeader>
@@ -433,5 +433,6 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
     
 
     
+
 
 
