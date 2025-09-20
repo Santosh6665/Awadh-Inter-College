@@ -140,7 +140,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
             </form>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="results" className="w-full">
+            <Tabs defaultValue="profile" className="w-full">
               <TabsList className="print-hidden">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="results">Exam Results</TabsTrigger>
