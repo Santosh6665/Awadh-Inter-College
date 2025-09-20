@@ -64,6 +64,8 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
     }
   }, [state, toast, setIsOpen]);
 
+  const formattedDob = teacher?.dob ? new Date(teacher.dob).toISOString().split('T')[0] : '';
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-lg">
@@ -95,6 +97,10 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
               <Label htmlFor="phone">Phone</Label>
               <Input id="phone" name="phone" type="tel" defaultValue={teacher?.phone} />
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="dob">Date of Birth</Label>
+            <Input id="dob" name="dob" type="date" defaultValue={formattedDob} />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsOpen(false)}>

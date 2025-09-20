@@ -67,6 +67,7 @@ export type Teacher = {
     subject: string;
     phone: string;
     photoUrl?: string;
+    dob?: string;
 };
 
 export type Book = {
