@@ -13,8 +13,9 @@ import { calculatePercentage, calculateGrade, calculateTotals } from '@/lib/resu
 import { Download, CheckCircle, XCircle, Clock, GraduationCap, User, BookOpen, BarChart3, Mail, Phone } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useMemo } from 'react';
-import { Separator } from '@/components/ui/separator';
 import { CollegeLogo } from '@/components/icons';
+import { cn } from '@/lib/utils';
+
 
 interface StudentDashboardProps {
   student: Student;
@@ -173,12 +174,12 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                               </TableRow>
                                           </TableHeader>
                                           <TableBody>
-                                            {Object.entries(student.marks || {}).filter(([key]) => key !== 'remarks').map(([subject, marks]) => (
+                                            {Object.entries(student.marks || {}).filter(([key]) => key !== 'remarks' && typeof student.marks?.[key as keyof typeof student.marks] === 'number').map(([subject, marks]) => (
                                               <TableRow key={subject}>
                                                 <TableCell className="capitalize">{subject.replace(/([A-Z])/g, ' $1')}</TableCell>
                                                 <TableCell className="text-center">100</TableCell>
                                                 <TableCell className="text-center">{marks ?? 'N/A'}</TableCell>
-                                                <TableCell className="text-right">{calculateGrade(marks)}</TableCell>
+                                                <TableCell className="text-right">{calculateGrade(marks as number)}</TableCell>
                                               </TableRow>
                                             ))}
                                           </TableBody>
@@ -197,7 +198,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                       <div className="space-y-2 text-sm">
                                         <div className="flex justify-between"><strong>Percentage:</strong> <span className="font-mono">{percentage?.toFixed(2)}%</span></div>
                                         <div className="flex justify-between"><strong>Overall Grade:</strong> <span className="font-mono">{grade}</span></div>
-                                        <div className="flex justify-between"><strong>Result Status:</strong> <Badge variant={resultStatus === 'Pass' ? 'default' : 'destructive'} className="bg-green-600 text-white">{resultStatus === 'Pass' ? '✅ Pass' : '❌ Fail'}</Badge></div>
+                                        <div className="flex justify-between"><strong>Result Status:</strong> <Badge className={cn(resultStatus === 'Pass' ? 'bg-green-600' : 'bg-red-600', 'text-white')}>{resultStatus === 'Pass' ? '✅ Pass' : '❌ Fail'}</Badge></div>
                                       </div>
                                     </div>
                                     <div className="border rounded-lg p-4">

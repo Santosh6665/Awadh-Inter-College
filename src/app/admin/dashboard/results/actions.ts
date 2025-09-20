@@ -11,6 +11,7 @@ const MarksSchema = z.object({
   maths: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
   english: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
   computerScience: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  remarks: z.string().optional(),
 });
 
 
@@ -56,6 +57,7 @@ export async function updateStudentMarks(
     });
 
     revalidatePath('/admin/dashboard');
+    revalidatePath('/student');
     return { success: true, message: 'Student marks updated successfully.' };
   } catch (error) {
     console.error('Error updating student marks:', error);

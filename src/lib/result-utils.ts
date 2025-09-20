@@ -26,12 +26,14 @@ export function calculateGrade(value: number | null | undefined): string {
     return 'N/A';
   }
 
-  if (value >= 90) return 'A+';
-  if (value >= 80) return 'A';
-  if (value >= 70) return 'B+';
-  if (value >= 60) return 'B';
-  if (value >= 50) return 'C';
-  if (value >= 40) return 'D';
+  const marks = Math.round(value);
+
+  if (marks >= 90) return 'A+';
+  if (marks >= 80) return 'A';
+  if (marks >= 70) return 'B+';
+  if (marks >= 60) return 'B';
+  if (marks >= 50) return 'C';
+  if (marks >= 40) return 'D';
   return 'F';
 }
 
