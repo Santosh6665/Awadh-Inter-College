@@ -14,13 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon, Search } from "lucide-react";
@@ -170,16 +165,24 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
                       <TableCell>{student.name}</TableCell>
                       <TableCell className="hidden md:table-cell">{`${student.class}-${student.section}`}</TableCell>
                       <TableCell className="text-right">
-                        <Select onValueChange={(value) => handleStatusChange(student.id, value as AttendanceStatus)} value={status}>
-                          <SelectTrigger className="w-full md:w-[120px] ml-auto">
-                            <SelectValue placeholder="Mark" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="present">Present</SelectItem>
-                            <SelectItem value="absent">Absent</SelectItem>
-                            <SelectItem value="late">Late</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <RadioGroup
+                          onValueChange={(value) => handleStatusChange(student.id, value as AttendanceStatus)}
+                          value={status}
+                          className="flex justify-end gap-2 md:gap-4"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="present" id={`present-${student.id}`} />
+                            <Label htmlFor={`present-${student.id}`}>Present</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="absent" id={`absent-${student.id}`} />
+                            <Label htmlFor={`absent-${student.id}`}>Absent</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="late" id={`late-${student.id}`} />
+                            <Label htmlFor={`late-${student.id}`}>Late</Label>
+                          </div>
+                        </RadioGroup>
                       </TableCell>
                     </TableRow>
                   )
