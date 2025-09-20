@@ -51,6 +51,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
             description: 'Could not fetch attendance data.',
             variant: 'destructive',
         });
+        setAttendance({}); // Reset to empty on error
     } finally {
         setLoading(false);
     }
@@ -67,8 +68,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
     const result = await setAttendanceAction(studentId, formattedDate, status);
     
     if (result.success) {
-      // Re-fetch on success to ensure data consistency, though optimistic update handles the immediate UI change.
-      // This is useful if the backend modifies the data in some way.
+      // Re-fetch on success to ensure data consistency
       await fetchAttendance();
     } else {
       toast({

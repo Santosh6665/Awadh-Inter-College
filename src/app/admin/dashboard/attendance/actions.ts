@@ -13,7 +13,8 @@ export async function getAttendanceByDate(date: string) {
     return attendanceSnapshot.data() || {};
   } catch (error) {
     console.error('Error fetching attendance:', error);
-    return {};
+    // Re-throw the error to be caught by the client-side component
+    throw new Error('Failed to fetch attendance data from the server.');
   }
 }
 
