@@ -71,20 +71,20 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
     }
   };
 
-  const filteredStudents = students.filter(student => {
+  const filteredStudents = useMemo(() => students.filter(student => {
     const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const classMatch = classFilter ? student.class === classFilter : true;
+    const classMatch = classFilter ? student.class.toLowerCase().includes(classFilter.toLowerCase()) : true;
     return nameMatch && classMatch;
-  });
+  }), [students, searchQuery, classFilter]);
   
   const attendanceSummary = useMemo(() => {
     const present = Object.values(attendance).filter(a => a.status === 'present').length;
     const absent = Object.values(attendance).filter(a => a.status === 'absent').length;
     const late = Object.values(attendance).filter(a => a.status === 'late').length;
-    const total = students.length;
-    const percentage = total > 0 ? (present + late) / total * 100 : 0;
+    const total = filteredStudents.length;
+    const percentage = total > 0 ? ((present + late) / total) * 100 : 0;
     return { present, absent, late, percentage };
-  }, [attendance, students]);
+  }, [attendance, filteredStudents]);
 
   return (
     <Card>
@@ -135,7 +135,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
           />
         </div>
         <div className="mt-4 text-sm text-muted-foreground">
-          <strong>Summary:</strong> Present: {attendanceSummary.present} | Absent: {attendanceSummary.absent} | Late: {attendanceSummary.late} | 
+          <strong>Summary for filtered students:</strong> Present: {attendanceSummary.present} | Absent: {attendanceSummary.absent} | Late: {attendanceSummary.late} | 
           <strong> Attendance: {attendanceSummary.percentage.toFixed(2)}%</strong>
         </div>
       </CardHeader>
