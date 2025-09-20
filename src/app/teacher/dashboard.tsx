@@ -5,7 +5,7 @@ import type { Student, Teacher, AttendanceRecord } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFooter } from '@/components/ui/table';
 import { SetPasswordDialog } from './set-password-dialog';
 import { ResultsManagement } from './results-management';
 import { AttendanceManagement } from './attendance/attendance-management';
@@ -34,6 +34,11 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
     const presentDays = attendance.filter(a => a.status === 'present').length;
     return `${((presentDays / attendance.length) * 100).toFixed(2)}%`;
   }, [attendance]);
+  
+  const totalSalaryPaid = useMemo(() => {
+    return (teacher.salaryPayments || []).reduce((acc, p) => acc + p.amount, 0);
+  }, [teacher.salaryPayments]);
+
 
   const getAttendanceStatusIcon = (status: 'present' | 'absent') => {
     switch (status) {
@@ -103,6 +108,61 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                       </TableRow>
                                   </TableBody>
                               </Table>
+                            </div>
+                        </CardContent>
+                    </Card>
+                     <Card>
+                        <CardHeader>
+                            <CardTitle>Salary Information</CardTitle>
+                            <CardDescription>Your salary and payment history.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Card className="p-4">
+                                    <CardTitle className="text-sm text-muted-foreground">Base Salary (Monthly)</CardTitle>
+                                    <p className="text-2xl font-bold">₹{(teacher.baseSalary || 0).toFixed(2)}</p>
+                                </Card>
+                                <Card className="p-4">
+                                    <CardTitle className="text-sm text-muted-foreground">Total Paid (All Time)</CardTitle>
+                                    <p className="text-2xl font-bold text-green-600">₹{totalSalaryPaid.toFixed(2)}</p>
+                                </Card>
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-semibold mb-2">Payment History</h3>
+                                <div className="overflow-auto max-h-96">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Date</TableHead>
+                                            <TableHead>Method</TableHead>
+                                            <TableHead>Remarks</TableHead>
+                                            <TableHead className="text-right">Amount (₹)</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                    {teacher.salaryPayments && teacher.salaryPayments.length > 0 ? (
+                                        teacher.salaryPayments.map(payment => (
+                                            <TableRow key={payment.id}>
+                                                <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
+                                                <TableCell>{payment.method}</TableCell>
+                                                <TableCell>{payment.remarks || 'N/A'}</TableCell>
+                                                <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="text-center text-muted-foreground">No salary payments recorded yet.</TableCell>
+                                        </TableRow>
+                                    )}
+                                    </TableBody>
+                                     <TableFooter>
+                                        <TableRow className="font-bold text-base bg-muted/50">
+                                            <TableCell colSpan={3}>Total Paid</TableCell>
+                                            <TableCell className="text-right">₹{totalSalaryPaid.toFixed(2)}</TableCell>
+                                        </TableRow>
+                                    </TableFooter>
+                                </Table>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
