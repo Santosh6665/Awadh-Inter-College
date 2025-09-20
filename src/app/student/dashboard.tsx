@@ -211,12 +211,12 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                             <Badge variant="secondary" className="text-base font-bold tracking-wider">🎓 STUDENT RESULT CARD</Badge>
                           </div>
                       </CardHeader>
-                      <CardContent className="p-4 md:p-6 pt-0 space-y-6 print-p-4">
+                      <CardContent className="p-4 md:p-6 space-y-4 print-p-4">
                           {hasMarks ? (
                               <>
-                                  <div className="border rounded-lg p-4 print-p-4 mt-6">
-                                     <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><User className="h-5 w-5 text-primary"/> 🧑‍🎓 Student Details</h3>
-                                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2 text-sm">
+                                  <div className="border rounded-lg p-2 print-p-4">
+                                     <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><User className="h-5 w-5 text-primary"/> 🧑‍🎓 Student Details</h3>
+                                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-1 text-sm">
                                         <div><strong>Name:</strong> {student.name}</div>
                                         <div><strong>Roll No.:</strong> {student.rollNumber}</div>
                                         <div><strong>Class/Section:</strong> {`${student.class}-${student.section}`}</div>
@@ -224,8 +224,8 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                       </div>
                                   </div>
 
-                                  <div className="border rounded-lg p-4 print-p-4">
-                                     <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><BookOpen className="h-5 w-5 text-primary" /> 📘 Academic Performance</h3>
+                                  <div className="border rounded-lg p-2 print-p-4">
+                                     <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><BookOpen className="h-5 w-5 text-primary" /> 📘 Academic Performance</h3>
                                       <Table>
                                           <TableHeader>
                                               <TableRow>
@@ -256,17 +256,17 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                       </Table>
                                   </div>
                                   
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="border rounded-lg p-4 print-p-4">
-                                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><BarChart3 className="h-5 w-5 text-primary" /> 📊 Summary</h3>
-                                      <div className="space-y-2 text-sm">
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="border rounded-lg p-2 print-p-4">
+                                      <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><BarChart3 className="h-5 w-5 text-primary" /> 📊 Summary</h3>
+                                      <div className="space-y-1 text-sm">
                                         <div className="flex justify-between"><strong>Percentage:</strong> <span className="font-mono">{percentage?.toFixed(2)}%</span></div>
                                         <div className="flex justify-between"><strong>Overall Grade:</strong> <span className="font-mono">{grade}</span></div>
                                         <div className="flex justify-between"><strong>Result Status:</strong> <Badge className={cn(resultStatus === 'Pass' ? 'bg-green-600' : 'bg-red-600', 'text-white')}>{resultStatus === 'Pass' ? '✅ Pass' : '❌ Fail'}</Badge></div>
                                       </div>
                                     </div>
-                                    <div className="border rounded-lg p-4 print-p-4">
-                                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><GraduationCap className="h-5 w-5 text-primary" /> 🏅 Remarks</h3>
+                                    <div className="border rounded-lg p-2 print-p-4">
+                                      <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><GraduationCap className="h-5 w-5 text-primary" /> 🏅 Remarks</h3>
                                       <p className="text-sm text-muted-foreground italic">
                                         “{student.marks?.remarks || 'Good effort. Keep improving.'}”
                                       </p>
@@ -437,3 +437,6 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
 
 
 
+
+
+    
