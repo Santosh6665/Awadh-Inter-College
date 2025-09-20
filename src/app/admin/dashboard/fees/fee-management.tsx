@@ -42,24 +42,31 @@ export function FeeManagement({ students, feeSettings }: { students: Student[], 
   });
 
   const calculateFeeStatus = (student: Student) => {
-    const studentFeeStructure = student.feeStructure;
+    // Start with the default fee structure for the student's class.
     const classFeeStructure = feeSettings[student.class] || {};
+    
+    // Get the student-specific overrides.
+    const studentFeeOverrides = student.feeStructure || {};
 
-    const structure = {
+    // Combine them, with student-specific values taking precedence.
+    const finalFeeStructure = {
       ...classFeeStructure,
-      ...studentFeeStructure,
+      ...studentFeeOverrides,
     };
     
-    const positiveFees = (structure.tuition || 0) + 
-                         (structure.transport || 0) +
-                         (structure.exam || 0) +
-                         (structure.library || 0) +
-                         (structure.miscellaneous || 0);
-    const discount = structure.discount || 0;
-    const totalFees = positiveFees - discount;
+    const { 
+      tuition = 0, 
+      transport = 0, 
+      exam = 0, 
+      library = 0, 
+      miscellaneous = 0,
+      discount = 0 
+    } = finalFeeStructure;
 
+    const totalFees = (tuition + transport + exam + library + miscellaneous) - discount;
     const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
     const due = totalFees - totalPaid;
+
     return { totalFees, totalPaid, due };
   };
 
