@@ -11,6 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { saveFeeSettings } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const classes = ['LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 const feeHeads = ['tuition', 'transport', 'exam', 'library', 'miscellaneous'];
@@ -34,7 +35,7 @@ export function FeeSettings({ initialData }: { initialData: any }) {
       ...prev,
       [className]: {
         ...prev[className],
-        [feeHead]: value ? Number(value) : null,
+        [feeHead]: value ? (feeHead === 'paymentPlan' ? value : Number(value)) : null,
       },
     }));
   };
@@ -85,6 +86,22 @@ export function FeeSettings({ initialData }: { initialData: any }) {
                         />
                       </div>
                     ))}
+                     <div className="space-y-2">
+                        <Label htmlFor={`${className}-paymentPlan`}>Payment Plan</Label>
+                        <Select
+                            value={feeSettings[className]?.paymentPlan || ''}
+                            onValueChange={(value) => handleInputChange(className, 'paymentPlan', value)}
+                        >
+                            <SelectTrigger id={`${className}-paymentPlan`}>
+                                <SelectValue placeholder="Select a plan" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="monthly">Monthly</SelectItem>
+                                <SelectItem value="quarterly">Quarterly</SelectItem>
+                                <SelectItem value="yearly">Yearly</SelectItem>
+                            </SelectContent>
+                        </Select>
+                      </div>
                   </div>
                 </AccordionContent>
               </AccordionItem>
