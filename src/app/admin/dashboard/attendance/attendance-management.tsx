@@ -159,9 +159,9 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="hidden md:table-cell">Roll No.</TableHead>
+                <TableHead>Roll No.</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead className="hidden md:table-cell">Class</TableHead>
+                <TableHead>Class</TableHead>
                 <TableHead className="text-right">Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -175,9 +175,9 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
                   const status = attendance[student.id]?.status;
                   return (
                     <TableRow key={student.id}>
-                      <TableCell className="hidden md:table-cell">{student.rollNumber}</TableCell>
+                      <TableCell>{student.rollNumber}</TableCell>
                       <TableCell>{student.name}</TableCell>
-                      <TableCell className="hidden md:table-cell">{`${student.class}-${student.section}`}</TableCell>
+                      <TableCell>{`${student.class}-${student.section}`}</TableCell>
                       <TableCell className="text-right">
                         <RadioGroup
                           onValueChange={(value) => handleStatusChange(student.id, value as AttendanceStatus)}
