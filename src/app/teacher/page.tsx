@@ -10,6 +10,7 @@ import { getTeacherById } from './actions';
 export default async function TeacherPage() {
   const cookieStore = cookies();
   const teacherId = cookieStore.get('teacher_id')?.value;
+  const forcePasswordReset = cookieStore.get('force_teacher_password_reset')?.value === 'true';
 
   let teacher: Teacher | null = null;
 
@@ -26,7 +27,7 @@ export default async function TeacherPage() {
       <Header />
       <main className="flex-1">
         {teacher ? (
-          <TeacherDashboard teacher={teacher} />
+          <TeacherDashboard teacher={teacher} forcePasswordReset={forcePasswordReset} />
         ) : (
           <div className="flex items-center justify-center p-4 h-full bg-[rgb(231,249,254)]">
             <TeacherLoginForm />

@@ -69,6 +69,7 @@ export type Teacher = {
     photoUrl?: string;
     dob?: string;
     qualification?: string;
+    password?: string;
 };
 
 export type Book = {

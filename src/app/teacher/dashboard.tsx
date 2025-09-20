@@ -6,12 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { SetPasswordDialog } from './set-password-dialog';
 
 interface TeacherDashboardProps {
   teacher: Teacher;
+  forcePasswordReset: boolean;
 }
 
-export function TeacherDashboard({ teacher }: TeacherDashboardProps) {
+export function TeacherDashboard({ teacher, forcePasswordReset }: TeacherDashboardProps) {
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -21,59 +23,62 @@ export function TeacherDashboard({ teacher }: TeacherDashboardProps) {
   };
 
   return (
-    <div id="teacher-dashboard" className="bg-[rgb(231,249,254)]">
-        <Card className="min-h-screen">
-          <CardHeader className="relative flex items-center justify-between p-4 md:p-6 print-hidden">
-            <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16 md:h-20 md:w-20 border">
-                <AvatarImage src={teacher.photoUrl} alt={teacher.name} />
-                <AvatarFallback>{getInitials(teacher.name)}</AvatarFallback>
-                </Avatar>
-                <div>
-                    <CardTitle className="text-xl md:text-2xl">{teacher.name}</CardTitle>
-                    <CardDescription>Welcome to your teacher portal.</CardDescription>
-                </div>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <Tabs defaultValue="profile" className="w-full">
-               <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-nowrap">
-                <TabsTrigger value="profile">Profile</TabsTrigger>
-              </TabsList>
-              <TabsContent value="profile" className="mt-4">
-                  <Card>
-                      <CardHeader>
-                          <CardTitle>Personal Information</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                          <div className="overflow-x-auto">
-                            <Table className="table-fixed w-full">
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell className="font-medium w-1/3 md:w-1/4">Name</TableCell>
-                                        <TableCell className="break-words">{teacher.name}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell className="font-medium">Email</TableCell>
-                                        <TableCell className="whitespace-normal break-words">{teacher.email}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell className="font-medium">Subject</TableCell>
-                                        <TableCell>{teacher.subject}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell className="font-medium">Phone</TableCell>
-                                        <TableCell className="whitespace-normal break-words">{teacher.phone}</TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                          </div>
-                      </CardContent>
-                  </Card>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-      </div>
+    <>
+      <SetPasswordDialog isOpen={forcePasswordReset} teacherId={teacher.id} />
+      <div id="teacher-dashboard" className="bg-[rgb(231,249,254)]">
+          <Card className="min-h-screen">
+            <CardHeader className="relative flex items-center justify-between p-4 md:p-6 print-hidden">
+              <div className="flex items-center gap-4">
+                  <Avatar className="h-16 w-16 md:h-20 md:w-20 border">
+                  <AvatarImage src={teacher.photoUrl} alt={teacher.name} />
+                  <AvatarFallback>{getInitials(teacher.name)}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                      <CardTitle className="text-xl md:text-2xl">{teacher.name}</CardTitle>
+                      <CardDescription>Welcome to your teacher portal.</CardDescription>
+                  </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <Tabs defaultValue="profile" className="w-full">
+                <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-nowrap">
+                  <TabsTrigger value="profile">Profile</TabsTrigger>
+                </TabsList>
+                <TabsContent value="profile" className="mt-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Personal Information</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="overflow-x-auto">
+                              <Table className="table-fixed w-full">
+                                  <TableBody>
+                                      <TableRow>
+                                          <TableCell className="font-medium w-1/3 md:w-1/4">Name</TableCell>
+                                          <TableCell className="break-words">{teacher.name}</TableCell>
+                                      </TableRow>
+                                      <TableRow>
+                                          <TableCell className="font-medium">Email</TableCell>
+                                          <TableCell className="whitespace-normal break-words">{teacher.email}</TableCell>
+                                      </TableRow>
+                                      <TableRow>
+                                          <TableCell className="font-medium">Subject</TableCell>
+                                          <TableCell>{teacher.subject}</TableCell>
+                                      </TableRow>
+                                      <TableRow>
+                                          <TableCell className="font-medium">Phone</TableCell>
+                                          <TableCell className="whitespace-normal break-words">{teacher.phone}</TableCell>
+                                      </TableRow>
+                                  </TableBody>
+                              </Table>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
+    </>
   );
 }
