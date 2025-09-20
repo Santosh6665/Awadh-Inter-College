@@ -22,9 +22,10 @@ interface StudentDashboardProps {
   rank: number | null;
   attendance: AttendanceRecord[];
   forcePasswordReset: boolean;
+  feeSettings: any;
 }
 
-export function StudentDashboard({ student, rank, attendance, forcePasswordReset }: StudentDashboardProps) {
+export function StudentDashboard({ student, rank, attendance, forcePasswordReset, feeSettings }: StudentDashboardProps) {
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -60,6 +61,38 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
         return <Clock className="h-5 w-5 text-yellow-500" />;
     }
   };
+
+  const feeDetails = useMemo(() => {
+    const classFeeStructure = feeSettings[student.class] || {};
+    const studentFeeOverrides = student.feeStructure || {};
+    const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
+
+    const feeHeads = [
+      { key: 'tuition', label: 'Tuition Fee' },
+      { key: 'transport', label: 'Transport Fee' },
+      { key: 'exam', label: 'Exam Fee' },
+      { key: 'library', label: 'Library Fee' },
+      { key: 'miscellaneous', label: 'Miscellaneous' },
+    ];
+    
+    const structuredFees = feeHeads
+      .map(head => ({
+        head: head.label,
+        amount: finalFeeStructure[head.key] || 0,
+      }))
+      .filter(fee => fee.amount > 0);
+
+    const discount = finalFeeStructure.discount || 0;
+    if (discount > 0) {
+      structuredFees.push({ head: 'Discount/Concession', amount: -discount });
+    }
+
+    const totalFees = structuredFees.reduce((acc, fee) => acc + fee.amount, 0);
+    const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
+    const due = totalFees - totalPaid;
+
+    return { structuredFees, totalFees, totalPaid, due };
+  }, [student, feeSettings]);
 
 
   return (
@@ -275,13 +308,78 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
               </TabsContent>
                <TabsContent value="fees" className="mt-4">
                   <Card>
-                      <CardHeader>
-                          <CardTitle>Fee Payment Details</CardTitle>
-                          <CardDescription>Status of your fee payments.</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground">No fee information available at the moment.</p>
-                      </CardContent>
+                    <CardHeader>
+                        <CardTitle>Fee Payment Details</CardTitle>
+                        <CardDescription>A summary of your fee structure and payment history.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div>
+                            <h3 className="text-lg font-semibold mb-2">Fee Structure</h3>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Fee Head</TableHead>
+                                        <TableHead className="text-right">Amount (₹)</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {feeDetails.structuredFees.map((fee, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell>{fee.head}</TableCell>
+                                            <TableCell className={cn("text-right", fee.amount < 0 && 'text-green-600')}>{fee.amount.toFixed(2)}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                                <TableFooter>
+                                    <TableRow className="font-bold text-base">
+                                        <TableCell>Total Fees</TableCell>
+                                        <TableCell className="text-right">₹{feeDetails.totalFees.toFixed(2)}</TableCell>
+                                    </TableRow>
+                                </TableFooter>
+                            </Table>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                            <Card className="p-4">
+                                <CardTitle className="text-sm text-muted-foreground">Total Fees</CardTitle>
+                                <p className="text-2xl font-bold">₹{feeDetails.totalFees.toFixed(2)}</p>
+                            </Card>
+                             <Card className="p-4">
+                                <CardTitle className="text-sm text-muted-foreground">Total Paid</CardTitle>
+                                <p className="text-2xl font-bold text-green-600">₹{feeDetails.totalPaid.toFixed(2)}</p>
+                            </Card>
+                             <Card className="p-4">
+                                <CardTitle className="text-sm text-muted-foreground">Balance Due</CardTitle>
+                                <p className={cn("text-2xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>₹{feeDetails.due.toFixed(2)}</p>
+                            </Card>
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-semibold mb-2">Payment History</h3>
+                             <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Date</TableHead>
+                                        <TableHead>Method</TableHead>
+                                        <TableHead className="text-right">Amount (₹)</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {student.payments && student.payments.length > 0 ? (
+                                        student.payments.map(payment => (
+                                            <TableRow key={payment.id}>
+                                                <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
+                                                <TableCell>{payment.method}</TableCell>
+                                                <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={3} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </CardContent>
                   </Card>
               </TabsContent>
             </Tabs>

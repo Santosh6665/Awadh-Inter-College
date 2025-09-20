@@ -8,6 +8,7 @@ import { StudentDashboard } from '@/app/student/dashboard';
 import type { Student, AttendanceRecord } from '@/lib/types';
 import { getStudentById, getStudentsByClass, getStudentAttendance } from './actions';
 import { calculatePercentage } from '@/lib/result-utils';
+import { firestore } from '@/lib/firebase-admin';
 
 
 export default async function StudentPage() {
@@ -18,6 +19,7 @@ export default async function StudentPage() {
   let student: Student | null = null;
   let rank: number | null = null;
   let attendance: AttendanceRecord[] = [];
+  let feeSettings: any = {};
 
   if (studentId) {
     student = await getStudentById(studentId);
@@ -49,6 +51,14 @@ export default async function StudentPage() {
         
         // Fetch attendance
         attendance = await getStudentAttendance(studentId);
+
+        // Fetch fee settings
+        if (firestore) {
+            const feeStructureDoc = await firestore.collection('settings').doc('feeStructure').get();
+            if (feeStructureDoc.exists) {
+                feeSettings = feeStructureDoc.data() || {};
+            }
+        }
     }
   }
 
@@ -57,7 +67,7 @@ export default async function StudentPage() {
       <Header />
       <main className="flex-1 bg-muted/40">
         {student ? (
-          <StudentDashboard student={student} rank={rank} attendance={attendance} forcePasswordReset={forcePasswordReset} />
+          <StudentDashboard student={student} rank={rank} attendance={attendance} forcePasswordReset={forcePasswordReset} feeSettings={feeSettings} />
         ) : (
           <div className="flex items-center justify-center p-4 h-full">
             <StudentLoginForm />
