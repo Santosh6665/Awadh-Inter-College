@@ -14,7 +14,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import type { Teacher } from '@/lib/types';
@@ -98,8 +97,8 @@ export function RecordPaymentForm({ isOpen, setIsOpen, teacher }: RecordPaymentF
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="remarks">Remarks (Optional)</Label>
-            <Textarea id="remarks" name="remarks" placeholder="E.g., Salary for May" />
+            <Label htmlFor="month">Month</Label>
+            <Input id="month" name="month" placeholder="E.g., May" />
           </div>
           <DialogFooter>
             <Button variant="outline" type="button" onClick={() => setIsOpen(false)}>

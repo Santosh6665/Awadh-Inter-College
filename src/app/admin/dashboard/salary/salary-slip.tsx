@@ -85,7 +85,7 @@ export function SalarySlip({ teacher, payment }: SalarySlipProps) {
                         <TableCell>
                             <p className="font-medium">Salary Payment</p>
                             <p className="text-xs text-muted-foreground">Method: {payment.method}</p>
-                             {payment.remarks && <p className="text-xs text-muted-foreground">Remarks: {payment.remarks}</p>}
+                             {payment.month && <p className="text-xs text-muted-foreground">Month: {payment.month}</p>}
                         </TableCell>
                         <TableCell className="text-right font-mono">{payment.amount.toFixed(2)}</TableCell>
                     </TableRow>

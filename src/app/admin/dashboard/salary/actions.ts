@@ -14,7 +14,7 @@ const PaymentSchema = z.object({
     amount: z.coerce.number().min(1, 'Amount must be greater than 0.'),
     method: z.enum(['Cash', 'Bank Transfer', 'Cheque']),
     date: z.string().min(1, 'Date is required.'),
-    remarks: z.string().optional(),
+    month: z.string().optional(),
 });
 
 

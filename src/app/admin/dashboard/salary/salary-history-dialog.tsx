@@ -116,7 +116,7 @@ export function SalaryHistoryDialog({ isOpen, setIsOpen, teacher }: SalaryHistor
                             <TableRow>
                             <TableHead>Date</TableHead>
                             <TableHead>Method</TableHead>
-                             <TableHead>Remarks</TableHead>
+                             <TableHead>Month</TableHead>
                             <TableHead className="text-right">Amount (₹)</TableHead>
                             <TableHead className="text-right print-hidden">Actions</TableHead>
                             </TableRow>
@@ -127,7 +127,7 @@ export function SalaryHistoryDialog({ isOpen, setIsOpen, teacher }: SalaryHistor
                                 <TableRow key={payment.id}>
                                 <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
                                 <TableCell>{payment.method}</TableCell>
-                                <TableCell>{payment.remarks || 'N/A'}</TableCell>
+                                <TableCell>{payment.month || 'N/A'}</TableCell>
                                 <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
                                 <TableCell className="text-right print-hidden">
                                     <Button variant="outline" size="sm" onClick={() => handlePrintSlip(payment)}>

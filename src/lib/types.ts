@@ -65,7 +65,7 @@ export type SalaryPayment = {
   date: string;
   amount: number;
   method: 'Cash' | 'Bank Transfer' | 'Cheque';
-  remarks?: string;
+  month?: string;
 };
 
 export type Teacher = {
