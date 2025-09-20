@@ -25,6 +25,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
 
@@ -35,6 +36,7 @@ export default function ManageTeachersPage() {
   const { toast } = useToast();
 
   const fetchTeachers = async () => {
+    setLoading(true);
     try {
       const teacherList = await getTeachers();
       setTeachers(teacherList);
@@ -125,7 +127,7 @@ export default function ManageTeachersPage() {
                                 </Link>
                             </DropdownMenuItem>
                             <AlertDialogTrigger asChild>
-                                <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10">
+                                <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10" onSelect={(e) => e.preventDefault()}>
                                 <Trash2 className="mr-2 h-4 w-4" /> Delete
                                 </DropdownMenuItem>
                             </AlertDialogTrigger>

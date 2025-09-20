@@ -36,6 +36,7 @@ export default function ManageStudentsPage() {
   const { toast } = useToast();
 
   const fetchStudents = async () => {
+    setLoading(true);
     try {
       const studentList = await getStudents();
       setStudents(studentList);
