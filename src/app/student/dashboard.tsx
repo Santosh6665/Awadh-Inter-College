@@ -1,7 +1,7 @@
 
 'use client';
 
-import type { Student } from '@/lib/types';
+import type { Student, AttendanceRecord } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,15 +10,17 @@ import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader } from '@
 import Link from 'next/link';
 import { SetPasswordDialog } from './set-password-dialog';
 import { calculatePercentage, calculateGrade } from '@/lib/result-utils';
-import { Download } from 'lucide-react';
+import { Download, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface StudentDashboardProps {
   student: Student;
   rank: number | null;
+  attendance: AttendanceRecord[];
   forcePasswordReset: boolean;
 }
 
-export function StudentDashboard({ student, rank, forcePasswordReset }: StudentDashboardProps) {
+export function StudentDashboard({ student, rank, attendance, forcePasswordReset }: StudentDashboardProps) {
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -34,6 +36,26 @@ export function StudentDashboard({ student, rank, forcePasswordReset }: StudentD
 
   const handlePrint = () => {
     window.print();
+  };
+  
+  const getAttendanceStatusIcon = (status: string) => {
+    switch (status) {
+      case 'Present':
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case 'Absent':
+        return <XCircle className="h-5 w-5 text-red-500" />;
+      case 'Late':
+        return <Clock className="h-5 w-5 text-yellow-500" />;
+      default:
+        return null;
+    }
+  };
+
+  const attendancePercentage = () => {
+    if (attendance.length === 0) return 'N/A';
+    const presentCount = attendance.filter(a => a.status === 'Present' || a.status === 'Late').length;
+    const percentage = (presentCount / attendance.length) * 100;
+    return `${percentage.toFixed(2)}%`;
   };
 
   return (
@@ -62,9 +84,9 @@ export function StudentDashboard({ student, rank, forcePasswordReset }: StudentD
             <Tabs defaultValue="results" className="w-full">
               <TabsList className="print-hidden">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
-                <TabsTrigger value="fees">Fee Information</TabsTrigger>
                 <TabsTrigger value="results">Exam Results</TabsTrigger>
                 <TabsTrigger value="attendance">Attendance</TabsTrigger>
+                <TabsTrigger value="fees">Fee Information</TabsTrigger>
               </TabsList>
               <TabsContent value="profile" className="mt-4">
                   <Card>
@@ -99,18 +121,7 @@ export function StudentDashboard({ student, rank, forcePasswordReset }: StudentD
                       </CardContent>
                   </Card>
               </TabsContent>
-              <TabsContent value="fees" className="mt-4">
-                  <Card>
-                      <CardHeader>
-                          <CardTitle>Fee Payment Details</CardTitle>
-                          <CardDescription>Status of your fee payments.</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground">No fee information available at the moment.</p>
-                      </CardContent>
-                  </Card>
-              </TabsContent>
-              <TabsContent value="results" className="mt-4">
+               <TabsContent value="results" className="mt-4">
                   <Card id="result-card">
                       <CardHeader>
                         <div className="flex flex-col md:flex-row items-center justify-between gap-2">
@@ -175,14 +186,51 @@ export function StudentDashboard({ student, rank, forcePasswordReset }: StudentD
                       </CardContent>
                   </Card>
               </TabsContent>
-              <TabsContent value="attendance" className="mt-4">
+               <TabsContent value="attendance" className="mt-4">
                   <Card>
                       <CardHeader>
                           <CardTitle>Attendance Record</CardTitle>
-                          <CardDescription>Your monthly attendance summary.</CardDescription>
+                          <CardDescription>Your attendance summary for the last 30 days.</CardDescription>
                       </CardHeader>
                       <CardContent>
-                          <p className="text-muted-foreground">No attendance records available at the moment.</p>
+                        {attendance.length > 0 ? (
+                            <>
+                                <div className="mb-4">
+                                    <h4 className="text-lg font-semibold">Overall: <Badge>{attendancePercentage()}</Badge></h4>
+                                </div>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Date</TableHead>
+                                            <TableHead>Status</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {attendance.map(record => (
+                                            <TableRow key={record.id}>
+                                                <TableCell>{new Date(record.date).toLocaleDateString()}</TableCell>
+                                                <TableCell className="flex items-center gap-2">
+                                                   {getAttendanceStatusIcon(record.status)} {record.status}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </>
+                        ) : (
+                           <p className="text-muted-foreground">No attendance records available at the moment.</p>
+                        )}
+                      </CardContent>
+                  </Card>
+              </TabsContent>
+               <TabsContent value="fees" className="mt-4">
+                  <Card>
+                      <CardHeader>
+                          <CardTitle>Fee Payment Details</CardTitle>
+                          <CardDescription>Status of your fee payments.</CardDescription>
+                      </Header>
+                      <CardContent>
+                        <p className="text-muted-foreground">No fee information available at the moment.</p>
                       </CardContent>
                   </Card>
               </TabsContent>
