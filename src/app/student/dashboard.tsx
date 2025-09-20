@@ -134,9 +134,9 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                 </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 md:p-6 pt-0">
             <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="flex flex-wrap h-auto w-full justify-start print-hidden mb-4">
+              <TabsList className="w-full justify-start print-hidden mb-4 overflow-x-auto">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="results">Exam Results</TabsTrigger>
                 <TabsTrigger value="attendance">Attendance</TabsTrigger>
@@ -429,3 +429,5 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
     </>
   );
 }
+
+    
