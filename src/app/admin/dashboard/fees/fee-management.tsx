@@ -14,13 +14,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Edit, PlusCircle } from 'lucide-react';
+import { Search, Edit, PlusCircle, Eye } from 'lucide-react';
 import { UpdateFeeStructureForm } from './update-fee-structure-form';
 import { RecordPaymentForm } from './record-payment-form';
+import { FeeHistoryDialog } from './fee-history-dialog';
 
 export function FeeManagement({ students, feeSettings }: { students: Student[], feeSettings: any }) {
   const [isFeeStructureFormOpen, setIsFeeStructureFormOpen] = useState(false);
   const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false);
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
@@ -33,6 +35,11 @@ export function FeeManagement({ students, feeSettings }: { students: Student[], 
   const handleRecordPayment = (student: Student) => {
     setSelectedStudent(student);
     setIsPaymentFormOpen(true);
+  };
+  
+  const handleViewHistory = (student: Student) => {
+    setSelectedStudent(student);
+    setIsHistoryDialogOpen(true);
   };
 
   const filteredStudents = students.filter(student => {
@@ -125,6 +132,9 @@ export function FeeManagement({ students, feeSettings }: { students: Student[], 
                             <TableCell>₹{totalPaid.toFixed(2)}</TableCell>
                             <TableCell className={due > 0 ? 'text-destructive font-semibold' : ''}>₹{due.toFixed(2)}</TableCell>
                             <TableCell className="text-right space-x-2">
+                                <Button variant="ghost" size="icon" title="View Details" onClick={() => handleViewHistory(student)}>
+                                    <Eye className="h-4 w-4" />
+                                </Button>
                                 <Button variant="ghost" size="icon" title="Edit Fee Structure" onClick={() => handleEditFeeStructure(student)}>
                                     <Edit className="h-4 w-4" />
                                 </Button>
@@ -159,6 +169,13 @@ export function FeeManagement({ students, feeSettings }: { students: Student[], 
         isOpen={isPaymentFormOpen}
         setIsOpen={setIsPaymentFormOpen}
         student={selectedStudent}
+      />
+      
+      <FeeHistoryDialog
+        isOpen={isHistoryDialogOpen}
+        setIsOpen={setIsHistoryDialogOpen}
+        student={selectedStudent}
+        feeSettings={feeSettings}
       />
     </>
   );
