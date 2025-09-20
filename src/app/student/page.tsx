@@ -64,7 +64,7 @@ export default async function StudentPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 bg-muted/40">
+      <main className="flex-1" style={{ backgroundColor: 'rgb(231,249,254)' }}>
         {student ? (
           <StudentDashboard student={student} rank={rank} attendance={attendance} forcePasswordReset={forcePasswordReset} feeSettings={feeSettings} />
         ) : (
