@@ -1,7 +1,6 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { Header } from '@/components/layout/header';
 import { TeacherLoginForm } from '@/app/teacher/login-form';
 import { TeacherDashboard } from '@/app/teacher/dashboard';
 import type { Student, Teacher, AttendanceRecord } from '@/lib/types';
@@ -33,7 +32,6 @@ export default async function TeacherPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
       <main className="flex-1">
         {teacher ? (
           <TeacherDashboard teacher={teacher} students={students} attendance={attendance} forcePasswordReset={forcePasswordReset} />
