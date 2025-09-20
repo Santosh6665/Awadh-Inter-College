@@ -118,7 +118,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
           <FeeReceipt student={student} payment={receiptToPrint} feeDetails={feeDetails} />
         </div>
       )}
-      <div id="student-dashboard" className="bg-[rgb(231,249,254)] p-4 md:p-6">
+      <div id="student-dashboard" className="bg-[rgb(231,249,254)]">
         <Card className="min-h-screen">
           <CardHeader className="relative flex items-center justify-between p-4 md:p-6 print-hidden">
             <div className="flex items-center gap-4">
@@ -433,4 +433,5 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
     
 
     
+
 
