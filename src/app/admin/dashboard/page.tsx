@@ -97,19 +97,19 @@ export default async function AdminDashboardPage() {
   }
 
   // Calculate attendance percentages
-  const totalStudents = students.length > 0 ? students.length : 1;
+  const totalStudents = students.length;
   const presentToday = Object.values(todayAttendanceData).filter((att: any) => att.status === 'present').length;
   const presentYesterday = Object.values(yesterdayAttendanceData).filter((att: any) => att.status === 'present').length;
 
-  const todayAttendancePercentage = (presentToday / totalStudents) * 100;
-  const yesterdayAttendancePercentage = (presentYesterday / totalStudents) * 100;
-
+  const todayAttendancePercentage = totalStudents > 0 ? (presentToday / totalStudents) * 100 : 0;
+  const yesterdayAttendancePercentage = totalStudents > 0 ? (presentYesterday / totalStudents) * 100 : 0;
+  
   let attendancePercentageChangeText = 'No data from yesterday';
-  if (presentYesterday > 0) {
-    const percentageChange = ((todayAttendancePercentage - yesterdayAttendancePercentage) / yesterdayAttendancePercentage) * 100;
-    attendancePercentageChangeText = `${percentageChange >= 0 ? '+' : ''}${percentageChange.toFixed(1)}% from yesterday`;
-  } else if (presentToday > 0) {
-    attendancePercentageChangeText = 'Attendance recorded today';
+  if (Object.keys(yesterdayAttendanceData).length > 0) {
+      const percentagePointDifference = todayAttendancePercentage - yesterdayAttendancePercentage;
+      attendancePercentageChangeText = `${percentagePointDifference >= 0 ? '+' : ''}${percentagePointDifference.toFixed(1)}% from yesterday`;
+  } else if (Object.keys(todayAttendanceData).length > 0) {
+      attendancePercentageChangeText = 'First day with attendance data';
   }
 
 
