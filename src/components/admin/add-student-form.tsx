@@ -17,13 +17,16 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { updateStudent } from '@/lib/firebase/realtimedb';
-import type { Student } from '@/lib/types';
+import { addStudent } from '@/lib/firebase/realtimedb';
 import { Loader2 } from 'lucide-react';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/lib/firebase/firebase';
+
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Invalid email address.' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
   rollNumber: z.string().min(1, { message: 'Roll number is required.' }),
   class: z.string().min(1, { message: 'Class is required.' }),
   section: z.string().min(1, { message: 'Section is required.' }),
@@ -35,37 +38,66 @@ const formSchema = z.object({
 
 type StudentFormValues = z.infer<typeof formSchema>;
 
-interface StudentFormProps {
-  student: Student;
-}
 
-export function StudentForm({ student }: StudentFormProps) {
+export function AddStudentForm() {
   const { toast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const form = useForm<StudentFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: student,
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      rollNumber: '',
+      class: '',
+      section: '',
+      dob: '',
+      phone: '',
+      fatherName: '',
+      address: '',
+    },
   });
 
   async function onSubmit(data: StudentFormValues) {
     setLoading(true);
     try {
-      await updateStudent(student.id, data);
-      toast({
-        title: 'Student Updated',
-        description: 'The student record has been successfully updated.',
-      });
-      router.push('/admin/dashboard/students');
-      router.refresh(); 
-    } catch (error) {
-      console.error("Failed to update student:", error);
-      toast({
-        title: 'An error occurred',
-        description: 'Could not update the student data. Please try again.',
-        variant: 'destructive',
-      });
+        // Step 1: Create user in Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+        const user = userCredential.user;
+
+        if (user) {
+            // Step 2: Save student data to Realtime Database
+            const { password, ...studentData } = data; // Exclude password from DB
+            await addStudent({
+                ...studentData,
+                feeStatus: 'Due',
+                amountDue: 0, // Default fee status and amount
+            });
+            
+            toast({
+                title: 'Student Added',
+                description: 'A new student has been successfully added.',
+            });
+            
+            router.push('/admin/dashboard/students');
+            router.refresh();
+        }
+
+    } catch (error: any) {
+        console.error("Failed to add student:", error);
+        let errorMessage = 'Could not save the student data. Please try again.';
+        if (error.code === 'auth/email-already-in-use') {
+            errorMessage = 'This email is already in use by another account.';
+        } else if (error.code === 'auth/weak-password') {
+            errorMessage = 'The password is too weak. Please choose a stronger password.';
+        }
+        toast({
+            title: 'An error occurred',
+            description: errorMessage,
+            variant: 'destructive',
+        });
     } finally {
         setLoading(false);
     }
@@ -95,11 +127,24 @@ export function StudentForm({ student }: StudentFormProps) {
                 <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                    <Input placeholder="Enter email address" {...field} readOnly disabled />
+                    <Input placeholder="Enter email address" {...field} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
             )}
+            />
+             <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                        <Input type="password" placeholder="Enter a password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
             />
             <FormField
             control={form.control}
@@ -197,7 +242,7 @@ export function StudentForm({ student }: StudentFormProps) {
         </div>
         <Button type="submit" disabled={loading}>
             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Update Student
+            Add Student
         </Button>
       </form>
     </Form>
