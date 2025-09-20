@@ -19,6 +19,7 @@ export type Marks = {
   maths?: number;
   english?: number;
   computerScience?: number;
+  remarks?: string;
 };
 
 export type Student = {

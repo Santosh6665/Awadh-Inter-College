@@ -6,7 +6,10 @@ export function calculatePercentage(marks: Marks | undefined | null): number | n
     return null;
   }
 
-  const subjects = Object.values(marks).filter(mark => typeof mark === 'number');
+  const subjects = Object.entries(marks)
+    .filter(([key, value]) => key !== 'remarks' && typeof value === 'number')
+    .map(([, value]) => value as number);
+
   if (subjects.length === 0) {
     return null;
   }
@@ -18,14 +21,31 @@ export function calculatePercentage(marks: Marks | undefined | null): number | n
   return (totalMarks / (totalSubjects * maxMarksPerSubject)) * 100;
 }
 
-export function calculateGrade(percentage: number | null): string {
-  if (percentage === null) {
+export function calculateGrade(value: number | null | undefined): string {
+  if (value === null || value === undefined) {
     return 'N/A';
   }
 
-  if (percentage >= 90) return 'A';
-  if (percentage >= 80) return 'B';
-  if (percentage >= 70) return 'C';
-  if (percentage >= 60) return 'D';
+  if (value >= 90) return 'A+';
+  if (value >= 80) return 'A';
+  if (value >= 70) return 'B+';
+  if (value >= 60) return 'B';
+  if (value >= 50) return 'C';
+  if (value >= 40) return 'D';
   return 'F';
+}
+
+export function calculateTotals(marks: Marks | undefined | null): { totalObtainedMarks: number, totalMaxMarks: number } {
+  if (!marks) {
+    return { totalObtainedMarks: 0, totalMaxMarks: 0 };
+  }
+
+  const subjects = Object.entries(marks)
+    .filter(([key, value]) => key !== 'remarks' && typeof value === 'number')
+    .map(([, value]) => value as number);
+    
+  const totalObtainedMarks = subjects.reduce((sum, mark) => sum + (mark || 0), 0);
+  const totalMaxMarks = subjects.length * 100;
+
+  return { totalObtainedMarks, totalMaxMarks };
 }
