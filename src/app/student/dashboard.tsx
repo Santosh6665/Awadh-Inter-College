@@ -122,14 +122,19 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
       )}
       <div id="student-dashboard">
         <Card className="min-h-[calc(100vh-3.5rem)]">
-           <CardHeader className="relative flex items-center gap-4 p-4 md:p-6 print-hidden">
-            <Avatar className="h-16 w-16 md:h-20 md:w-20 border">
-              <AvatarImage src={student.photoUrl} alt={student.name} />
-              <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle className="text-xl md:text-2xl">{student.name}</CardTitle>
-              <CardDescription>Welcome to your student portal.</CardDescription>
+           <CardHeader className="relative flex items-center justify-between p-4 md:p-6 print-hidden">
+            <div className='flex-1'>
+                 {/* This empty div will push the other content to the right */}
+            </div>
+            <div className="flex items-center gap-4">
+                <div className='text-right'>
+                    <CardTitle className="text-xl md:text-2xl">{student.name}</CardTitle>
+                    <CardDescription>Welcome to your student portal.</CardDescription>
+                </div>
+                <Avatar className="h-16 w-16 md:h-20 md:w-20 border">
+                <AvatarImage src={student.photoUrl} alt={student.name} />
+                <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
+                </Avatar>
             </div>
             <form action="/student/logout" method="GET" className="absolute top-4 right-4">
               <Button asChild variant="outline" size="sm">
@@ -139,7 +144,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
           </CardHeader>
           <CardContent className="p-4 md:p-6">
             <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="flex flex-wrap h-auto w-full justify-start print-hidden mb-4 sm:grid sm:grid-cols-4">
+              <TabsList className="flex flex-wrap h-auto w-full justify-start print-hidden mb-4">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="results">Exam Results</TabsTrigger>
                 <TabsTrigger value="attendance">Attendance</TabsTrigger>
