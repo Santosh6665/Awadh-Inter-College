@@ -1,7 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Users, BookOpen } from "lucide-react";
+import { StudentList } from "./students/student-list";
+import { getStudents } from "./students/actions";
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const students = await getStudents();
+
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
@@ -14,9 +18,9 @@ export default function AdminDashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
+            <div className="text-2xl font-bold">{students.length}</div>
             <p className="text-xs text-muted-foreground">
-              +20.1% from last month
+              Currently enrolled
             </p>
           </CardContent>
         </Card>
@@ -49,11 +53,8 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
       </div>
-       <div className="pt-8">
-        <h3 className="text-xl font-semibold">Welcome, Admin!</h3>
-        <p className="text-muted-foreground">
-            From here you can manage students, teachers, fees, and more. Use the navigation to get started.
-        </p>
+      <div className="pt-8">
+        <StudentList students={students} />
       </div>
     </div>
   );
