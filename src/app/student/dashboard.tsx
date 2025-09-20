@@ -71,7 +71,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
       { key: 'tuition', label: 'Tuition Fee' },
       { key: 'transport', label: 'Transport Fee' },
       { key: 'exam', label: 'Exam Fee' },
-      { key: 'library', label: 'Library Fee' },
+      { key: 'computer', label: 'Computer Fee' },
       { key: 'miscellaneous', label: 'Miscellaneous' },
     ];
     

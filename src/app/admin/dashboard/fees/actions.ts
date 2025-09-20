@@ -10,7 +10,7 @@ const FeeStructureSchema = z.object({
   tuition: z.coerce.number().min(0).optional().or(z.literal('')),
   transport: z.coerce.number().min(0).optional().or(z.literal('')),
   exam: z.coerce.number().min(0).optional().or(z.literal('')),
-  library: z.coerce.number().min(0).optional().or(z.literal('')),
+  computer: z.coerce.number().min(0).optional().or(z.literal('')),
   miscellaneous: z.coerce.number().min(0).optional().or(z.literal('')),
   discount: z.coerce.number().min(0).optional().or(z.literal('')),
   paymentPlan: z.enum(['monthly', 'quarterly', 'yearly', '']).optional(),

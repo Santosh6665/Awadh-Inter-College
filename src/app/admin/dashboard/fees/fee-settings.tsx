@@ -14,7 +14,7 @@ import { Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const classes = ['LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-const feeHeads = ['tuition', 'transport', 'exam', 'library', 'miscellaneous'];
+const feeHeads = ['tuition', 'transport', 'exam', 'computer', 'miscellaneous'];
 
 function SubmitButton() {
   const { pending } = useFormStatus();

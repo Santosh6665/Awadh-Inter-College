@@ -26,7 +26,7 @@ export type FeeStructure = {
   tuition?: number;
   transport?: number;
   exam?: number;
-  library?: number;
+  computer?: number;
   miscellaneous?: number;
   discount?: number;
   paymentPlan?: 'monthly' | 'quarterly' | 'yearly';

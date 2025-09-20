@@ -100,8 +100,8 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
               <Input id="exam" name="exam" type="number" defaultValue={getFeeValue('exam')} placeholder={classDefaults.exam || '0'} />
             </div>
              <div className="space-y-2">
-              <Label htmlFor="library">Library Fee</Label>
-              <Input id="library" name="library" type="number" defaultValue={getFeeValue('library')} placeholder={classDefaults.library || '0'} />
+              <Label htmlFor="computer">Computer Fee</Label>
+              <Input id="computer" name="computer" type="number" defaultValue={getFeeValue('computer')} placeholder={classDefaults.computer || '0'} />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
