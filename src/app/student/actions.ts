@@ -64,7 +64,8 @@ export async function loginStudent(credentials: z.infer<typeof loginSchema>) {
       path: '/',
     });
     
-    if (isFirstLogin) {
+    // Only force password reset if the password field does not exist in the database
+    if (isFirstLogin && !studentData.password) {
         cookies().set('force_password_reset', 'true', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
