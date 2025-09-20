@@ -6,6 +6,7 @@ import { TeacherDashboard } from '@/app/teacher/dashboard';
 import type { Student, Teacher, AttendanceRecord } from '@/lib/types';
 import { getTeacherById, getTeacherAttendance } from './actions';
 import { getStudents } from '../admin/dashboard/students/actions';
+import { Header } from '@/components/layout/header';
 
 
 export default async function TeacherPage() {
@@ -32,11 +33,12 @@ export default async function TeacherPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <Header />
       <main className="flex-1">
         {teacher ? (
           <TeacherDashboard teacher={teacher} students={students} attendance={attendance} forcePasswordReset={forcePasswordReset} />
         ) : (
-          <div className="flex items-center justify-center p-4 h-full bg-[rgb(231,249,254)]">
+          <div className="flex items-center justify-center p-4 h-full bg-[rgb(231,249,244)]">
             <TeacherLoginForm />
           </div>
         )}

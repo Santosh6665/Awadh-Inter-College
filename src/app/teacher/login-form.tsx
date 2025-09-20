@@ -71,8 +71,6 @@ export function TeacherLoginForm() {
         <CardTitle className="text-2xl">Teacher Portal</CardTitle>
         <CardDescription>
           Enter your credentials to access your dashboard.
-          <br />
-          <span className="text-xs italic">Default password is: FirstName@&lt;first 5 digits of phone&gt;</span>
         </CardDescription>
       </CardHeader>
       <CardContent>
