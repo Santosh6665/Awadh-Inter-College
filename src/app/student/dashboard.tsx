@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFoo
 import Link from 'next/link';
 import { SetPasswordDialog } from './set-password-dialog';
 import { calculatePercentage, calculateGrade, calculateTotals } from '@/lib/result-utils';
-import { Download, CheckCircle, XCircle, Clock, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, CalendarDays } from 'lucide-react';
+import { Download, CheckCircle, XCircle, Clock, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, CalendarDays, LogOut } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useMemo, useState } from 'react';
 import { CollegeLogo } from '@/components/icons';
@@ -136,7 +136,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
           </CardHeader>
           <CardContent className="p-4 md:p-6 pt-0">
             <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="w-full justify-start print-hidden mb-4 overflow-x-auto">
+               <TabsList className="w-full justify-start print-hidden mb-4 overflow-x-auto whitespace-nowrap">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="results">Exam Results</TabsTrigger>
                 <TabsTrigger value="attendance">Attendance</TabsTrigger>
@@ -148,42 +148,44 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                           <CardTitle>Personal Information</CardTitle>
                       </CardHeader>
                       <CardContent>
-                          <Table>
-                              <TableBody>
-                                  <TableRow>
-                                      <TableCell className="font-medium">Name</TableCell>
-                                      <TableCell>{student.name}</TableCell>
-                                  </TableRow>
-                                  <TableRow>
-                                      <TableCell className="font-medium">Roll Number</TableCell>
-                                      <TableCell>{student.rollNumber}</TableCell>
-                                  </TableRow>
-                                  <TableRow>
-                                      <TableCell className="font-medium">Class</TableCell>
-                                      <TableCell>{student.class}-{student.section}</TableCell>
-                                  </TableRow>
-                                  <TableRow>
-                                      <TableCell className="font-medium">Date of Birth</TableCell>
-                                      <TableCell>{new Date(student.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
-                                  </TableRow>
-                                  <TableRow>
-                                      <TableCell className="font-medium">Father's Name</TableCell>
-                                      <TableCell>{student.fatherName}</TableCell>
-                                  </TableRow>
-                                  <TableRow>
-                                      <TableCell className="font-medium">Address</TableCell>
-                                      <TableCell>{student.address}</TableCell>
-                                  </TableRow>
-                                  <TableRow>
-                                      <TableCell className="font-medium">Phone</TableCell>
-                                      <TableCell>{student.phone}</TableCell>
-                                  </TableRow>
-                                   <TableRow>
-                                      <TableCell className="font-medium">Email</TableCell>
-                                      <TableCell>{student.email}</TableCell>
-                                  </TableRow>
-                              </TableBody>
-                          </Table>
+                          <div className="overflow-x-auto">
+                            <Table className="table-fixed w-full">
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell className="font-medium w-1/3 md:w-1/4">Name</TableCell>
+                                        <TableCell className="break-words">{student.name}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="font-medium">Roll Number</TableCell>
+                                        <TableCell>{student.rollNumber}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="font-medium">Class</TableCell>
+                                        <TableCell>{`${student.class}-${student.section}`}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="font-medium">Date of Birth</TableCell>
+                                        <TableCell>{new Date(student.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="font-medium">Father's Name</TableCell>
+                                        <TableCell className="break-words">{student.fatherName}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="font-medium">Address</TableCell>
+                                        <TableCell className="whitespace-normal break-words">{student.address}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="font-medium">Phone</TableCell>
+                                        <TableCell className="whitespace-normal break-words">{student.phone}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="font-medium">Email</TableCell>
+                                        <TableCell className="whitespace-normal break-words">{student.email}</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                          </div>
                       </CardContent>
                   </Card>
               </TabsContent>
@@ -429,5 +431,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
     </>
   );
 }
+
+    
 
     
