@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { FileText, CheckSquare, BarChart2, Loader2 } from 'lucide-react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
-import { getStudentByEmail, getAttendanceForStudent } from '@/lib/firebase/realtimedb';
+import { getStudentByEmail, getAttendanceForStudent } from '@/lib/firebase/firestore';
 import type { Student } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 

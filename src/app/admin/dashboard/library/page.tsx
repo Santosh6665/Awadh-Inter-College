@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getBooks, addBook, updateBook, getStudents } from '@/lib/firebase/realtimedb';
+import { getBooks, addBook, updateBook, getStudents } from '@/lib/firebase/firestore';
 import type { Book, Student } from '@/lib/types';
 import { Loader2, PlusCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';

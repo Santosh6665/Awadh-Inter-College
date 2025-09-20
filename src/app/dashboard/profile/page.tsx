@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { auth } from '@/lib/firebase/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { getStudentByEmail } from '@/lib/firebase/realtimedb';
+import { getStudentByEmail } from '@/lib/firebase/firestore';
 import type { Student } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';

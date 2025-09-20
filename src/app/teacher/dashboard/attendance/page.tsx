@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { getStudents, saveAttendance, getAttendanceForDate } from '@/lib/firebase/realtimedb';
+import { getStudents, saveAttendance, getAttendanceForDate } from '@/lib/firebase/firestore';
 import type { Student } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';

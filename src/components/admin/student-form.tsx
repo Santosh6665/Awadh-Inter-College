@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { updateStudent } from '@/lib/firebase/realtimedb';
+import { updateStudent } from '@/lib/firebase/firestore';
 import type { Student } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 

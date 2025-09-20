@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getBusRoutes, addBusRoute, updateBusRoute, deleteBusRoute } from '@/lib/firebase/realtimedb';
+import { getBusRoutes, addBusRoute, updateBusRoute, deleteBusRoute } from '@/lib/firebase/firestore';
 import type { BusRoute } from '@/lib/types';
 import { Loader2, PlusCircle, MoreHorizontal, Trash2, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';

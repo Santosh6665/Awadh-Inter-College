@@ -9,7 +9,7 @@ import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
-import { getStudentByEmail } from '@/lib/firebase/realtimedb';
+import { getStudentByEmail } from '@/lib/firebase/firestore';
 import type { Student } from '@/lib/types';
 
 export default function AcademicProgressPage() {

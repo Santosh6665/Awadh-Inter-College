@@ -7,7 +7,7 @@ import { BarChart2, FileText, MessageSquare, Bell, Loader2 } from 'lucide-react'
 import Link from 'next/link';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
-import { getStudentByEmail } from '@/lib/firebase/realtimedb';
+import { getStudentByEmail } from '@/lib/firebase/firestore';
 import type { Student } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Download, Loader2 } from 'lucide-react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
-import { getStudentByEmail } from '@/lib/firebase/realtimedb';
+import { getStudentByEmail } from '@/lib/firebase/firestore';
 import type { Student } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
