@@ -14,13 +14,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Edit, PlusCircle } from 'lucide-react';
+import { Search, Edit, PlusCircle, Eye } from 'lucide-react';
 import { SetSalaryForm } from './set-salary-form';
 import { RecordPaymentForm } from './record-payment-form';
+import { SalaryHistoryDialog } from './salary-history-dialog';
 
 export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
   const [isSalaryFormOpen, setIsSalaryFormOpen] = useState(false);
   const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false);
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -32,6 +34,11 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
   const handleRecordPayment = (teacher: Teacher) => {
     setSelectedTeacher(teacher);
     setIsPaymentFormOpen(true);
+  };
+  
+  const handleViewHistory = (teacher: Teacher) => {
+    setSelectedTeacher(teacher);
+    setIsHistoryDialogOpen(true);
   };
 
   const filteredTeachers = teachers.filter(teacher =>
@@ -85,6 +92,9 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
                         <TableCell>₹{baseSalary.toFixed(2)}</TableCell>
                         <TableCell>₹{totalPaid.toFixed(2)}</TableCell>
                         <TableCell className="text-right space-x-2">
+                          <Button variant="ghost" size="icon" title="View History" onClick={() => handleViewHistory(teacher)}>
+                            <Eye className="h-4 w-4" />
+                          </Button>
                           <Button variant="ghost" size="icon" title="Set Base Salary" onClick={() => handleSetSalary(teacher)}>
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -117,6 +127,12 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
       <RecordPaymentForm
         isOpen={isPaymentFormOpen}
         setIsOpen={setIsPaymentFormOpen}
+        teacher={selectedTeacher}
+      />
+
+      <SalaryHistoryDialog
+        isOpen={isHistoryDialogOpen}
+        setIsOpen={setIsHistoryDialogOpen}
         teacher={selectedTeacher}
       />
     </>
