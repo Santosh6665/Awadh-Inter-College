@@ -69,7 +69,11 @@ export function StudentForm({ student }: StudentFormProps) {
           description: 'The student record has been successfully updated.',
         });
       } else {
-        await addStudent(data);
+        await addStudent({
+          ...data,
+          feeStatus: 'Due',
+          amountDue: 0,
+        });
         toast({
           title: 'Student Added',
           description: 'A new student has been successfully added.',
