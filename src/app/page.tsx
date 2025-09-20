@@ -192,9 +192,9 @@ export default function HomePage() {
             </div>
         </section>
 
-        <section id="about-us" className="bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8 py-10 md:py-16">
+        <section id="about-us" className="bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8 py-0">
           <div className="container mx-auto text-center">
-            <h3 className="text-3xl font-bold text-center mb-6">About Our School</h3>
+            <h3 className="text-3xl font-bold text-center mb-6 pt-6">About Our School</h3>
              <Card className="text-left max-w-5xl mx-auto">
                 <CardHeader className="p-0">
                     <div className="overflow-hidden rounded-t-lg">
@@ -202,8 +202,8 @@ export default function HomePage() {
                         src="/images/about-school.jpg"
                         alt="School Building"
                         width={1200}
-                        height={250}
-                        className="object-cover w-full h-[250px]"
+                        height={300}
+                        className="object-cover w-full h-[300px]"
                         data-ai-hint="school building"
                         />
                     </div>
@@ -233,7 +233,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="bg-background py-12 md:py-16 px-4 sm:px-6 md:px-8">
+        <section className="bg-[rgb(231,249,254)] py-12 md:py-16 px-4 sm:px-6 md:px-8">
           <div className="container mx-auto grid grid-cols-2 gap-2 md:grid-cols-2 md:gap-8">
             <Card>
               <CardHeader className="p-4">
@@ -290,7 +290,7 @@ export default function HomePage() {
           </div>
         </section>
         
-        <section id="vision-mission" className="py-6 md:py-10 bg-background px-4 sm:px-6 md:px-8">
+        <section id="vision-mission" className="py-0 md:py-0 bg-background px-4 sm:px-6 md:px-8">
           <div className="container mx-auto text-center">
             <h3 className="text-3xl font-bold text-center mb-10">Our Vision &amp; Mission</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -325,7 +325,7 @@ export default function HomePage() {
         </section>
 
         <section id="principal-message" className="py-2 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
-          <div className="container mx-auto">
+          <div className="container mx-auto pt-4">
             <Card>
               <CardHeader className="p-4 md:p-6">
                 <CardTitle className="text-2xl md:text-3xl text-center">A Message from the Principal</CardTitle>
@@ -444,7 +444,7 @@ export default function HomePage() {
         <section id="contact" className="py-6 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
             <Card className="overflow-hidden">
-              <CardHeader className="p-4">
+              <CardHeader className="p-4 py-2">
                 <CardTitle className="text-3xl text-center">Contact Us</CardTitle>
                 <CardDescription className="text-center">
                   We'd love to hear from you. Reach out to us with any questions.
