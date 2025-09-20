@@ -122,7 +122,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
       )}
       <div id="student-dashboard">
         <Card className="min-h-screen">
-           <CardHeader className="relative flex items-center justify-between p-4 md:p-6 print-hidden">
+          <CardHeader className="relative flex items-center justify-between p-4 md:p-6 print-hidden">
             <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16 md:h-20 md:w-20 border">
                 <AvatarImage src={student.photoUrl} alt={student.name} />
@@ -133,13 +133,8 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                     <CardDescription>Welcome to your student portal.</CardDescription>
                 </div>
             </div>
-            <form action="/student/logout" method="GET" className="absolute top-4 right-4">
-              <Button asChild variant="outline" size="sm">
-                  <Link href="/student/logout">Log Out</Link>
-              </Button>
-            </form>
           </CardHeader>
-          <CardContent className="p-4 md:p-6">
+          <CardContent>
             <Tabs defaultValue="profile" className="w-full">
               <TabsList className="flex flex-wrap h-auto w-full justify-start print-hidden mb-4">
                 <TabsTrigger value="profile">Profile</TabsTrigger>

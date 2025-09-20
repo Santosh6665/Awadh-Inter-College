@@ -3,10 +3,11 @@
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 import Link from 'next/link';
 import { CollegeLogo } from '@/components/icons';
 import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -19,6 +20,9 @@ const navLinks = [
 ];
 
 export function Header() {
+  const pathname = usePathname();
+  const isStudentPage = pathname.startsWith('/student');
+
   return (
     <header className={cn('sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm', 'print-hidden')}>
       <div className="flex items-center gap-2">
@@ -43,6 +47,15 @@ export function Header() {
                 {link.label}
                 </Link>
             ))}
+            {isStudentPage && (
+                 <Link
+                    href="/student/logout"
+                    className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-destructive"
+                    >
+                    <LogOut className="h-5 w-5" />
+                    Logout
+                </Link>
+            )}
             </nav>
              <div className="mt-auto pt-6 text-center text-xs text-muted-foreground">
                 <p>© {new Date().getFullYear()} Awadh Inter College. All rights reserved.</p>
