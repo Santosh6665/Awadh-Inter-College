@@ -42,7 +42,15 @@ export function FeeManagement({ students }: { students: Student[] }) {
   });
 
   const calculateFeeStatus = (student: Student) => {
-    const totalFees = Object.values(student.feeStructure || {}).reduce((acc, val) => acc + (val || 0), 0);
+    const structure = student.feeStructure || {};
+    const positiveFees = (structure.tuition || 0) + 
+                         (structure.transport || 0) +
+                         (structure.exam || 0) +
+                         (structure.library || 0) +
+                         (structure.miscellaneous || 0);
+    const discount = structure.discount || 0;
+    const totalFees = positiveFees - discount;
+
     const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
     const due = totalFees - totalPaid;
     return { totalFees, totalPaid, due };
