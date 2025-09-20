@@ -8,20 +8,24 @@ import { getTeachers } from "./teachers/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultsManagement } from "./results/results-management";
 import { AttendanceManagement } from "./attendance/attendance-management";
-import type { Student, Teacher } from "@/lib/types";
+import type { Student, Teacher, Notice } from "@/lib/types";
 import { firestore } from "@/lib/firebase-admin";
 import { FeeManagement } from "./fees/fee-management";
+import { NoticeManagement } from "./notices/notice-management";
+import { getNotices } from "./notices/actions";
 
 export default async function AdminDashboardPage() {
   let students: Student[] = [];
   let teachers: Teacher[] = [];
   let feeStructures: any = {};
+  let notices: Notice[] = [];
 
   // Only attempt to fetch data if firestore was successfully initialized
   if (firestore) {
     try {
       students = await getStudents();
       teachers = await getTeachers();
+      notices = await getNotices();
       const feeStructureDoc = await firestore.collection('settings').doc('feeStructure').get();
       if (feeStructureDoc.exists) {
         feeStructures = feeStructureDoc.data() || {};
@@ -44,15 +48,12 @@ export default async function AdminDashboardPage() {
   const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   
-  let feesThisMonth = 0;
   let feesLastMonth = 0;
 
   students.forEach(student => {
     (student.payments || []).forEach(payment => {
       const paymentDate = new Date(payment.date);
-      if (paymentDate >= startOfCurrentMonth) {
-        // Current month's collections are not needed for "change from last month"
-      } else if (paymentDate >= startOfLastMonth && paymentDate < startOfCurrentMonth) {
+      if (paymentDate >= startOfLastMonth && paymentDate < startOfCurrentMonth) {
         feesLastMonth += payment.amount;
       }
     });
@@ -137,12 +138,13 @@ export default async function AdminDashboardPage() {
       </div>
       <div className="pt-8">
         <Tabs defaultValue="students">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
             <TabsTrigger value="students">Manage Students</TabsTrigger>
             <TabsTrigger value="teachers">Manage Teachers</TabsTrigger>
             <TabsTrigger value="results">Result Management</TabsTrigger>
             <TabsTrigger value="attendance">Attendance</TabsTrigger>
             <TabsTrigger value="fees">Fee Management</TabsTrigger>
+            <TabsTrigger value="notices">Events &amp; Notices</TabsTrigger>
           </TabsList>
           <TabsContent value="students" className="mt-4">
             <StudentList students={students} />
@@ -158,6 +160,9 @@ export default async function AdminDashboardPage() {
           </TabsContent>
            <TabsContent value="fees" className="mt-4">
             <FeeManagement students={students} feeSettings={feeStructures} />
+          </TabsContent>
+          <TabsContent value="notices" className="mt-4">
+            <NoticeManagement notices={notices} />
           </TabsContent>
         </Tabs>
       </div>
