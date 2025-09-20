@@ -145,6 +145,7 @@ export function FeeManagement({ students, feeSettings }: { students: Student[], 
         isOpen={isFeeStructureFormOpen}
         setIsOpen={setIsFeeStructureFormOpen}
         student={selectedStudent}
+        feeSettings={feeSettings}
       />
       
       <RecordPaymentForm

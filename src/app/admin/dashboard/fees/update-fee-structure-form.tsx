@@ -24,6 +24,7 @@ interface UpdateFeeStructureFormProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   student?: Student | null;
+  feeSettings: any;
 }
 
 const initialState: FormState = {
@@ -41,7 +42,7 @@ function SubmitButton() {
   );
 }
 
-export function UpdateFeeStructureForm({ isOpen, setIsOpen, student }: UpdateFeeStructureFormProps) {
+export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings }: UpdateFeeStructureFormProps) {
   const { toast } = useToast();
   
   const action = student ? updateFeeStructure.bind(null, student.id) : async () => initialState;
@@ -65,49 +66,57 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student }: UpdateFee
 
   if (!student) return null;
 
+  const classDefaults = feeSettings[student.class] || {};
+  const studentFeeStructure = student.feeStructure || {};
+
+  const getFeeValue = (feeHead: string) => {
+    // Prioritize student-specific fee, then class default, then empty string
+    return studentFeeStructure[feeHead] ?? classDefaults[feeHead] ?? '';
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Update Fee Structure for {student.name}</DialogTitle>
           <DialogDescription>
-            Enter the fee amounts for each category.
+            Enter the fee amounts for each category. Blank fields will use class defaults.
           </DialogDescription>
         </DialogHeader>
         <form action={formAction} className="grid gap-4 py-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="tuition">Tuition Fee</Label>
-              <Input id="tuition" name="tuition" type="number" defaultValue={student.feeStructure?.tuition || ''} />
+              <Input id="tuition" name="tuition" type="number" defaultValue={getFeeValue('tuition')} placeholder={classDefaults.tuition || '0'} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="transport">Transport Fee</Label>
-              <Input id="transport" name="transport" type="number" defaultValue={student.feeStructure?.transport || ''} />
+              <Input id="transport" name="transport" type="number" defaultValue={getFeeValue('transport')} placeholder={classDefaults.transport || '0'} />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="exam">Exam Fee</Label>
-              <Input id="exam" name="exam" type="number" defaultValue={student.feeStructure?.exam || ''} />
+              <Input id="exam" name="exam" type="number" defaultValue={getFeeValue('exam')} placeholder={classDefaults.exam || '0'} />
             </div>
              <div className="space-y-2">
               <Label htmlFor="library">Library Fee</Label>
-              <Input id="library" name="library" type="number" defaultValue={student.feeStructure?.library || ''} />
+              <Input id="library" name="library" type="number" defaultValue={getFeeValue('library')} placeholder={classDefaults.library || '0'} />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="miscellaneous">Miscellaneous</Label>
-              <Input id="miscellaneous" name="miscellaneous" type="number" defaultValue={student.feeStructure?.miscellaneous || ''} />
+              <Input id="miscellaneous" name="miscellaneous" type="number" defaultValue={getFeeValue('miscellaneous')} placeholder={classDefaults.miscellaneous || '0'} />
             </div>
              <div className="space-y-2">
               <Label htmlFor="discount">Discount/Concession</Label>
-              <Input id="discount" name="discount" type="number" defaultValue={student.feeStructure?.discount || ''} />
+              <Input id="discount" name="discount" type="number" defaultValue={getFeeValue('discount')} placeholder={classDefaults.discount || '0'} />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="paymentPlan">Payment Plan</Label>
-            <Select name="paymentPlan" defaultValue={student.feeStructure?.paymentPlan || ''}>
+            <Select name="paymentPlan" defaultValue={getFeeValue('paymentPlan')}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a payment plan" />
               </SelectTrigger>
