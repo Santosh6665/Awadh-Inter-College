@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import type { Student } from '@/lib/types';
+import type { Teacher } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -21,20 +21,20 @@ import { Calendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon, Search } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
-import { getAttendanceByDate, setAttendance as setAttendanceAction } from './actions';
+import { getTeacherAttendanceByDate, setTeacherAttendance as setTeacherAttendanceAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
 
 type AttendanceStatus = 'present' | 'absent';
 type AttendanceData = {
-  [studentId: string]: { status: AttendanceStatus };
+  [teacherId: string]: { status: AttendanceStatus };
 };
 
-export function AttendanceManagement({ students }: { students: Student[] }) {
+export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] }) {
   const [date, setDate] = useState<Date>(new Date());
   const [attendance, setAttendance] = useState<AttendanceData>({});
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [classFilter, setClassFilter] = useState('');
+  const [subjectFilter, setSubjectFilter] = useState('');
   const { toast } = useToast();
 
   const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
@@ -42,13 +42,13 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
   const fetchAttendance = useCallback(async () => {
     setLoading(true);
     try {
-        const data = await getAttendanceByDate(formattedDate);
+        const data = await getTeacherAttendanceByDate(formattedDate);
         setAttendance(data || {});
     } catch (error) {
         console.error("Failed to fetch attendance:", error);
         toast({
             title: 'Error',
-            description: 'Could not fetch attendance data.',
+            description: 'Could not fetch teacher attendance data.',
             variant: 'destructive',
         });
         setAttendance({}); // Reset to empty on error
@@ -61,11 +61,11 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
     fetchAttendance();
   }, [fetchAttendance]);
 
-  const handleStatusChange = async (studentId: string, status: AttendanceStatus) => {
+  const handleStatusChange = async (teacherId: string, status: AttendanceStatus) => {
     // Optimistic UI update
-    setAttendance(prev => ({ ...prev, [studentId]: { status } }));
+    setAttendance(prev => ({ ...prev, [teacherId]: { status } }));
     
-    const result = await setAttendanceAction(studentId, formattedDate, status);
+    const result = await setTeacherAttendanceAction(teacherId, formattedDate, status);
     
     if (result.success) {
       // Re-fetch on success to ensure data consistency
@@ -81,24 +81,24 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
     }
   };
 
-  const filteredStudents = useMemo(() => students.filter(student => {
-    const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const classMatch = classFilter ? student.class.toLowerCase().includes(classFilter.toLowerCase()) : true;
-    return nameMatch && classMatch;
-  }), [students, searchQuery, classFilter]);
+  const filteredTeachers = useMemo(() => teachers.filter(teacher => {
+    const nameMatch = teacher.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const subjectMatch = subjectFilter ? teacher.subject.toLowerCase().includes(subjectFilter.toLowerCase()) : true;
+    return nameMatch && subjectMatch;
+  }), [teachers, searchQuery, subjectFilter]);
   
   const attendanceSummary = useMemo(() => {
-    const studentIdsInFilter = new Set(filteredStudents.map(s => s.id));
+    const teacherIdsInFilter = new Set(filteredTeachers.map(t => t.id));
     const attendanceValues = Object.entries(attendance || {})
-      .filter(([studentId]) => studentIdsInFilter.has(studentId))
+      .filter(([teacherId]) => teacherIdsInFilter.has(teacherId))
       .map(([, data]) => data);
       
     const present = attendanceValues.filter(a => a?.status === 'present').length;
     const absent = attendanceValues.filter(a => a?.status === 'absent').length;
-    const total = filteredStudents.length;
+    const total = filteredTeachers.length;
     const percentage = total > 0 ? (present / total) * 100 : 0;
     return { present, absent, percentage };
-  }, [attendance, filteredStudents]);
+  }, [attendance, filteredTeachers]);
 
 
   return (
@@ -106,8 +106,8 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
       <CardHeader>
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className='w-full'>
-                <CardTitle>Student Attendance Management</CardTitle>
-                <CardDescription>Mark and track student attendance for the selected date.</CardDescription>
+                <CardTitle>Teacher Attendance Management</CardTitle>
+                <CardDescription>Mark and track teacher attendance for the selected date.</CardDescription>
             </div>
             <Popover>
                 <PopoverTrigger asChild>
@@ -143,14 +143,14 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
               />
           </div>
             <Input
-              placeholder="Filter by class..."
-              value={classFilter}
-              onChange={(e) => setClassFilter(e.target.value)}
+              placeholder="Filter by subject..."
+              value={subjectFilter}
+              onChange={(e) => setSubjectFilter(e.target.value)}
               className="w-full"
           />
         </div>
         <div className="mt-4 text-sm text-muted-foreground">
-          <strong>Summary for filtered students:</strong> Present: {attendanceSummary.present} | Absent: {attendanceSummary.absent} | 
+          <strong>Summary for filtered teachers:</strong> Present: {attendanceSummary.present} | Absent: {attendanceSummary.absent} | 
           <strong> Attendance: {attendanceSummary.percentage.toFixed(2)}%</strong>
         </div>
       </CardHeader>
@@ -159,38 +159,36 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Roll No.</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Class</TableHead>
+                <TableHead>Subject</TableHead>
                 <TableHead className="text-right">Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center">Loading attendance...</TableCell>
+                  <TableCell colSpan={3} className="text-center">Loading attendance...</TableCell>
                 </TableRow>
-              ) : filteredStudents.length > 0 ? (
-                filteredStudents.map((student) => {
-                  const status = attendance[student.id]?.status;
+              ) : filteredTeachers.length > 0 ? (
+                filteredTeachers.map((teacher) => {
+                  const status = attendance[teacher.id]?.status;
                   return (
-                    <TableRow key={student.id}>
-                      <TableCell>{student.rollNumber}</TableCell>
-                      <TableCell>{student.name}</TableCell>
-                      <TableCell>{`${student.class}-${student.section}`}</TableCell>
+                    <TableRow key={teacher.id}>
+                      <TableCell>{teacher.name}</TableCell>
+                      <TableCell>{teacher.subject}</TableCell>
                       <TableCell className="text-right">
                         <RadioGroup
-                          onValueChange={(value) => handleStatusChange(student.id, value as AttendanceStatus)}
+                          onValueChange={(value) => handleStatusChange(teacher.id, value as AttendanceStatus)}
                           value={status}
                           className="flex justify-end gap-2 md:gap-4"
                         >
                           <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="present" id={`present-${student.id}`} />
-                            <Label htmlFor={`present-${student.id}`}>Present</Label>
+                            <RadioGroupItem value="present" id={`present-${teacher.id}`} />
+                            <Label htmlFor={`present-${teacher.id}`}>Present</Label>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="absent" id={`absent-${student.id}`} />
-                            <Label htmlFor={`absent-${student.id}`}>Absent</Label>
+                            <RadioGroupItem value="absent" id={`absent-${teacher.id}`} />
+                            <Label htmlFor={`absent-${teacher.id}`}>Absent</Label>
                           </div>
                         </RadioGroup>
                       </TableCell>
@@ -199,8 +197,8 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center">
-                    No students found.
+                  <TableCell colSpan={3} className="text-center">
+                    No teachers found.
                   </TableCell>
                 </TableRow>
               )}
