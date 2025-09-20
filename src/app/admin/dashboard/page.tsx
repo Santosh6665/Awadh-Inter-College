@@ -13,12 +13,15 @@ import { firestore } from "@/lib/firebase-admin";
 import { FeeManagement } from "./fees/fee-management";
 import { NoticeManagement } from "./notices/notice-management";
 import { getNotices } from "./notices/actions";
+import { format } from 'date-fns';
 
 export default async function AdminDashboardPage() {
   let students: Student[] = [];
   let teachers: Teacher[] = [];
   let feeStructures: any = {};
   let notices: Notice[] = [];
+  let todayAttendanceData: any = {};
+  let yesterdayAttendanceData: any = {};
 
   // Only attempt to fetch data if firestore was successfully initialized
   if (firestore) {
@@ -30,6 +33,25 @@ export default async function AdminDashboardPage() {
       if (feeStructureDoc.exists) {
         feeStructures = feeStructureDoc.data() || {};
       }
+
+      // Fetch attendance data
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      const todayDateString = format(today, 'yyyy-MM-dd');
+      const yesterdayDateString = format(yesterday, 'yyyy-MM-dd');
+
+      const todayAttendanceDoc = await firestore.collection('attendance').doc(todayDateString).get();
+      if (todayAttendanceDoc.exists) {
+        todayAttendanceData = todayAttendanceDoc.data() || {};
+      }
+
+      const yesterdayAttendanceDoc = await firestore.collection('attendance').doc(yesterdayDateString).get();
+      if (yesterdayAttendanceDoc.exists) {
+        yesterdayAttendanceData = yesterdayAttendanceDoc.data() || {};
+      }
+
     } catch (error) {
       console.error("Failed to fetch dashboard data at runtime:", error);
       // In case of an error at runtime, we still render the page with empty data
@@ -66,12 +88,28 @@ export default async function AdminDashboardPage() {
   }, 0);
 
 
-  let percentageChangeText = '+0% from last month';
+  let feesPercentageChangeText = '+0% from last month';
   if (feesLastMonth > 0) {
     const percentageChange = ((totalFeesCollectedSoFarThisMonth - feesLastMonth) / feesLastMonth) * 100;
-     percentageChangeText = `${percentageChange >= 0 ? '+' : ''}${percentageChange.toFixed(1)}% from last month`;
+     feesPercentageChangeText = `${percentageChange >= 0 ? '+' : ''}${percentageChange.toFixed(1)}% from last month`;
   } else if (totalFeesCollectedSoFarThisMonth > 0) {
-    percentageChangeText = 'New collections this month';
+    feesPercentageChangeText = 'New collections this month';
+  }
+
+  // Calculate attendance percentages
+  const totalStudents = students.length > 0 ? students.length : 1;
+  const presentToday = Object.values(todayAttendanceData).filter((att: any) => att.status === 'present').length;
+  const presentYesterday = Object.values(yesterdayAttendanceData).filter((att: any) => att.status === 'present').length;
+
+  const todayAttendancePercentage = (presentToday / totalStudents) * 100;
+  const yesterdayAttendancePercentage = (presentYesterday / totalStudents) * 100;
+
+  let attendancePercentageChangeText = 'No data from yesterday';
+  if (presentYesterday > 0) {
+    const percentageChange = ((todayAttendancePercentage - yesterdayAttendancePercentage) / yesterdayAttendancePercentage) * 100;
+    attendancePercentageChangeText = `${percentageChange >= 0 ? '+' : ''}${percentageChange.toFixed(1)}% from yesterday`;
+  } else if (presentToday > 0) {
+    attendancePercentageChangeText = 'Attendance recorded today';
   }
 
 
@@ -119,21 +157,21 @@ export default async function AdminDashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold">₹{totalFeesCollected.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
             <p className="text-xs text-muted-foreground">
-              {percentageChangeText}
+              {feesPercentageChangeText}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Library Books Issued
+              Today's Attendance
             </CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <UserCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+573</div>
+            <div className="text-2xl font-bold">{todayAttendancePercentage.toFixed(1)}%</div>
             <p className="text-xs text-muted-foreground">
-              +19% from last month
+              {attendancePercentageChangeText}
             </p>
           </CardContent>
         </Card>
@@ -150,22 +188,22 @@ export default async function AdminDashboardPage() {
               <TabsTrigger value="notices">Events &amp; Notices</TabsTrigger>
             </TabsList>
           </div>
-          <TabsContent value="students" className="mt-4">
+          <TabsContent value="students" className="mt-4 px-4 md:px-8">
             <StudentList students={students} />
           </TabsContent>
-          <TabsContent value="teachers" className="mt-4">
+          <TabsContent value="teachers" className="mt-4 px-4 md:px-8">
             <TeacherList teachers={teachers} />
           </TabsContent>
-           <TabsContent value="results" className="mt-4">
+           <TabsContent value="results" className="mt-4 px-4 md:px-8">
             <ResultsManagement students={students} />
           </TabsContent>
-          <TabsContent value="attendance" className="mt-4">
+          <TabsContent value="attendance" className="mt-4 px-4 md:px-8">
             <AttendanceManagement students={students} />
           </TabsContent>
-           <TabsContent value="fees" className="mt-4">
+           <TabsContent value="fees" className="mt-4 px-4 md:px-8">
             <FeeManagement students={students} feeSettings={feeStructures} />
           </TabsContent>
-          <TabsContent value="notices" className="mt-4">
+          <TabsContent value="notices" className="mt-4 px-4 md:px-8">
             <NoticeManagement notices={notices} />
           </TabsContent>
         </Tabs>
