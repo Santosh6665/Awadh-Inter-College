@@ -171,7 +171,7 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete the teacher's record from the database.
-                </"AlertDialogDescription>
+                </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
