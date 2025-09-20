@@ -64,10 +64,9 @@ export function AddStudentForm() {
     setLoading(true);
     try {
       // Step 1: Create user in Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-      const user = userCredential.user;
+      await createUserWithEmailAndPassword(auth, data.email, data.password);
 
-      // Step 2: Prepare student data for Realtime Database (exclude password)
+      // Step 2: Prepare student data for Firestore (exclude password)
       const { password, ...studentDataForDb } = data;
       const studentDataWithFee = {
         ...studentDataForDb,
