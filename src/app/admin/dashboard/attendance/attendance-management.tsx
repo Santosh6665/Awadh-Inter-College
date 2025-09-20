@@ -41,10 +41,20 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
 
   const fetchAttendance = useCallback(async () => {
     setLoading(true);
-    const data = await getAttendanceByDate(formattedDate);
-    setAttendance(data || {});
-    setLoading(false);
-  }, [formattedDate]);
+    try {
+        const data = await getAttendanceByDate(formattedDate);
+        setAttendance(data || {});
+    } catch (error) {
+        console.error("Failed to fetch attendance:", error);
+        toast({
+            title: 'Error',
+            description: 'Could not fetch attendance data.',
+            variant: 'destructive',
+        });
+    } finally {
+        setLoading(false);
+    }
+  }, [formattedDate, toast]);
 
   useEffect(() => {
     fetchAttendance();
@@ -55,13 +65,18 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
     setAttendance(prev => ({ ...prev, [studentId]: { status } }));
     
     const result = await setAttendanceAction(studentId, formattedDate, status);
-    if (!result.success) {
+    
+    if (result.success) {
+      // Re-fetch on success to ensure data consistency, though optimistic update handles the immediate UI change.
+      // This is useful if the backend modifies the data in some way.
+      await fetchAttendance();
+    } else {
       toast({
         title: 'Error',
         description: result.message,
         variant: 'destructive',
       });
-      // Revert if API call fails by re-fetching
+      // Revert if API call fails by re-fetching the original state
       await fetchAttendance();
     }
   };
