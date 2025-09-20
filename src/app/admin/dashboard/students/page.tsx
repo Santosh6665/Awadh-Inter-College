@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -32,6 +32,7 @@ import {
 export default function ManageStudentsPage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
   const fetchStudents = async () => {
@@ -53,21 +54,23 @@ export default function ManageStudentsPage() {
     fetchStudents();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteStudent(id);
-      toast({
-        title: 'Student Deleted',
-        description: 'The student record has been successfully deleted.',
-      });
-      fetchStudents(); // Refresh the list
-    } catch (error) {
-      toast({
-        title: 'Error Deleting Student',
-        description: 'Could not delete the student record. Please try again.',
-        variant: 'destructive',
-      });
-    }
+  const handleDelete = (id: string) => {
+    startTransition(async () => {
+        try {
+        await deleteStudent(id);
+        toast({
+            title: 'Student Deleted',
+            description: 'The student record has been successfully deleted.',
+        });
+        fetchStudents(); // Refresh the list
+        } catch (error) {
+        toast({
+            title: 'Error Deleting Student',
+            description: 'Could not delete the student record. Please try again.',
+            variant: 'destructive',
+        });
+        }
+    });
   };
 
   return (
@@ -110,7 +113,7 @@ export default function ManageStudentsPage() {
                     <AlertDialog>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
+                          <Button variant="ghost" className="h-8 w-8 p-0" disabled={isPending}>
                             <span className="sr-only">Open menu</span>
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
@@ -122,7 +125,7 @@ export default function ManageStudentsPage() {
                               </Link>
                           </DropdownMenuItem>
                           <AlertDialogTrigger asChild>
-                            <DropdownMenuItem className="text-destructive">
+                            <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10" onSelect={(e) => e.preventDefault()}>
                               <Trash2 className="mr-2 h-4 w-4" /> Delete
                             </DropdownMenuItem>
                           </AlertDialogTrigger>
@@ -138,8 +141,11 @@ export default function ManageStudentsPage() {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(student.id)}>
-                            Continue
+                          <AlertDialogAction 
+                            onClick={() => handleDelete(student.id)}
+                            className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                          >
+                            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Continue'}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
