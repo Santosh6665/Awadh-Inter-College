@@ -63,43 +63,44 @@ export function AddStudentForm() {
   async function onSubmit(data: StudentFormValues) {
     setLoading(true);
     try {
-        // Step 1: Create user in Firebase Auth
-        const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-        const user = userCredential.user;
+      // Step 1: Create user in Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      const user = userCredential.user;
 
-        if (user) {
-            // Step 2: Save student data to Realtime Database
-            const { password, ...studentData } = data; // Exclude password from DB
-            await addStudent({
-                ...studentData,
-                feeStatus: 'Due',
-                amountDue: 0, // Default fee status and amount
-            });
-            
-            toast({
-                title: 'Student Added',
-                description: 'A new student has been successfully added.',
-            });
-            
-            router.push('/admin/dashboard/students');
-            router.refresh();
-        }
-
-    } catch (error: any) {
-        console.error("Failed to add student:", error);
-        let errorMessage = 'Could not save the student data. Please try again.';
-        if (error.code === 'auth/email-already-in-use') {
-            errorMessage = 'This email is already in use by another account.';
-        } else if (error.code === 'auth/weak-password') {
-            errorMessage = 'The password is too weak. Please choose a stronger password.';
-        }
-        toast({
-            title: 'An error occurred',
-            description: errorMessage,
-            variant: 'destructive',
+      if (user) {
+        // Step 2: Save student data to Realtime Database
+        const { password, ...studentData } = data; // Exclude password from DB
+        await addStudent({
+          ...studentData,
+          feeStatus: 'Due',
+          amountDue: 0, // Default fee status and amount
         });
+
+        toast({
+          title: 'Student Added',
+          description: 'A new student has been successfully added.',
+        });
+
+        router.push('/admin/dashboard/students');
+        router.refresh();
+      } else {
+        throw new Error("User creation failed unexpectedly.");
+      }
+    } catch (error: any) {
+      console.error("Failed to add student:", error);
+      let errorMessage = 'Could not save the student data. Please try again.';
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'This email is already in use by another account.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'The password is too weak. Please choose a stronger password.';
+      }
+      toast({
+        title: 'An error occurred',
+        description: errorMessage,
+        variant: 'destructive',
+      });
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   }
 
