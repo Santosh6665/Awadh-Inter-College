@@ -45,7 +45,8 @@ export async function loginStudent(credentials: z.infer<typeof loginSchema>) {
         }
     } else {
         // Otherwise, construct and check default password
-        const firstName = studentData.name.split(' ')[0];
+        const firstNameRaw = studentData.name.split(' ')[0];
+        const firstName = firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1);
         const yearOfBirth = new Date(studentData.dob).getFullYear();
         const defaultPassword = `${firstName}@${yearOfBirth}`;
 
