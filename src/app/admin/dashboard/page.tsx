@@ -7,14 +7,10 @@ import { TeacherList } from "./teachers/teacher-list";
 import { getTeachers } from "./teachers/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultsManagement } from "./results/results-management";
-import { AttendanceManagement } from "./attendance/attendance-management";
-import { getAttendanceByDate } from "./attendance/actions";
 
 export default async function AdminDashboardPage() {
   const students = await getStudents();
   const teachers = await getTeachers();
-  const today = new Date().toISOString().split('T')[0];
-  const initialAttendance = await getAttendanceByDate(today);
 
 
   return (
@@ -84,7 +80,6 @@ export default async function AdminDashboardPage() {
             <TabsTrigger value="students">Manage Students</TabsTrigger>
             <TabsTrigger value="teachers">Manage Teachers</TabsTrigger>
             <TabsTrigger value="results">Result Management</TabsTrigger>
-            <TabsTrigger value="attendance">Attendance</TabsTrigger>
           </TabsList>
           <TabsContent value="students" className="mt-4">
             <StudentList students={students} />
@@ -94,9 +89,6 @@ export default async function AdminDashboardPage() {
           </TabsContent>
            <TabsContent value="results" className="mt-4">
             <ResultsManagement students={students} />
-          </TabsContent>
-          <TabsContent value="attendance" className="mt-4">
-            <AttendanceManagement students={students} initialAttendance={initialAttendance} />
           </TabsContent>
         </Tabs>
       </div>

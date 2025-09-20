@@ -50,16 +50,6 @@ export type Teacher = {
     photoUrl?: string;
 };
 
-export type AttendanceRecord = {
-    id: string; // Composite key like YYYY-MM-DD_studentId
-    studentId: string;
-    studentName: string;
-    class: string;
-    section: string;
-    date: string; // YYYY-MM-DD
-    status: 'Present' | 'Absent' | 'Late';
-};
-
 export type Book = {
     id: string;
     title: string;
