@@ -183,7 +183,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                               </TableRow>
                                             ))}
                                           </TableBody>
-                                          <TableFooter>
+                                           <TableFooter>
                                             <TableRow className="font-bold bg-muted/50">
                                                 <TableCell>Total</TableCell>
                                                 <TableCell className="text-center">{totals.totalMaxMarks}</TableCell>
@@ -195,7 +195,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                   </div>
                                   
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="border rounded-lg p-4">
+                                    <div className="border rounded-lg p-4 print-p-4">
                                       <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><BarChart3 className="h-5 w-5 text-primary" /> 📊 Summary</h3>
                                       <div className="space-y-2 text-sm">
                                         <div className="flex justify-between"><strong>Percentage:</strong> <span className="font-mono">{percentage?.toFixed(2)}%</span></div>
@@ -203,7 +203,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                         <div className="flex justify-between"><strong>Result Status:</strong> <Badge className={cn(resultStatus === 'Pass' ? 'bg-green-600' : 'bg-red-600', 'text-white')}>{resultStatus === 'Pass' ? '✅ Pass' : '❌ Fail'}</Badge></div>
                                       </div>
                                     </div>
-                                    <div className="border rounded-lg p-4">
+                                    <div className="border rounded-lg p-4 print-p-4">
                                       <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><GraduationCap className="h-5 w-5 text-primary" /> 🏅 Remarks</h3>
                                       <p className="text-sm text-muted-foreground italic">
                                         “{student.marks?.remarks || 'Good effort. Keep improving.'}”

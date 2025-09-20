@@ -103,6 +103,9 @@ body {
     padding: 0;
     margin: 0;
   }
+  .print-p-4 {
+    padding: 1rem;
+  }
   #student-dashboard,
   #student-dashboard > .container,
   #student-dashboard .p-4,
