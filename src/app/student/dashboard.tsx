@@ -371,7 +371,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                     {student.payments && student.payments.length > 0 ? (
                                         student.payments.map(payment => (
                                             <TableRow key={payment.id}>
-                                                <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
+                                                <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
                                                 <TableCell>{payment.method}</TableCell>
                                                 <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
                                             </TableRow>
@@ -394,6 +394,3 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
     </>
   );
 }
-
-
-    
