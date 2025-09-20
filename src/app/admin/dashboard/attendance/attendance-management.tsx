@@ -48,7 +48,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
     async function fetchAttendance() {
       setLoading(true);
       const data = await getAttendanceByDate(formattedDate);
-      setAttendance(data);
+      setAttendance(data || {});
       setLoading(false);
     }
     fetchAttendance();
@@ -78,13 +78,15 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
   }), [students, searchQuery, classFilter]);
   
   const attendanceSummary = useMemo(() => {
-    const present = Object.values(attendance).filter(a => a.status === 'present').length;
-    const absent = Object.values(attendance).filter(a => a.status === 'absent').length;
-    const late = Object.values(attendance).filter(a => a.status === 'late').length;
+    const attendanceValues = Object.values(attendance || {});
+    const present = attendanceValues.filter(a => a.status === 'present').length;
+    const absent = attendanceValues.filter(a => a.status === 'absent').length;
+    const late = attendanceValues.filter(a => a.status === 'late').length;
     const total = filteredStudents.length;
     const percentage = total > 0 ? ((present + late) / total) * 100 : 0;
     return { present, absent, late, percentage };
   }, [attendance, filteredStudents]);
+
 
   return (
     <Card>
