@@ -120,9 +120,9 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
           <FeeReceipt student={student} payment={receiptToPrint} feeDetails={feeDetails} />
         </div>
       )}
-      <div className="container mx-auto p-4 md:p-8" id="student-dashboard">
-        <Card>
-          <CardHeader className="flex flex-col md:flex-row items-center justify-between gap-4 print-hidden">
+      <div className="container mx-auto" id="student-dashboard">
+        <Card className="min-h-[calc(100vh-3.5rem)]">
+          <CardHeader className="flex flex-col md:flex-row items-center justify-between gap-4 print-hidden p-4 md:p-6">
             <div className="flex items-center gap-4">
               <Avatar className="h-20 w-20 border">
                 <AvatarImage src={student.photoUrl} alt={student.name} />
@@ -139,7 +139,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
               </Button>
             </form>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 md:p-6">
             <Tabs defaultValue="profile" className="w-full">
               <TabsList className="grid w-full grid-cols-2 sm:w-auto sm:grid-cols-4 print-hidden">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
