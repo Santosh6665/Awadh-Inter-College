@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFooter } from '@/components/ui/table';
 import Link from 'next/link';
 import { SetPasswordDialog } from './set-password-dialog';
 import { calculatePercentage, calculateGrade, calculateTotals } from '@/lib/result-utils';
@@ -183,12 +183,14 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                               </TableRow>
                                             ))}
                                           </TableBody>
-                                          <TableRow className="font-bold bg-muted/50">
-                                            <TableCell>Total</TableCell>
-                                            <TableCell className="text-center">{totals.totalMaxMarks}</TableCell>
-                                            <TableCell className="text-center">{totals.totalObtainedMarks}</TableCell>
-                                            <TableCell className="text-right">—</TableCell>
-                                          </TableRow>
+                                          <TableFooter>
+                                            <TableRow className="font-bold bg-muted/50">
+                                                <TableCell>Total</TableCell>
+                                                <TableCell className="text-center">{totals.totalMaxMarks}</TableCell>
+                                                <TableCell className="text-center">{totals.totalObtainedMarks}</TableCell>
+                                                <TableCell className="text-right">—</TableCell>
+                                            </TableRow>
+                                          </TableFooter>
                                       </Table>
                                   </div>
                                   
