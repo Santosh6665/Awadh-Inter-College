@@ -91,3 +91,39 @@ body {
     background: hsl(var(--muted-foreground) / 0.5);
   }
 }
+
+@media print {
+  body {
+    background: white;
+  }
+  .print-hidden, header, footer, [data-orientation="vertical"], nav {
+    display: none;
+  }
+  main {
+    padding: 0;
+    margin: 0;
+  }
+  #student-dashboard,
+  #student-dashboard > .container,
+  #student-dashboard .p-4,
+  #student-dashboard .p-8 {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  #result-card, #result-card > div, #result-card > div > div {
+     box-shadow: none !important;
+     border: none !important;
+  }
+   body * {
+    visibility: hidden;
+  }
+  #result-card, #result-card * {
+    visibility: visible;
+  }
+  #result-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}

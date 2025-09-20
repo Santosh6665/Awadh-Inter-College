@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader } from '@
 import Link from 'next/link';
 import { SetPasswordDialog } from './set-password-dialog';
 import { calculatePercentage, calculateGrade } from '@/lib/result-utils';
+import { Download } from 'lucide-react';
 
 interface StudentDashboardProps {
   student: Student;
@@ -31,12 +32,16 @@ export function StudentDashboard({ student, rank, forcePasswordReset }: StudentD
 
   const hasMarks = student.marks && Object.values(student.marks).some(mark => mark !== null && mark !== undefined);
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <>
       <SetPasswordDialog isOpen={forcePasswordReset} studentId={student.id} />
-      <div className="container mx-auto p-4 md:p-8">
+      <div className="container mx-auto p-4 md:p-8" id="student-dashboard">
         <Card>
-          <CardHeader className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <CardHeader className="flex flex-col md:flex-row items-center justify-between gap-4 print-hidden">
             <div className="flex items-center gap-4">
               <Avatar className="h-20 w-20 border">
                 <AvatarImage src={student.photoUrl} alt={student.name} />
@@ -54,8 +59,8 @@ export function StudentDashboard({ student, rank, forcePasswordReset }: StudentD
             </form>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="profile" className="w-full">
-              <TabsList>
+            <Tabs defaultValue="results" className="w-full">
+              <TabsList className="print-hidden">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="fees">Fee Information</TabsTrigger>
                 <TabsTrigger value="results">Exam Results</TabsTrigger>
@@ -106,14 +111,28 @@ export function StudentDashboard({ student, rank, forcePasswordReset }: StudentD
                   </Card>
               </TabsContent>
               <TabsContent value="results" className="mt-4">
-                  <Card>
+                  <Card id="result-card">
                       <CardHeader>
-                          <CardTitle>Examination Results</CardTitle>
-                          <CardDescription>Your performance in recent exams.</CardDescription>
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-2">
+                           <div className="text-center md:text-left">
+                                <CardTitle>Examination Results</CardTitle>
+                                <CardDescription>Awadh Inter College - Session 2024-2025</CardDescription>
+                           </div>
+                           <Button onClick={handlePrint} variant="outline" size="sm" className="print-hidden">
+                                <Download className="mr-2 h-4 w-4" />
+                                Download Result
+                           </Button>
+                        </div>
                       </CardHeader>
                       <CardContent>
                           {hasMarks ? (
                               <div className="space-y-4">
+                                  <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm mb-4">
+                                    <div><strong>Student Name:</strong> {student.name}</div>
+                                    <div><strong>Roll Number:</strong> {student.rollNumber}</div>
+                                    <div><strong>Class:</strong> {`${student.class}-${student.section}`}</div>
+                                    <div><strong>Father's Name:</strong> {student.fatherName}</div>
+                                  </div>
                                   <Table>
                                       <TableHeader>
                                           <TableRow>
