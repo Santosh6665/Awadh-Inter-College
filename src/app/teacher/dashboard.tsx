@@ -93,6 +93,14 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                           <TableCell className="font-medium">Phone</TableCell>
                                           <TableCell className="whitespace-normal break-words">{teacher.phone}</TableCell>
                                       </TableRow>
+                                      <TableRow>
+                                        <TableCell className="font-medium">Date of Birth</TableCell>
+                                        <TableCell>{teacher.dob ? new Date(teacher.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' }) : 'N/A'}</TableCell>
+                                      </TableRow>
+                                      <TableRow>
+                                        <TableCell className="font-medium">Qualification</TableCell>
+                                        <TableCell>{teacher.qualification || 'N/A'}</TableCell>
+                                      </TableRow>
                                   </TableBody>
                               </Table>
                             </div>
