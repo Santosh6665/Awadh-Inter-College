@@ -130,7 +130,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
               </Avatar>
               <div>
                 <CardTitle className="text-2xl">{student.name}</CardTitle>
-                <CardDescription>Roll No: {student.rollNumber} | Class: {student.class}-{student.section}</CardDescription>
+                <CardDescription>Welcome to your student portal.</CardDescription>
               </div>
             </div>
             <form action="/student/logout" method="GET">
@@ -155,6 +155,18 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                       <CardContent>
                           <Table>
                               <TableBody>
+                                  <TableRow>
+                                      <TableCell className="font-medium">Name</TableCell>
+                                      <TableCell>{student.name}</TableCell>
+                                  </TableRow>
+                                  <TableRow>
+                                      <TableCell className="font-medium">Roll Number</TableCell>
+                                      <TableCell>{student.rollNumber}</TableCell>
+                                  </TableRow>
+                                  <TableRow>
+                                      <TableCell className="font-medium">Class</TableCell>
+                                      <TableCell>{student.class}-{student.section}</TableCell>
+                                  </TableRow>
                                   <TableRow>
                                       <TableCell className="font-medium">Email</TableCell>
                                       <TableCell>{student.email}</TableCell>
