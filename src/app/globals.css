@@ -163,4 +163,18 @@ body {
     margin: 0;
     padding-top: 2rem;
   }
+
+  /* Rules for printing salary slip */
+  .print-salary-slip #slip-to-print, .print-salary-slip #slip-to-print * {
+    visibility: visible;
+  }
+
+  .print-salary-slip #slip-to-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding-top: 2rem;
+  }
 }
