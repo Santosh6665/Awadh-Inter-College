@@ -22,6 +22,21 @@ export type Marks = {
   remarks?: string;
 };
 
+export type FeeStructure = {
+  tuition?: number;
+  transport?: number;
+  exam?: number;
+  other?: number;
+};
+
+export type Payment = {
+  id: string;
+  date: string;
+  amount: number;
+  method: 'Cash' | 'Card' | 'Online';
+};
+
+
 export type Student = {
     id: string;
     name: string;
@@ -34,11 +49,11 @@ export type Student = {
     fatherName: string;
     address: string;
     photoUrl?: string;
-    feeStatus?: 'Paid' | 'Due' | 'Overdue';
-    amountDue?: number;
     marks?: Marks;
     // Password should not be sent to client, but exists in DB
-    password?: string; 
+    password?: string;
+    feeStructure?: FeeStructure;
+    payments?: Payment[];
 };
 
 export type Teacher = {
