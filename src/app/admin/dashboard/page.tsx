@@ -36,6 +36,44 @@ export default async function AdminDashboardPage() {
      console.warn("Firestore is not available. Skipping data fetch for Admin Dashboard. This is expected during the build process.");
   }
 
+  const totalFeesCollected = students.reduce((acc, student) => {
+    const studentTotal = (student.payments || []).reduce((paymentAcc, payment) => paymentAcc + payment.amount, 0);
+    return acc + studentTotal;
+  }, 0);
+
+  const now = new Date();
+  const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  
+  let feesThisMonth = 0;
+  let feesLastMonth = 0;
+
+  students.forEach(student => {
+    (student.payments || []).forEach(payment => {
+      const paymentDate = new Date(payment.date);
+      if (paymentDate >= startOfCurrentMonth) {
+        // Current month's collections are not needed for "change from last month"
+      } else if (paymentDate >= startOfLastMonth && paymentDate < startOfCurrentMonth) {
+        feesLastMonth += payment.amount;
+      }
+    });
+  });
+  
+  const totalFeesCollectedSoFarThisMonth = students.reduce((acc, student) => {
+    return acc + (student.payments || [])
+      .filter(p => new Date(p.date) >= startOfCurrentMonth)
+      .reduce((sum, p) => sum + p.amount, 0);
+  }, 0);
+
+
+  let percentageChangeText = '+0% from last month';
+  if (feesLastMonth > 0) {
+    const percentageChange = ((totalFeesCollectedSoFarThisMonth - feesLastMonth) / feesLastMonth) * 100;
+     percentageChangeText = `${percentageChange >= 0 ? '+' : ''}${percentageChange.toFixed(1)}% from last month`;
+  } else if (totalFeesCollectedSoFarThisMonth > 0) {
+    percentageChangeText = 'New collections this month';
+  }
+
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -72,14 +110,14 @@ export default async function AdminDashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Fees Collected
+              Total Fees Collected
             </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$45,231.89</div>
+            <div className="text-2xl font-bold">₹{totalFeesCollected.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
             <p className="text-xs text-muted-foreground">
-              +180.1% from last month
+              {percentageChangeText}
             </p>
           </CardContent>
         </Card>
