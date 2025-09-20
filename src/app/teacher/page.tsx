@@ -4,8 +4,8 @@ import { redirect } from 'next/navigation';
 import { Header } from '@/components/layout/header';
 import { TeacherLoginForm } from '@/app/teacher/login-form';
 import { TeacherDashboard } from '@/app/teacher/dashboard';
-import type { Student, Teacher } from '@/lib/types';
-import { getTeacherById } from './actions';
+import type { Student, Teacher, AttendanceRecord } from '@/lib/types';
+import { getTeacherById, getTeacherAttendance } from './actions';
 import { getStudents } from '../admin/dashboard/students/actions';
 
 
@@ -16,6 +16,7 @@ export default async function TeacherPage() {
 
   let teacher: Teacher | null = null;
   let students: Student[] = [];
+  let attendance: AttendanceRecord[] = [];
 
   if (teacherId) {
     teacher = await getTeacherById(teacherId);
@@ -25,6 +26,8 @@ export default async function TeacherPage() {
     } else {
       // Fetch all students for the teacher to manage
       students = await getStudents();
+      // Fetch teacher's own attendance
+      attendance = await getTeacherAttendance(teacherId);
     }
   }
 
@@ -33,7 +36,7 @@ export default async function TeacherPage() {
       <Header />
       <main className="flex-1">
         {teacher ? (
-          <TeacherDashboard teacher={teacher} students={students} forcePasswordReset={forcePasswordReset} />
+          <TeacherDashboard teacher={teacher} students={students} attendance={attendance} forcePasswordReset={forcePasswordReset} />
         ) : (
           <div className="flex items-center justify-center p-4 h-full bg-[rgb(231,249,254)]">
             <TeacherLoginForm />
