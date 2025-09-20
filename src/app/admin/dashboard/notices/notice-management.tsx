@@ -86,7 +86,7 @@ export function NoticeManagement({ notices }: { notices: Notice[] }) {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto max-h-96">
             <Table>
               <TableHeader>
                 <TableRow>
