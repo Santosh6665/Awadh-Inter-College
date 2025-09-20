@@ -11,7 +11,6 @@ import { AttendanceManagement } from "./attendance/attendance-management";
 import type { Student, Teacher } from "@/lib/types";
 import { firestore } from "@/lib/firebase-admin";
 import { FeeManagement } from "./fees/fee-management";
-import { FeeSettings } from "./fees/fee-settings";
 
 export default async function AdminDashboardPage() {
   let students: Student[] = [];
@@ -138,13 +137,12 @@ export default async function AdminDashboardPage() {
       </div>
       <div className="pt-8">
         <Tabs defaultValue="students">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
             <TabsTrigger value="students">Manage Students</TabsTrigger>
             <TabsTrigger value="teachers">Manage Teachers</TabsTrigger>
             <TabsTrigger value="results">Result Management</TabsTrigger>
             <TabsTrigger value="attendance">Attendance</TabsTrigger>
             <TabsTrigger value="fees">Fee Management</TabsTrigger>
-            <TabsTrigger value="fee-settings">Fee Settings</TabsTrigger>
           </TabsList>
           <TabsContent value="students" className="mt-4">
             <StudentList students={students} />
@@ -160,9 +158,6 @@ export default async function AdminDashboardPage() {
           </TabsContent>
            <TabsContent value="fees" className="mt-4">
             <FeeManagement students={students} feeSettings={feeStructures} />
-          </TabsContent>
-          <TabsContent value="fee-settings" className="mt-4">
-            <FeeSettings initialData={feeStructures} />
           </TabsContent>
         </Tabs>
       </div>
