@@ -8,10 +8,18 @@ import { getTeachers } from "./teachers/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultsManagement } from "./results/results-management";
 import { AttendanceManagement } from "./attendance/attendance-management";
+import type { Student, Teacher } from "@/lib/types";
 
 export default async function AdminDashboardPage() {
-  const students = await getStudents();
-  const teachers = await getTeachers();
+  let students: Student[] = [];
+  let teachers: Teacher[] = [];
+
+  try {
+    students = await getStudents();
+    teachers = await getTeachers();
+  } catch (error) {
+    console.warn("Could not fetch initial dashboard data, likely due to missing environment variables during build time. This is expected during deployment builds and the app will function correctly once environment variables are set.", error);
+  }
 
 
   return (
