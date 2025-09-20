@@ -26,7 +26,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon, Search } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
-import { getAttendanceByDate, setAttendance } from './actions';
+import { getAttendanceByDate, setAttendance as setAttendanceAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
 
 type AttendanceStatus = 'present' | 'absent' | 'late';
@@ -58,7 +58,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
     // Optimistic UI update
     setAttendance(prev => ({ ...prev, [studentId]: { status } }));
     
-    const result = await setAttendance(studentId, formattedDate, status);
+    const result = await setAttendanceAction(studentId, formattedDate, status);
     if (!result.success) {
       toast({
         title: 'Error',
