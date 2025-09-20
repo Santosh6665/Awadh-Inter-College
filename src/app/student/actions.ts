@@ -8,7 +8,11 @@ import { firestore } from '@/lib/firebase-admin';
 
 const loginSchema = z.object({
   rollNumber: z.string(),
-  password: z.string().min(6),
+  password: z.string().min(1), // Allow any password length for default check
+});
+
+const setPasswordSchema = z.object({
+    password: z.string().min(6, 'Password must be at least 6 characters.'),
 });
 
 export async function loginStudent(credentials: z.infer<typeof loginSchema>) {
@@ -28,9 +32,29 @@ export async function loginStudent(credentials: z.infer<typeof loginSchema>) {
     }
 
     const studentData = studentDoc.data();
-    if (studentData?.password !== password) {
-      return { success: false, message: 'Incorrect password.' };
+    if (!studentData) {
+        return { success: false, message: 'Student data could not be read.' };
     }
+
+    let isFirstLogin = false;
+
+    // If password field exists, use it
+    if (studentData.password) {
+        if (studentData.password !== password) {
+            return { success: false, message: 'Incorrect password.' };
+        }
+    } else {
+        // Otherwise, construct and check default password
+        const firstName = studentData.name.split(' ')[0];
+        const yearOfBirth = new Date(studentData.dob).getFullYear();
+        const defaultPassword = `${firstName}@${yearOfBirth}`;
+
+        if (password !== defaultPassword) {
+            return { success: false, message: 'Incorrect password or password not set.' };
+        }
+        isFirstLogin = true;
+    }
+
 
     cookies().set('student_id', rollNumber, {
       httpOnly: true,
@@ -38,6 +62,16 @@ export async function loginStudent(credentials: z.infer<typeof loginSchema>) {
       maxAge: 60 * 60 * 24 * 7, // 1 week
       path: '/',
     });
+    
+    if (isFirstLogin) {
+        cookies().set('force_password_reset', 'true', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 60 * 15, // 15 minutes to reset password
+            path: '/',
+        });
+    }
+
 
     revalidatePath('/student');
     return { success: true, message: 'Login successful' };
@@ -49,6 +83,7 @@ export async function loginStudent(credentials: z.infer<typeof loginSchema>) {
 
 export async function logoutStudent() {
   cookies().delete('student_id');
+  cookies().delete('force_password_reset');
   revalidatePath('/student');
 }
 
@@ -69,6 +104,7 @@ export async function getStudentById(id: string) {
         return [key, value];
       })
     );
+    // Even if password exists, we don't send it to the client
     delete serializedData.password;
 
     return { id: studentDoc.id, ...serializedData } as any;
@@ -76,4 +112,26 @@ export async function getStudentById(id: string) {
     console.error('Error fetching student:', error);
     return null;
   }
+}
+
+export async function setStudentPassword(studentId: string, formData: FormData) {
+    const password = formData.get('password');
+    const validatedFields = setPasswordSchema.safeParse({ password });
+
+    if (!validatedFields.success) {
+        return { success: false, message: validatedFields.error.flatten().fieldErrors.password?.[0] || 'Invalid password.' };
+    }
+    
+    try {
+        const studentDocRef = firestore.collection('students').doc(studentId);
+        await studentDocRef.update({ password: validatedFields.data.password });
+
+        cookies().delete('force_password_reset');
+        revalidatePath('/student');
+        return { success: true, message: 'Password updated successfully.' };
+
+    } catch (error) {
+        console.error('Password update error:', error);
+        return { success: false, message: 'An unexpected error occurred.' };
+    }
 }

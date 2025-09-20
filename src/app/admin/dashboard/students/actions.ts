@@ -15,12 +15,10 @@ const StudentSchema = z.object({
   phone: z.string().min(10, 'Phone number must be at least 10 digits.'),
   fatherName: z.string().min(2, "Father's name is required."),
   address: z.string().min(5, 'Address is required.'),
-  password: z.string().min(6, 'Password must be at least 6 characters.'),
 });
 
-const UpdateStudentSchema = StudentSchema.extend({
-  password: z.string().min(6, 'Password must be at least 6 characters.').optional().or(z.literal('')),
-});
+// Update schema doesn't require password, as it's handled by the student now
+const UpdateStudentSchema = StudentSchema;
 
 
 export type StudentFormState = {
@@ -54,10 +52,12 @@ export async function addStudent(
         return { success: false, message: 'A student with this Roll Number already exists.' };
     }
 
+    // Password is no longer set by admin
     await studentDoc.set({
       ...validatedFields.data,
       createdAt: new Date(),
     });
+
     revalidatePath('/admin/dashboard');
     return { success: true, message: 'Student added successfully.' };
   } catch (error) {
@@ -86,12 +86,8 @@ export async function updateStudent(
   }
 
   try {
-    const { password, ...studentData } = validatedFields.data;
+    const studentData = validatedFields.data;
     const updateData: { [key: string]: any } = { ...studentData, updatedAt: new Date() };
-
-    if (password) {
-      updateData.password = password;
-    }
 
     const studentDoc = firestore.collection('students').doc(id);
     await studentDoc.update(updateData);

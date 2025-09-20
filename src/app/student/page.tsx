@@ -12,6 +12,7 @@ import { getStudentById } from './actions';
 export default async function StudentPage() {
   const cookieStore = cookies();
   const studentId = cookieStore.get('student_id')?.value;
+  const forcePasswordReset = cookieStore.get('force_password_reset')?.value === 'true';
 
   let student: Student | null = null;
   if (studentId) {
@@ -27,7 +28,7 @@ export default async function StudentPage() {
       <Header />
       <main className="flex-1 bg-muted/40">
         {student ? (
-          <StudentDashboard student={student} />
+          <StudentDashboard student={student} forcePasswordReset={forcePasswordReset} />
         ) : (
           <div className="flex items-center justify-center p-4 h-full">
             <StudentLoginForm />
