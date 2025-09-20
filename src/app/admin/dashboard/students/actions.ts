@@ -114,10 +114,22 @@ export async function getStudents() {
     if (studentsSnapshot.empty) {
       return [];
     }
-    return studentsSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as any[]; // Using any to avoid TS errors with Firestore data types
+    return studentsSnapshot.docs.map(doc => {
+      const data = doc.data();
+      // Convert Firestore Timestamps to strings to make them serializable
+      const serializedData = Object.fromEntries(
+        Object.entries(data).map(([key, value]) => {
+          if (value && typeof value.toDate === 'function') {
+            return [key, value.toDate().toISOString()];
+          }
+          return [key, value];
+        })
+      );
+      return {
+        id: doc.id,
+        ...serializedData,
+      };
+    }) as any[]; // Using any to avoid TS errors with Firestore data types
   } catch (error) {
     console.error('Error fetching students:', error);
     return [];
