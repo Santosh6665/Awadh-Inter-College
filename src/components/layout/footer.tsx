@@ -35,9 +35,6 @@ export function Footer() {
                 <h4 className="font-semibold">Portals</h4>
                 <nav className="flex flex-col space-y-2 text-sm">
                   <Link href="/student/login" className="text-muted-foreground hover:text-foreground">Student Login</Link>
-                  <Link href="/parent/login" className="text-muted-foreground hover:text-foreground">Parent Login</Link>
-                  <Link href="/teacher/login" className="text-muted-foreground hover:text-foreground">Teacher Login</Link>
-                  <Link href="/admin/login" className="text-muted-foreground hover:text-foreground">Admin Login</Link>
                 </nav>
               </div>
             </div>
