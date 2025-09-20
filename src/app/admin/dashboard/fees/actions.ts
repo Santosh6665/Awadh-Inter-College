@@ -49,14 +49,14 @@ export async function updateFeeStructure(
   try {
     const feeData = validatedFields.data;
     const feesForUpdate = Object.fromEntries(
-        Object.entries(feeData).map(([key, value]) => [key, value === '' ? null : value])
+        Object.entries(feeData).map(([key, value]) => [key, value === '' ? FieldValue.delete() : value])
     );
     
     const studentDoc = firestore.collection('students').doc(studentId);
-    await studentDoc.update({
+    await studentDoc.set({
         feeStructure: feesForUpdate,
         updatedAt: new Date()
-    });
+    }, { merge: true });
 
     revalidatePath('/admin/dashboard');
     return { success: true, message: 'Fee structure updated successfully.' };

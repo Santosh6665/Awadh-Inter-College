@@ -78,36 +78,36 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student }: UpdateFee
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="tuition">Tuition Fee</Label>
-              <Input id="tuition" name="tuition" type="number" defaultValue={student.feeStructure?.tuition} />
+              <Input id="tuition" name="tuition" type="number" defaultValue={student.feeStructure?.tuition || ''} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="transport">Transport Fee</Label>
-              <Input id="transport" name="transport" type="number" defaultValue={student.feeStructure?.transport} />
+              <Input id="transport" name="transport" type="number" defaultValue={student.feeStructure?.transport || ''} />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="exam">Exam Fee</Label>
-              <Input id="exam" name="exam" type="number" defaultValue={student.feeStructure?.exam} />
+              <Input id="exam" name="exam" type="number" defaultValue={student.feeStructure?.exam || ''} />
             </div>
              <div className="space-y-2">
               <Label htmlFor="library">Library Fee</Label>
-              <Input id="library" name="library" type="number" defaultValue={student.feeStructure?.library} />
+              <Input id="library" name="library" type="number" defaultValue={student.feeStructure?.library || ''} />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="miscellaneous">Miscellaneous</Label>
-              <Input id="miscellaneous" name="miscellaneous" type="number" defaultValue={student.feeStructure?.miscellaneous} />
+              <Input id="miscellaneous" name="miscellaneous" type="number" defaultValue={student.feeStructure?.miscellaneous || ''} />
             </div>
              <div className="space-y-2">
               <Label htmlFor="discount">Discount/Concession</Label>
-              <Input id="discount" name="discount" type="number" defaultValue={student.feeStructure?.discount} />
+              <Input id="discount" name="discount" type="number" defaultValue={student.feeStructure?.discount || ''} />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="paymentPlan">Payment Plan</Label>
-            <Select name="paymentPlan" defaultValue={student.feeStructure?.paymentPlan}>
+            <Select name="paymentPlan" defaultValue={student.feeStructure?.paymentPlan || ''}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a payment plan" />
               </SelectTrigger>
