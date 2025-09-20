@@ -168,14 +168,6 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                       <TableCell>{student.class}-{student.section}</TableCell>
                                   </TableRow>
                                   <TableRow>
-                                      <TableCell className="font-medium">Email</TableCell>
-                                      <TableCell>{student.email}</TableCell>
-                                  </TableRow>
-                                  <TableRow>
-                                      <TableCell className="font-medium">Phone</TableCell>
-                                      <TableCell>{student.phone}</TableCell>
-                                  </TableRow>
-                                  <TableRow>
                                       <TableCell className="font-medium">Date of Birth</TableCell>
                                       <TableCell>{new Date(student.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
                                   </TableRow>
@@ -186,6 +178,14 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                   <TableRow>
                                       <TableCell className="font-medium">Address</TableCell>
                                       <TableCell>{student.address}</TableCell>
+                                  </TableRow>
+                                  <TableRow>
+                                      <TableCell className="font-medium">Phone</TableCell>
+                                      <TableCell>{student.phone}</TableCell>
+                                  </TableRow>
+                                   <TableRow>
+                                      <TableCell className="font-medium">Email</TableCell>
+                                      <TableCell>{student.email}</TableCell>
                                   </TableRow>
                               </TableBody>
                           </Table>
