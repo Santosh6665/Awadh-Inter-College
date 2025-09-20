@@ -13,6 +13,8 @@ import { calculatePercentage, calculateGrade } from '@/lib/result-utils';
 import { Download, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useMemo } from 'react';
+import { Separator } from '@/components/ui/separator';
+import { CollegeLogo } from '@/components/icons';
 
 interface StudentDashboardProps {
   student: Student;
@@ -32,6 +34,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
 
   const percentage = calculatePercentage(student.marks);
   const grade = calculateGrade(percentage);
+  const resultStatus = grade === 'F' ? 'Fail' : 'Pass';
 
   const hasMarks = student.marks && Object.values(student.marks).some(mark => mark !== null && mark !== undefined);
 
@@ -105,7 +108,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                   </TableRow>
                                   <TableRow>
                                       <TableCell className="font-medium">Date of Birth</TableCell>
-                                      <TableCell>{student.dob}</TableCell>
+                                      <TableCell>{new Date(student.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
                                   </TableRow>
                                   <TableRow>
                                       <TableCell className="font-medium">Father's Name</TableCell>
@@ -121,12 +124,17 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                   </Card>
               </TabsContent>
                <TabsContent value="results" className="mt-4">
-                  <Card id="result-card">
-                      <CardHeader>
+                  <Card id="result-card" className="border-2">
+                      <CardHeader className="p-4">
                         <div className="flex flex-col md:flex-row items-center justify-between gap-2">
-                           <div className="text-center md:text-left">
-                                <CardTitle>Examination Results</CardTitle>
-                                <CardDescription>Awadh Inter College - Session 2024-2025</CardDescription>
+                           <div className="text-center md:text-left flex-1">
+                                <div className="flex items-center gap-4 justify-center md:justify-start">
+                                    <CollegeLogo className="h-12 w-12 text-primary" />
+                                    <div>
+                                        <CardTitle className="text-xl md:text-2xl">Awadh Inter College</CardTitle>
+                                        <CardDescription>Annual Examination Marksheet (2024-2025)</CardDescription>
+                                    </div>
+                                </div>
                            </div>
                            <Button onClick={handlePrint} variant="outline" size="sm" className="print-hidden">
                                 <Download className="mr-2 h-4 w-4" />
@@ -134,53 +142,76 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                            </Button>
                         </div>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="p-4">
                           {hasMarks ? (
                               <div className="space-y-4">
-                                  <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm mb-4">
+                                  <Separator />
+                                  <h3 className="font-semibold text-center md:text-left mt-4">Student Details</h3>
+                                  <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
                                     <div><strong>Student Name:</strong> {student.name}</div>
                                     <div><strong>Roll Number:</strong> {student.rollNumber}</div>
                                     <div><strong>Class:</strong> {`${student.class}-${student.section}`}</div>
                                     <div><strong>Father's Name:</strong> {student.fatherName}</div>
                                   </div>
+                                  <Separator className="my-4"/>
                                   <Table>
                                       <TableHeader>
                                           <TableRow>
-                                              <TableHead>Subject</TableHead>
-                                              <TableHead className="text-right">Marks (out of 100)</TableHead>
+                                              <TableHead className='font-bold'>Subject</TableHead>
+                                              <TableHead className='font-bold'>Total Marks</TableHead>
+                                              <TableHead className="text-right font-bold">Marks Obtained</TableHead>
                                           </TableRow>
                                       </TableHeader>
                                       <TableBody>
                                           <TableRow>
                                               <TableCell>Physics</TableCell>
+                                              <TableCell>100</TableCell>
                                               <TableCell className="text-right">{student.marks?.physics ?? 'N/A'}</TableCell>
                                           </TableRow>
                                            <TableRow>
                                               <TableCell>Chemistry</TableCell>
+                                              <TableCell>100</TableCell>
                                               <TableCell className="text-right">{student.marks?.chemistry ?? 'N/A'}</TableCell>
                                           </TableRow>
                                            <TableRow>
                                               <TableCell>Maths</TableCell>
+                                              <TableCell>100</TableCell>
                                               <TableCell className="text-right">{student.marks?.maths ?? 'N/A'}</TableCell>
                                           </TableRow>
                                            <TableRow>
                                               <TableCell>English</TableCell>
+                                              <TableCell>100</TableCell>
                                               <TableCell className="text-right">{student.marks?.english ?? 'N/A'}</TableCell>
                                           </TableRow>
                                            <TableRow>
                                               <TableCell>Computer Science</TableCell>
+                                              <TableCell>100</TableCell>
                                               <TableCell className="text-right">{student.marks?.computerScience ?? 'N/A'}</TableCell>
                                           </TableRow>
                                       </TableBody>
                                   </Table>
-                                  <div className="flex justify-end gap-8 font-bold pr-4">
-                                      <span>Percentage: {percentage?.toFixed(2)}%</span>
-                                      <span>Grade: {grade}</span>
-                                      <span>Rank: {rank ?? 'N/A'}</span>
+                                  <Separator className="my-4"/>
+                                  <div className="flex flex-col md:flex-row justify-between items-center gap-4 font-bold p-4 bg-muted rounded-lg">
+                                      <div className='text-center md:text-left'>
+                                        <span>Percentage: </span>
+                                        <span className='text-primary'>{percentage?.toFixed(2)}%</span>
+                                      </div>
+                                      <div className='text-center md:text-left'>
+                                        <span>Grade: </span>
+                                        <span className='text-primary'>{grade}</span>
+                                      </div>
+                                       <div className='text-center md:text-left'>
+                                        <span>Rank: </span>
+                                        <span className='text-primary'>{rank ?? 'N/A'}</span>
+                                      </div>
+                                      <div className='text-center md:text-left'>
+                                        <span>Result: </span>
+                                        <Badge variant={resultStatus === 'Pass' ? 'default' : 'destructive'} className='bg-green-500 text-white'>{resultStatus}</Badge>
+                                      </div>
                                   </div>
                               </div>
                           ) : (
-                            <p className="text-muted-foreground">No exam results available at the moment.</p>
+                            <p className="text-muted-foreground text-center py-8">No exam results are available at the moment.</p>
                           )}
                       </CardContent>
                   </Card>
@@ -197,33 +228,35 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Date</TableHead>
-                          <TableHead className="text-right">Status</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {attendance.length > 0 ? (
-                          attendance.map((record) => (
-                            <TableRow key={record.date}>
-                              <TableCell>{new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
-                              <TableCell className="text-right flex items-center justify-end gap-2">
-                                {getAttendanceStatusIcon(record.status)}
-                                <span className="capitalize">{record.status}</span>
+                    <div className='overflow-auto max-h-96'>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Date</TableHead>
+                            <TableHead className="text-right">Status</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {attendance.length > 0 ? (
+                            attendance.map((record) => (
+                              <TableRow key={record.date}>
+                                <TableCell>{new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
+                                <TableCell className="text-right flex items-center justify-end gap-2">
+                                  {getAttendanceStatusIcon(record.status)}
+                                  <span className="capitalize">{record.status}</span>
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <TableCell colSpan={2} className="text-center">
+                                No attendance records found.
                               </TableCell>
                             </TableRow>
-                          ))
-                        ) : (
-                          <TableRow>
-                            <TableCell colSpan={2} className="text-center">
-                              No attendance records found.
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
