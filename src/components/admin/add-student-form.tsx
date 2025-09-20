@@ -68,13 +68,22 @@ export function AddStudentForm() {
       const user = userCredential.user;
 
       if (user) {
-        // Step 2: Save student data to Realtime Database
-        const { password, ...studentData } = data; // Exclude password from DB
-        await addStudent({
-          ...studentData,
-          feeStatus: 'Due',
-          amountDue: 0, // Default fee status and amount
-        });
+        // Step 2: Prepare student data for Realtime Database (exclude password)
+        const studentDataForDb = {
+          name: data.name,
+          email: data.email,
+          rollNumber: data.rollNumber,
+          class: data.class,
+          section: data.section,
+          dob: data.dob,
+          phone: data.phone,
+          fatherName: data.fatherName,
+          address: data.address,
+          feeStatus: 'Due' as const,
+          amountDue: 0,
+        };
+        
+        await addStudent(studentDataForDb);
 
         toast({
           title: 'Student Added',
