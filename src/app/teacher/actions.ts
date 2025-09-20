@@ -34,6 +34,12 @@ export async function loginTeacher(credentials: z.infer<typeof loginSchema>) {
     
     const teacherDoc = teacherQuery.docs[0];
     const teacherData = teacherDoc.data();
+    
+    // Security Check: Ensure the user is marked as a teacher.
+    if (teacherData.isTeacher !== true) {
+        return { success: false, message: 'You do not have permission to log in.' };
+    }
+    
     let needsPasswordReset = false;
     
     if (teacherData.password) {
