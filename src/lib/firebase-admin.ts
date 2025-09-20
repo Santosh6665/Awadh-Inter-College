@@ -1,27 +1,34 @@
 import admin from 'firebase-admin';
 
-const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+// This function initializes Firebase Admin and returns the firestore instance.
+// It's designed to be safely called multiple times.
+function initializeFirebaseAdmin() {
+  if (admin.apps.length > 0) {
+    return admin.firestore();
+  }
 
-if (!serviceAccountString) {
-  throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set.');
-}
+  const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
 
-let serviceAccount;
-try {
-    serviceAccount = JSON.parse(serviceAccountString);
-} catch (error) {
-    throw new Error('Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY. Make sure it is a valid JSON string.');
-}
+  if (!serviceAccountString) {
+    console.error('FIREBASE_SERVICE_ACCOUNT_KEY is not set in the environment variables.');
+    // In a production environment, you might want to throw an error
+    // but for development, we can log and prevent the app from crashing.
+    // However, Firestore will not be available.
+    throw new Error('Firebase Admin SDK initialization failed: Service account key is missing.');
+  }
 
-
-if (!admin.apps.length) {
   try {
+    const serviceAccount = JSON.parse(serviceAccountString);
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
+    return admin.firestore();
   } catch (error) {
-    console.error('Firebase admin initialization error', error);
+    console.error('Firebase admin initialization error:', error);
+    throw new Error('Firebase Admin SDK initialization failed. Please check your service account credentials.');
   }
 }
 
-export const firestore = admin.firestore();
+// Initialize and export firestore.
+// Any file importing 'firestore' from here will get the initialized instance.
+export const firestore = initializeFirebaseAdmin();
