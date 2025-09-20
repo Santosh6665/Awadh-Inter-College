@@ -141,7 +141,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="print-hidden">
+              <TabsList className="grid w-full grid-cols-2 sm:w-auto sm:grid-cols-4 print-hidden">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="results">Exam Results</TabsTrigger>
                 <TabsTrigger value="attendance">Attendance</TabsTrigger>
@@ -221,7 +221,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                               <>
                                   <div className="border rounded-lg p-4">
                                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><User className="h-5 w-5 text-primary"/> 🧑‍🎓 Student Details</h3>
-                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2 text-sm">
+                                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2 text-sm">
                                         <div><strong>Name:</strong> {student.name}</div>
                                         <div><strong>Roll No.:</strong> {student.rollNumber}</div>
                                         <div><strong>Class/Section:</strong> {`${student.class}-${student.section}`}</div>
@@ -372,22 +372,22 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                 </TableFooter>
                             </Table>
                         </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
                             <Card className="p-4">
                                 <CardTitle className="text-sm text-muted-foreground">Total Fees</CardTitle>
-                                <p className="text-2xl font-bold">₹{feeDetails.totalFees.toFixed(2)}</p>
+                                <p className="text-xl md:text-2xl font-bold">₹{feeDetails.totalFees.toFixed(2)}</p>
                             </Card>
                              <Card className="p-4">
                                 <CardTitle className="text-sm text-muted-foreground">Total Paid</CardTitle>
-                                <p className="text-2xl font-bold text-green-600">₹{feeDetails.totalPaid.toFixed(2)}</p>
+                                <p className="text-xl md:text-2xl font-bold text-green-600">₹{feeDetails.totalPaid.toFixed(2)}</p>
                             </Card>
                              <Card className="p-4">
                                 <CardTitle className="text-sm text-muted-foreground">Balance Due</CardTitle>
-                                <p className={cn("text-2xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>₹{feeDetails.due.toFixed(2)}</p>
+                                <p className={cn("text-xl md:text-2xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>₹{feeDetails.due.toFixed(2)}</p>
                             </Card>
                              <Card className="p-4">
                                 <CardTitle className="text-sm text-muted-foreground">Payment Plan</CardTitle>
-                                <p className="text-2xl font-bold capitalize">{feeDetails.paymentPlan}</p>
+                                <p className="text-xl md:text-2xl font-bold capitalize">{feeDetails.paymentPlan}</p>
                             </Card>
                         </div>
                         <div>
@@ -396,7 +396,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Date</TableHead>
-                                        <TableHead>Method</TableHead>
+                                        <TableHead className="hidden sm:table-cell">Method</TableHead>
                                         <TableHead className="text-right">Amount (₹)</TableHead>
                                         <TableHead className="text-right print-hidden">Actions</TableHead>
                                     </TableRow>
@@ -406,7 +406,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                         student.payments.map(payment => (
                                             <TableRow key={payment.id}>
                                                 <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
-                                                <TableCell>{payment.method}</TableCell>
+                                                <TableCell className="hidden sm:table-cell">{payment.method}</TableCell>
                                                 <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
                                                 <TableCell className="text-right print-hidden">
                                                     <Button variant="outline" size="sm" onClick={() => handlePrintReceipt(payment)}>
