@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFoo
 import Link from 'next/link';
 import { SetPasswordDialog } from './set-password-dialog';
 import { calculatePercentage, calculateGrade, calculateTotals } from '@/lib/result-utils';
-import { Download, CheckCircle, XCircle, Clock, GraduationCap, User, BookOpen, BarChart3, Mail, Phone } from 'lucide-react';
+import { Download, CheckCircle, XCircle, Clock, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, CalendarDays } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useMemo } from 'react';
 import { CollegeLogo } from '@/components/icons';
@@ -90,8 +90,9 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
     const totalFees = structuredFees.reduce((acc, fee) => acc + fee.amount, 0);
     const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
     const due = totalFees - totalPaid;
+    const paymentPlan = finalFeeStructure.paymentPlan || 'Not set';
 
-    return { structuredFees, totalFees, totalPaid, due };
+    return { structuredFees, totalFees, totalPaid, due, paymentPlan };
   }, [student, feeSettings]);
 
 
@@ -338,7 +339,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                 </TableFooter>
                             </Table>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                             <Card className="p-4">
                                 <CardTitle className="text-sm text-muted-foreground">Total Fees</CardTitle>
                                 <p className="text-2xl font-bold">₹{feeDetails.totalFees.toFixed(2)}</p>
@@ -350,6 +351,10 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                              <Card className="p-4">
                                 <CardTitle className="text-sm text-muted-foreground">Balance Due</CardTitle>
                                 <p className={cn("text-2xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>₹{feeDetails.due.toFixed(2)}</p>
+                            </Card>
+                             <Card className="p-4">
+                                <CardTitle className="text-sm text-muted-foreground">Payment Plan</CardTitle>
+                                <p className="text-2xl font-bold capitalize">{feeDetails.paymentPlan}</p>
                             </Card>
                         </div>
                         <div>
@@ -389,3 +394,6 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
     </>
   );
 }
+
+
+    
