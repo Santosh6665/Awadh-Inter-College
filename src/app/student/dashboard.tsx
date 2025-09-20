@@ -120,21 +120,19 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
           <FeeReceipt student={student} payment={receiptToPrint} feeDetails={feeDetails} />
         </div>
       )}
-      <div className="container mx-auto" id="student-dashboard">
+      <div className="container mx-auto p-0" id="student-dashboard">
         <Card className="min-h-[calc(100vh-3.5rem)]">
-          <CardHeader className="flex flex-col md:flex-row items-center justify-between gap-4 print-hidden p-4 md:p-6">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-20 w-20 border">
-                <AvatarImage src={student.photoUrl} alt={student.name} />
-                <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
-              </Avatar>
-              <div>
-                <CardTitle className="text-2xl">{student.name}</CardTitle>
-                <CardDescription>Welcome to your student portal.</CardDescription>
-              </div>
+           <CardHeader className="relative flex flex-row items-center gap-4 p-4 md:p-6 print-hidden">
+            <Avatar className="h-16 w-16 md:h-20 md:w-20 border">
+              <AvatarImage src={student.photoUrl} alt={student.name} />
+              <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <CardTitle className="text-xl md:text-2xl">{student.name}</CardTitle>
+              <CardDescription>Welcome to your student portal.</CardDescription>
             </div>
-            <form action="/student/logout" method="GET">
-              <Button asChild variant="outline">
+            <form action="/student/logout" method="GET" className="absolute top-4 right-4">
+              <Button asChild variant="outline" size="sm">
                   <Link href="/student/logout">Log Out</Link>
               </Button>
             </form>
