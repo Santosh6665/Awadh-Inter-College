@@ -36,9 +36,9 @@ export async function loginStudent(credentials: z.infer<typeof loginSchema>) {
         return { success: false, message: 'Student data could not be read.' };
     }
 
-    let isFirstLogin = false;
+    let needsPasswordReset = false;
 
-    // If password field exists, use it
+    // If password field exists and is not empty, use it
     if (studentData.password) {
         if (studentData.password !== password) {
             return { success: false, message: 'Incorrect password.' };
@@ -53,7 +53,7 @@ export async function loginStudent(credentials: z.infer<typeof loginSchema>) {
         if (password !== defaultPassword) {
             return { success: false, message: 'Incorrect password or password not set.' };
         }
-        isFirstLogin = true;
+        needsPasswordReset = true;
     }
 
 
@@ -65,13 +65,16 @@ export async function loginStudent(credentials: z.infer<typeof loginSchema>) {
     });
     
     // Only force password reset if the password field does not exist in the database
-    if (isFirstLogin && !studentData.password) {
+    if (needsPasswordReset) {
         cookies().set('force_password_reset', 'true', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             maxAge: 60 * 15, // 15 minutes to reset password
             path: '/',
         });
+    } else {
+        // Ensure the cookie is cleared if they are logging in with a correct, existing password
+        cookies().delete('force_password_reset');
     }
 
 
