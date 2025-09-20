@@ -5,8 +5,8 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { StudentLoginForm } from '@/app/student/login-form';
 import { StudentDashboard } from '@/app/student/dashboard';
-import type { Student } from '@/lib/types';
-import { getStudentById, getStudentsByClass } from './actions';
+import type { Student, AttendanceRecord } from '@/lib/types';
+import { getStudentById, getStudentsByClass, getStudentAttendance } from './actions';
 import { calculatePercentage } from '@/lib/result-utils';
 
 
@@ -17,6 +17,7 @@ export default async function StudentPage() {
 
   let student: Student | null = null;
   let rank: number | null = null;
+  let attendance: AttendanceRecord[] = [];
 
   if (studentId) {
     student = await getStudentById(studentId);
@@ -45,6 +46,9 @@ export default async function StudentPage() {
                 break;
             }
         }
+        
+        // Fetch attendance
+        attendance = await getStudentAttendance(studentId);
     }
   }
 
@@ -53,7 +57,7 @@ export default async function StudentPage() {
       <Header />
       <main className="flex-1 bg-muted/40">
         {student ? (
-          <StudentDashboard student={student} rank={rank} forcePasswordReset={forcePasswordReset} />
+          <StudentDashboard student={student} rank={rank} attendance={attendance} forcePasswordReset={forcePasswordReset} />
         ) : (
           <div className="flex items-center justify-center p-4 h-full">
             <StudentLoginForm />

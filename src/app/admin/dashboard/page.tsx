@@ -7,6 +7,7 @@ import { TeacherList } from "./teachers/teacher-list";
 import { getTeachers } from "./teachers/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultsManagement } from "./results/results-management";
+import { AttendanceManagement } from "./attendance/attendance-management";
 
 export default async function AdminDashboardPage() {
   const students = await getStudents();
@@ -76,10 +77,11 @@ export default async function AdminDashboardPage() {
       </div>
       <div className="pt-8">
         <Tabs defaultValue="students">
-          <TabsList>
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
             <TabsTrigger value="students">Manage Students</TabsTrigger>
             <TabsTrigger value="teachers">Manage Teachers</TabsTrigger>
             <TabsTrigger value="results">Result Management</TabsTrigger>
+            <TabsTrigger value="attendance">Attendance</TabsTrigger>
           </TabsList>
           <TabsContent value="students" className="mt-4">
             <StudentList students={students} />
@@ -89,6 +91,9 @@ export default async function AdminDashboardPage() {
           </TabsContent>
            <TabsContent value="results" className="mt-4">
             <ResultsManagement students={students} />
+          </TabsContent>
+          <TabsContent value="attendance" className="mt-4">
+            <AttendanceManagement students={students} />
           </TabsContent>
         </Tabs>
       </div>

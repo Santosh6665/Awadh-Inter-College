@@ -1,5 +1,4 @@
 
-
 export type NewsArticle = {
   id: string;
   title: string;
@@ -65,4 +64,9 @@ export type BusRoute = {
     driverName: string;
     driverPhone: string;
     capacity: number;
+};
+
+export type AttendanceRecord = {
+  date: string;
+  status: 'present' | 'absent' | 'late';
 };

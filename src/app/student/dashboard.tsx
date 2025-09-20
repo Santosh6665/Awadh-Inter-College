@@ -1,7 +1,7 @@
 
 'use client';
 
-import type { Student } from '@/lib/types';
+import type { Student, AttendanceRecord } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,15 +10,18 @@ import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader } from '@
 import Link from 'next/link';
 import { SetPasswordDialog } from './set-password-dialog';
 import { calculatePercentage, calculateGrade } from '@/lib/result-utils';
-import { Download } from 'lucide-react';
+import { Download, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { useMemo } from 'react';
 
 interface StudentDashboardProps {
   student: Student;
   rank: number | null;
+  attendance: AttendanceRecord[];
   forcePasswordReset: boolean;
 }
 
-export function StudentDashboard({ student, rank, forcePasswordReset }: StudentDashboardProps) {
+export function StudentDashboard({ student, rank, attendance, forcePasswordReset }: StudentDashboardProps) {
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -36,6 +39,24 @@ export function StudentDashboard({ student, rank, forcePasswordReset }: StudentD
     window.print();
   };
   
+  const attendancePercentage = useMemo(() => {
+    if (attendance.length === 0) return 'N/A';
+    const presentDays = attendance.filter(a => a.status === 'present' || a.status === 'late').length;
+    return `${((presentDays / attendance.length) * 100).toFixed(2)}%`;
+  }, [attendance]);
+
+  const getAttendanceStatusIcon = (status: 'present' | 'absent' | 'late') => {
+    switch (status) {
+      case 'present':
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case 'absent':
+        return <XCircle className="h-5 w-5 text-red-500" />;
+      case 'late':
+        return <Clock className="h-5 w-5 text-yellow-500" />;
+    }
+  };
+
+
   return (
     <>
       <SetPasswordDialog isOpen={forcePasswordReset} studentId={student.id} />
@@ -63,6 +84,7 @@ export function StudentDashboard({ student, rank, forcePasswordReset }: StudentD
               <TabsList className="print-hidden">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="results">Exam Results</TabsTrigger>
+                <TabsTrigger value="attendance">Attendance</TabsTrigger>
                 <TabsTrigger value="fees">Fee Information</TabsTrigger>
               </TabsList>
               <TabsContent value="profile" className="mt-4">
@@ -162,6 +184,48 @@ export function StudentDashboard({ student, rank, forcePasswordReset }: StudentD
                           )}
                       </CardContent>
                   </Card>
+              </TabsContent>
+               <TabsContent value="attendance" className="mt-4">
+                <Card>
+                  <CardHeader>
+                    <div className='flex flex-col md:flex-row items-center justify-between'>
+                      <div>
+                        <CardTitle>Attendance Record</CardTitle>
+                        <CardDescription>Your attendance history for the current session.</CardDescription>
+                      </div>
+                      <Badge className="mt-2 md:mt-0">Overall: {attendancePercentage}</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Date</TableHead>
+                          <TableHead className="text-right">Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {attendance.length > 0 ? (
+                          attendance.map((record) => (
+                            <TableRow key={record.date}>
+                              <TableCell>{new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
+                              <TableCell className="text-right flex items-center justify-end gap-2">
+                                {getAttendanceStatusIcon(record.status)}
+                                <span className="capitalize">{record.status}</span>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={2} className="text-center">
+                              No attendance records found.
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
               </TabsContent>
                <TabsContent value="fees" className="mt-4">
                   <Card>

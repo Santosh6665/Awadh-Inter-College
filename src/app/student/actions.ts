@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { firestore } from '@/lib/firebase-admin';
-import type { Student } from '@/lib/types';
+import type { Student, AttendanceRecord } from '@/lib/types';
 
 const loginSchema = z.object({
   rollNumber: z.string(),
@@ -167,4 +167,29 @@ export async function setStudentPassword(studentId: string, formData: FormData) 
         console.error('Password update error:', error);
         return { success: false, message: 'An unexpected error occurred.' };
     }
+}
+
+
+export async function getStudentAttendance(studentId: string): Promise<AttendanceRecord[]> {
+  try {
+    const attendanceSnapshot = await firestore.collection('attendance').get();
+    const attendanceRecords: AttendanceRecord[] = [];
+    
+    attendanceSnapshot.forEach(doc => {
+      const date = doc.id;
+      const data = doc.data();
+      if (data && data[studentId]) {
+        attendanceRecords.push({
+          date,
+          status: data[studentId].status,
+        });
+      }
+    });
+
+    // Sort by date descending
+    return attendanceRecords.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  } catch (error) {
+    console.error(`Error fetching attendance for student ${studentId}:`, error);
+    return [];
+  }
 }
