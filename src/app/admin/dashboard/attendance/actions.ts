@@ -22,7 +22,7 @@ export async function setAttendance(studentId: string, date: string, status: 'pr
   try {
     const attendanceDocRef = firestore.collection('attendance').doc(date);
     await attendanceDocRef.set({
-      [studentId]: { status, updatedAt: new Date() }
+      [studentId]: { status }
     }, { merge: true });
     
     revalidatePath('/admin/dashboard');
