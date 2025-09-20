@@ -18,7 +18,7 @@ import { Search, Edit, PlusCircle } from 'lucide-react';
 import { UpdateFeeStructureForm } from './update-fee-structure-form';
 import { RecordPaymentForm } from './record-payment-form';
 
-export function FeeManagement({ students }: { students: Student[] }) {
+export function FeeManagement({ students, feeSettings }: { students: Student[], feeSettings: any }) {
   const [isFeeStructureFormOpen, setIsFeeStructureFormOpen] = useState(false);
   const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -42,7 +42,14 @@ export function FeeManagement({ students }: { students: Student[] }) {
   });
 
   const calculateFeeStatus = (student: Student) => {
-    const structure = student.feeStructure || {};
+    const studentFeeStructure = student.feeStructure;
+    const classFeeStructure = feeSettings[student.class] || {};
+
+    const structure = {
+      ...classFeeStructure,
+      ...studentFeeStructure,
+    };
+    
     const positiveFees = (structure.tuition || 0) + 
                          (structure.transport || 0) +
                          (structure.exam || 0) +

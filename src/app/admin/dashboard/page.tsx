@@ -121,7 +121,7 @@ export default async function AdminDashboardPage() {
             <AttendanceManagement students={students} />
           </TabsContent>
            <TabsContent value="fees" className="mt-4">
-            <FeeManagement students={students} />
+            <FeeManagement students={students} feeSettings={feeStructures} />
           </TabsContent>
           <TabsContent value="fee-settings" className="mt-4">
             <FeeSettings initialData={feeStructures} />
