@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Users, BookOpen, UserCheck } from "lucide-react";
 import { StudentList } from "./students/student-list";
@@ -5,6 +6,7 @@ import { getStudents } from "./students/actions";
 import { TeacherList } from "./teachers/teacher-list";
 import { getTeachers } from "./teachers/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ResultsManagement } from "./results/results-management";
 
 export default async function AdminDashboardPage() {
   const students = await getStudents();
@@ -76,12 +78,16 @@ export default async function AdminDashboardPage() {
           <TabsList>
             <TabsTrigger value="students">Manage Students</TabsTrigger>
             <TabsTrigger value="teachers">Manage Teachers</TabsTrigger>
+            <TabsTrigger value="results">Result Management</TabsTrigger>
           </TabsList>
           <TabsContent value="students" className="mt-4">
             <StudentList students={students} />
           </TabsContent>
           <TabsContent value="teachers" className="mt-4">
             <TeacherList teachers={teachers} />
+          </TabsContent>
+           <TabsContent value="results" className="mt-4">
+            <ResultsManagement students={students} />
           </TabsContent>
         </Tabs>
       </div>
