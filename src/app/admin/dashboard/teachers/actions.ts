@@ -49,6 +49,7 @@ export async function addTeacher(
 
     await teachersCollection.add({
       ...teacherData,
+      isTeacher: true, // Ensure all new teachers can log in
       createdAt: new Date(),
     });
 
