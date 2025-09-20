@@ -11,16 +11,22 @@ import { AttendanceManagement } from "./attendance/attendance-management";
 import type { Student, Teacher } from "@/lib/types";
 import { firestore } from "@/lib/firebase-admin";
 import { FeeManagement } from "./fees/fee-management";
+import { FeeSettings } from "./fees/fee-settings";
 
 export default async function AdminDashboardPage() {
   let students: Student[] = [];
   let teachers: Teacher[] = [];
+  let feeStructures: any = {};
 
   // Only attempt to fetch data if firestore was successfully initialized
   if (firestore) {
     try {
       students = await getStudents();
       teachers = await getTeachers();
+      const feeStructureDoc = await firestore.collection('settings').doc('feeStructure').get();
+      if (feeStructureDoc.exists) {
+        feeStructures = feeStructureDoc.data() || {};
+      }
     } catch (error) {
       console.error("Failed to fetch dashboard data at runtime:", error);
       // In case of an error at runtime, we still render the page with empty data
@@ -94,12 +100,13 @@ export default async function AdminDashboardPage() {
       </div>
       <div className="pt-8">
         <Tabs defaultValue="students">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
             <TabsTrigger value="students">Manage Students</TabsTrigger>
             <TabsTrigger value="teachers">Manage Teachers</TabsTrigger>
             <TabsTrigger value="results">Result Management</TabsTrigger>
             <TabsTrigger value="attendance">Attendance</TabsTrigger>
             <TabsTrigger value="fees">Fee Management</TabsTrigger>
+            <TabsTrigger value="fee-settings">Fee Settings</TabsTrigger>
           </TabsList>
           <TabsContent value="students" className="mt-4">
             <StudentList students={students} />
@@ -115,6 +122,9 @@ export default async function AdminDashboardPage() {
           </TabsContent>
            <TabsContent value="fees" className="mt-4">
             <FeeManagement students={students} />
+          </TabsContent>
+          <TabsContent value="fee-settings" className="mt-4">
+            <FeeSettings initialData={feeStructures} />
           </TabsContent>
         </Tabs>
       </div>

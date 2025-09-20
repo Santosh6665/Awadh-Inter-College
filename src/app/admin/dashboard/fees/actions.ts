@@ -10,7 +10,10 @@ const FeeStructureSchema = z.object({
   tuition: z.coerce.number().min(0).optional().or(z.literal('')),
   transport: z.coerce.number().min(0).optional().or(z.literal('')),
   exam: z.coerce.number().min(0).optional().or(z.literal('')),
-  other: z.coerce.number().min(0).optional().or(z.literal('')),
+  library: z.coerce.number().min(0).optional().or(z.literal('')),
+  miscellaneous: z.coerce.number().min(0).optional().or(z.literal('')),
+  discount: z.coerce.number().min(0).optional().or(z.literal('')),
+  paymentPlan: z.enum(['monthly', 'quarterly', 'yearly', '']).optional(),
 });
 
 const PaymentSchema = z.object({
@@ -100,5 +103,17 @@ export async function recordPayment(
   } catch (error) {
     console.error('Error recording payment:', error);
     return { success: false, message: 'An unexpected error occurred.' };
+  }
+}
+
+export async function saveFeeSettings(settings: any) {
+  try {
+    const settingsDocRef = firestore.collection('settings').doc('feeStructure');
+    await settingsDocRef.set(settings, { merge: true });
+    revalidatePath('/admin/dashboard');
+    return { success: true, message: 'Fee settings saved successfully.' };
+  } catch (error) {
+    console.error('Error saving fee settings:', error);
+    return { success: false, message: 'An unexpected error occurred while saving settings.' };
   }
 }

@@ -26,7 +26,10 @@ export type FeeStructure = {
   tuition?: number;
   transport?: number;
   exam?: number;
-  other?: number;
+  library?: number;
+  miscellaneous?: number;
+  discount?: number;
+  paymentPlan?: 'monthly' | 'quarterly' | 'yearly';
 };
 
 export type Payment = {

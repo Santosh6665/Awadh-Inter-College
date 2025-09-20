@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import type { Student } from '@/lib/types';
 import { updateFeeStructure, type FormState } from './actions';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface UpdateFeeStructureFormProps {
   isOpen: boolean;
@@ -90,9 +91,32 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student }: UpdateFee
               <Input id="exam" name="exam" type="number" defaultValue={student.feeStructure?.exam} />
             </div>
              <div className="space-y-2">
-              <Label htmlFor="other">Other Fees</Label>
-              <Input id="other" name="other" type="number" defaultValue={student.feeStructure?.other} />
+              <Label htmlFor="library">Library Fee</Label>
+              <Input id="library" name="library" type="number" defaultValue={student.feeStructure?.library} />
             </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="miscellaneous">Miscellaneous</Label>
+              <Input id="miscellaneous" name="miscellaneous" type="number" defaultValue={student.feeStructure?.miscellaneous} />
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="discount">Discount/Concession</Label>
+              <Input id="discount" name="discount" type="number" defaultValue={student.feeStructure?.discount} />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="paymentPlan">Payment Plan</Label>
+            <Select name="paymentPlan" defaultValue={student.feeStructure?.paymentPlan}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a payment plan" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="quarterly">Quarterly</SelectItem>
+                <SelectItem value="yearly">Yearly</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsOpen(false)}>
