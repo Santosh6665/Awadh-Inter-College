@@ -2,10 +2,11 @@
 import { CollegeLogo } from '@/components/icons';
 import Link from 'next/link';
 import { Mail, MapPin, Phone } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export function Footer() {
   return (
-    <footer className="border-t bg-card text-card-foreground">
+    <footer className={cn('border-t bg-card text-card-foreground', 'print-hidden')}>
       <div className="container mx-auto px-6 py-2 md:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div className="space-y-4 md:col-span-1">

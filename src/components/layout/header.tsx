@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import { CollegeLogo } from '@/components/icons';
+import { cn } from '@/lib/utils';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -19,7 +20,7 @@ const navLinks = [
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm">
+    <header className={cn('sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm', 'print-hidden')}>
       <div className="flex items-center gap-2">
          <Sheet>
           <SheetTrigger asChild>
