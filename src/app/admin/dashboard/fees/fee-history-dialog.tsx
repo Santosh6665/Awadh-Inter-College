@@ -25,6 +25,8 @@ import { Download, Mail, Phone, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { CollegeLogo } from '@/components/icons';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+
 
 interface FeeHistoryDialogProps {
   isOpen: boolean;
@@ -97,7 +99,8 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
 
   const FeeHistoryContent = () => (
     <div className="space-y-6">
-       <CardHeader className="p-4 bg-muted/30">
+       <Card>
+        <CardHeader className="p-4 bg-muted/30">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                   <CollegeLogo className="h-16 w-16 text-primary" />
@@ -115,92 +118,94 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
               <Badge variant="secondary" className="text-base font-bold tracking-wider">💰 FEE SUMMARY</Badge>
             </div>
         </CardHeader>
-
-      <div className="border rounded-lg p-4">
-        <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><User className="h-5 w-5 text-primary"/> Student Details</h3>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <div><strong>Name:</strong> {student.name}</div>
-            <div><strong>Roll No.:</strong> {student.rollNumber}</div>
-            <div><strong>Class/Section:</strong> {`${student.class}-${student.section}`}</div>
-            <div><strong>Father's Name:</strong> {student.fatherName}</div>
-        </div>
-      </div>
-      
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Fee Structure</h3>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Fee Head</TableHead>
-              <TableHead className="text-right">Amount (₹)</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {feeDetails.structuredFees.map((fee, index) => (
-              <TableRow key={index}>
-                <TableCell>{fee.head}</TableCell>
-                <TableCell className={cn("text-right", fee.amount < 0 && 'text-green-600')}>{fee.amount.toFixed(2)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow className="font-bold text-base bg-muted/50">
-              <TableCell>Total Fees</TableCell>
-              <TableCell className="text-right">₹{feeDetails.totalFees.toFixed(2)}</TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </div>
-
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Payment History</h3>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Method</TableHead>
-              <TableHead className="text-right">Amount (₹)</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {student.payments && student.payments.length > 0 ? (
-              student.payments.map(payment => (
-                <TableRow key={payment.id}>
-                  <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
-                  <TableCell>{payment.method}</TableCell>
-                  <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={3} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center border-t pt-4">
-        <div className="p-2 rounded-md bg-muted">
-          <p className="text-sm text-muted-foreground">Total Fees</p>
-          <p className="text-xl font-bold">₹{feeDetails.totalFees.toFixed(2)}</p>
-        </div>
-        <div className="p-2 rounded-md bg-muted">
-          <p className="text-sm text-muted-foreground">Total Paid</p>
-          <p className="text-xl font-bold text-green-600">₹{feeDetails.totalPaid.toFixed(2)}</p>
-        </div>
-        <div className="p-2 rounded-md bg-muted">
-          <p className="text-sm text-muted-foreground">Balance Due</p>
-          <p className={cn("text-xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>₹{feeDetails.due.toFixed(2)}</p>
-        </div>
-      </div>
-       <div className="pt-8">
-            <div className="flex justify-end text-center">
-                <div>
-                    <p className="border-t-2 border-dashed pt-2">Authorized Signature</p>
+        <CardContent className="p-4 space-y-6">
+            <div className="border rounded-lg p-4">
+                <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><User className="h-5 w-5 text-primary"/> Student Details</h3>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div><strong>Name:</strong> {student.name}</div>
+                    <div><strong>Roll No.:</strong> {student.rollNumber}</div>
+                    <div><strong>Class/Section:</strong> {`${student.class}-${student.section}`}</div>
+                    <div><strong>Father's Name:</strong> {student.fatherName}</div>
                 </div>
             </div>
-        </div>
+            
+            <div>
+                <h3 className="text-lg font-semibold mb-2">Fee Structure</h3>
+                <Table>
+                <TableHeader>
+                    <TableRow>
+                    <TableHead>Fee Head</TableHead>
+                    <TableHead className="text-right">Amount (₹)</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {feeDetails.structuredFees.map((fee, index) => (
+                    <TableRow key={index}>
+                        <TableCell>{fee.head}</TableCell>
+                        <TableCell className={cn("text-right", fee.amount < 0 && 'text-green-600')}>{fee.amount.toFixed(2)}</TableCell>
+                    </TableRow>
+                    ))}
+                </TableBody>
+                <TableFooter>
+                    <TableRow className="font-bold text-base bg-muted/50">
+                    <TableCell>Total Fees</TableCell>
+                    <TableCell className="text-right">₹{feeDetails.totalFees.toFixed(2)}</TableCell>
+                    </TableRow>
+                </TableFooter>
+                </Table>
+            </div>
+
+            <div>
+                <h3 className="text-lg font-semibold mb-2">Payment History</h3>
+                <Table>
+                <TableHeader>
+                    <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Method</TableHead>
+                    <TableHead className="text-right">Amount (₹)</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {student.payments && student.payments.length > 0 ? (
+                    student.payments.map(payment => (
+                        <TableRow key={payment.id}>
+                        <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
+                        <TableCell>{payment.method}</TableCell>
+                        <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
+                        </TableRow>
+                    ))
+                    ) : (
+                    <TableRow>
+                        <TableCell colSpan={3} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
+                    </TableRow>
+                    )}
+                </TableBody>
+                </Table>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center border-t pt-4">
+                <div className="p-2 rounded-md bg-muted">
+                <p className="text-sm text-muted-foreground">Total Fees</p>
+                <p className="text-xl font-bold">₹{feeDetails.totalFees.toFixed(2)}</p>
+                </div>
+                <div className="p-2 rounded-md bg-muted">
+                <p className="text-sm text-muted-foreground">Total Paid</p>
+                <p className="text-xl font-bold text-green-600">₹{feeDetails.totalPaid.toFixed(2)}</p>
+                </div>
+                <div className="p-2 rounded-md bg-muted">
+                <p className="text-sm text-muted-foreground">Balance Due</p>
+                <p className={cn("text-xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>₹{feeDetails.due.toFixed(2)}</p>
+                </div>
+            </div>
+            <div className="pt-8">
+                    <div className="flex justify-end text-center">
+                        <div>
+                            <p className="border-t-2 border-dashed pt-2">Authorized Signature</p>
+                        </div>
+                    </div>
+                </div>
+        </CardContent>
+       </Card>
     </div>
   );
 
