@@ -66,7 +66,7 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{isEditing ? 'Edit Student' : 'Add New Student'}</DialogTitle>
           <DialogDescription>
@@ -76,60 +76,48 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
           </DialogDescription>
         </DialogHeader>
         <form action={formAction} className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input id="name" name="name" defaultValue={student?.name} className="col-span-3" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input id="name" name="name" defaultValue={student?.name} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" name="email" type="email" defaultValue={student?.email} />
+            </div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">
-              Email
-            </Label>
-            <Input id="email" name="email" type="email" defaultValue={student?.email} className="col-span-3" />
+          <div className="space-y-2">
+            <Label htmlFor="rollNumber">Roll No.</Label>
+            <Input id="rollNumber" name="rollNumber" defaultValue={student?.rollNumber} disabled={isEditing} />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="rollNumber" className="text-right">
-              Roll No.
-            </Label>
-            <Input id="rollNumber" name="rollNumber" defaultValue={student?.rollNumber} className="col-span-3" disabled={isEditing} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+             <div className="space-y-2">
+              <Label htmlFor="class">Class</Label>
+              <Input id="class" name="class" defaultValue={student?.class} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="section">Section</Label>
+              <Input id="section" name="section" defaultValue={student?.section} />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="dob">Date of Birth</Label>
+                <Input id="dob" name="dob" type="date" defaultValue={student?.dob?.split('T')[0]} />
+            </div>
           </div>
-           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="class" className="text-right">
-              Class
-            </Label>
-            <Input id="class" name="class" defaultValue={student?.class} className="col-span-3" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div className="space-y-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input id="phone" name="phone" defaultValue={student?.phone} />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="fatherName">Father's Name</Label>
+                <Input id="fatherName" name="fatherName" defaultValue={student?.fatherName} />
+            </div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="section" className="text-right">
-              Section
-            </Label>
-            <Input id="section" name="section" defaultValue={student?.section} className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="dob" className="text-right">
-              DOB
-            </Label>
-            <Input id="dob" name="dob" type="date" defaultValue={student?.dob?.split('T')[0]} className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="phone" className="text-right">
-              Phone
-            </Label>
-            <Input id="phone" name="phone" defaultValue={student?.phone} className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="fatherName" className="text-right">
-              Father's Name
-            </Label>
-            <Input id="fatherName" name="fatherName" defaultValue={student?.fatherName} className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="address" className="text-right">
-              Address
-            </Label>
-            <Input id="address" name="address" defaultValue={student?.address} className="col-span-3" />
-          </div>
+           <div className="space-y-2">
+              <Label htmlFor="address">Address</Label>
+              <Input id="address" name="address" defaultValue={student?.address} />
+            </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsOpen(false)}>
               Cancel
