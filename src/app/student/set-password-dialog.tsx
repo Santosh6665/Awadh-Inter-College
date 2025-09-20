@@ -39,6 +39,11 @@ export function SetPasswordDialog({ isOpen, studentId }: SetPasswordDialogProps)
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isDialogOpen, setIsDialogOpen] = useState(isOpen);
+
+  useEffect(() => {
+    setIsDialogOpen(isOpen);
+  }, [isOpen]);
 
   // This effect synchronizes server-side state (the 'force_password_reset' cookie)
   // with the client-side dialog visibility. If the component is rendered, `isOpen`
@@ -69,6 +74,7 @@ export function SetPasswordDialog({ isOpen, studentId }: SetPasswordDialogProps)
         title: 'Success',
         description: 'Your password has been updated. You can now use it for future logins.',
       });
+      setIsDialogOpen(false);
       // The server action will revalidate and the page will re-render without the dialog
       window.location.reload();
     } else {
@@ -81,7 +87,7 @@ export function SetPasswordDialog({ isOpen, studentId }: SetPasswordDialogProps)
   };
 
   return (
-    <Dialog open={isOpen}>
+    <Dialog open={isDialogOpen}>
       <DialogContent className="sm:max-w-[425px]" onInteractOutside={(e) => e.preventDefault()} hideCloseButton={true}>
         <DialogHeader>
           <DialogTitle>Set Your New Password</DialogTitle>
@@ -120,6 +126,9 @@ export function SetPasswordDialog({ isOpen, studentId }: SetPasswordDialogProps)
           </div>
           {error && <p className="text-sm text-destructive text-center col-span-4">{error}</p>}
           <DialogFooter>
+            <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)}>
+                Skip for now
+             </Button>
              <Button asChild variant="outline">
                 <Link href="/student/logout">Log Out</Link>
              </Button>
