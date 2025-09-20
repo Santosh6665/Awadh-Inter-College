@@ -122,6 +122,9 @@ export function SetPasswordDialog({ isOpen, teacherId }: SetPasswordDialogProps)
           </div>
           {error && <p className="text-sm text-destructive text-center col-span-4">{error}</p>}
           <DialogFooter>
+             <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)}>
+                Skip for now
+             </Button>
              <Button asChild variant="outline">
                 <Link href="/teacher/logout">Log Out</Link>
              </Button>
