@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { SetPasswordDialog } from './set-password-dialog';
 import { ResultsManagement } from './results-management';
+import { AttendanceManagement } from './attendance/attendance-management';
 
 interface TeacherDashboardProps {
   teacher: Teacher;
@@ -46,6 +47,7 @@ export function TeacherDashboard({ teacher, students, forcePasswordReset }: Teac
                 <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-nowrap">
                   <TabsTrigger value="profile">Profile</TabsTrigger>
                   <TabsTrigger value="results">Manage Results</TabsTrigger>
+                  <TabsTrigger value="attendance">Manage Attendance</TabsTrigger>
                 </TabsList>
                 <TabsContent value="profile" className="mt-4">
                     <Card>
@@ -80,6 +82,9 @@ export function TeacherDashboard({ teacher, students, forcePasswordReset }: Teac
                 </TabsContent>
                  <TabsContent value="results" className="mt-4">
                     <ResultsManagement students={students} />
+                </TabsContent>
+                 <TabsContent value="attendance" className="mt-4">
+                    <AttendanceManagement students={students} />
                 </TabsContent>
               </Tabs>
             </CardContent>
