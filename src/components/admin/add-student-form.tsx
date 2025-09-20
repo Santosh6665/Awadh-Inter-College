@@ -67,47 +67,43 @@ export function AddStudentForm() {
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
 
-      if (user) {
-        // Step 2: Prepare student data for Realtime Database (exclude password)
-        const studentDataForDb = {
-          name: data.name,
-          email: data.email,
-          rollNumber: data.rollNumber,
-          class: data.class,
-          section: data.section,
-          dob: data.dob,
-          phone: data.phone,
-          fatherName: data.fatherName,
-          address: data.address,
-          feeStatus: 'Due' as const,
-          amountDue: 0,
-        };
-        
-        await addStudent(studentDataForDb);
+      // Step 2: Prepare student data for Realtime Database (exclude password)
+      const { password, ...studentDataForDb } = data;
+      const studentDataWithFee = {
+        ...studentDataForDb,
+        feeStatus: 'Due' as const,
+        amountDue: 0,
+      };
+      
+      await addStudent(studentDataWithFee);
 
-        toast({
-          title: 'Student Added',
-          description: 'A new student has been successfully added.',
-        });
+      toast({
+        title: 'Student Added',
+        description: 'A new student has been successfully added.',
+      });
 
-        router.push('/admin/dashboard/students');
-        router.refresh();
-      } else {
-        throw new Error("User creation failed unexpectedly.");
-      }
+      router.push('/admin/dashboard/students');
+      router.refresh();
+
     } catch (error: any) {
       console.error("Failed to add student:", error);
-      let errorMessage = 'Could not save the student data. Please try again.';
       if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'This email is already in use by another account.';
+        form.setError('email', {
+          type: 'manual',
+          message: 'This email is already in use by another account.',
+        });
       } else if (error.code === 'auth/weak-password') {
-        errorMessage = 'The password is too weak. Please choose a stronger password.';
+         form.setError('password', {
+          type: 'manual',
+          message: 'The password is too weak. Please choose a stronger password.',
+        });
+      } else {
+        toast({
+          title: 'An error occurred',
+          description: 'Could not save the student data. Please try again.',
+          variant: 'destructive',
+        });
       }
-      toast({
-        title: 'An error occurred',
-        description: errorMessage,
-        variant: 'destructive',
-      });
     } finally {
       setLoading(false);
     }
