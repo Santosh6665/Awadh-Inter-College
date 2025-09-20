@@ -9,16 +9,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultsManagement } from "./results/results-management";
 import { AttendanceManagement } from "./attendance/attendance-management";
 import type { Student, Teacher } from "@/lib/types";
+import { firestore } from "@/lib/firebase-admin";
 
 export default async function AdminDashboardPage() {
   let students: Student[] = [];
   let teachers: Teacher[] = [];
 
-  try {
-    students = await getStudents();
-    teachers = await getTeachers();
-  } catch (error) {
-    console.warn("Could not fetch initial dashboard data, likely due to missing environment variables during build time. This is expected during deployment builds and the app will function correctly once environment variables are set.", error);
+  // Only attempt to fetch data if firestore was successfully initialized
+  if (firestore) {
+    try {
+      students = await getStudents();
+      teachers = await getTeachers();
+    } catch (error) {
+      console.error("Failed to fetch dashboard data at runtime:", error);
+      // In case of an error at runtime, we still render the page with empty data
+      // to avoid crashing the entire dashboard.
+    }
+  } else {
+     console.warn("Firestore is not available. Skipping data fetch for Admin Dashboard. This is expected during the build process.");
   }
 
 

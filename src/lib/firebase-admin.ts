@@ -10,11 +10,10 @@ function initializeFirebaseAdmin() {
   const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
 
   if (!serviceAccountString) {
-    console.error('FIREBASE_SERVICE_ACCOUNT_KEY is not set in the environment variables.');
-    // In a production environment, you might want to throw an error
-    // but for development, we can log and prevent the app from crashing.
-    // However, Firestore will not be available.
-    throw new Error('Firebase Admin SDK initialization failed: Service account key is missing.');
+    console.warn(
+      'FIREBASE_SERVICE_ACCOUNT_KEY is not set. Firebase Admin SDK will not be initialized. This is expected during build, but the app will not function correctly without it at runtime.'
+    );
+    return null;
   }
 
   try {
