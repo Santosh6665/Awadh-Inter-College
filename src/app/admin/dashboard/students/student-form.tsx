@@ -1,8 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
-import { useEffect } from 'react';
-import { z } from 'zod';
+import { useActionState, useEffect } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -46,7 +45,7 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
   const isEditing = !!student;
 
   const action = isEditing ? updateStudent.bind(null, student.id) : addStudent;
-  const [state, formAction] = useFormState(action, initialState);
+  const [state, formAction] = useActionState(action, initialState);
 
   useEffect(() => {
     if (state.success) {
