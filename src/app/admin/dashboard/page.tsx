@@ -76,9 +76,11 @@ export default async function AdminDashboardPage() {
 
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="flex-1 space-y-4 py-6">
+      <div className="px-4 md:px-8">
+        <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 px-4 md:px-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -138,7 +140,7 @@ export default async function AdminDashboardPage() {
       </div>
       <div className="pt-8">
         <Tabs defaultValue="students">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto px-4 md:px-8">
             <TabsList className="whitespace-nowrap">
               <TabsTrigger value="students">Manage Students</TabsTrigger>
               <TabsTrigger value="teachers">Manage Teachers</TabsTrigger>
