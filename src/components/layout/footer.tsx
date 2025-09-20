@@ -32,10 +32,7 @@ export function Footer() {
               </div>
 
               <div className="space-y-4">
-                <h4 className="font-semibold">Portals</h4>
-                <nav className="flex flex-col space-y-2 text-sm">
-                  <Link href="/student/login" className="text-muted-foreground hover:text-foreground">Student Login</Link>
-                </nav>
+                 {/* Portals section can be re-added here if needed */}
               </div>
             </div>
           </div>

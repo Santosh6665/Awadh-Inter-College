@@ -3,21 +3,8 @@
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, User, LogOut } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import Link from 'next/link';
-import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth';
-import { auth } from '@/lib/firebase/firebase';
-import { useEffect, useState } from 'react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { useRouter, usePathname } from 'next/navigation';
 import { CollegeLogo } from '@/components/icons';
 
 const navLinks = [
@@ -30,41 +17,6 @@ const navLinks = [
 ];
 
 export function Header() {
-  const [user, setUser] = useState<FirebaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const handleLogout = async () => {
-    await signOut(auth);
-    router.push('/');
-  };
-
-  const isDashboard = pathname.startsWith('/dashboard') || pathname.startsWith('/teacher/dashboard');
-  const getDashboardPath = () => {
-    if (pathname.startsWith('/teacher')) {
-      return '/teacher/dashboard';
-    }
-    return '/dashboard';
-  }
-  
-  const getProfilePath = () => {
-    if (pathname.startsWith('/teacher')) {
-      // Assuming teachers might have a different profile page in the future
-      return '/teacher/dashboard/profile'; 
-    }
-    return '/dashboard/profile';
-  }
-
-
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm">
       <div className="flex items-center gap-2">
@@ -89,16 +41,6 @@ export function Header() {
                 {link.label}
                 </Link>
             ))}
-            {!user && (
-                
-                <Link
-                    href="/login"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                >
-                    Login
-                </Link>
-                
-            )}
             </nav>
              <div className="mt-auto pt-6 text-center text-xs text-muted-foreground">
                 <p>© {new Date().getFullYear()} Awadh Inter College. All rights reserved.</p>
@@ -138,41 +80,7 @@ export function Header() {
       </nav>
       
       <div className="flex items-center gap-2">
-        {loading ? null : user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full border-2 border-black">
-                <Avatar>
-                  <AvatarImage src={user.photoURL || ''} alt={user.displayName || user.email || ''} />
-                  <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push(getDashboardPath())}>
-                <User className="mr-2 h-4 w-4" />
-                <span>Dashboard</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push(getProfilePath())}>
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Logout</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <div className="hidden md:flex items-center gap-2">
-            <Button asChild variant="ghost">
-              <Link href="/login">Login</Link>
-            </Button>
-          </div>
-        )}
+        {/* Login button removed */}
       </div>
     </header>
   );

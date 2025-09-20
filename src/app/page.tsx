@@ -6,7 +6,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { BookOpen, Camera, Info, LogIn, Target, Zap, Phone, Mail, MapPin, Megaphone, Users, FlaskConical, Library, Trophy, BrainCircuit, ScreenShare, HandHeart, Computer, Video, Wifi, ZapIcon, UserCheck, Wind, Droplets, Medal, BookCheck, LineChart, Award, GraduationCap } from 'lucide-react';
+import { BookOpen, Camera, Info, Target, Zap, Phone, Mail, MapPin, Megaphone, Users, HandHeart, Computer, ScreenShare, Video, Wifi, ZapIcon, UserCheck, Wind, Droplets, Trophy, BookCheck, LineChart, Award, GraduationCap } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -235,19 +235,6 @@ export default function HomePage() {
 
         <section className="bg-[rgb(231,249,254)] py-12 md:py-16 px-4 sm:px-6 md:px-8">
           <div className="container mx-auto grid grid-cols-2 gap-2 md:grid-cols-2 md:gap-8">
-            <Card>
-              <CardHeader className="p-4">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <LogIn className="text-accent" /> Portals
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <p className="text-sm">Access for students, parents, and faculty.</p>
-                <Button variant="outline" asChild className="mt-4">
-                  <Link href="/login">Login Now</Link>
-                </Button>
-              </CardContent>
-            </Card>
             <Card>
               <CardHeader className="p-4">
                 <CardTitle className="flex items-center gap-2 text-base">
