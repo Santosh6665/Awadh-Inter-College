@@ -192,7 +192,7 @@ export default function HomePage() {
             </div>
         </section>
 
-        <section id="about-us" className="py-2 bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
+        <section id="about-us" className="bg-[rgb(231,249,254)] px-4 sm:px-6 md:px-8">
           <div className="container mx-auto text-center">
             <h3 className="text-3xl font-bold text-center mb-6">About Our School</h3>
              <Card className="text-left max-w-5xl mx-auto">
@@ -202,7 +202,7 @@ export default function HomePage() {
                         src="/images/about-school.jpg"
                         alt="School Building"
                         width={1200}
-                        height={200}
+                        height={120}
                         className="object-cover w-full h-auto"
                         data-ai-hint="school building"
                         />
