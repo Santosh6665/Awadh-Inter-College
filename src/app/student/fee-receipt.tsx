@@ -125,7 +125,7 @@ export function FeeReceipt({ student, payment, feeDetails }: FeeReceiptProps) {
                 </Card>
             </div>
             
-             <div className="pt-16">
+             <div className="pt-8">
                 <div className="flex justify-end text-center">
                     <div>
                         <p className="border-t-2 border-dashed pt-2">Authorized Signature</p>
@@ -133,7 +133,7 @@ export function FeeReceipt({ student, payment, feeDetails }: FeeReceiptProps) {
                 </div>
             </div>
 
-            <p className="text-xs text-muted-foreground text-center mt-6">
+            <p className="text-xs text-muted-foreground text-center mt-4">
                 This is a computer-generated receipt and does not require a physical signature.
             </p>
         </CardContent>
