@@ -1,7 +1,7 @@
 
 'use client';
 
-import type { Student, Teacher, AttendanceRecord } from '@/lib/types';
+import type { Student, Teacher, AttendanceRecord, SalaryPayment } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -9,9 +9,11 @@ import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFoo
 import { SetPasswordDialog } from './set-password-dialog';
 import { ResultsManagement } from './results-management';
 import { AttendanceManagement } from './attendance/attendance-management';
-import { useMemo } from 'react';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { CheckCircle, XCircle, Download } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { SalarySlip } from '../admin/dashboard/salary/salary-slip';
 
 interface TeacherDashboardProps {
   teacher: Teacher;
@@ -21,6 +23,8 @@ interface TeacherDashboardProps {
 }
 
 export function TeacherDashboard({ teacher, students, attendance, forcePasswordReset }: TeacherDashboardProps) {
+  const [slipToPrint, setSlipToPrint] = useState<SalaryPayment | null>(null);
+
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -48,10 +52,26 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
         return <XCircle className="h-5 w-5 text-red-500" />;
     }
   };
+  
+  const handlePrintSlip = (payment: SalaryPayment) => {
+    setSlipToPrint(payment);
+    // Timeout to allow state to update before printing
+    setTimeout(() => {
+        document.body.classList.add('print-salary-slip');
+        window.print();
+        document.body.classList.remove('print-salary-slip');
+        setSlipToPrint(null);
+    }, 100);
+  };
 
   return (
     <>
       <SetPasswordDialog isOpen={forcePasswordReset} teacherId={teacher.id} />
+      {slipToPrint && (
+        <div id="slip-to-print" className="hidden print-block">
+          <SalarySlip teacher={teacher} payment={slipToPrint} />
+        </div>
+      )}
       <div id="teacher-dashboard" className="bg-[rgb(231,249,254)]">
           <Card className="min-h-screen">
             <CardHeader className="relative flex items-center justify-between p-4 md:p-6 print-hidden">
@@ -137,6 +157,7 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                             <TableHead>Method</TableHead>
                                             <TableHead>Remarks</TableHead>
                                             <TableHead className="text-right">Amount (₹)</TableHead>
+                                            <TableHead className="text-right print-hidden">Actions</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -147,11 +168,17 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                                 <TableCell>{payment.method}</TableCell>
                                                 <TableCell>{payment.remarks || 'N/A'}</TableCell>
                                                 <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
+                                                <TableCell className="text-right print-hidden">
+                                                    <Button variant="outline" size="sm" onClick={() => handlePrintSlip(payment)}>
+                                                        <Download className="mr-2 h-4 w-4" />
+                                                        Slip
+                                                    </Button>
+                                                </TableCell>
                                             </TableRow>
                                         ))
                                     ) : (
                                         <TableRow>
-                                            <TableCell colSpan={4} className="text-center text-muted-foreground">No salary payments recorded yet.</TableCell>
+                                            <TableCell colSpan={5} className="text-center text-muted-foreground">No salary payments recorded yet.</TableCell>
                                         </TableRow>
                                     )}
                                     </TableBody>
@@ -159,6 +186,7 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                         <TableRow className="font-bold text-base bg-muted/50">
                                             <TableCell colSpan={3}>Total Paid</TableCell>
                                             <TableCell className="text-right">₹{totalSalaryPaid.toFixed(2)}</TableCell>
+                                            <TableCell className="print-hidden"></TableCell>
                                         </TableRow>
                                     </TableFooter>
                                 </Table>
