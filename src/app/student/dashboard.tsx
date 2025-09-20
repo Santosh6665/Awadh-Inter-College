@@ -211,10 +211,10 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                             <Badge variant="secondary" className="text-base font-bold tracking-wider">🎓 STUDENT RESULT CARD</Badge>
                           </div>
                       </CardHeader>
-                      <CardContent className="p-4 md:p-6 space-y-6 print-p-4">
+                      <CardContent className="p-4 md:p-6 pt-0 space-y-6 print-p-4">
                           {hasMarks ? (
                               <>
-                                  <div className="border rounded-lg p-4 print-p-4">
+                                  <div className="border rounded-lg p-4 print-p-4 mt-6">
                                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><User className="h-5 w-5 text-primary"/> 🧑‍🎓 Student Details</h3>
                                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2 text-sm">
                                         <div><strong>Name:</strong> {student.name}</div>
@@ -433,6 +433,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
     
 
     
+
 
 
 
