@@ -1,19 +1,21 @@
 
 'use client';
 
-import type { Teacher } from '@/lib/types';
+import type { Student, Teacher } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { SetPasswordDialog } from './set-password-dialog';
+import { ResultsManagement } from './results-management';
 
 interface TeacherDashboardProps {
   teacher: Teacher;
+  students: Student[];
   forcePasswordReset: boolean;
 }
 
-export function TeacherDashboard({ teacher, forcePasswordReset }: TeacherDashboardProps) {
+export function TeacherDashboard({ teacher, students, forcePasswordReset }: TeacherDashboardProps) {
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -43,6 +45,7 @@ export function TeacherDashboard({ teacher, forcePasswordReset }: TeacherDashboa
               <Tabs defaultValue="profile" className="w-full">
                 <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-nowrap">
                   <TabsTrigger value="profile">Profile</TabsTrigger>
+                  <TabsTrigger value="results">Manage Results</TabsTrigger>
                 </TabsList>
                 <TabsContent value="profile" className="mt-4">
                     <Card>
@@ -74,6 +77,9 @@ export function TeacherDashboard({ teacher, forcePasswordReset }: TeacherDashboa
                             </div>
                         </CardContent>
                     </Card>
+                </TabsContent>
+                 <TabsContent value="results" className="mt-4">
+                    <ResultsManagement students={students} />
                 </TabsContent>
               </Tabs>
             </CardContent>

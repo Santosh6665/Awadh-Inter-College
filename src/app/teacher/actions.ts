@@ -138,3 +138,69 @@ export async function setTeacherPassword(teacherId: string, formData: FormData) 
         return { success: false, message: 'An unexpected error occurred.' };
     }
 }
+
+
+const MarksSchema = z.object({
+  physics: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  chemistry: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  maths: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  english: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  computerScience: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  remarks: z.string().optional(),
+});
+
+
+export type MarksFormState = {
+  success: boolean;
+  message: string;
+  errors?: {
+    [key: string]: string[];
+  } | null;
+};
+
+export async function updateStudentMarksByTeacher(
+  id: string,
+  prevState: MarksFormState,
+  formData: FormData
+): Promise<MarksFormState> {
+  // Basic auth check: ensure a teacher is logged in
+  const teacherId = cookies().get('teacher_id')?.value;
+  if (!teacherId) {
+    return { success: false, message: 'Unauthorized. Please log in.' };
+  }
+
+  if (!id) {
+    return { success: false, message: 'Student ID is missing.' };
+  }
+
+  const validatedFields = MarksSchema.safeParse(Object.fromEntries(formData.entries()));
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      message: 'Validation failed. Marks should be between 0 and 100.',
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    const marksData = validatedFields.data;
+    
+    const marksForUpdate = Object.fromEntries(
+        Object.entries(marksData).map(([key, value]) => [key, value === '' ? null : value])
+    );
+    
+    const studentDoc = firestore.collection('students').doc(id);
+    await studentDoc.update({
+        marks: marksForUpdate,
+        updatedAt: new Date()
+    });
+
+    revalidatePath('/teacher');
+    revalidatePath('/student'); // Also revalidate student portal
+    return { success: true, message: 'Student marks updated successfully.' };
+  } catch (error) {
+    console.error('Error updating student marks:', error);
+    return { success: false, message: 'An unexpected error occurred while updating marks.' };
+  }
+}
