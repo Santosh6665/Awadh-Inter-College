@@ -141,7 +141,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
           </CardHeader>
           <CardContent className="p-4 md:p-6">
             <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 sm:w-auto sm:grid-cols-4 print-hidden">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 print-hidden mb-4">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="results">Exam Results</TabsTrigger>
                 <TabsTrigger value="attendance">Attendance</TabsTrigger>
