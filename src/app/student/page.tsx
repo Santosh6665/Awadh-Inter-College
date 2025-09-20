@@ -2,7 +2,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 import { StudentLoginForm } from '@/app/student/login-form';
 import { StudentDashboard } from '@/app/student/dashboard';
 import type { Student, AttendanceRecord } from '@/lib/types';
@@ -74,7 +73,6 @@ export default async function StudentPage() {
           </div>
         )}
       </main>
-      <Footer />
     </div>
   );
 }

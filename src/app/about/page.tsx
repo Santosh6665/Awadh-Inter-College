@@ -1,6 +1,5 @@
 
 import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 
@@ -45,7 +44,6 @@ export default function AboutUsPage() {
           </Card>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

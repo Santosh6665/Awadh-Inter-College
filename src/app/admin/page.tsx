@@ -1,7 +1,6 @@
 import { LoginForm } from './login-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 
 export default function AdminLoginPage() {
   return (
@@ -18,7 +17,6 @@ export default function AdminLoginPage() {
           </CardContent>
         </Card>
       </main>
-      <Footer />
     </div>
   );
 }

@@ -1,6 +1,5 @@
 
 import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -59,7 +58,6 @@ export default async function NoticesPage() {
           </Card>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
