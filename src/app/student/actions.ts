@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { firestore } from '@/lib/firebase-admin';
+import type { Student } from '@/lib/types';
 
 const loginSchema = z.object({
   rollNumber: z.string(),
@@ -92,7 +93,7 @@ export async function logoutStudent() {
   revalidatePath('/student');
 }
 
-export async function getStudentById(id: string) {
+export async function getStudentById(id: string): Promise<Student | null> {
   try {
     const studentDoc = await firestore.collection('students').doc(id).get();
     if (!studentDoc.exists) {
@@ -112,12 +113,39 @@ export async function getStudentById(id: string) {
     // Even if password exists, we don't send it to the client
     delete serializedData.password;
 
-    return { id: studentDoc.id, ...serializedData } as any;
+    return { id: studentDoc.id, ...serializedData } as Student;
   } catch (error) {
     console.error('Error fetching student:', error);
     return null;
   }
 }
+
+export async function getStudentsByClass(className: string): Promise<Student[]> {
+  if (!className) return [];
+  try {
+    const studentsSnapshot = await firestore.collection('students').where('class', '==', className).get();
+    if (studentsSnapshot.empty) {
+      return [];
+    }
+    return studentsSnapshot.docs.map(doc => {
+      const data = doc.data();
+      const serializedData = Object.fromEntries(
+        Object.entries(data).map(([key, value]) => {
+          if (value && typeof value.toDate === 'function') {
+            return [key, value.toDate().toISOString()];
+          }
+          return [key, value];
+        })
+      );
+      delete serializedData.password;
+      return { id: doc.id, ...serializedData };
+    }) as Student[];
+  } catch (error) {
+    console.error(`Error fetching students for class ${className}:`, error);
+    return [];
+  }
+}
+
 
 export async function setStudentPassword(studentId: string, formData: FormData) {
     const password = formData.get('password');

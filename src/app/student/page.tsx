@@ -6,7 +6,8 @@ import { Footer } from '@/components/layout/footer';
 import { StudentLoginForm } from '@/app/student/login-form';
 import { StudentDashboard } from '@/app/student/dashboard';
 import type { Student } from '@/lib/types';
-import { getStudentById } from './actions';
+import { getStudentById, getStudentsByClass } from './actions';
+import { calculatePercentage } from '@/lib/result-utils';
 
 
 export default async function StudentPage() {
@@ -15,11 +16,35 @@ export default async function StudentPage() {
   const forcePasswordReset = cookieStore.get('force_password_reset')?.value === 'true';
 
   let student: Student | null = null;
+  let rank: number | null = null;
+
   if (studentId) {
     student = await getStudentById(studentId);
     if (!student) {
       // If cookie is invalid, redirect to clear it
       redirect('/student/logout');
+    } else {
+       // Calculate rank if student exists
+        const classmates = await getStudentsByClass(student.class);
+        const studentsWithPercentage = classmates
+            .map(s => ({
+                id: s.id,
+                percentage: calculatePercentage(s.marks),
+            }))
+            .filter(s => s.percentage !== null);
+        
+        studentsWithPercentage.sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0));
+
+        let currentRank = 0;
+        for (let i = 0; i < studentsWithPercentage.length; i++) {
+            if (i === 0 || studentsWithPercentage[i].percentage < studentsWithPercentage[i-1].percentage) {
+                currentRank = i + 1;
+            }
+            if (studentsWithPercentage[i].id === student.id) {
+                rank = currentRank;
+                break;
+            }
+        }
     }
   }
 
@@ -28,7 +53,7 @@ export default async function StudentPage() {
       <Header />
       <main className="flex-1 bg-muted/40">
         {student ? (
-          <StudentDashboard student={student} forcePasswordReset={forcePasswordReset} />
+          <StudentDashboard student={student} rank={rank} forcePasswordReset={forcePasswordReset} />
         ) : (
           <div className="flex items-center justify-center p-4 h-full">
             <StudentLoginForm />

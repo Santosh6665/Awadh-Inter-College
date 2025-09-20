@@ -13,10 +13,11 @@ import { calculatePercentage, calculateGrade } from '@/lib/result-utils';
 
 interface StudentDashboardProps {
   student: Student;
+  rank: number | null;
   forcePasswordReset: boolean;
 }
 
-export function StudentDashboard({ student, forcePasswordReset }: StudentDashboardProps) {
+export function StudentDashboard({ student, rank, forcePasswordReset }: StudentDashboardProps) {
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -146,6 +147,7 @@ export function StudentDashboard({ student, forcePasswordReset }: StudentDashboa
                                   <div className="flex justify-end gap-8 font-bold pr-4">
                                       <span>Percentage: {percentage?.toFixed(2)}%</span>
                                       <span>Grade: {grade}</span>
+                                      <span>Rank: {rank ?? 'N/A'}</span>
                                   </div>
                               </div>
                           ) : (
