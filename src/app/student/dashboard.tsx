@@ -1,7 +1,7 @@
 
 'use client';
 
-import type { Student, AttendanceRecord } from '@/lib/types';
+import type { Student, AttendanceRecord, Payment } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,9 +12,10 @@ import { SetPasswordDialog } from './set-password-dialog';
 import { calculatePercentage, calculateGrade, calculateTotals } from '@/lib/result-utils';
 import { Download, CheckCircle, XCircle, Clock, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, CalendarDays } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { CollegeLogo } from '@/components/icons';
 import { cn } from '@/lib/utils';
+import { FeeReceipt } from './fee-receipt';
 
 
 interface StudentDashboardProps {
@@ -26,6 +27,8 @@ interface StudentDashboardProps {
 }
 
 export function StudentDashboard({ student, rank, attendance, forcePasswordReset, feeSettings }: StudentDashboardProps) {
+  const [receiptToPrint, setReceiptToPrint] = useState<Payment | null>(null);
+
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -41,10 +44,23 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
 
   const hasMarks = student.marks && Object.values(student.marks).some(mark => typeof mark === 'number');
 
-  const handlePrint = () => {
+  const handlePrintResult = () => {
+    document.body.classList.add('print-result');
     window.print();
+    document.body.classList.remove('print-result');
   };
   
+  const handlePrintReceipt = (payment: Payment) => {
+    setReceiptToPrint(payment);
+    // Timeout to allow state to update before printing
+    setTimeout(() => {
+        document.body.classList.add('print-receipt');
+        window.print();
+        document.body.classList.remove('print-receipt');
+        setReceiptToPrint(null);
+    }, 100);
+  };
+
   const attendancePercentage = useMemo(() => {
     if (attendance.length === 0) return 'N/A';
     const presentDays = attendance.filter(a => a.status === 'present' || a.status === 'late').length;
@@ -99,6 +115,11 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
   return (
     <>
       <SetPasswordDialog isOpen={forcePasswordReset} studentId={student.id} />
+       {receiptToPrint && (
+        <div id="receipt-to-print" className="hidden print-block">
+          <FeeReceipt student={student} payment={receiptToPrint} feeDetails={feeDetails} />
+        </div>
+      )}
       <div className="container mx-auto p-4 md:p-8" id="student-dashboard">
         <Card>
           <CardHeader className="flex flex-col md:flex-row items-center justify-between gap-4 print-hidden">
@@ -174,7 +195,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                     </div>
                                 </div>
                             </div>
-                            <Button onClick={handlePrint} variant="outline" size="sm" className="print-hidden self-start sm:self-center">
+                            <Button onClick={handlePrintResult} variant="outline" size="sm" className="print-hidden self-start sm:self-center">
                                 <Download className="mr-2 h-4 w-4" />
                                 Download
                            </Button>
@@ -365,6 +386,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                         <TableHead>Date</TableHead>
                                         <TableHead>Method</TableHead>
                                         <TableHead className="text-right">Amount (₹)</TableHead>
+                                        <TableHead className="text-right print-hidden">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -374,11 +396,17 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                                 <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
                                                 <TableCell>{payment.method}</TableCell>
                                                 <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
+                                                <TableCell className="text-right print-hidden">
+                                                    <Button variant="outline" size="sm" onClick={() => handlePrintReceipt(payment)}>
+                                                        <Download className="mr-2 h-4 w-4" />
+                                                        Receipt
+                                                    </Button>
+                                                </TableCell>
                                             </TableRow>
                                         ))
                                     ) : (
                                         <TableRow>
-                                            <TableCell colSpan={3} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
+                                            <TableCell colSpan={4} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
                                         </TableRow>
                                     )}
                                 </TableBody>

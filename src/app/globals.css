@@ -94,36 +94,51 @@ body {
 
 @media print {
   body {
-    background: white;
+    background: white !important;
+    color: black !important;
   }
-  .print-hidden, header, footer, [data-orientation="vertical"], nav {
-    display: none;
-  }
-  main {
-    padding: 0;
-    margin: 0;
-  }
-  .print-p-4 {
-    padding: 1rem;
-  }
-  #student-dashboard,
-  #student-dashboard > .container,
-  #student-dashboard .p-4,
-  #student-dashboard .p-8 {
+
+  main, .container, #student-dashboard {
     padding: 0 !important;
     margin: 0 !important;
   }
-  #result-card, #result-card > div, #result-card > div > div {
-     box-shadow: none !important;
-     border: none !important;
+  
+  .print-hidden {
+    display: none !important;
   }
-   body * {
+
+  .print-block {
+    display: block !important;
+  }
+
+  .print-p-4 {
+    padding: 1rem !important;
+  }
+  
+  body * {
     visibility: hidden;
   }
-  #result-card, #result-card * {
+
+  /* Rules for printing result card */
+  .print-result #result-card, .print-result #result-card * {
     visibility: visible;
   }
-  #result-card {
+
+  .print-result #result-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Rules for printing fee receipt */
+  .print-receipt #receipt-to-print, .print-receipt #receipt-to-print * {
+    visibility: visible;
+  }
+  
+  .print-receipt #receipt-to-print {
     position: absolute;
     left: 0;
     top: 0;
