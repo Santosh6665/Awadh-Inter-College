@@ -1,3 +1,4 @@
+
 'use server';
 
 import { firestore } from '@/lib/firebase-admin';
@@ -14,7 +15,13 @@ const StudentSchema = z.object({
   phone: z.string().min(10, 'Phone number must be at least 10 digits.'),
   fatherName: z.string().min(2, "Father's name is required."),
   address: z.string().min(5, 'Address is required.'),
+  password: z.string().min(6, 'Password must be at least 6 characters.'),
 });
+
+const UpdateStudentSchema = StudentSchema.extend({
+  password: z.string().min(6, 'Password must be at least 6 characters.').optional().or(z.literal('')),
+});
+
 
 export type StudentFormState = {
   success: boolean;
@@ -40,7 +47,6 @@ export async function addStudent(
   
   try {
     const studentsCollection = firestore.collection('students');
-    // Use rollNumber as the document ID to ensure uniqueness
     const studentDoc = studentsCollection.doc(validatedFields.data.rollNumber);
 
     const docSnapshot = await studentDoc.get();
@@ -69,7 +75,7 @@ export async function updateStudent(
     return { success: false, message: 'Student ID is missing.' };
   }
 
-  const validatedFields = StudentSchema.safeParse(Object.fromEntries(formData.entries()));
+  const validatedFields = UpdateStudentSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
     return {
@@ -80,11 +86,15 @@ export async function updateStudent(
   }
 
   try {
+    const { password, ...studentData } = validatedFields.data;
+    const updateData: { [key: string]: any } = { ...studentData, updatedAt: new Date() };
+
+    if (password) {
+      updateData.password = password;
+    }
+
     const studentDoc = firestore.collection('students').doc(id);
-    await studentDoc.update({
-        ...validatedFields.data,
-        updatedAt: new Date(),
-    });
+    await studentDoc.update(updateData);
 
     revalidatePath('/admin/dashboard');
     return { success: true, message: 'Student updated successfully.' };
@@ -125,6 +135,9 @@ export async function getStudents() {
           return [key, value];
         })
       );
+      // Ensure password is not sent to the client
+      delete serializedData.password;
+
       return {
         id: doc.id,
         ...serializedData,

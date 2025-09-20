@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useActionState, useEffect } from 'react';
@@ -86,6 +87,12 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
               Email
             </Label>
             <Input id="email" name="email" type="email" defaultValue={student?.email} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="password" className="text-right">
+              Password
+            </Label>
+            <Input id="password" name="password" type="password" placeholder={isEditing ? 'Leave blank to keep unchanged' : 'Required'} className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="rollNumber" className="text-right">

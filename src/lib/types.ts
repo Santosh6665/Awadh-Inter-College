@@ -37,6 +37,8 @@ export type Student = {
     feeStatus?: 'Paid' | 'Due' | 'Overdue';
     amountDue?: number;
     marks?: Marks;
+    // Password should not be sent to client, but exists in DB
+    password?: string; 
 };
 
 export type Teacher = {
