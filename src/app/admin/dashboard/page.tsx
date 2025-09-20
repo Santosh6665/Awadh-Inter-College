@@ -138,14 +138,16 @@ export default async function AdminDashboardPage() {
       </div>
       <div className="pt-8">
         <Tabs defaultValue="students">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
-            <TabsTrigger value="students">Manage Students</TabsTrigger>
-            <TabsTrigger value="teachers">Manage Teachers</TabsTrigger>
-            <TabsTrigger value="results">Result Management</TabsTrigger>
-            <TabsTrigger value="attendance">Attendance</TabsTrigger>
-            <TabsTrigger value="fees">Fee Management</TabsTrigger>
-            <TabsTrigger value="notices">Events &amp; Notices</TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto">
+            <TabsList className="whitespace-nowrap">
+              <TabsTrigger value="students">Manage Students</TabsTrigger>
+              <TabsTrigger value="teachers">Manage Teachers</TabsTrigger>
+              <TabsTrigger value="results">Result Management</TabsTrigger>
+              <TabsTrigger value="attendance">Attendance</TabsTrigger>
+              <TabsTrigger value="fees">Fee Management</TabsTrigger>
+              <TabsTrigger value="notices">Events &amp; Notices</TabsTrigger>
+            </TabsList>
+          </div>
           <TabsContent value="students" className="mt-4">
             <StudentList students={students} />
           </TabsContent>

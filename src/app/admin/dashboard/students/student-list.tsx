@@ -89,7 +89,7 @@ export function StudentList({ students }: { students: Student[] }) {
                 <CardTitle>Manage Students</CardTitle>
                 <CardDescription>Add, edit, or remove student records.</CardDescription>
             </div>
-            <Button onClick={handleAddNew} size="sm" className="w-full md:w-auto">
+            <Button onClick={handleAddNew} size="sm" className="w-full md:w-auto flex-shrink-0">
               <PlusCircle className="mr-2 h-4 w-4" /> Add Student
             </Button>
           </div>
@@ -100,7 +100,7 @@ export function StudentList({ students }: { students: Student[] }) {
                     placeholder="Search by name..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-8"
+                    className="pl-8 w-full"
                 />
             </div>
              <Input
@@ -129,7 +129,7 @@ export function StudentList({ students }: { students: Student[] }) {
                   filteredStudents.map((student) => (
                     <TableRow key={student.id}>
                       <TableCell>{student.rollNumber}</TableCell>
-                      <TableCell>{student.name}</TableCell>
+                      <TableCell className="font-medium">{student.name}</TableCell>
                       <TableCell className="hidden md:table-cell">{`${student.class}-${student.section}`}</TableCell>
                       <TableCell className="hidden md:table-cell">{student.phone}</TableCell>
                       <TableCell className="hidden lg:table-cell">{student.fatherName}</TableCell>
@@ -146,7 +146,7 @@ export function StudentList({ students }: { students: Student[] }) {
                               <Edit className="mr-2 h-4 w-4" />
                               <span>Edit</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => confirmDelete(student.id)}>
+                            <DropdownMenuItem onClick={() => confirmDelete(student.id)} className="text-destructive">
                                <Trash2 className="mr-2 h-4 w-4" />
                                <span>Delete</span>
                             </DropdownMenuItem>
@@ -157,7 +157,7 @@ export function StudentList({ students }: { students: Student[] }) {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center">
+                    <TableCell colSpan={6} className="text-center h-24">
                       No students found.
                     </TableCell>
                   </TableRow>
@@ -184,7 +184,7 @@ export function StudentList({ students }: { students: Student[] }) {
             </AlertDialogHeader>
             <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+                <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
