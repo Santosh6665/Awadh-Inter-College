@@ -83,17 +83,17 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
     <>
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="w-full">
                 <CardTitle>Manage Teachers</CardTitle>
                 <CardDescription>Add, edit, or remove teacher records.</CardDescription>
             </div>
-            <Button onClick={handleAddNew} size="sm">
+            <Button onClick={handleAddNew} size="sm" className="w-full md:w-auto">
               <PlusCircle className="mr-2 h-4 w-4" /> Add Teacher
             </Button>
           </div>
           <div className="mt-4 flex items-center gap-4">
-            <div className="relative w-full max-w-sm">
+            <div className="relative w-full">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                     placeholder="Search by name or subject..."
@@ -110,9 +110,9 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
+                  <TableHead className="hidden md:table-cell">Email</TableHead>
                   <TableHead>Subject</TableHead>
-                  <TableHead>Phone</TableHead>
+                  <TableHead className="hidden md:table-cell">Phone</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -121,9 +121,9 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
                   filteredTeachers.map((teacher) => (
                     <TableRow key={teacher.id}>
                       <TableCell>{teacher.name}</TableCell>
-                      <TableCell>{teacher.email}</TableCell>
+                      <TableCell className="hidden md:table-cell">{teacher.email}</TableCell>
                       <TableCell>{teacher.subject}</TableCell>
-                      <TableCell>{teacher.phone}</TableCell>
+                      <TableCell className="hidden md:table-cell">{teacher.phone}</TableCell>
                       <TableCell className="text-right">
                          <DropdownMenu>
                           <DropdownMenuTrigger asChild>

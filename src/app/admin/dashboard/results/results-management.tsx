@@ -72,14 +72,14 @@ export function ResultsManagement({ students }: { students: Student[] }) {
     <>
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className='w-full'>
                 <CardTitle>Manage Student Results</CardTitle>
                 <CardDescription>Update marks and view grades for students.</CardDescription>
             </div>
           </div>
-          <div className="mt-4 flex items-center gap-4">
-            <div className="relative w-full max-w-sm">
+          <div className="mt-4 flex flex-col md:flex-row items-center gap-4">
+            <div className="relative w-full">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                     placeholder="Search by name..."
@@ -92,7 +92,7 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                 placeholder="Filter by class..."
                 value={classFilter}
                 onChange={(e) => setClassFilter(e.target.value)}
-                className="w-full max-w-xs"
+                className="w-full"
             />
           </div>
         </CardHeader>
@@ -101,14 +101,14 @@ export function ResultsManagement({ students }: { students: Student[] }) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Roll No.</TableHead>
+                  <TableHead className="hidden md:table-cell">Roll No.</TableHead>
                   <TableHead>Name</TableHead>
-                  <TableHead>Class</TableHead>
-                  <TableHead>Physics</TableHead>
-                  <TableHead>Chemistry</TableHead>
-                  <TableHead>Maths</TableHead>
-                  <TableHead>English</TableHead>
-                  <TableHead>Comp. Sci.</TableHead>
+                  <TableHead className="hidden md:table-cell">Class</TableHead>
+                  <TableHead className="hidden lg:table-cell">Physics</TableHead>
+                  <TableHead className="hidden lg:table-cell">Chemistry</TableHead>
+                  <TableHead className="hidden lg:table-cell">Maths</TableHead>
+                  <TableHead className="hidden lg:table-cell">English</TableHead>
+                  <TableHead className="hidden lg:table-cell">Comp. Sci.</TableHead>
                   <TableHead>Percentage</TableHead>
                   <TableHead>Grade</TableHead>
                   <TableHead>Rank</TableHead>
@@ -123,14 +123,14 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                     const rank = studentRanks.get(student.id);
                     return (
                         <TableRow key={student.id}>
-                            <TableCell>{student.rollNumber}</TableCell>
+                            <TableCell className="hidden md:table-cell">{student.rollNumber}</TableCell>
                             <TableCell>{student.name}</TableCell>
-                            <TableCell>{`${student.class}-${student.section}`}</TableCell>
-                            <TableCell>{student.marks?.physics ?? 'N/A'}</TableCell>
-                            <TableCell>{student.marks?.chemistry ?? 'N/A'}</TableCell>
-                            <TableCell>{student.marks?.maths ?? 'N/A'}</TableCell>
-                            <TableCell>{student.marks?.english ?? 'N/A'}</TableCell>
-                            <TableCell>{student.marks?.computerScience ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden md:table-cell">{`${student.class}-${student.section}`}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{student.marks?.physics ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{student.marks?.chemistry ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{student.marks?.maths ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{student.marks?.english ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{student.marks?.computerScience ?? 'N/A'}</TableCell>
                             <TableCell>{percentage !== null ? `${percentage.toFixed(2)}%` : 'N/A'}</TableCell>
                             <TableCell>{grade}</TableCell>
                             <TableCell>{rank ?? 'N/A'}</TableCell>

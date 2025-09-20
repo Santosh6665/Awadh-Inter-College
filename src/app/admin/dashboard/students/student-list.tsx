@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -83,17 +84,17 @@ export function StudentList({ students }: { students: Student[] }) {
     <>
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="w-full">
                 <CardTitle>Manage Students</CardTitle>
                 <CardDescription>Add, edit, or remove student records.</CardDescription>
             </div>
-            <Button onClick={handleAddNew} size="sm">
+            <Button onClick={handleAddNew} size="sm" className="w-full md:w-auto">
               <PlusCircle className="mr-2 h-4 w-4" /> Add Student
             </Button>
           </div>
-          <div className="mt-4 flex items-center gap-4">
-            <div className="relative w-full max-w-sm">
+          <div className="mt-4 flex flex-col md:flex-row items-center gap-4">
+            <div className="relative w-full">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                     placeholder="Search by name..."
@@ -106,7 +107,7 @@ export function StudentList({ students }: { students: Student[] }) {
                 placeholder="Filter by class..."
                 value={classFilter}
                 onChange={(e) => setClassFilter(e.target.value)}
-                className="w-full max-w-xs"
+                className="w-full"
             />
           </div>
         </CardHeader>
@@ -117,9 +118,9 @@ export function StudentList({ students }: { students: Student[] }) {
                 <TableRow>
                   <TableHead>Roll No.</TableHead>
                   <TableHead>Name</TableHead>
-                  <TableHead>Class</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Father's Name</TableHead>
+                  <TableHead className="hidden md:table-cell">Class</TableHead>
+                  <TableHead className="hidden md:table-cell">Phone</TableHead>
+                  <TableHead className="hidden lg:table-cell">Father's Name</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -129,9 +130,9 @@ export function StudentList({ students }: { students: Student[] }) {
                     <TableRow key={student.id}>
                       <TableCell>{student.rollNumber}</TableCell>
                       <TableCell>{student.name}</TableCell>
-                      <TableCell>{`${student.class}-${student.section}`}</TableCell>
-                      <TableCell>{student.phone}</TableCell>
-                      <TableCell>{student.fatherName}</TableCell>
+                      <TableCell className="hidden md:table-cell">{`${student.class}-${student.section}`}</TableCell>
+                      <TableCell className="hidden md:table-cell">{student.phone}</TableCell>
+                      <TableCell className="hidden lg:table-cell">{student.fatherName}</TableCell>
                       <TableCell className="text-right">
                          <DropdownMenu>
                           <DropdownMenuTrigger asChild>
