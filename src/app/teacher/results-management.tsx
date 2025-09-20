@@ -104,6 +104,11 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                   <TableHead className="hidden md:table-cell">Roll No.</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead className="hidden md:table-cell">Class</TableHead>
+                  <TableHead className="hidden lg:table-cell">Physics</TableHead>
+                  <TableHead className="hidden lg:table-cell">Chemistry</TableHead>
+                  <TableHead className="hidden lg:table-cell">Maths</TableHead>
+                  <TableHead className="hidden lg:table-cell">English</TableHead>
+                  <TableHead className="hidden lg:table-cell">Comp. Sci.</TableHead>
                   <TableHead>Percentage</TableHead>
                   <TableHead>Grade</TableHead>
                   <TableHead>Rank</TableHead>
@@ -121,6 +126,11 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                             <TableCell className="hidden md:table-cell">{student.rollNumber}</TableCell>
                             <TableCell>{student.name}</TableCell>
                             <TableCell className="hidden md:table-cell">{`${student.class}-${student.section}`}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{student.marks?.physics ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{student.marks?.chemistry ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{student.marks?.maths ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{student.marks?.english ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{student.marks?.computerScience ?? 'N/A'}</TableCell>
                             <TableCell>{percentage !== null ? `${percentage.toFixed(2)}%` : 'N/A'}</TableCell>
                             <TableCell>{grade}</TableCell>
                             <TableCell>{rank ?? 'N/A'}</TableCell>
@@ -134,7 +144,7 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center">
+                    <TableCell colSpan={12} className="text-center">
                       No students found.
                     </TableCell>
                   </TableRow>
