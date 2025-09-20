@@ -63,6 +63,9 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
       });
     }
   }, [state, toast, setIsOpen]);
+  
+  const formattedDob = student?.dob ? new Date(student.dob).toISOString().split('T')[0] : '';
+
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -101,7 +104,7 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
             </div>
             <div className="space-y-2">
                 <Label htmlFor="dob">Date of Birth</Label>
-                <Input id="dob" name="dob" type="date" defaultValue={student?.dob?.split('T')[0]} />
+                <Input id="dob" name="dob" type="date" defaultValue={formattedDob} />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
