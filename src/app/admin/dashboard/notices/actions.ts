@@ -109,9 +109,18 @@ export async function getNotices(): Promise<Notice[]> {
     }
     return noticesSnapshot.docs.map(doc => {
       const data = doc.data();
+      // Convert Firestore Timestamps to strings to make them serializable for client components
+      const serializedData = Object.fromEntries(
+        Object.entries(data).map(([key, value]) => {
+          if (value && typeof value.toDate === 'function') {
+            return [key, value.toDate().toISOString()];
+          }
+          return [key, value];
+        })
+      );
       return {
         id: doc.id,
-        ...data,
+        ...serializedData,
       } as Notice;
     });
   } catch (error) {
