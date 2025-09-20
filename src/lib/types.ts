@@ -60,6 +60,14 @@ export type Student = {
     payments?: Payment[];
 };
 
+export type SalaryPayment = {
+  id: string;
+  date: string;
+  amount: number;
+  method: 'Cash' | 'Bank Transfer' | 'Cheque';
+  remarks?: string;
+};
+
 export type Teacher = {
     id: string;
     name: string;
@@ -70,6 +78,8 @@ export type Teacher = {
     dob?: string;
     qualification?: string;
     password?: string;
+    baseSalary?: number;
+    salaryPayments?: SalaryPayment[];
 };
 
 export type Book = {

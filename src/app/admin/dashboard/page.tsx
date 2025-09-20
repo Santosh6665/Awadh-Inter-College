@@ -1,4 +1,5 @@
 
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Users, BookOpen, UserCheck } from "lucide-react";
 import { StudentList } from "./students/student-list";
@@ -15,6 +16,7 @@ import { NoticeManagement } from "./notices/notice-management";
 import { getNotices } from "./notices/actions";
 import { format } from 'date-fns';
 import { TeacherAttendanceManagement } from "./teacher-attendance/teacher-attendance-management";
+import { SalaryManagement } from "./salary/salary-management";
 
 export default async function AdminDashboardPage() {
   let students: Student[] = [];
@@ -190,6 +192,7 @@ export default async function AdminDashboardPage() {
               <TabsTrigger value="attendance">Student Attendance</TabsTrigger>
               <TabsTrigger value="teacher-attendance">Teacher Attendance</TabsTrigger>
               <TabsTrigger value="fees">Fee Management</TabsTrigger>
+              <TabsTrigger value="teacher-salary">Teacher Salary</TabsTrigger>
               <TabsTrigger value="notices">Events &amp; Notices</TabsTrigger>
             </TabsList>
           </div>
@@ -210,6 +213,9 @@ export default async function AdminDashboardPage() {
           </TabsContent>
            <TabsContent value="fees" className="mt-4 px-4 md:px-8">
             <FeeManagement students={students} feeSettings={feeStructures} />
+          </TabsContent>
+           <TabsContent value="teacher-salary" className="mt-4 px-4 md:px-8">
+            <SalaryManagement teachers={teachers} />
           </TabsContent>
           <TabsContent value="notices" className="mt-4 px-4 md:px-8">
             <NoticeManagement notices={notices} />
