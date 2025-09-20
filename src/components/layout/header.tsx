@@ -16,12 +16,14 @@ const navLinks = [
   { href: '/gallery', label: 'Gallery' },
   { href: '/notices', label: 'Notices' },
   { href: '/student', label: 'Student Portal' },
+  { href: '/teacher', label: 'Teacher Portal' },
   { href: '/#contact', label: 'Contact Us' },
 ];
 
 export function Header() {
   const pathname = usePathname();
   const isStudentPage = pathname.startsWith('/student');
+  const isTeacherPage = pathname.startsWith('/teacher');
 
   return (
     <header className={cn('sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm', 'print-hidden')}>
@@ -50,6 +52,15 @@ export function Header() {
             {isStudentPage && (
                  <Link
                     href="/student/logout"
+                    className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-destructive"
+                    >
+                    <LogOut className="h-5 w-5" />
+                    Logout
+                </Link>
+            )}
+             {isTeacherPage && (
+                 <Link
+                    href="/teacher/logout"
                     className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-destructive"
                     >
                     <LogOut className="h-5 w-5" />

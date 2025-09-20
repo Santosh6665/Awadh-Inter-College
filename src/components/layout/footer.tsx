@@ -36,6 +36,7 @@ export function Footer() {
                  <h4 className="font-semibold">Portals</h4>
                 <nav className="flex flex-col space-y-2 text-sm">
                   <Link href="/student" className="text-muted-foreground hover:text-foreground">Student Portal</Link>
+                  <Link href="/teacher" className="text-muted-foreground hover:text-foreground">Teacher Portal</Link>
                   <Link href="/admin" className="text-muted-foreground hover:text-foreground">Admin Portal</Link>
                 </nav>
               </div>
@@ -52,7 +53,7 @@ export function Footer() {
                 </div>
                 <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4 flex-shrink-0" />
-                    <a href="tel:+916393071946" className="hover:underline">+91 6393071946</a>
+                    <a href="tel:+916393071946" className="hover:underline">+916393071946</a>
                 </div>
                 <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4 flex-shrink-0" />
