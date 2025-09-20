@@ -2,7 +2,7 @@
 'use client';
 
 import type { Student, Payment } from '@/lib/types';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFooter } from '@/components/ui/table';
 import { CollegeLogo } from '@/components/icons';
 import { Mail, Phone } from 'lucide-react';
