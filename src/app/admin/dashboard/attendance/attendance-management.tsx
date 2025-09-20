@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import type { Student } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -42,17 +42,18 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
   const [classFilter, setClassFilter] = useState('');
   const { toast } = useToast();
 
-  const formattedDate = format(date, 'yyyy-MM-dd');
+  const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
+
+  const fetchAttendance = useCallback(async () => {
+    setLoading(true);
+    const data = await getAttendanceByDate(formattedDate);
+    setAttendance(data || {});
+    setLoading(false);
+  }, [formattedDate]);
 
   useEffect(() => {
-    async function fetchAttendance() {
-      setLoading(true);
-      const data = await getAttendanceByDate(formattedDate);
-      setAttendance(data || {});
-      setLoading(false);
-    }
     fetchAttendance();
-  }, [formattedDate]);
+  }, [fetchAttendance]);
 
   const handleStatusChange = async (studentId: string, status: AttendanceStatus) => {
     // Optimistic UI update
@@ -65,9 +66,8 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
         description: result.message,
         variant: 'destructive',
       });
-      // Revert if API call fails
-      const originalData = await getAttendanceByDate(formattedDate);
-      setAttendance(originalData);
+      // Revert if API call fails by re-fetching
+      await fetchAttendance();
     }
   };
 
@@ -78,10 +78,14 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
   }), [students, searchQuery, classFilter]);
   
   const attendanceSummary = useMemo(() => {
-    const attendanceValues = Object.values(attendance || {});
-    const present = attendanceValues.filter(a => a.status === 'present').length;
-    const absent = attendanceValues.filter(a => a.status === 'absent').length;
-    const late = attendanceValues.filter(a => a.status === 'late').length;
+    const studentIdsInFilter = new Set(filteredStudents.map(s => s.id));
+    const attendanceValues = Object.entries(attendance || {})
+      .filter(([studentId]) => studentIdsInFilter.has(studentId))
+      .map(([, data]) => data);
+      
+    const present = attendanceValues.filter(a => a?.status === 'present').length;
+    const absent = attendanceValues.filter(a => a?.status === 'absent').length;
+    const late = attendanceValues.filter(a => a?.status === 'late').length;
     const total = filteredStudents.length;
     const percentage = total > 0 ? ((present + late) / total) * 100 : 0;
     return { present, absent, late, percentage };
