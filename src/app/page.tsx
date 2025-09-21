@@ -175,7 +175,7 @@ export default function HomePage() {
                     <h2 className="text-3xl font-bold tracking-tight">Why Choose Awadh Inter College?</h2>
                     <p className="mt-2 text-lg text-muted-foreground">A commitment to holistic education and student success.</p>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+                <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
                     {features.map((feature, index) => (
                         <Card key={index} className="text-center hover:shadow-lg transition-shadow duration-300">
                             <CardContent className="p-4 flex flex-col items-center justify-center h-full">
