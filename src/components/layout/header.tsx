@@ -109,6 +109,15 @@ export function Header() {
                     Logout
                 </Link>
             )}
+             {isTeacherPage && (
+                 <Link
+                    href="/teacher/logout"
+                    className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-destructive"
+                    >
+                    <LogOut className="h-5 w-5" />
+                    Logout
+                </Link>
+            )}
             </nav>
              <div className="mt-auto pt-6 text-center text-xs text-muted-foreground">
                 <p>© {new Date().getFullYear()} Awadh Inter College. All rights reserved.</p>
@@ -152,7 +161,7 @@ export function Header() {
       <div className="flex items-center gap-4">
         {renderProfileIcon()}
         {isTeacherPage && (
-          <Button asChild variant="ghost" size="sm">
+          <Button asChild variant="ghost" size="sm" className="hidden md:flex">
             <Link href="/teacher/logout">
               <LogOut className="mr-2 h-4 w-4"/>
               Logout
