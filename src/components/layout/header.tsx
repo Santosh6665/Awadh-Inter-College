@@ -90,7 +90,7 @@ export function Header() {
              <SheetHeader>
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             </SheetHeader>
-            <nav className="grid gap-6 text-lg font-medium mt-8">
+            <nav className="grid gap-4 text-lg font-medium mt-8">
             {navLinks.map((link) => (
                 <Link
                 key={link.href}
