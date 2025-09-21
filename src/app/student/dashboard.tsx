@@ -120,8 +120,8 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
       )}
       <div id="student-dashboard" className="bg-[rgb(231,249,254)]">
         <Card className="min-h-screen">
-          <CardHeader className="relative flex flex-col items-center justify-center p-4 md:p-6 print-hidden text-center">
-            <Avatar className="h-16 w-16 md:h-20 md:w-20 border mb-4">
+          <CardHeader className="relative flex flex-row items-center p-4 md:p-6 print-hidden">
+            <Avatar className="h-16 w-16 md:h-20 md:w-20 border mr-4">
               <AvatarImage src={student.photoUrl} alt={student.name} />
               <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
             </Avatar>
