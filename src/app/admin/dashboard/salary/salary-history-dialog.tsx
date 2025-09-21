@@ -23,9 +23,9 @@ import {
 } from '@/components/ui/table';
 import { Download, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { CollegeLogo } from '@/components/icons';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { SalarySlip } from './salary-slip';
+import { Logo } from '@/components/layout/logo';
 
 
 interface SalaryHistoryDialogProps {
@@ -73,7 +73,7 @@ export function SalaryHistoryDialog({ isOpen, setIsOpen, teacher }: SalaryHistor
                 <CardHeader className="p-4 bg-muted/30">
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
-                          <CollegeLogo className="h-16 w-16 text-primary" />
+                          <Logo className="h-16 w-16" />
                           <div className="text-center sm:text-left">
                               <h2 className="text-2xl font-bold text-primary">Awadh Inter College</h2>
                               <p className="text-xs text-muted-foreground">Ghosiyari bazar, bansi, Siddharth Nagar, 272148</p>

@@ -1,5 +1,5 @@
 
-import { CollegeLogo } from '@/components/icons';
+import { Logo } from '@/components/layout/logo';
 import Link from 'next/link';
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -11,7 +11,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div className="space-y-4 md:col-span-1">
             <Link href="/" className="flex items-center gap-2">
-                <CollegeLogo className="h-8 w-8 text-primary" />
+                <Logo className="h-8 w-8 text-primary" />
                 <span className="text-xl font-bold">Awadh Inter College</span>
             </Link>
             <p className="text-sm text-muted-foreground">

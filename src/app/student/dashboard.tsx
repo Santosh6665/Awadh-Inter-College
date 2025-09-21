@@ -13,9 +13,9 @@ import { calculatePercentage, calculateGrade, calculateTotals } from '@/lib/resu
 import { Download, CheckCircle, XCircle, Clock, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, CalendarDays, LogOut } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useMemo, useState } from 'react';
-import { CollegeLogo } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { FeeReceipt } from './fee-receipt';
+import { Logo } from '@/components/layout/logo';
 
 
 interface StudentDashboardProps {
@@ -190,7 +190,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                       <CardHeader className="p-4 bg-muted/30 print-p-4">
                           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="flex items-center gap-4">
-                                <CollegeLogo className="h-16 w-16 text-primary" />
+                                <Logo className="h-16 w-16" />
                                 <div className="text-center sm:text-left">
                                     <h2 className="text-2xl font-bold text-primary">Awadh Inter College</h2>
                                     <p className="text-xs text-muted-foreground">Ghosiyari bazar, bansi, Siddharth Nagar, 272148</p>

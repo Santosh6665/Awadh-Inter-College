@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { LogOut, Menu, User, CircleUserRound } from 'lucide-react';
 import Link from 'next/link';
-import { CollegeLogo } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Logo } from './logo';
 
 
 const navLinks = [
@@ -90,7 +90,7 @@ export function Header() {
              <SheetHeader>
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             </SheetHeader>
-            <nav className="grid gap-4 text-lg font-medium mt-8">
+            <nav className="grid gap-2 text-lg font-medium mt-8">
             {navLinks.map((link) => (
                 <Link
                 key={link.href}
@@ -128,7 +128,7 @@ export function Header() {
           </SheetContent>
         </Sheet>
         <Link href="/" className="hidden items-center gap-2 md:flex">
-            <CollegeLogo className="h-6 w-6 text-primary" />
+            <Logo className="h-8 w-8" />
             <h1 className="font-headline text-xl font-bold tracking-tight text-primary">
             Awadh Inter College
             </h1>
@@ -137,7 +137,7 @@ export function Header() {
       
       <div className="flex items-center md:hidden">
         <Link href="/" className="flex items-center gap-2">
-            <CollegeLogo className="h-6 w-6 text-primary" />
+            <Logo className="h-8 w-8" />
             <h1 className="font-headline text-lg font-bold tracking-tight text-primary">
                 Awadh Inter College
             </h1>

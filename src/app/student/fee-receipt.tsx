@@ -4,7 +4,7 @@
 import type { Student, Payment } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFooter } from '@/components/ui/table';
-import { CollegeLogo } from '@/components/icons';
+import { Logo } from '@/components/layout/logo';
 import { Mail, Phone } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -42,7 +42,7 @@ export function FeeReceipt({ student, payment, feeDetails }: FeeReceiptProps) {
        <CardHeader className="p-4 bg-muted/30">
             <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-                <CollegeLogo className="h-16 w-16 text-primary" />
+                <Logo className="h-16 w-16" />
                 <div className="text-left">
                     <h2 className="text-2xl font-bold text-primary">Awadh Inter College</h2>
                     <p className="text-xs text-muted-foreground">Ghosiyari bazar, bansi, Siddharth Nagar, 272148</p>
