@@ -123,7 +123,7 @@ export default async function AdminDashboardPage() {
       <div className="px-4 md:px-8">
         <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 px-4 md:px-8">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-2 lg:grid-cols-4 px-4 md:px-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-1">
             <CardTitle className="text-sm font-medium">
