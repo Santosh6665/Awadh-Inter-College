@@ -44,17 +44,17 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
   const hasMarks = student.marks && Object.values(student.marks).some(mark => typeof mark === 'number');
 
   const handlePrintResult = () => {
-    document.body.classList.add('printing');
+    document.body.classList.add('print-result-card');
     window.print();
-    document.body.classList.remove('printing');
+    document.body.classList.remove('print-result-card');
   };
   
   const handlePrintReceipt = (payment: Payment) => {
     setReceiptToPrint(payment);
     setTimeout(() => {
-        document.body.classList.add('printing');
+        document.body.classList.add('print-fee-receipt');
         window.print();
-        document.body.classList.remove('printing');
+        document.body.classList.remove('print-fee-receipt');
         setReceiptToPrint(null);
     }, 100);
   };
@@ -111,11 +111,11 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
   return (
     <>
       <SetPasswordDialog isOpen={forcePasswordReset} studentId={student.id} />
-       {receiptToPrint && (
-        <div className="print-container">
-          <FeeReceipt student={student} payment={receiptToPrint} feeDetails={feeDetails} />
-        </div>
-      )}
+       <div id="fee-receipt-to-print" className="hidden print-block">
+          {receiptToPrint && (
+            <FeeReceipt student={student} payment={receiptToPrint} feeDetails={feeDetails} />
+          )}
+       </div>
       <div id="student-dashboard" className="bg-muted/50">
         <div className="container mx-auto py-8">
             <Card className="min-h-screen">
@@ -185,7 +185,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                     </Card>
                 </TabsContent>
                 <TabsContent value="results" className="mt-6">
-                    <div className="print-container">
+                    <div id="result-card-to-print" className="print-block">
                         <Card id="result-card" className="border-2 shadow-lg print-area">
                             <CardHeader className="p-4 bg-muted/30">
                                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -209,7 +209,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                                     <Badge variant="secondary" className="text-base font-bold tracking-wider">🎓 STUDENT RESULT CARD</Badge>
                                 </div>
                             </CardHeader>
-                            <CardContent className="p-4 md:p-6 space-y-4">
+                            <CardContent className="space-y-4">
                                 {hasMarks ? (
                                     <>
                                         <div className="border rounded-lg p-4">
