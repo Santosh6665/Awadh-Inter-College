@@ -50,7 +50,7 @@ export function Header() {
   const renderProfileIcon = () => {
     if (loggedInPortal) {
       return (
-        <Button asChild variant="ghost" size="icon" className="rounded-full">
+        <Button asChild variant="ghost" size="icon" className="rounded-full border">
             <Link href={loggedInPortal}>
                 <CircleUserRound className="h-6 w-6" />
             </Link>
@@ -60,7 +60,7 @@ export function Header() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
+                <Button variant="ghost" size="icon" className="rounded-full border">
                     <User className="h-6 w-6" />
                 </Button>
             </DropdownMenuTrigger>
