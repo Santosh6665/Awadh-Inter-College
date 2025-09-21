@@ -98,7 +98,7 @@ export function StudentLoginForm() {
                     <div className="relative">
                       <Input
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="******"
+                        placeholder="Password"
                         {...field}
                         className="pr-10"
                       />

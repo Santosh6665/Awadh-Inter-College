@@ -104,6 +104,7 @@ export function SetPasswordDialog({ isOpen, teacherId }: SetPasswordDialogProps)
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              placeholder="Password"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -118,6 +119,7 @@ export function SetPasswordDialog({ isOpen, teacherId }: SetPasswordDialogProps)
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+              placeholder="Password"
             />
           </div>
           {error && <p className="text-sm text-destructive text-center col-span-4">{error}</p>}
