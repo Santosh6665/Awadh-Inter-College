@@ -127,7 +127,7 @@ body {
   }
 
   .print-result #result-card {
-    position: absolute;
+    position: relative;
     left: 0;
     top: 0;
     width: 100%;
@@ -144,7 +144,7 @@ body {
   }
   
   .print-result .print-signatures {
-    position: absolute;
+    position: relative;
     bottom: 2rem;
     left: 1.5rem;
     right: 1.5rem;
@@ -156,7 +156,7 @@ body {
   }
   
   .print-receipt #receipt-to-print {
-    position: absolute;
+    position: relative;
     left: 0;
     top: 0;
     width: 100%;
@@ -170,7 +170,7 @@ body {
   }
 
   .print-salary-slip #slip-to-print {
-    position: absolute;
+    position: relative;
     left: 0;
     top: 0;
     width: 100%;
