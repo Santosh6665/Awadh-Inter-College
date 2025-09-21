@@ -72,178 +72,180 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
           <SalarySlip teacher={teacher} payment={slipToPrint} />
         </div>
       )}
-      <div id="teacher-dashboard" className="bg-[rgb(231,249,254)]">
-          <Card className="min-h-screen">
-            <CardHeader className="relative flex flex-row items-center p-4 md:p-6 print-hidden">
-              <Avatar className="h-16 w-16 md:h-20 md:w-20 border mr-4">
-                <AvatarImage src={teacher.photoUrl} alt={teacher.name} />
-                <AvatarFallback>{getInitials(teacher.name)}</AvatarFallback>
-              </Avatar>
-              <div>
-                <CardTitle className="text-xl md:text-2xl">{teacher.name}</CardTitle>
-                <CardDescription>Welcome to your teacher portal.</CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <Tabs defaultValue="profile" className="w-full">
-                <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-nowrap">
-                  <TabsTrigger value="profile">Profile</TabsTrigger>
-                  <TabsTrigger value="results">Manage Results</TabsTrigger>
-                  <TabsTrigger value="attendance">Manage Student Attendance</TabsTrigger>
-                </TabsList>
-                <TabsContent value="profile" className="mt-4 space-y-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Personal Information</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="overflow-x-auto">
-                              <Table className="table-fixed w-full">
-                                  <TableBody>
-                                      <TableRow>
-                                          <TableCell className="font-medium w-1/3 md:w-1/4">Name</TableCell>
-                                          <TableCell className="break-words">{teacher.name}</TableCell>
-                                      </TableRow>
-                                      <TableRow>
-                                          <TableCell className="font-medium">Email</TableCell>
-                                          <TableCell className="whitespace-normal break-words">{teacher.email}</TableCell>
-                                      </TableRow>
-                                      <TableRow>
-                                          <TableCell className="font-medium">Subject</TableCell>
-                                          <TableCell>{teacher.subject}</TableCell>
-                                      </TableRow>
-                                      <TableRow>
-                                          <TableCell className="font-medium">Phone</TableCell>
-                                          <TableCell className="whitespace-normal break-words">{teacher.phone}</TableCell>
-                                      </TableRow>
-                                      <TableRow>
-                                        <TableCell className="font-medium">Date of Birth</TableCell>
-                                        <TableCell>{teacher.dob ? new Date(teacher.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' }) : 'N/A'}</TableCell>
-                                      </TableRow>
-                                      <TableRow>
-                                        <TableCell className="font-medium">Qualification</TableCell>
-                                        <TableCell>{teacher.qualification || 'N/A'}</TableCell>
-                                      </TableRow>
-                                  </TableBody>
-                              </Table>
-                            </div>
-                        </CardContent>
-                    </Card>
-                     <Card>
-                        <CardHeader>
-                            <CardTitle>Salary Information</CardTitle>
-                            <CardDescription>Your salary and payment history.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <Card className="p-4">
-                                    <CardTitle className="text-sm text-muted-foreground">Base Salary (Monthly)</CardTitle>
-                                    <p className="text-2xl font-bold">₹{(teacher.baseSalary || 0).toFixed(2)}</p>
-                                </Card>
-                                <Card className="p-4">
-                                    <CardTitle className="text-sm text-muted-foreground">Total Paid (All Time)</CardTitle>
-                                    <p className="text-2xl font-bold text-green-600">₹{totalSalaryPaid.toFixed(2)}</p>
-                                </Card>
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold mb-2">Payment History</h3>
-                                <div className="overflow-auto max-h-96">
+      <div id="teacher-dashboard" className="bg-muted/50">
+          <div className="container mx-auto py-8">
+            <Card className="min-h-screen">
+                <CardHeader className="relative flex flex-col md:flex-row items-start md:items-center p-4 md:p-6 print-hidden gap-4">
+                    <Avatar className="h-20 w-20 md:h-24 md:w-24 border">
+                        <AvatarImage src={teacher.photoUrl} alt={teacher.name} />
+                        <AvatarFallback>{getInitials(teacher.name)}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                        <CardTitle className="text-2xl md:text-3xl">{teacher.name}</CardTitle>
+                        <CardDescription className="text-base">Welcome to your teacher portal.</CardDescription>
+                    </div>
+                </CardHeader>
+                <CardContent className="pt-0 p-4 md:p-6">
+                <Tabs defaultValue="profile" className="w-full">
+                    <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-nowrap">
+                    <TabsTrigger value="profile">Profile</TabsTrigger>
+                    <TabsTrigger value="results">Manage Results</TabsTrigger>
+                    <TabsTrigger value="attendance">Manage Student Attendance</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="profile" className="mt-6 space-y-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Personal Information</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="overflow-x-auto">
                                 <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Date</TableHead>
-                                            <TableHead>Method</TableHead>
-                                            <TableHead>Month</TableHead>
-                                            <TableHead className="text-right">Amount (₹)</TableHead>
-                                            <TableHead className="text-right print-hidden">Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
                                     <TableBody>
-                                    {teacher.salaryPayments && teacher.salaryPayments.length > 0 ? (
-                                        teacher.salaryPayments.map(payment => (
-                                            <TableRow key={payment.id}>
-                                                <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
-                                                <TableCell>{payment.method}</TableCell>
-                                                <TableCell>{payment.month || 'N/A'}</TableCell>
-                                                <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
-                                                <TableCell className="text-right print-hidden">
-                                                    <Button variant="outline" size="sm" onClick={() => handlePrintSlip(payment)}>
-                                                        <Download className="mr-2 h-4 w-4" />
-                                                        Slip
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
-                                    ) : (
                                         <TableRow>
-                                            <TableCell colSpan={5} className="text-center text-muted-foreground">No salary payments recorded yet.</TableCell>
+                                            <TableCell className="font-medium w-1/3 md:w-1/4">Name</TableCell>
+                                            <TableCell>{teacher.name}</TableCell>
                                         </TableRow>
-                                    )}
+                                        <TableRow>
+                                            <TableCell className="font-medium">Email</TableCell>
+                                            <TableCell>{teacher.email}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell className="font-medium">Subject</TableCell>
+                                            <TableCell>{teacher.subject}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell className="font-medium">Phone</TableCell>
+                                            <TableCell>{teacher.phone}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell className="font-medium">Date of Birth</TableCell>
+                                            <TableCell>{teacher.dob ? new Date(teacher.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' }) : 'N/A'}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell className="font-medium">Qualification</TableCell>
+                                            <TableCell>{teacher.qualification || 'N/A'}</TableCell>
+                                        </TableRow>
                                     </TableBody>
-                                     <TableFooter>
-                                        <TableRow className="font-bold text-base bg-muted/50">
-                                            <TableCell colSpan={3}>Total Paid</TableCell>
-                                            <TableCell className="text-right">₹{totalSalaryPaid.toFixed(2)}</TableCell>
-                                            <TableCell className="print-hidden"></TableCell>
-                                        </TableRow>
-                                    </TableFooter>
                                 </Table>
                                 </div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Salary Information</CardTitle>
+                                <CardDescription>Your salary and payment history.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <Card className="p-4">
+                                        <CardTitle className="text-sm text-muted-foreground">Base Salary (Monthly)</CardTitle>
+                                        <p className="text-2xl font-bold">₹{(teacher.baseSalary || 0).toFixed(2)}</p>
+                                    </Card>
+                                    <Card className="p-4">
+                                        <CardTitle className="text-sm text-muted-foreground">Total Paid (All Time)</CardTitle>
+                                        <p className="text-2xl font-bold text-green-600">₹{totalSalaryPaid.toFixed(2)}</p>
+                                    </Card>
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-2">Payment History</h3>
+                                    <div className="overflow-auto max-h-96">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Date</TableHead>
+                                                <TableHead>Method</TableHead>
+                                                <TableHead>Month</TableHead>
+                                                <TableHead className="text-right">Amount (₹)</TableHead>
+                                                <TableHead className="text-right print-hidden">Actions</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                        {teacher.salaryPayments && teacher.salaryPayments.length > 0 ? (
+                                            teacher.salaryPayments.map(payment => (
+                                                <TableRow key={payment.id}>
+                                                    <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
+                                                    <TableCell>{payment.method}</TableCell>
+                                                    <TableCell>{payment.month || 'N/A'}</TableCell>
+                                                    <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
+                                                    <TableCell className="text-right print-hidden">
+                                                        <Button variant="outline" size="sm" onClick={() => handlePrintSlip(payment)}>
+                                                            <Download className="mr-2 h-4 w-4" />
+                                                            Slip
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        ) : (
+                                            <TableRow>
+                                                <TableCell colSpan={5} className="text-center text-muted-foreground">No salary payments recorded yet.</TableCell>
+                                            </TableRow>
+                                        )}
+                                        </TableBody>
+                                        <TableFooter>
+                                            <TableRow className="font-bold text-base bg-muted/50">
+                                                <TableCell colSpan={3}>Total Paid</TableCell>
+                                                <TableCell className="text-right">₹{totalSalaryPaid.toFixed(2)}</TableCell>
+                                                <TableCell className="print-hidden"></TableCell>
+                                            </TableRow>
+                                        </TableFooter>
+                                    </Table>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                        <CardHeader>
+                            <div className='flex flex-col md:flex-row items-center justify-between'>
+                            <div>
+                                <CardTitle>My Attendance History</CardTitle>
+                                <CardDescription>Your attendance record for the current session.</CardDescription>
+                            </div>
+                            <Badge className="mt-2 md:mt-0">Overall: {attendancePercentage}</Badge>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className='overflow-auto max-h-96'>
+                            <Table>
+                                <TableHeader>
+                                <TableRow>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead className="text-right">Status</TableHead>
+                                </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                {attendance.length > 0 ? (
+                                    attendance.map((record) => (
+                                    <TableRow key={record.date}>
+                                        <TableCell>{new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
+                                        <TableCell className="text-right flex items-center justify-end gap-2">
+                                        {getAttendanceStatusIcon(record.status)}
+                                        <span className="capitalize">{record.status}</span>
+                                        </TableCell>
+                                    </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                    <TableCell colSpan={2} className="text-center">
+                                        No attendance records found.
+                                    </TableCell>
+                                    </TableRow>
+                                )}
+                                </TableBody>
+                            </Table>
                             </div>
                         </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader>
-                        <div className='flex flex-col md:flex-row items-center justify-between'>
-                          <div>
-                            <CardTitle>My Attendance History</CardTitle>
-                            <CardDescription>Your attendance record for the current session.</CardDescription>
-                          </div>
-                          <Badge className="mt-2 md:mt-0">Overall: {attendancePercentage}</Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className='overflow-auto max-h-96'>
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>Date</TableHead>
-                                <TableHead className="text-right">Status</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {attendance.length > 0 ? (
-                                attendance.map((record) => (
-                                  <TableRow key={record.date}>
-                                    <TableCell>{new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
-                                    <TableCell className="text-right flex items-center justify-end gap-2">
-                                      {getAttendanceStatusIcon(record.status)}
-                                      <span className="capitalize">{record.status}</span>
-                                    </TableCell>
-                                  </TableRow>
-                                ))
-                              ) : (
-                                <TableRow>
-                                  <TableCell colSpan={2} className="text-center">
-                                    No attendance records found.
-                                  </TableCell>
-                                </TableRow>
-                              )}
-                            </TableBody>
-                          </Table>
-                        </div>
-                      </CardContent>
-                    </Card>
-                </TabsContent>
-                 <TabsContent value="results" className="mt-4">
-                    <ResultsManagement students={students} />
-                </TabsContent>
-                 <TabsContent value="attendance" className="mt-4">
-                    <AttendanceManagement students={students} />
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="results" className="mt-6">
+                        <ResultsManagement students={students} />
+                    </TabsContent>
+                    <TabsContent value="attendance" className="mt-6">
+                        <AttendanceManagement students={students} />
+                    </TabsContent>
+                </Tabs>
+                </CardContent>
+            </Card>
+          </div>
         </div>
     </>
   );

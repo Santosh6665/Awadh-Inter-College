@@ -119,19 +119,19 @@ export default async function AdminDashboardPage() {
 
 
   return (
-    <div className="flex-1 space-y-4 py-6">
-      <div className="px-4 md:px-8">
-        <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
-      </div>
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-2 lg:grid-cols-4 px-4 md:px-8">
+    <div className="flex-1 space-y-8 p-4 md:p-8">
+        <div className="flex items-center justify-between space-y-2">
+            <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
+        </div>
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-1">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Students
             </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="p-3 pt-0">
+          <CardContent>
             <div className="text-2xl font-bold">{students.length}</div>
             <p className="text-xs text-muted-foreground">
               Currently enrolled
@@ -139,13 +139,13 @@ export default async function AdminDashboardPage() {
           </CardContent>
         </Card>
          <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-1">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Teachers
             </CardTitle>
             <UserCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="p-3 pt-0">
+          <CardContent>
             <div className="text-2xl font-bold">{teachers.length}</div>
              <p className="text-xs text-muted-foreground">
               Currently employed
@@ -153,27 +153,27 @@ export default async function AdminDashboardPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-1">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Fees Collected
+              Fees Collected (Month)
             </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="p-3 pt-0">
-            <div className="text-2xl font-bold">₹{totalFeesCollected.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          <CardContent>
+            <div className="text-2xl font-bold">₹{totalFeesCollectedSoFarThisMonth.toLocaleString('en-IN')}</div>
             <p className="text-xs text-muted-foreground">
               {feesPercentageChangeText}
             </p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 pb-1">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Today's Attendance
             </CardTitle>
             <UserCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="p-3 pt-0">
+          <CardContent>
             <div className="text-2xl font-bold">{todayAttendancePercentage.toFixed(1)}%</div>
             <p className="text-xs text-muted-foreground">
               {attendancePercentageChangeText}
@@ -181,42 +181,42 @@ export default async function AdminDashboardPage() {
           </CardContent>
         </Card>
       </div>
-      <div className="pt-8">
-        <Tabs defaultValue="students">
-          <div className="overflow-x-auto px-4 md:px-8">
-            <TabsList className="whitespace-nowrap">
-              <TabsTrigger value="students">Manage Students</TabsTrigger>
-              <TabsTrigger value="teachers">Manage Teachers</TabsTrigger>
-              <TabsTrigger value="results">Result Management</TabsTrigger>
-              <TabsTrigger value="attendance">Student Attendance</TabsTrigger>
-              <TabsTrigger value="teacher-attendance">Teacher Attendance</TabsTrigger>
-              <TabsTrigger value="fees">Fee Management</TabsTrigger>
-              <TabsTrigger value="teacher-salary">Teacher Salary</TabsTrigger>
-              <TabsTrigger value="notices">Events &amp; Notices</TabsTrigger>
-            </TabsList>
-          </div>
-          <TabsContent value="students" className="mt-4 px-4 md:px-8">
+      <div>
+        <Tabs defaultValue="students" className="w-full">
+            <div className="overflow-x-auto">
+                <TabsList className="whitespace-nowrap">
+                <TabsTrigger value="students">Manage Students</TabsTrigger>
+                <TabsTrigger value="teachers">Manage Teachers</TabsTrigger>
+                <TabsTrigger value="results">Result Management</TabsTrigger>
+                <TabsTrigger value="attendance">Student Attendance</TabsTrigger>
+                <TabsTrigger value="teacher-attendance">Teacher Attendance</TabsTrigger>
+                <TabsTrigger value="fees">Fee Management</TabsTrigger>
+                <TabsTrigger value="teacher-salary">Teacher Salary</TabsTrigger>
+                <TabsTrigger value="notices">Events &amp; Notices</TabsTrigger>
+                </TabsList>
+            </div>
+          <TabsContent value="students" className="mt-4">
             <StudentList students={students} />
           </TabsContent>
-          <TabsContent value="teachers" className="mt-4 px-4 md:px-8">
+          <TabsContent value="teachers" className="mt-4">
             <TeacherList teachers={teachers} />
           </TabsContent>
-           <TabsContent value="results" className="mt-4 px-4 md:px-8">
+           <TabsContent value="results" className="mt-4">
             <ResultsManagement students={students} />
           </TabsContent>
-          <TabsContent value="attendance" className="mt-4 px-4 md:px-8">
+          <TabsContent value="attendance" className="mt-4">
             <AttendanceManagement students={students} />
           </TabsContent>
-           <TabsContent value="teacher-attendance" className="mt-4 px-4 md:px-8">
+           <TabsContent value="teacher-attendance" className="mt-4">
             <TeacherAttendanceManagement teachers={teachers} />
           </TabsContent>
-           <TabsContent value="fees" className="mt-4 px-4 md:px-8">
+           <TabsContent value="fees" className="mt-4">
             <FeeManagement students={students} feeSettings={feeStructures} />
           </TabsContent>
-           <TabsContent value="teacher-salary" className="mt-4 px-4 md:px-8">
+           <TabsContent value="teacher-salary" className="mt-4">
             <SalaryManagement teachers={teachers} />
           </TabsContent>
-          <TabsContent value="notices" className="mt-4 px-4 md:px-8">
+          <TabsContent value="notices" className="mt-4">
             <NoticeManagement notices={notices} />
           </TabsContent>
         </Tabs>

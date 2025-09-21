@@ -47,9 +47,9 @@ export function Header({ student, teacher }: HeaderProps) {
   const renderProfileIcon = () => {
     if (student) {
       return (
-        <Button asChild variant="ghost" size="icon" className="rounded-full border w-8 h-8">
+        <Button asChild variant="ghost" size="icon" className="rounded-full border w-9 h-9">
             <Link href="/student">
-                 <Avatar className="h-8 w-8">
+                 <Avatar className="h-9 w-9">
                     <AvatarImage src={student.photoUrl} alt={student.name} />
                     <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
                 </Avatar>
@@ -59,9 +59,9 @@ export function Header({ student, teacher }: HeaderProps) {
     }
     if (teacher) {
         return (
-            <Button asChild variant="ghost" size="icon" className="rounded-full border w-8 h-8">
+            <Button asChild variant="ghost" size="icon" className="rounded-full border w-9 h-9">
                 <Link href="/teacher">
-                     <Avatar className="h-8 w-8">
+                     <Avatar className="h-9 w-9">
                         <AvatarImage src={teacher.photoUrl} alt={teacher.name} />
                         <AvatarFallback>{getInitials(teacher.name)}</AvatarFallback>
                     </Avatar>
@@ -72,8 +72,8 @@ export function Header({ student, teacher }: HeaderProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full border">
-                    <User className="h-6 w-6" />
+                <Button variant="ghost" size="icon" className="rounded-full w-9 h-9">
+                    <CircleUserRound className="h-5 w-5" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -83,41 +83,47 @@ export function Header({ student, teacher }: HeaderProps) {
                 <DropdownMenuItem asChild>
                     <Link href="/teacher">Teacher Portal</Link>
                 </DropdownMenuItem>
+                 <DropdownMenuItem asChild>
+                    <Link href="/admin">Admin Portal</Link>
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );
   };
 
   return (
-    <header className={cn('sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm', 'print-hidden')}>
+    <header className={cn('sticky top-0 z-50 flex h-16 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm', 'print-hidden')}>
       <div className="flex items-center gap-2">
          <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden hover:bg-transparent hover:text-primary">
+            <Button variant="ghost" size="icon" className="md:hidden">
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="flex flex-col p-6 bg-white">
-             <SheetHeader>
-              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+          <SheetContent side="left" className="flex flex-col p-6">
+             <SheetHeader className="mb-4">
+                <Link href="/" className="flex items-center gap-2">
+                    <Logo className="h-8 w-8" />
+                    <span className="text-xl font-bold">Awadh Inter College</span>
+                </Link>
             </SheetHeader>
-            <nav className="grid gap-4 text-lg font-medium mt-8">
+            <nav className="grid gap-2 text-lg font-medium">
             {navLinks.map((link) => (
                 <Link
                 key={link.href}
                 href={link.href}
-                className="text-muted-foreground transition-colors hover:text-foreground"
+                className="flex items-center gap-4 px-2.5 py-2 text-muted-foreground hover:text-foreground"
                 >
                 {link.label}
                 </Link>
             ))}
             {!loggedInPortal && (
                 <>
-                    <Link href="/student" className="text-muted-foreground transition-colors hover:text-foreground">
+                    <Link href="/student" className="flex items-center gap-4 px-2.5 py-2 text-muted-foreground hover:text-foreground">
                         Student Portal
                     </Link>
-                    <Link href="/teacher" className="text-muted-foreground transition-colors hover:text-foreground">
+                    <Link href="/teacher" className="flex items-center gap-4 px-2.5 py-2 text-muted-foreground hover:text-foreground">
                         Teacher Portal
                     </Link>
                 </>
@@ -125,7 +131,7 @@ export function Header({ student, teacher }: HeaderProps) {
             {isStudentPage && (
                  <Link
                     href="/student/logout"
-                    className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-destructive"
+                    className="flex items-center gap-4 px-2.5 py-2 text-muted-foreground hover:text-destructive"
                     >
                     <LogOut className="h-5 w-5" />
                     Logout
@@ -134,7 +140,7 @@ export function Header({ student, teacher }: HeaderProps) {
              {isTeacherPage && (
                  <Link
                     href="/teacher/logout"
-                    className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-destructive"
+                    className="flex items-center gap-4 px-2.5 py-2 text-muted-foreground hover:text-destructive"
                     >
                     <LogOut className="h-5 w-5" />
                     Logout
@@ -151,7 +157,7 @@ export function Header({ student, teacher }: HeaderProps) {
         </Sheet>
         <Link href="/" className="hidden items-center gap-2 md:flex">
             <Logo className="h-8 w-8" />
-            <h1 className="font-headline text-xl font-bold tracking-tight text-primary">
+            <h1 className="text-xl font-bold tracking-tight text-primary">
             Awadh Inter College
             </h1>
         </Link>
@@ -160,19 +166,19 @@ export function Header({ student, teacher }: HeaderProps) {
       <div className="flex items-center md:hidden">
         <Link href="/" className="flex items-center gap-2">
             <Logo className="h-8 w-8" />
-            <h1 className="font-headline text-lg font-bold tracking-tight text-primary">
+            <h1 className="text-lg font-bold tracking-tight text-primary">
                 Awadh Inter College
             </h1>
         </Link>
       </div>
 
       {!isInPortal && (
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className={cn("transition-colors hover:text-foreground", pathname === link.href ? "text-foreground" : "text-muted-foreground")}
             >
               {link.label}
             </Link>
