@@ -143,7 +143,7 @@ export default function HomePage() {
               <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hover:bg-primary hover:text-primary-foreground" />
               <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hover:bg-primary hover:text-primary-foreground" />
             </Carousel>
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center p-4">
             <div className="container mx-auto text-center text-white">
                 <h1 className="text-3xl md:text-5xl font-bold">
                     Awadh Inter College
@@ -217,7 +217,7 @@ export default function HomePage() {
                         <p>
                             Today, Awadh Inter College stands as a testament to the enduring power of education to transform lives. We are proud of our rich history and the thousands of alumni who have gone on to make significant contributions in various fields across the globe. As we look to the future, we remain dedicated to our founding principles and committed to shaping the next generation of leaders.
                         </p>
-                        {!isHistoryExpanded && <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-card to-transparent" />}
+                        {!isHistoryExpanded && <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-muted/50 to-transparent" />}
                     </div>
                     <div className="mt-4">
                        <Button variant="link" onClick={() => setIsHistoryExpanded(!isHistoryExpanded)} className="px-0">
@@ -470,7 +470,7 @@ export default function HomePage() {
                 </div>
                 <div className="w-full h-64 md:h-full">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113947.88601614902!2d82.8249903!3d27.0345786!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3996d52f5f17ae31%3A0xd62c60629abe5491!2s2WM4%2BRXR%2C%20Nikhoria%2C%20Uttar%20Pradesh%20272153!5e0!3m2!1sen!2sin!4v1719504547926!5m2!1sen!2sin"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113947.88601614902!2d82.8249903!3d27.0345786!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3996d52f5f17ae31%3A0xd62c60629abe5491!2s2WM4%2BRXR%2C%2C%20Nikhoria%2C%20Uttar%20Pradesh%20272153!5e0!3m2!1sen!2sin!4v1719504547926!5m2!1sen!2sin"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
