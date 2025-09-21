@@ -10,12 +10,13 @@ import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFoo
 import Link from 'next/link';
 import { SetPasswordDialog } from './set-password-dialog';
 import { calculatePercentage, calculateGrade, calculateTotals } from '@/lib/result-utils';
-import { Download, CheckCircle, XCircle, Clock, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, CalendarDays, LogOut } from 'lucide-react';
+import { Download, CheckCircle, XCircle, Clock, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, CalendarDays, LogOut, Edit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { FeeReceipt } from './fee-receipt';
 import { Logo } from '@/components/layout/logo';
+import { EditProfileDialog } from './edit-profile-dialog';
 
 
 interface StudentDashboardProps {
@@ -28,6 +29,7 @@ interface StudentDashboardProps {
 
 export function StudentDashboard({ student, rank, attendance, forcePasswordReset, feeSettings }: StudentDashboardProps) {
   const [receiptToPrint, setReceiptToPrint] = useState<Payment | null>(null);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -113,6 +115,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
   return (
     <>
       <SetPasswordDialog isOpen={forcePasswordReset} studentId={student.id} />
+      <EditProfileDialog isOpen={isEditProfileOpen} setIsOpen={setIsEditProfileOpen} student={student} />
        {receiptToPrint && (
         <div id="receipt-to-print" className="hidden print-block">
           <FeeReceipt student={student} payment={receiptToPrint} feeDetails={feeDetails} />
@@ -121,14 +124,23 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
       <div id="student-dashboard" className="bg-[rgb(231,249,254)]">
         <Card className="min-h-screen">
           <CardHeader className="relative flex flex-row items-center p-4 md:p-6 print-hidden">
-            <Avatar className="h-16 w-16 md:h-20 md:w-20 border mr-4">
-              <AvatarImage src={student.photoUrl} alt={student.name} />
-              <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
-            </Avatar>
+            <button onClick={() => setIsEditProfileOpen(true)} className="relative group">
+              <Avatar className="h-16 w-16 md:h-20 md:w-20 border mr-4">
+                <AvatarImage src={student.photoUrl} alt={student.name} />
+                <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
+              </Avatar>
+               <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Edit className="h-6 w-6 text-white" />
+              </div>
+            </button>
             <div>
               <CardTitle className="text-xl md:text-2xl">{student.name}</CardTitle>
               <CardDescription>Welcome to your student portal.</CardDescription>
             </div>
+            <Button variant="outline" size="sm" className="ml-auto" onClick={() => setIsEditProfileOpen(true)}>
+                <Edit className="mr-2 h-4 w-4" />
+                Edit Profile
+            </Button>
           </CardHeader>
           <CardContent className="pt-0">
             <Tabs defaultValue="profile" className="w-full">
@@ -438,3 +450,4 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
 
 
     
+
