@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useActionState, useEffect } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useEffect } from 'react';
+import { useFormState, useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -46,7 +46,7 @@ export function UpdateMarksForm({ isOpen, setIsOpen, student }: UpdateMarksFormP
   const { toast } = useToast();
   
   const action = student ? updateStudentMarks.bind(null, student.id) : async () => initialState;
-  const [state, formAction] = useActionState(action, initialState);
+  const [state, formAction] = useFormState(action, initialState);
 
   useEffect(() => {
     if (state.success) {
