@@ -145,10 +145,10 @@ export default function HomePage() {
             </Carousel>
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center p-4">
             <div className="container mx-auto text-center text-white">
-                <h1 className="text-3xl md:text-5xl font-bold">
+                <h1 className="text-3xl md:text-5xl font-bold drop-shadow-lg">
                     Awadh Inter College
                 </h1>
-                <p className="mt-4 text-lg md:text-xl text-white/90">
+                <p className="mt-4 text-lg md:text-xl text-white/90 drop-shadow-lg">
                     Learning with Excellence, Living with Purpose.
                 </p>
                 <Button asChild size="lg" className="mt-8">
