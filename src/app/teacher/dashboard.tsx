@@ -55,11 +55,10 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
   
   const handlePrintSlip = (payment: SalaryPayment) => {
     setSlipToPrint(payment);
-    // Timeout to allow state to update before printing
     setTimeout(() => {
-        document.body.classList.add('print-salary-slip');
+        document.body.classList.add('printing');
         window.print();
-        document.body.classList.remove('print-salary-slip');
+        document.body.classList.remove('printing');
         setSlipToPrint(null);
     }, 100);
   };
@@ -68,7 +67,7 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
     <>
       <SetPasswordDialog isOpen={forcePasswordReset} teacherId={teacher.id} />
       {slipToPrint && (
-        <div id="slip-to-print" className="hidden print-block">
+        <div className="print-container">
           <SalarySlip teacher={teacher} payment={slipToPrint} />
         </div>
       )}
