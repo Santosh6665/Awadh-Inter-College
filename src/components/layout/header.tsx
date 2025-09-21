@@ -1,9 +1,10 @@
 
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { LogOut, Menu } from 'lucide-react';
+import { LogOut, Menu, User, CircleUserRound } from 'lucide-react';
 import Link from 'next/link';
 import { CollegeLogo } from '@/components/icons';
 import { cn } from '@/lib/utils';
@@ -21,10 +22,43 @@ const navLinks = [
 
 export function Header() {
   const pathname = usePathname();
+  const [loggedInPortal, setLoggedInPortal] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift();
+      return null;
+    };
+
+    if (getCookie('student_id')) {
+      setLoggedInPortal('/student');
+    } else if (getCookie('teacher_id')) {
+      setLoggedInPortal('/teacher');
+    } else {
+      setLoggedInPortal(null);
+    }
+  }, [pathname]);
+
   const isStudentPage = pathname.startsWith('/student');
   const isTeacherPage = pathname.startsWith('/teacher');
-
   const isInPortal = isStudentPage || isTeacherPage;
+
+  const renderProfileIcon = () => {
+    if (loggedInPortal) {
+      return (
+        <Link href={loggedInPortal}>
+          <CircleUserRound className="h-6 w-6" />
+        </Link>
+      );
+    }
+    return (
+      <Link href="/student">
+        <User className="h-6 w-6" />
+      </Link>
+    );
+  };
 
   return (
     <header className={cn('sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm', 'print-hidden')}>
@@ -108,7 +142,10 @@ export function Header() {
         </nav>
       )}
       
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-4">
+        <Button asChild variant="ghost" size="icon" className="rounded-full">
+            {renderProfileIcon()}
+        </Button>
         {isTeacherPage && (
           <Button asChild variant="ghost" size="sm">
             <Link href="/teacher/logout">
