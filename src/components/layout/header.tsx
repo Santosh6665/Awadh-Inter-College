@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { CollegeLogo } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -48,15 +50,29 @@ export function Header() {
   const renderProfileIcon = () => {
     if (loggedInPortal) {
       return (
-        <Link href={loggedInPortal}>
-          <CircleUserRound className="h-6 w-6" />
-        </Link>
+        <Button asChild variant="ghost" size="icon" className="rounded-full">
+            <Link href={loggedInPortal}>
+                <CircleUserRound className="h-6 w-6" />
+            </Link>
+        </Button>
       );
     }
     return (
-      <Link href="/student">
-        <User className="h-6 w-6" />
-      </Link>
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                    <User className="h-6 w-6" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                    <Link href="/student">Student Portal</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/teacher">Teacher Portal</Link>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
   };
 
@@ -143,9 +159,7 @@ export function Header() {
       )}
       
       <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="icon" className="rounded-full">
-            {renderProfileIcon()}
-        </Button>
+        {renderProfileIcon()}
         {isTeacherPage && (
           <Button asChild variant="ghost" size="sm">
             <Link href="/teacher/logout">
