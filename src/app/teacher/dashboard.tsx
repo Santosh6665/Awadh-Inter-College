@@ -74,16 +74,14 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
       )}
       <div id="teacher-dashboard" className="bg-[rgb(231,249,254)]">
           <Card className="min-h-screen">
-            <CardHeader className="relative flex items-center justify-between p-4 md:p-6 print-hidden">
-              <div className="flex items-center gap-4">
-                  <Avatar className="h-16 w-16 md:h-20 md:w-20 border">
-                  <AvatarImage src={teacher.photoUrl} alt={teacher.name} />
-                  <AvatarFallback>{getInitials(teacher.name)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                      <CardTitle className="text-xl md:text-2xl">{teacher.name}</CardTitle>
-                      <CardDescription>Welcome to your teacher portal.</CardDescription>
-                  </div>
+            <CardHeader className="relative flex flex-row items-center p-4 md:p-6 print-hidden">
+              <Avatar className="h-16 w-16 md:h-20 md:w-20 border mr-4">
+                <AvatarImage src={teacher.photoUrl} alt={teacher.name} />
+                <AvatarFallback>{getInitials(teacher.name)}</AvatarFallback>
+              </Avatar>
+              <div>
+                <CardTitle className="text-xl md:text-2xl">{teacher.name}</CardTitle>
+                <CardDescription>Welcome to your teacher portal.</CardDescription>
               </div>
             </CardHeader>
             <CardContent className="pt-0">
