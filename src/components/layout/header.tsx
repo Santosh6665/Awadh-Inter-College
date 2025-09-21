@@ -16,7 +16,6 @@ const navLinks = [
   { href: '/gallery', label: 'Gallery' },
   { href: '/notices', label: 'Notices' },
   { href: '/student', label: 'Student Portal' },
-  { href: '/teacher', label: 'Teacher Portal' },
   { href: '/#contact', label: 'Contact Us' },
 ];
 
