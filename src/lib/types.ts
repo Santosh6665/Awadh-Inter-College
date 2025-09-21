@@ -61,14 +61,6 @@ export type Student = {
     payments?: Payment[];
 };
 
-export const StudentProfileSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters.'),
-  email: z.string().email('Invalid email address.'),
-  phone: z.string().min(10, 'Phone number must be at least 10 digits.'),
-  photoUrl: z.string().url('Please enter a valid URL.').or(z.literal('')),
-});
-
-
 export type SalaryPayment = {
   id: string;
   date: string;

@@ -6,7 +6,6 @@ import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { firestore } from '@/lib/firebase-admin';
 import type { Student, AttendanceRecord } from '@/lib/types';
-import { StudentProfileSchema } from '@/lib/types';
 
 const loginSchema = z.object({
   rollNumber: z.string(),
@@ -201,38 +200,4 @@ export async function getLoggedInStudent(): Promise<Student | null> {
         return await getStudentById(studentId);
     }
     return null;
-}
-
-export async function updateStudentProfile(
-  studentId: string,
-  prevState: { success: boolean, message: string },
-  formData: FormData
-) {
-  const loggedInStudentId = cookies().get('student_id')?.value;
-  if (!loggedInStudentId || loggedInStudentId !== studentId) {
-    return { success: false, message: 'Unauthorized' };
-  }
-
-  const validatedFields = StudentProfileSchema.safeParse(Object.fromEntries(formData.entries()));
-
-  if (!validatedFields.success) {
-    return { success: false, message: 'Invalid data provided.' };
-  }
-
-  try {
-    const studentDocRef = firestore.collection('students').doc(studentId);
-    
-    const updateData = {
-        ...validatedFields.data,
-        updatedAt: new Date()
-    };
-    
-    await studentDocRef.update(updateData);
-    
-    revalidatePath('/student');
-    return { success: true, message: 'Profile updated successfully.' };
-  } catch (error) {
-    console.error('Error updating student profile:', error);
-    return { success: false, message: 'An unexpected error occurred.' };
-  }
 }
