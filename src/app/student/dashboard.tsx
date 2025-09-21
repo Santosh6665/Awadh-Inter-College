@@ -186,7 +186,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                     </Card>
                 </TabsContent>
                 <TabsContent value="results" className="mt-6">
-                    <Card id="result-card" className="border-2 shadow-lg">
+                    <Card id="result-card" className="border-2 shadow-lg print-area">
                         <CardHeader className="p-4 bg-muted/30 print-p-4">
                             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                                 <div className="flex items-center gap-4">

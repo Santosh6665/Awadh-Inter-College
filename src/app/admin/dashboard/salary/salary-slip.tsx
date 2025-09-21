@@ -33,7 +33,7 @@ export function SalarySlip({ teacher, payment }: SalarySlipProps) {
     };
     
   return (
-    <Card className="w-full max-w-2xl mx-auto border-2 shadow-none rounded-none">
+    <Card className="w-full max-w-2xl mx-auto border-2 shadow-none rounded-none print-area">
        <CardHeader className="p-4 bg-muted/30">
             <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">

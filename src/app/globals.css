@@ -121,22 +121,25 @@ body {
     visibility: hidden;
   }
 
-  /* Rules for printing result card */
-  .print-result #result-card, .print-result #result-card * {
+  .print-area, .print-area * {
     visibility: visible;
   }
 
-  .print-result #result-card {
-    position: relative;
-    left: 0;
-    top: 0;
+  .print-area {
     width: 100%;
-    height: 100%;
     margin: 0;
-    padding: 0;
+    padding: 1rem;
     box-shadow: none !important;
     border: none !important;
     border-radius: 0;
+  }
+
+  /* Rules for printing result card */
+  .print-result #result-card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 0;
   }
   
   .print-result #result-card .print-p-4 {
@@ -150,31 +153,10 @@ body {
     right: 1.5rem;
   }
 
-  /* Rules for printing fee receipt */
-  .print-receipt #receipt-to-print, .print-receipt #receipt-to-print * {
-    visibility: visible;
-  }
-  
-  .print-receipt #receipt-to-print {
-    position: relative;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding-top: 2rem;
-  }
-
-  /* Rules for printing salary slip */
-  .print-salary-slip #slip-to-print, .print-salary-slip #slip-to-print * {
-    visibility: visible;
-  }
-
+  /* Rules for printing fee receipt and salary slip */
+  .print-receipt #receipt-to-print,
   .print-salary-slip #slip-to-print {
     position: relative;
-    left: 0;
-    top: 0;
     width: 100%;
-    margin: 0;
-    padding-top: 2rem;
   }
 }
