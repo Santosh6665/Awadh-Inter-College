@@ -8,6 +8,8 @@ import type { Student, AttendanceRecord } from '@/lib/types';
 import { getStudentById, getStudentsByClass, getStudentAttendance } from './actions';
 import { calculatePercentage } from '@/lib/result-utils';
 import { firestore } from '@/lib/firebase-admin';
+import { getLoggedInStudent } from './actions';
+import { getLoggedInTeacher } from '../teacher/actions';
 
 
 export default async function StudentPage() {
@@ -19,6 +21,9 @@ export default async function StudentPage() {
   let rank: number | null = null;
   let attendance: AttendanceRecord[] = [];
   let feeSettings: any = {};
+  
+  const loggedInStudent = await getLoggedInStudent();
+  const loggedInTeacher = await getLoggedInTeacher();
 
   if (studentId) {
     student = await getStudentById(studentId);
@@ -63,7 +68,7 @@ export default async function StudentPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
+      <Header student={loggedInStudent} teacher={loggedInTeacher} />
       <main className="flex-1">
         {student ? (
           <StudentDashboard student={student} rank={rank} attendance={attendance} forcePasswordReset={forcePasswordReset} feeSettings={feeSettings} />

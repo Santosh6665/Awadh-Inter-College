@@ -193,3 +193,11 @@ export async function getStudentAttendance(studentId: string): Promise<Attendanc
     return [];
   }
 }
+
+export async function getLoggedInStudent(): Promise<Student | null> {
+    const studentId = cookies().get('student_id')?.value;
+    if (studentId) {
+        return await getStudentById(studentId);
+    }
+    return null;
+}

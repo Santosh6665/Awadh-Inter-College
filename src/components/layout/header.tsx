@@ -10,6 +10,8 @@ import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Logo } from './logo';
+import type { Student, Teacher } from '@/lib/types';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 
 const navLinks = [
@@ -18,44 +20,54 @@ const navLinks = [
   { href: '/admissions', label: 'Admissions' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/notices', label: 'Notices' },
-  { href: '/student', label: 'Student Portal' },
   { href: '/#contact', label: 'Contact Us' },
 ];
 
-export function Header() {
+interface HeaderProps {
+    student?: Student | null;
+    teacher?: Teacher | null;
+}
+
+export function Header({ student, teacher }: HeaderProps) {
   const pathname = usePathname();
-  const [loggedInPortal, setLoggedInPortal] = useState<string | null>(null);
-
-  useEffect(() => {
-    const getCookie = (name: string) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop()?.split(';').shift();
-      return null;
-    };
-
-    if (getCookie('student_id')) {
-      setLoggedInPortal('/student');
-    } else if (getCookie('teacher_id')) {
-      setLoggedInPortal('/teacher');
-    } else {
-      setLoggedInPortal(null);
-    }
-  }, [pathname]);
+  const loggedInPortal = student ? '/student' : teacher ? '/teacher' : null;
 
   const isStudentPage = pathname.startsWith('/student');
   const isTeacherPage = pathname.startsWith('/teacher');
   const isInPortal = isStudentPage || isTeacherPage;
+  
+  const getInitials = (name: string) => {
+    const names = name.split(' ');
+    if (names.length > 1) {
+      return `${names[0][0]}${names[names.length - 1][0]}`;
+    }
+    return name.substring(0, 2);
+  };
 
   const renderProfileIcon = () => {
-    if (loggedInPortal) {
+    if (student) {
       return (
-        <Button asChild variant="ghost" size="icon" className="rounded-full border">
-            <Link href={loggedInPortal}>
-                <CircleUserRound className="h-6 w-6" />
+        <Button asChild variant="ghost" size="icon" className="rounded-full border w-8 h-8">
+            <Link href="/student">
+                 <Avatar className="h-8 w-8">
+                    <AvatarImage src={student.photoUrl} alt={student.name} />
+                    <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
+                </Avatar>
             </Link>
         </Button>
       );
+    }
+    if (teacher) {
+        return (
+            <Button asChild variant="ghost" size="icon" className="rounded-full border w-8 h-8">
+                <Link href="/teacher">
+                     <Avatar className="h-8 w-8">
+                        <AvatarImage src={teacher.photoUrl} alt={teacher.name} />
+                        <AvatarFallback>{getInitials(teacher.name)}</AvatarFallback>
+                    </Avatar>
+                </Link>
+            </Button>
+        )
     }
     return (
         <DropdownMenu>
@@ -90,7 +102,7 @@ export function Header() {
              <SheetHeader>
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             </SheetHeader>
-            <nav className="grid gap-2 text-lg font-medium mt-8">
+            <nav className="grid gap-4 text-lg font-medium mt-8">
             {navLinks.map((link) => (
                 <Link
                 key={link.href}
@@ -100,6 +112,16 @@ export function Header() {
                 {link.label}
                 </Link>
             ))}
+            {!loggedInPortal && (
+                <>
+                    <Link href="/student" className="text-muted-foreground transition-colors hover:text-foreground">
+                        Student Portal
+                    </Link>
+                    <Link href="/teacher" className="text-muted-foreground transition-colors hover:text-foreground">
+                        Teacher Portal
+                    </Link>
+                </>
+            )}
             {isStudentPage && (
                  <Link
                     href="/student/logout"
@@ -163,6 +185,14 @@ export function Header() {
         {isTeacherPage && (
           <Button asChild variant="ghost" size="sm" className="hidden md:flex">
             <Link href="/teacher/logout">
+              <LogOut className="mr-2 h-4 w-4"/>
+              Logout
+            </Link>
+          </Button>
+        )}
+         {isStudentPage && (
+          <Button asChild variant="ghost" size="sm" className="hidden md:flex">
+            <Link href="/student/logout">
               <LogOut className="mr-2 h-4 w-4"/>
               Logout
             </Link>

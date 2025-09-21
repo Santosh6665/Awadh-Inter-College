@@ -228,3 +228,11 @@ export async function getTeacherAttendance(teacherId: string): Promise<Attendanc
     return [];
   }
 }
+
+export async function getLoggedInTeacher(): Promise<Teacher | null> {
+    const teacherId = cookies().get('teacher_id')?.value;
+    if (teacherId) {
+        return await getTeacherById(teacherId);
+    }
+    return null;
+}
