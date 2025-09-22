@@ -24,7 +24,7 @@ import {
 import { Download, Mail, Phone, User, Users, Banknote } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Logo } from '@/components/layout/logo';
 import { Separator } from '@/components/ui/separator';
 
