@@ -96,13 +96,15 @@ body {
 @media print {
   @page {
     size: A4;
-    margin: 0.5cm;
+    margin: 0;
   }
 
   body {
     background: white !important;
     color: black !important;
     -webkit-print-color-adjust: exact;
+    margin: 0;
+    padding: 0;
   }
 
   .print-hidden {
@@ -120,7 +122,7 @@ body {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
   }
   
   /* When printing, hide everything except the print-container and its contents */
@@ -138,36 +140,39 @@ body {
     left: 0;
     top: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
+    margin: 0;
+    padding: 0.5cm; /* Add some padding to the page instead of margin */
+    box-sizing: border-box; /* Include padding in width/height calculation */
   }
   
   /* Result Card Specific Print Optimizations */
-  body.print-result-card #result-card .p-4 {
+  #result-card .p-4 {
     padding: 0.5rem; /* Reduce padding inside card content */
   }
-  body.print-result-card #result-card .space-y-4 {
+  #result-card .space-y-4 {
     gap: 0.5rem; /* Reduce space between elements */
   }
-  body.print-result-card #result-card .text-xs {
+  #result-card .text-xs {
     font-size: 9px; /* Slightly smaller font for table cells */
   }
-  body.print-result-card #result-card td,
-  body.print-result-card #result-card th {
+  #result-card td,
+  #result-card th {
     padding: 2px 4px; /* Tighter padding for table cells */
   }
-  body.print-result-card #result-card .pt-8 {
+  #result-card .pt-8 {
     padding-top: 1rem;
   }
-  body.print-result-card #result-card .mb-8 {
+  #result-card .mb-8 {
     margin-bottom: 1rem;
   }
-  body.print-result-card #result-card .text-2xl {
+  #result-card .text-2xl {
     font-size: 1.25rem; /* Reduce header font size */
   }
-   body.print-result-card #result-card .h-16 {
+  #result-card .h-16 {
     height: 3rem; /* Reduce logo size */
   }
-  body.print-result-card #result-card .w-16 {
+  #result-card .w-16 {
     width: 3rem; /* Reduce logo size */
   }
 
