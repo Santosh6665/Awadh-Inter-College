@@ -8,8 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StudentDashboard } from '@/app/student/dashboard';
 import { useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Phone, Banknote } from 'lucide-react';
+import { Banknote } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface ParentDashboardProps {
@@ -80,15 +79,9 @@ export function ParentDashboard({ parent, childrenWithDetails, settings }: Paren
                          <Card className="flex-1">
                             <CardContent className="p-4">
                                 <h4 className="font-semibold text-lg mb-2">How to Pay Fees</h4>
-                                <p className="text-sm text-muted-foreground mb-4">
+                                <p className="text-sm text-muted-foreground">
                                     Online payment is not yet available. Please pay fees at the school office or contact us for bank transfer details.
                                 </p>
-                                <Button asChild>
-                                    <a href="tel:+916393071946">
-                                        <Phone className="mr-2 h-4 w-4"/>
-                                        Contact School Office
-                                    </a>
-                                </Button>
                             </CardContent>
                         </Card>
                     </div>
