@@ -15,6 +15,7 @@ import { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { FeeReceipt } from './fee-receipt';
 import { Logo } from '@/components/layout/logo';
+import { AttendanceHistory } from './attendance-history';
 
 
 interface StudentDashboardProps {
@@ -57,21 +58,6 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
         document.body.classList.remove('print-fee-receipt');
         setReceiptToPrint(null);
     }, 100);
-  };
-
-  const attendancePercentage = useMemo(() => {
-    if (attendance.length === 0) return 'N/A';
-    const presentDays = attendance.filter(a => a.status === 'present').length;
-    return `${((presentDays / attendance.length) * 100).toFixed(2)}%`;
-  }, [attendance]);
-
-  const getAttendanceStatusIcon = (status: 'present' | 'absent') => {
-    switch (status) {
-      case 'present':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'absent':
-        return <XCircle className="h-5 w-5 text-red-500" />;
-    }
   };
 
   const feeDetails = useMemo(() => {
@@ -291,48 +277,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                     </div>
                 </TabsContent>
                 <TabsContent value="attendance" className="mt-6">
-                    <Card>
-                    <CardHeader>
-                        <div className='flex flex-col md:flex-row items-center justify-between'>
-                        <div>
-                            <CardTitle>Attendance Record</CardTitle>
-                            <CardDescription>Your attendance history for the current session.</CardDescription>
-                        </div>
-                        <Badge className="mt-2 md:mt-0">Overall: {attendancePercentage}</Badge>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <div className='overflow-auto max-h-96'>
-                        <Table>
-                            <TableHeader>
-                            <TableRow>
-                                <TableHead>Date</TableHead>
-                                <TableHead className="text-right">Status</TableHead>
-                            </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                            {attendance.length > 0 ? (
-                                attendance.map((record) => (
-                                <TableRow key={record.date}>
-                                    <TableCell>{new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
-                                    <TableCell className="text-right flex items-center justify-end gap-2">
-                                    {getAttendanceStatusIcon(record.status)}
-                                    <span className="capitalize">{record.status}</span>
-                                    </TableCell>
-                                </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                <TableCell colSpan={2} className="text-center">
-                                    No attendance records found.
-                                </TableCell>
-                                </TableRow>
-                            )}
-                            </TableBody>
-                        </Table>
-                        </div>
-                    </CardContent>
-                    </Card>
+                   <AttendanceHistory attendanceRecords={attendance} />
                 </TabsContent>
                 <TabsContent value="fees" className="mt-6">
                     <Card>
