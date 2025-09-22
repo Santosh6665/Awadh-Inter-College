@@ -51,18 +51,21 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
   const [state, formAction] = useActionState(action, initialState);
 
   useEffect(() => {
-    if (state.success) {
-      toast({
-        title: 'Success',
-        description: state.message,
-      });
-      setIsOpen(false);
-    } else if (state.message && !state.success) {
-      toast({
-        title: 'Error',
-        description: state.message,
-        variant: 'destructive',
-      });
+    // Only process the action state if a message is present
+    if (state.message) {
+      if (state.success) {
+        toast({
+          title: 'Success',
+          description: state.message,
+        });
+        setIsOpen(false); // Close dialog only on success
+      } else {
+        toast({
+          title: 'Error',
+          description: state.message,
+          variant: 'destructive',
+        });
+      }
     }
   }, [state, toast, setIsOpen]);
   
