@@ -19,20 +19,20 @@ export function SettingsManagement({ settings }: { settings: any }) {
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   
-  const handleResultVisibilityChange = (exam: 'quarterly' | 'halfYearly' | 'annual', checked: boolean) => {
-    setResultVisibility((prev: any) => ({
-      ...prev,
+  const handleVisibilityChange = async (exam: 'quarterly' | 'halfYearly' | 'annual', checked: boolean) => {
+    const updatedVisibility = {
+      ...resultVisibility,
       [exam]: checked,
-    }));
-  };
-
-  const handleSaveChanges = async () => {
+    };
+    setResultVisibility(updatedVisibility);
     setIsSaving(true);
-    const result = await saveSettings({ resultVisibility });
+    
+    const result = await saveSettings({ resultVisibility: updatedVisibility });
+    
     if (result.success) {
       toast({
         title: 'Success',
-        description: result.message,
+        description: `Visibility for ${exam} results updated.`,
       });
     } else {
       toast({
@@ -40,6 +40,11 @@ export function SettingsManagement({ settings }: { settings: any }) {
         description: result.message,
         variant: 'destructive',
       });
+      // Revert on failure
+      setResultVisibility(prev => ({
+        ...prev,
+        [exam]: !checked,
+      }));
     }
     setIsSaving(false);
   };
@@ -48,8 +53,13 @@ export function SettingsManagement({ settings }: { settings: any }) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Result Visibility Settings</CardTitle>
-          <CardDescription>Control which exam results are visible to students in their portal.</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+                <CardTitle>Result Visibility Settings</CardTitle>
+                <CardDescription>Control which exam results are visible to students in their portal.</CardDescription>
+            </div>
+            {isSaving && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
            <div className="flex items-center justify-between rounded-lg border p-4">
@@ -62,7 +72,8 @@ export function SettingsManagement({ settings }: { settings: any }) {
               <Switch
                 id="quarterly-results"
                 checked={resultVisibility.quarterly}
-                onCheckedChange={(checked) => handleResultVisibilityChange('quarterly', checked)}
+                onCheckedChange={(checked) => handleVisibilityChange('quarterly', checked)}
+                disabled={isSaving}
               />
             </div>
             <div className="flex items-center justify-between rounded-lg border p-4">
@@ -75,7 +86,8 @@ export function SettingsManagement({ settings }: { settings: any }) {
               <Switch
                 id="halfYearly-results"
                 checked={resultVisibility.halfYearly}
-                onCheckedChange={(checked) => handleResultVisibilityChange('halfYearly', checked)}
+                onCheckedChange={(checked) => handleVisibilityChange('halfYearly', checked)}
+                disabled={isSaving}
               />
             </div>
              <div className="flex items-center justify-between rounded-lg border p-4">
@@ -88,18 +100,12 @@ export function SettingsManagement({ settings }: { settings: any }) {
               <Switch
                 id="annual-results"
                 checked={resultVisibility.annual}
-                onCheckedChange={(checked) => handleResultVisibilityChange('annual', checked)}
+                onCheckedChange={(checked) => handleVisibilityChange('annual', checked)}
+                disabled={isSaving}
               />
             </div>
         </CardContent>
       </Card>
-      
-      <div className="flex justify-end">
-        <Button onClick={handleSaveChanges} disabled={isSaving}>
-          {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Save Settings
-        </Button>
-      </div>
     </div>
   );
 }
