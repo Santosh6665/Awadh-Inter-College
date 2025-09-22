@@ -152,7 +152,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
     const classMatch = classFilter ? student.class === classFilter : true;
     const sectionMatch = sectionFilter ? student.section === sectionFilter : true;
     return nameMatch && classMatch && sectionMatch;
-  }), [students, searchQuery, classFilter, sectionFilter]);
+  }).sort((a, b) => a.name.localeCompare(b.name)), [students, searchQuery, classFilter, sectionFilter]);
   
   const attendanceSummary = useMemo(() => {
     const studentIdsInFilter = new Set(filteredStudents.map(s => s.id));

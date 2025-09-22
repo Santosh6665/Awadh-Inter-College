@@ -76,12 +76,14 @@ export function StudentList({ students }: { students: Student[] }) {
   };
 
 
-  const filteredStudents = students.filter(student => {
-    const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const classMatch = classFilter ? student.class === classFilter : true;
-    const sectionMatch = sectionFilter ? student.section === sectionFilter : true;
-    return nameMatch && classMatch && sectionMatch;
-  });
+  const filteredStudents = students
+    .filter(student => {
+      const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const classMatch = classFilter ? student.class === classFilter : true;
+      const sectionMatch = sectionFilter ? student.section === sectionFilter : true;
+      return nameMatch && classMatch && sectionMatch;
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <>

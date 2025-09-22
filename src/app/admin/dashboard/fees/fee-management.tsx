@@ -44,12 +44,14 @@ export function FeeManagement({ students, feeSettings }: { students: Student[], 
     setIsHistoryDialogOpen(true);
   };
 
-  const filteredStudents = students.filter(student => {
-    const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const classMatch = classFilter ? student.class === classFilter : true;
-    const sectionMatch = sectionFilter ? student.section === sectionFilter : true;
-    return nameMatch && classMatch && sectionMatch;
-  });
+  const filteredStudents = students
+    .filter(student => {
+      const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const classMatch = classFilter ? student.class === classFilter : true;
+      const sectionMatch = sectionFilter ? student.section === sectionFilter : true;
+      return nameMatch && classMatch && sectionMatch;
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const calculateFeeStatus = (student: Student) => {
     // Start with the default fee structure for the student's class.
