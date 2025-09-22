@@ -19,6 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import type { Student } from '@/lib/types';
 import { addStudent, updateStudent, type StudentFormState } from './actions';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface StudentFormProps {
   isOpen: boolean;
@@ -97,11 +98,41 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
              <div className="space-y-2">
               <Label htmlFor="class">Class</Label>
-              <Input id="class" name="class" defaultValue={student?.class} />
+                <Select name="class" defaultValue={student?.class}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select class" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Nursery">Nursery</SelectItem>
+                        <SelectItem value="LKG">LKG</SelectItem>
+                        <SelectItem value="UKG">UKG</SelectItem>
+                        <SelectItem value="1">Class 1</SelectItem>
+                        <SelectItem value="2">Class 2</SelectItem>
+                        <SelectItem value="3">Class 3</SelectItem>
+                        <SelectItem value="4">Class 4</SelectItem>
+                        <SelectItem value="5">Class 5</SelectItem>
+                        <SelectItem value="6">Class 6</SelectItem>
+                        <SelectItem value="7">Class 7</SelectItem>
+                        <SelectItem value="8">Class 8</SelectItem>
+                        <SelectItem value="9">Class 9</SelectItem>
+                        <SelectItem value="10">Class 10</SelectItem>
+                        <SelectItem value="11">Class 11</SelectItem>
+                        <SelectItem value="12">Class 12</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="section">Section</Label>
-              <Input id="section" name="section" defaultValue={student?.section} />
+               <Select name="section" defaultValue={student?.section}>
+                <SelectTrigger>
+                    <SelectValue placeholder="Select section" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="A">A</SelectItem>
+                    <SelectItem value="B">B</SelectItem>
+                    <SelectItem value="C">C</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
                 <Label htmlFor="dob">Date of Birth</Label>
