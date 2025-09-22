@@ -83,6 +83,12 @@ export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attenda
     return { present, absent, total, percentage };
   }, [presentDays, absentDays]);
 
+  const overallAttendance = useMemo(() => {
+    if (attendanceRecords.length === 0) return 0;
+    const presentCount = attendanceRecords.filter(r => r.status === 'present').length;
+    return (presentCount / attendanceRecords.length) * 100;
+  }, [attendanceRecords]);
+
 
   if (!personName) return null;
 
@@ -90,10 +96,17 @@ export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attenda
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Attendance History for {personName}</DialogTitle>
-          <DialogDescription>
-            Viewing attendance for {format(currentMonth, 'MMMM yyyy')}.
-          </DialogDescription>
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div>
+              <DialogTitle>Attendance History for {personName}</DialogTitle>
+              <DialogDescription>
+                Viewing attendance for {format(currentMonth, 'MMMM yyyy')}.
+              </DialogDescription>
+            </div>
+             <Badge className="mt-2 md:mt-0">
+                Overall: {overallAttendance.toFixed(2)}%
+            </Badge>
+          </div>
         </DialogHeader>
         <div className="flex items-center justify-between">
             <Button variant="outline" size="icon" onClick={handlePrevMonth}>
@@ -121,7 +134,7 @@ export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attenda
             <div className='flex justify-between items-center'>
                 <p><strong>Monthly Summary:</strong></p>
                 <Badge>
-                    Attendance: {monthSummary.percentage.toFixed(2)}%
+                    Current Month: {monthSummary.percentage.toFixed(2)}%
                 </Badge>
             </div>
             <div className="flex items-center gap-4">
