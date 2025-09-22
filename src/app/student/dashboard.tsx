@@ -178,16 +178,32 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                       ))}
                     </TableBody>
                     <TableFooter>
-                      <TableRow className="font-bold bg-muted/50">
-                        <TableCell>Total</TableCell>
-                        {examColumns.map(col => (
-                           <TableCell key={col.key} className="text-center">
-                              {subjectKeys.reduce((acc, sub) => acc + (student.marks?.[col.key]?.[sub] ?? 0), 0)}
-                           </TableCell>
-                        ))}
-                        <TableCell className="text-center">{totals.totalObtainedMarks}</TableCell>
-                        <TableCell className="text-center">{totals.totalMaxMarks}</TableCell>
-                      </TableRow>
+                        <TableRow className="font-semibold bg-muted/50">
+                            <TableCell>Total Obtained Marks</TableCell>
+                             {examColumns.map(col => {
+                                const obtained = subjectKeys.reduce((acc, sub) => acc + (student.marks?.[col.key]?.[sub] ?? 0), 0);
+                                return (
+                                    <TableCell key={`${col.key}-obtained`} className="text-center">
+                                        {obtained}
+                                    </TableCell>
+                                );
+                            })}
+                            <TableCell className="text-center text-base font-bold">{totals.totalObtainedMarks}</TableCell>
+                            <TableCell className="text-center text-base font-bold">{totals.totalMaxMarks}</TableCell>
+                        </TableRow>
+                        <TableRow className="font-semibold bg-muted/50">
+                            <TableCell>Maximum Marks</TableCell>
+                            {examColumns.map(col => {
+                                const max = subjectKeys.filter(sub => student.marks?.[col.key]?.[sub] !== undefined && student.marks?.[col.key]?.[sub] !== null).length * 100;
+                                return (
+                                    <TableCell key={`${col.key}-max`} className="text-center">
+                                        {max}
+                                    </TableCell>
+                                );
+                            })}
+                            <TableCell className="text-center text-base font-bold">{totals.totalMaxMarks}</TableCell>
+                             <TableCell className="text-center text-base font-bold">{totals.totalMaxMarks}</TableCell>
+                        </TableRow>
                     </TableFooter>
                   </Table>
                 </div>
