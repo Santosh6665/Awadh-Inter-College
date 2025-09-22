@@ -24,3 +24,16 @@ export async function setSchoolStatusForToday(isClosed: boolean) {
     return { success: false, message: 'An unexpected error occurred.' };
   }
 }
+
+export async function saveSettings(settings: any) {
+  try {
+    const settingsDocRef = firestore.collection('settings').doc('schoolSettings');
+    await settingsDocRef.set(settings, { merge: true });
+    revalidatePath('/admin/dashboard');
+    revalidatePath('/student');
+    return { success: true, message: 'Settings saved successfully.' };
+  } catch (error) {
+    console.error('Error saving settings:', error);
+    return { success: false, message: 'An unexpected error occurred while saving settings.' };
+  }
+}

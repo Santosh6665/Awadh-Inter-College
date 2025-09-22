@@ -16,7 +16,7 @@ import { getNotices } from "./notices/actions";
 import { format } from 'date-fns';
 import { TeacherAttendanceManagement } from "./teacher-attendance/teacher-attendance-management";
 import { SalaryManagement } from "./salary/salary-management";
-import { GeneralSettings } from "./settings/general-settings";
+import { Settings } from "./settings/settings";
 
 export default async function AdminDashboardPage() {
   let students: Student[] = [];
@@ -222,7 +222,7 @@ export default async function AdminDashboardPage() {
             <NoticeManagement notices={notices} />
           </TabsContent>
            <TabsContent value="settings" className="mt-4">
-            <GeneralSettings settings={settings} />
+            <Settings settings={settings} />
           </TabsContent>
         </Tabs>
       </div>

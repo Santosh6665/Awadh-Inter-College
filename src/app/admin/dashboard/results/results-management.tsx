@@ -30,7 +30,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { deleteStudentMarks } from './actions';
-import { ResultSettings } from './result-settings';
 import { ResultViewDialog } from './result-view-dialog';
 
 
@@ -127,7 +126,6 @@ export function ResultsManagement({ students, settings }: { students: Student[],
 
   return (
     <>
-      <ResultSettings settings={settings} />
       <Card>
         <CardHeader>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
