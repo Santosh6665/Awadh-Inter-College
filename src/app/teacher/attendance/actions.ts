@@ -5,13 +5,22 @@ import { firestore } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import type { AttendanceRecord } from '@/lib/types';
+import { getTeacherById } from '../actions';
+
+async function checkAuth() {
+    const teacherId = cookies().get('teacher_id')?.value;
+    if (!teacherId) {
+        throw new Error('Unauthorized: You must be logged in as a teacher.');
+    }
+    const teacher = await getTeacherById(teacherId);
+    if (!teacher) {
+        throw new Error('Unauthorized: Teacher not found.');
+    }
+    return teacher;
+}
 
 export async function getAttendanceByDate(date: string) {
-  const teacherId = cookies().get('teacher_id')?.value;
-  if (!teacherId) {
-    throw new Error('Unauthorized: You must be logged in as a teacher.');
-  }
-    
+  await checkAuth();
   try {
     const attendanceSnapshot = await firestore.collection('attendance').doc(date).get();
     if (!attendanceSnapshot.exists) {
@@ -25,9 +34,9 @@ export async function getAttendanceByDate(date: string) {
 }
 
 export async function setAttendance(studentId: string, date: string, status: 'present' | 'absent') {
-  const teacherId = cookies().get('teacher_id')?.value;
-  if (!teacherId) {
-    return { success: false, message: 'Unauthorized: You must be logged in as a teacher.' };
+  const teacher = await checkAuth();
+  if (!teacher.canEditAttendance) {
+    return { success: false, message: 'Permission Denied: You cannot edit attendance.' };
   }
 
   try {
@@ -47,11 +56,7 @@ export async function setAttendance(studentId: string, date: string, status: 'pr
 }
 
 export async function getStudentAttendanceHistory(studentId: string): Promise<AttendanceRecord[]> {
-  const teacherId = cookies().get('teacher_id')?.value;
-  if (!teacherId) {
-    throw new Error('Unauthorized: You must be logged in as a teacher.');
-  }
-
+  await checkAuth();
   try {
     const attendanceSnapshot = await firestore.collection('attendance').get();
     const attendanceRecords: AttendanceRecord[] = [];
@@ -76,10 +81,7 @@ export async function getStudentAttendanceHistory(studentId: string): Promise<At
 }
 
 export async function isHoliday(date: string): Promise<{ isHoliday: boolean; name?: string }> {
-  const teacherId = cookies().get('teacher_id')?.value;
-  if (!teacherId) {
-    throw new Error('Unauthorized: You must be logged in as a teacher.');
-  }
+  await checkAuth();
   try {
     const holidayDoc = await firestore.collection('holidays').doc(date).get();
     if (holidayDoc.exists) {
@@ -93,10 +95,7 @@ export async function isHoliday(date: string): Promise<{ isHoliday: boolean; nam
 }
 
 export async function getSchoolStatus(date: string): Promise<{ isClosed: boolean; reason?: string }> {
-  const teacherId = cookies().get('teacher_id')?.value;
-  if (!teacherId) {
-    throw new Error('Unauthorized: You must be logged in as a teacher.');
-  }
+  await checkAuth();
   try {
     const statusDoc = await firestore.collection('schoolStatus').doc(date).get();
     if (statusDoc.exists) {
@@ -113,10 +112,7 @@ export async function getSchoolStatus(date: string): Promise<{ isClosed: boolean
 }
 
 export async function getHolidays(): Promise<string[]> {
-  const teacherId = cookies().get('teacher_id')?.value;
-  if (!teacherId) {
-    throw new Error('Unauthorized: You must be logged in as a teacher.');
-  }
+  await checkAuth();
   try {
     const holidaysSnapshot = await firestore.collection('holidays').get();
     if (holidaysSnapshot.empty) {

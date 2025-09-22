@@ -13,6 +13,7 @@ import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SalarySlip } from '../admin/dashboard/salary/salary-slip';
 import { AttendanceHistory } from '../student/attendance-history';
+import { AttendanceManagement } from './attendance/attendance-management';
 
 interface TeacherDashboardProps {
   teacher: Teacher;
@@ -41,9 +42,9 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
   const handlePrintSlip = (payment: SalaryPayment) => {
     setSlipToPrint(payment);
     setTimeout(() => {
-        document.body.classList.add('printing');
+        document.body.classList.add('print-salary-slip');
         window.print();
-        document.body.classList.remove('printing');
+        document.body.classList.remove('print-salary-slip');
         setSlipToPrint(null);
     }, 100);
   };
@@ -51,8 +52,8 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
   return (
     <>
       <SetPasswordDialog isOpen={forcePasswordReset} teacherId={teacher.id} />
-      {slipToPrint && (
-        <div className="print-container">
+       {slipToPrint && (
+        <div id="slip-to-print" className="hidden print-block">
           <SalarySlip teacher={teacher} payment={slipToPrint} />
         </div>
       )}
@@ -72,8 +73,9 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                 <CardContent className="pt-0 p-4 md:p-6">
                 <Tabs defaultValue="profile" className="w-full">
                     <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-nowrap">
-                    <TabsTrigger value="profile">Profile</TabsTrigger>
-                    <TabsTrigger value="results">Manage Results</TabsTrigger>
+                        <TabsTrigger value="profile">Profile</TabsTrigger>
+                        <TabsTrigger value="attendance">Student Attendance</TabsTrigger>
+                        <TabsTrigger value="results">Manage Results</TabsTrigger>
                     </TabsList>
                     <TabsContent value="profile" className="mt-6 space-y-6">
                         <Card>
@@ -177,6 +179,9 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                             </CardContent>
                         </Card>
                         <AttendanceHistory attendanceRecords={attendance} />
+                    </TabsContent>
+                    <TabsContent value="attendance" className="mt-6">
+                       <AttendanceManagement students={students} teacher={teacher} />
                     </TabsContent>
                     <TabsContent value="results" className="mt-6">
                         <ResultsManagement students={students} teacher={teacher} settings={settings} />
