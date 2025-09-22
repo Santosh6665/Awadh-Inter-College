@@ -16,11 +16,12 @@ import { getNotices } from "./notices/actions";
 import { format } from 'date-fns';
 import { TeacherAttendanceManagement } from "./teacher-attendance/teacher-attendance-management";
 import { SalaryManagement } from "./salary/salary-management";
+import { SettingsManagement } from "./fees/fee-settings";
 
 export default async function AdminDashboardPage() {
   let students: Student[] = [];
   let teachers: Teacher[] = [];
-  let feeStructures: any = {};
+  let settings: any = {};
   let notices: Notice[] = [];
   let todayAttendanceData: any = {};
   let yesterdayAttendanceData: any = {};
@@ -31,9 +32,9 @@ export default async function AdminDashboardPage() {
       students = await getStudents();
       teachers = await getTeachers();
       notices = await getNotices();
-      const feeStructureDoc = await firestore.collection('settings').doc('feeStructure').get();
-      if (feeStructureDoc.exists) {
-        feeStructures = feeStructureDoc.data() || {};
+      const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
+      if (settingsDoc.exists) {
+        settings = settingsDoc.data() || {};
       }
 
       // Fetch attendance data
@@ -193,6 +194,7 @@ export default async function AdminDashboardPage() {
                 <TabsTrigger value="fees">Fee Management</TabsTrigger>
                 <TabsTrigger value="teacher-salary">Teacher Salary</TabsTrigger>
                 <TabsTrigger value="notices">Events &amp; Notices</TabsTrigger>
+                <TabsTrigger value="settings">Fee &amp; Result Settings</TabsTrigger>
                 </TabsList>
             </div>
           <TabsContent value="students" className="mt-4">
@@ -211,13 +213,16 @@ export default async function AdminDashboardPage() {
             <TeacherAttendanceManagement teachers={teachers} />
           </TabsContent>
            <TabsContent value="fees" className="mt-4">
-            <FeeManagement students={students} feeSettings={feeStructures} />
+            <FeeManagement students={students} feeSettings={settings?.feeStructure || {}} />
           </TabsContent>
            <TabsContent value="teacher-salary" className="mt-4">
             <SalaryManagement teachers={teachers} />
           </TabsContent>
           <TabsContent value="notices" className="mt-4">
             <NoticeManagement notices={notices} />
+          </TabsContent>
+          <TabsContent value="settings" className="mt-4">
+            <SettingsManagement settings={settings} />
           </TabsContent>
         </Tabs>
       </div>

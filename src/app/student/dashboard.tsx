@@ -26,12 +26,16 @@ interface StudentDashboardProps {
   ranks: { [key in ExamTypes]?: number | null };
   attendance: AttendanceRecord[];
   forcePasswordReset: boolean;
-  feeSettings: any;
+  settings: any;
 }
 
-export function StudentDashboard({ student, ranks, attendance, forcePasswordReset, feeSettings }: StudentDashboardProps) {
+export function StudentDashboard({ student, ranks, attendance, forcePasswordReset, settings }: StudentDashboardProps) {
   const [receiptToPrint, setReceiptToPrint] = useState<Payment | null>(null);
-  const [examType, setExamType] = useState<ExamTypes>('annual');
+  const examType: ExamTypes = 'annual'; // Default to annual as per user request
+  
+  const feeSettings = settings?.feeStructure || {};
+  const resultVisibility = settings?.resultVisibility || { quarterly: false, halfYearly: false, annual: true };
+
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -90,13 +94,13 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
     return { structuredFees, totalFees, totalPaid, due, paymentPlan };
   }, [student, feeSettings]);
 
-  const ResultCard = ({ student, examType }: { student: Student, examType: ExamTypes }) => {
+  const ResultCard = ({ student, examType, visibleExams }: { student: Student, examType: ExamTypes, visibleExams: ExamTypes[] }) => {
     const { marks: combinedStudentMarks, examCyclesWithMarks } = useMemo(() => combineMarks(student.marks, examType), [student.marks, examType]);
     const percentage = calculateCumulativePercentage(combinedStudentMarks, examCyclesWithMarks, student.class);
     const grade = calculateGrade(percentage);
     const totals = calculateCumulativeTotals(combinedStudentMarks, examCyclesWithMarks, student.class);
     const resultStatus = grade === 'F' ? 'Fail' : 'Pass';
-    const hasMarks = combinedStudentMarks && Object.keys(combinedStudentMarks).length > 0;
+    const hasMarks = combinedStudentMarks && Object.keys(combinedStudentMarks).length > 0 && visibleExams.length > 0;
     const examTitle = examType.charAt(0).toUpperCase() + examType.slice(1);
     
     const subjectsForClass = useMemo(() => {
@@ -149,13 +153,13 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                     <TableHeader>
                         <TableRow>
                             <TableHead rowSpan={2} className="align-bottom text-center">Subject</TableHead>
-                            {examCycles.map(cycle => (
+                            {examCycles.filter(cycle => visibleExams.includes(cycle)).map(cycle => (
                                 <TableHead key={cycle} colSpan={2} className="text-center border-l capitalize">{cycle.replace('Yearly', ' Yearly')}</TableHead>
                             ))}
                             <TableHead colSpan={2} className="text-center border-l bg-muted/50">Total</TableHead>
                         </TableRow>
                         <TableRow>
-                            {examCycles.map(cycle => (
+                            {examCycles.filter(cycle => visibleExams.includes(cycle)).map(cycle => (
                                 <React.Fragment key={cycle}>
                                     <TableHead className="text-center border-l">Obtained</TableHead>
                                     <TableHead className="text-center">Max</TableHead>
@@ -169,9 +173,9 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                       {subjectsForClass.map(subject => {
                           const examsToCombine: ExamTypes[] = [];
                             switch (examType) {
-                                case 'quarterly': examsToCombine.push('quarterly'); break;
-                                case 'halfYearly': examsToCombine.push('quarterly', 'halfYearly'); break;
-                                case 'annual': examsToCombine.push('quarterly', 'halfYearly', 'annual'); break;
+                                case 'quarterly': if (visibleExams.includes('quarterly')) examsToCombine.push('quarterly'); break;
+                                case 'halfYearly': if (visibleExams.includes('quarterly')) examsToCombine.push('quarterly'); if (visibleExams.includes('halfYearly')) examsToCombine.push('halfYearly'); break;
+                                case 'annual': if (visibleExams.includes('quarterly')) examsToCombine.push('quarterly'); if (visibleExams.includes('halfYearly')) examsToCombine.push('halfYearly'); if (visibleExams.includes('annual')) examsToCombine.push('annual'); break;
                             }
 
                           const totalObtained = examsToCombine.reduce((acc, cycle) => acc + (student.marks?.[cycle]?.[subject.key] ?? 0), 0);
@@ -180,7 +184,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                           return (
                             <TableRow key={subject.key}>
                                 <TableCell className="capitalize font-medium">{subject.label}</TableCell>
-                                {examCycles.map(cycle => {
+                                {examCycles.filter(cycle => visibleExams.includes(cycle)).map(cycle => {
                                     const obtained = student.marks?.[cycle]?.[subject.key];
                                     const max = obtained != null ? 100 : '-';
                                     return (
@@ -199,7 +203,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                     <TableFooter>
                         <TableRow className="font-bold bg-muted/50 text-base">
                             <TableCell>Grand Total</TableCell>
-                            {examCycles.map(cycle => {
+                            {examCycles.filter(cycle => visibleExams.includes(cycle)).map(cycle => {
                                 const cycleObtained = subjectsForClass.reduce((acc, sub) => acc + (student.marks?.[cycle]?.[sub.key] ?? 0), 0);
                                 const cycleMax = subjectsForClass.filter(sub => student.marks?.[cycle]?.[sub.key] != null).length * 100;
                                 return (
@@ -239,13 +243,17 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                 </div>
               </>
             ) : (
-              <p className="text-muted-foreground text-center py-8">No results are available for the {examTitle} exam.</p>
+              <p className="text-muted-foreground text-center py-8">Results are not currently available. Please check back later or contact the administration.</p>
             )}
           </CardContent>
         </Card>
       </div>
     );
   };
+  
+  const visibleExams = Object.entries(resultVisibility)
+    .filter(([, isVisible]) => isVisible)
+    .map(([exam]) => exam as ExamTypes);
 
 
   return (
@@ -325,7 +333,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                     </Card>
                 </TabsContent>
                 <TabsContent value="results" className="mt-6">
-                    <ResultCard student={student} examType={examType} />
+                    <ResultCard student={student} examType={examType} visibleExams={visibleExams} />
                 </TabsContent>
                 <TabsContent value="attendance" className="mt-6">
                    <AttendanceHistory attendanceRecords={attendance} />

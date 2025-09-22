@@ -106,14 +106,15 @@ export async function recordPayment(
   }
 }
 
-export async function saveFeeSettings(settings: any) {
+export async function saveSettings(settings: any) {
   try {
-    const settingsDocRef = firestore.collection('settings').doc('feeStructure');
+    const settingsDocRef = firestore.collection('settings').doc('schoolSettings');
     await settingsDocRef.set(settings, { merge: true });
     revalidatePath('/admin/dashboard');
-    return { success: true, message: 'Fee settings saved successfully.' };
+    revalidatePath('/student');
+    return { success: true, message: 'Settings saved successfully.' };
   } catch (error) {
-    console.error('Error saving fee settings:', error);
+    console.error('Error saving settings:', error);
     return { success: false, message: 'An unexpected error occurred while saving settings.' };
   }
 }

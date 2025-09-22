@@ -21,7 +21,7 @@ export default async function StudentPage() {
   let student: Student | null = null;
   let ranks: { [key in ExamTypes]?: number | null } = {};
   let attendance: AttendanceRecord[] = [];
-  let feeSettings: any = {};
+  let settings: any = {};
   
   const loggedInStudent = await getLoggedInStudent();
   const loggedInTeacher = await getLoggedInTeacher();
@@ -65,9 +65,9 @@ export default async function StudentPage() {
 
         // Fetch fee settings
         if (firestore) {
-            const feeStructureDoc = await firestore.collection('settings').doc('feeStructure').get();
-            if (feeStructureDoc.exists) {
-                feeSettings = feeStructureDoc.data() || {};
+            const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
+            if (settingsDoc.exists) {
+                settings = settingsDoc.data() || {};
             }
         }
     }
@@ -78,7 +78,7 @@ export default async function StudentPage() {
       <Header student={loggedInStudent} teacher={loggedInTeacher} />
       <main className="flex-1">
         {student ? (
-          <StudentDashboard student={student} ranks={ranks} attendance={attendance} forcePasswordReset={forcePasswordReset} feeSettings={feeSettings} />
+          <StudentDashboard student={student} ranks={ranks} attendance={attendance} forcePasswordReset={forcePasswordReset} settings={settings} />
         ) : (
           <div className="flex items-center justify-center p-4 h-full bg-[rgb(231,249,254)]">
             <StudentLoginForm />
