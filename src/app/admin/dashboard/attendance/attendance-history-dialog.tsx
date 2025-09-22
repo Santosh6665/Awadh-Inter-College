@@ -100,7 +100,7 @@ export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attenda
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <div className="font-semibold">{format(currentMonth, 'MMMM yyyy')}</div>
-            <Button variant="outline" size="icon" onClick={handleNextMonth} disabled={currentMonth.getMonth() === new Date().getMonth() && currentMonth.getFullYear() === new Date().getFullYear()}>
+            <Button variant="outline" size="icon" onClick={handleNextMonth}>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
