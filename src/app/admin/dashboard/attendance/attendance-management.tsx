@@ -38,6 +38,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
+  const [sectionFilter, setSectionFilter] = useState('');
   const { toast } = useToast();
 
   const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
@@ -148,9 +149,10 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
 
   const filteredStudents = useMemo(() => students.filter(student => {
     const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const classMatch = classFilter ? student.class.toLowerCase().includes(classFilter.toLowerCase()) : true;
-    return nameMatch && classMatch;
-  }), [students, searchQuery, classFilter]);
+    const classMatch = classFilter ? student.class === classFilter : true;
+    const sectionMatch = sectionFilter ? student.section === sectionFilter : true;
+    return nameMatch && classMatch && sectionMatch;
+  }), [students, searchQuery, classFilter, sectionFilter]);
   
   const attendanceSummary = useMemo(() => {
     const studentIdsInFilter = new Set(filteredStudents.map(s => s.id));
@@ -229,6 +231,17 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
                     <SelectItem value="10">Class 10</SelectItem>
                     <SelectItem value="11">Class 11</SelectItem>
                     <SelectItem value="12">Class 12</SelectItem>
+                </SelectContent>
+            </Select>
+            <Select value={sectionFilter} onValueChange={(value) => setSectionFilter(value === 'all' ? '' : value)}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Filter by section..." />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Sections</SelectItem>
+                    <SelectItem value="A">A</SelectItem>
+                    <SelectItem value="B">B</SelectItem>
+                    <SelectItem value="C">C</SelectItem>
                 </SelectContent>
             </Select>
         </div>

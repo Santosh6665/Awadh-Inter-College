@@ -36,6 +36,7 @@ export function StudentList({ students }: { students: Student[] }) {
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
+  const [sectionFilter, setSectionFilter] = useState('');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
   const { toast } = useToast();
@@ -78,7 +79,8 @@ export function StudentList({ students }: { students: Student[] }) {
   const filteredStudents = students.filter(student => {
     const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
     const classMatch = classFilter ? student.class === classFilter : true;
-    return nameMatch && classMatch;
+    const sectionMatch = sectionFilter ? student.section === sectionFilter : true;
+    return nameMatch && classMatch && sectionMatch;
   });
 
   return (
@@ -125,6 +127,17 @@ export function StudentList({ students }: { students: Student[] }) {
                     <SelectItem value="10">Class 10</SelectItem>
                     <SelectItem value="11">Class 11</SelectItem>
                     <SelectItem value="12">Class 12</SelectItem>
+                </SelectContent>
+            </Select>
+            <Select value={sectionFilter} onValueChange={(value) => setSectionFilter(value === 'all' ? '' : value)}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Filter by section..." />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Sections</SelectItem>
+                    <SelectItem value="A">A</SelectItem>
+                    <SelectItem value="B">B</SelectItem>
+                    <SelectItem value="C">C</SelectItem>
                 </SelectContent>
             </Select>
           </div>
