@@ -28,6 +28,11 @@ const CombinedPaymentSchema = z.object({
     amount: z.coerce.number().min(1, 'Amount must be greater than 0.'),
     method: z.enum(['Cash', 'Card', 'Online']),
     date: z.string().min(1, 'Date is required.'),
+    months: z.preprocess((val) => {
+        if (Array.isArray(val)) return val;
+        if (typeof val === 'string') return [val];
+        return [];
+    }, z.array(z.string()).optional()),
 });
 
 
@@ -150,14 +155,21 @@ export async function recordCombinedPayment(
   if (!parentPhone || !studentIds || studentIds.length === 0) {
     return { success: false, message: 'Parent or student information is missing.' };
   }
+  
+  const rawData = {
+    amount: formData.get('amount'),
+    method: formData.get('method'),
+    date: formData.get('date'),
+    months: formData.getAll('months'),
+  };
 
-  const validatedFields = CombinedPaymentSchema.safeParse(Object.fromEntries(formData.entries()));
-
+  const validatedFields = CombinedPaymentSchema.safeParse(rawData);
+  
   if (!validatedFields.success) {
     return { success: false, message: 'Validation failed. Please check payment details.' };
   }
 
-  const { amount: totalPayment, method, date } = validatedFields.data;
+  const { amount: totalPayment, method, date, months } = validatedFields.data;
   let remainingPayment = totalPayment;
 
   try {
@@ -184,7 +196,6 @@ export async function recordCombinedPayment(
     let childrenWithDues = studentDueDetails.filter(s => s && s.due > 0) as { id: string; due: number; ref: FirebaseFirestore.DocumentReference }[];
     let paymentDistribution: { [studentId: string]: number } = {};
 
-    // This loop continues as long as there's money to distribute and children who owe money
     while (remainingPayment > 0 && childrenWithDues.length > 0) {
         const totalDueOfRemainingChildren = childrenWithDues.reduce((acc, s) => acc + s.due, 0);
         if (totalDueOfRemainingChildren === 0) break;
@@ -192,7 +203,6 @@ export async function recordCombinedPayment(
         let surplus = 0;
         
         for (const student of childrenWithDues) {
-            // Proportional distribution for the current remaining amount
             const proportionalShare = (student.due / totalDueOfRemainingChildren) * remainingPayment;
             const amountToPay = Math.min(student.due, proportionalShare);
             
@@ -205,7 +215,6 @@ export async function recordCombinedPayment(
         childrenWithDues = childrenWithDues.filter(s => s.due > 0);
     }
 
-    // After loops, if there's still money, distribute it to anyone still owing
     if (remainingPayment > 0 && childrenWithDues.length > 0) {
         for (const student of childrenWithDues) {
             const amountToPay = Math.min(student.due, remainingPayment);
@@ -217,7 +226,6 @@ export async function recordCombinedPayment(
     }
 
 
-    // Now, commit the payments to Firestore
     for (const studentId in paymentDistribution) {
         const paidAmount = paymentDistribution[studentId];
         if (paidAmount > 0) {
@@ -226,7 +234,7 @@ export async function recordCombinedPayment(
                 amount: paidAmount,
                 method: method,
                 date: date,
-                month: new Date(date).toLocaleString('default', { month: 'long' }),
+                months: months || [],
             };
             const studentRef = firestore.collection('students').doc(studentId);
             batch.update(studentRef, {

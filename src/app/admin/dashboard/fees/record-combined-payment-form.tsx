@@ -20,6 +20,7 @@ import { Loader2 } from 'lucide-react';
 import type { Parent } from '@/lib/types';
 import { recordCombinedPayment, type FormState } from './actions';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface RecordCombinedPaymentFormProps {
   isOpen: boolean;
@@ -31,6 +32,11 @@ const initialState: FormState = {
   success: false,
   message: '',
 };
+
+const months = [
+  'January', 'February', 'March', 'April', 'May', 'June', 
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -99,6 +105,19 @@ export function RecordCombinedPaymentForm({ isOpen, setIsOpen, parent }: RecordC
                     <SelectItem value="Online">Online</SelectItem>
                 </SelectContent>
             </Select>
+          </div>
+           <div className="space-y-2">
+            <Label>Payment for Months</Label>
+            <div className="grid grid-cols-3 gap-2 rounded-md border p-2">
+                {months.map(month => (
+                    <div key={month} className="flex items-center space-x-2">
+                        <Checkbox id={`month-${month}`} name="months" value={month} />
+                        <Label htmlFor={`month-${month}`} className="text-sm font-normal">
+                            {month}
+                        </Label>
+                    </div>
+                ))}
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" type="button" onClick={() => setIsOpen(false)}>
