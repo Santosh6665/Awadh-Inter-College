@@ -1,3 +1,4 @@
+
 import admin from 'firebase-admin';
 
 // This function initializes Firebase Admin and returns the firestore instance.
@@ -9,9 +10,10 @@ function initializeFirebaseAdmin() {
 
   const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
 
-  if (!serviceAccountString) {
+  // Strengthened check: ensure the variable is a non-empty string.
+  if (!serviceAccountString || serviceAccountString.trim() === '') {
     console.warn(
-      'FIREBASE_SERVICE_ACCOUNT_KEY is not set. Firebase Admin SDK will not be initialized. This is expected during build, but the app will not function correctly without it at runtime.'
+      'FIREBASE_SERVICE_ACCOUNT_KEY is not set or is empty. Firebase Admin SDK will not be initialized. This is expected during build, but the app will not function correctly without it at runtime.'
     );
     return null;
   }

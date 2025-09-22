@@ -67,13 +67,13 @@ export type Student = {
     phone: string;
     fatherName: string;
     address: string;
+    parentPhone?: string; // New field for linking siblings
     photoUrl?: string;
     marks?: {
       quarterly?: Marks;
       halfYearly?: Marks;
       annual?: Marks;
     };
-    // Password should not be sent to client, but exists in DB
     password?: string;
     feeStructure?: FeeStructure;
     payments?: Payment[];
@@ -132,4 +132,13 @@ export type Notice = {
   date: string;
   category: 'Academics' | 'Event' | 'General' | 'Holiday';
   description: string;
+};
+
+export type Parent = {
+  id: string; // Using parentPhone as the ID
+  parentName: string;
+  children: Student[];
+  totalFees: number;
+  totalPaid: number;
+  totalDue: number;
 };

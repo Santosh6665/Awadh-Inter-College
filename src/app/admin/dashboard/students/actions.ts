@@ -15,6 +15,7 @@ const StudentSchema = z.object({
   phone: z.string().min(10, 'Phone number must be at least 10 digits.'),
   fatherName: z.string().min(2, "Father's name is required."),
   address: z.string().min(5, 'Address is required.'),
+  parentPhone: z.string().optional(),
 });
 
 // Update schema doesn't require password, as it's handled by the student now

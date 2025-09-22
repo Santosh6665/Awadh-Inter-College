@@ -97,7 +97,7 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
              <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone">Student/Guardian Phone</Label>
                 <Input id="phone" name="phone" defaultValue={student?.phone} />
             </div>
             <div className="space-y-2">
@@ -153,6 +153,10 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
                 <Input id="dob" name="dob" type="date" defaultValue={formattedDob} />
             </div>
           </div>
+            <div className="space-y-2">
+                <Label htmlFor="parentPhone">Parent's Primary Phone (for linking siblings)</Label>
+                <Input id="parentPhone" name="parentPhone" defaultValue={student?.parentPhone} placeholder="Enter a single phone number for all siblings" />
+            </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsOpen(false)}>
               Cancel
