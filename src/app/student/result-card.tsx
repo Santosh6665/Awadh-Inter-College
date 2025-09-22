@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFoo
 import { calculateGrade, calculateCumulativeTotals, combineMarks, calculateCumulativePercentage } from '@/lib/result-utils';
 import { Download, User, BookOpen, BarChart3, Mail, Phone } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/layout/logo';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -24,11 +24,22 @@ interface ResultCardProps {
 export function ResultCard({ student, ranks, settings }: ResultCardProps) {
   const [examType, setExamType] = useState<ExamTypes>('annual');
   const resultVisibility = settings?.resultVisibility || { quarterly: false, halfYearly: false, annual: true };
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const handlePrintResult = () => {
-    document.body.classList.add('print-result-card');
+    if (!cardRef.current) return;
+  
+    const printContainer = document.createElement('div');
+    printContainer.id = 'print-container';
+    const cardNode = cardRef.current.cloneNode(true) as HTMLElement;
+    printContainer.appendChild(cardNode);
+    document.body.appendChild(printContainer);
+  
+    document.body.classList.add('printing-result-card');
     window.print();
-    document.body.classList.remove('print-result-card');
+    document.body.classList.remove('printing-result-card');
+  
+    document.body.removeChild(printContainer);
   };
 
   const visibleExams = Object.entries(resultVisibility)
@@ -50,7 +61,7 @@ export function ResultCard({ student, ranks, settings }: ResultCardProps) {
   const examCycles: ExamTypes[] = ['quarterly', 'halfYearly', 'annual'];
 
   return (
-    <div id="result-card-to-print" className="print-block">
+    <div ref={cardRef}>
       <Card id="result-card" className="border-2 shadow-lg print-area">
         <CardHeader className="p-4 bg-muted/30">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">

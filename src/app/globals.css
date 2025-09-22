@@ -124,56 +124,55 @@ body {
     width: 100%;
     height: 100%;
   }
-  
-  /* When printing, hide everything except the print-container and its contents */
-  body.print-result-card * {
+
+  /* Universal print styles */
+  body.printing-result-card * {
     visibility: hidden;
   }
   
-  body.print-result-card #result-card-to-print,
-  body.print-result-card #result-card-to-print * {
+  #print-container, #print-container * {
     visibility: visible;
   }
   
-  body.print-result-card #result-card-to-print {
+  #print-container {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     margin: 0;
-    padding: 0.5cm; /* Add some padding to the page instead of margin */
-    box-sizing: border-box; /* Include padding in width/height calculation */
+    padding: 0.5cm;
+    box-sizing: border-box;
   }
-  
+
   /* Result Card Specific Print Optimizations */
-  #result-card-to-print .p-4 {
-    padding: 0.5rem; /* Reduce padding inside card content */
+  #print-container .p-4 {
+    padding: 0.5rem !important;
   }
-  #result-card-to-print .space-y-4 {
-    gap: 0.5rem; /* Reduce space between elements */
+  #print-container .space-y-4 {
+    gap: 0.5rem !important;
   }
-  #result-card-to-print .text-xs {
-    font-size: 9px; /* Slightly smaller font for table cells */
+  #print-container .text-xs {
+    font-size: 9px !important;
   }
-  #result-card-to-print td,
-  #result-card-to-print th {
-    padding: 2px 4px; /* Tighter padding for table cells */
+  #print-container td,
+  #print-container th {
+    padding: 2px 4px !important;
   }
-  #result-card-to-print .pt-8 {
-    padding-top: 1rem;
+  #print-container .pt-8 {
+    padding-top: 1rem !important;
   }
-  #result-card-to-print .mb-8 {
-    margin-bottom: 1rem;
+  #print-container .mb-8 {
+    margin-bottom: 1rem !important;
   }
-  #result-card-to-print .text-2xl {
-    font-size: 1.25rem; /* Reduce header font size */
+  #print-container .text-2xl {
+    font-size: 1.25rem !important;
   }
-  #result-card-to-print .h-16 {
-    height: 3rem; /* Reduce logo size */
+  #print-container .h-16 {
+    height: 3rem !important;
   }
-  #result-card-to-print .w-16 {
-    width: 3rem; /* Reduce logo size */
+  #print-container .w-16 {
+    width: 3rem !important;
   }
 
   body.print-fee-receipt * {
