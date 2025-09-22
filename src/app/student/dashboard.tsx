@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFooter } from '@/components/ui/table';
 import { SetPasswordDialog } from './set-password-dialog';
-import { calculateCumulativePercentage, calculateGrade, calculateCumulativeTotals, combineMarks } from '@/lib/result-utils';
+import { calculateGrade, calculateCumulativeTotals, combineMarks, calculateCumulativePercentage } from '@/lib/result-utils';
 import { Download, CheckCircle, XCircle, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, Edit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useMemo, useState } from 'react';
@@ -18,6 +18,7 @@ import { FeeReceipt } from './fee-receipt';
 import { Logo } from '@/components/layout/logo';
 import { AttendanceHistory } from './attendance-history';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SUBJECTS_BY_CLASS } from '@/lib/class-subjects';
 
 
 interface StudentDashboardProps {
@@ -91,14 +92,16 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
 
   const ResultCard = ({ student, examType }: { student: Student, examType: ExamTypes }) => {
     const { marks: combinedStudentMarks, examCyclesWithMarks } = useMemo(() => combineMarks(student.marks, examType), [student.marks, examType]);
-    const percentage = calculateCumulativePercentage(combinedStudentMarks, examCyclesWithMarks);
+    const percentage = calculateCumulativePercentage(combinedStudentMarks, examCyclesWithMarks, student.class);
     const grade = calculateGrade(percentage);
-    const totals = calculateCumulativeTotals(combinedStudentMarks, examCyclesWithMarks);
+    const totals = calculateCumulativeTotals(combinedStudentMarks, examCyclesWithMarks, student.class);
     const resultStatus = grade === 'F' ? 'Fail' : 'Pass';
     const hasMarks = combinedStudentMarks && Object.keys(combinedStudentMarks).length > 0;
     const examTitle = examType.charAt(0).toUpperCase() + examType.slice(1);
     
-    const subjectKeys: (keyof Marks)[] = ['physics', 'chemistry', 'maths', 'english', 'computerScience'];
+    const subjectsForClass = useMemo(() => {
+        return SUBJECTS_BY_CLASS[student.class as keyof typeof SUBJECTS_BY_CLASS] || [];
+    }, [student.class]);
     const examCycles: ExamTypes[] = ['quarterly', 'halfYearly', 'annual'];
 
     return (
@@ -142,28 +145,28 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                 </div>
                 <div className="border rounded-lg p-4">
                   <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><BookOpen className="h-5 w-5 text-primary" /> Academic Performance</h3>
-                  <Table className="[&_td]:p-2 [&_th]:p-2">
+                  <Table className="[&_td]:p-2 [&_th]:p-2 text-xs">
                     <TableHeader>
                         <TableRow>
                             <TableHead rowSpan={2} className="align-bottom text-center">Subject</TableHead>
-                            <TableHead colSpan={2} className="text-center border-l">Quarterly</TableHead>
-                            <TableHead colSpan={2} className="text-center border-l">Half-Yearly</TableHead>
-                            <TableHead colSpan={2} className="text-center border-l">Annual</TableHead>
+                            {examCycles.map(cycle => (
+                                <TableHead key={cycle} colSpan={2} className="text-center border-l capitalize">{cycle.replace('Yearly', ' Yearly')}</TableHead>
+                            ))}
                             <TableHead colSpan={2} className="text-center border-l bg-muted/50">Total</TableHead>
                         </TableRow>
                         <TableRow>
-                            <TableHead className="text-center border-l">Obtained</TableHead>
-                            <TableHead className="text-center">Max</TableHead>
-                            <TableHead className="text-center border-l">Obtained</TableHead>
-                            <TableHead className="text-center">Max</TableHead>
-                            <TableHead className="text-center border-l">Obtained</TableHead>
-                            <TableHead className="text-center">Max</TableHead>
+                            {examCycles.map(cycle => (
+                                <React.Fragment key={cycle}>
+                                    <TableHead className="text-center border-l">Obtained</TableHead>
+                                    <TableHead className="text-center">Max</TableHead>
+                                </React.Fragment>
+                            ))}
                             <TableHead className="text-center border-l bg-muted/50">Obtained</TableHead>
                             <TableHead className="text-center bg-muted/50">Max</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {subjectKeys.map(subject => {
+                      {subjectsForClass.map(subject => {
                           const examsToCombine: ExamTypes[] = [];
                             switch (examType) {
                                 case 'quarterly': examsToCombine.push('quarterly'); break;
@@ -171,14 +174,14 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                                 case 'annual': examsToCombine.push('quarterly', 'halfYearly', 'annual'); break;
                             }
 
-                          const totalObtained = examsToCombine.reduce((acc, cycle) => acc + (student.marks?.[cycle]?.[subject] ?? 0), 0);
-                          const totalMax = examsToCombine.filter(cycle => student.marks?.[cycle]?.[subject] != null).length * 100;
+                          const totalObtained = examsToCombine.reduce((acc, cycle) => acc + (student.marks?.[cycle]?.[subject.key] ?? 0), 0);
+                          const totalMax = examsToCombine.filter(cycle => student.marks?.[cycle]?.[subject.key] != null).length * 100;
 
                           return (
-                            <TableRow key={subject}>
-                                <TableCell className="capitalize font-medium">{subject.replace(/([A-Z])/g, ' $1')}</TableCell>
+                            <TableRow key={subject.key}>
+                                <TableCell className="capitalize font-medium">{subject.label}</TableCell>
                                 {examCycles.map(cycle => {
-                                    const obtained = student.marks?.[cycle]?.[subject];
+                                    const obtained = student.marks?.[cycle]?.[subject.key];
                                     const max = obtained != null ? 100 : '-';
                                     return (
                                         <React.Fragment key={cycle}>
@@ -197,8 +200,8 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                         <TableRow className="font-bold bg-muted/50 text-base">
                             <TableCell>Grand Total</TableCell>
                             {examCycles.map(cycle => {
-                                const cycleObtained = subjectKeys.reduce((acc, sub) => acc + (student.marks?.[cycle]?.[sub] ?? 0), 0);
-                                const cycleMax = subjectKeys.filter(sub => student.marks?.[cycle]?.[sub] != null).length * 100;
+                                const cycleObtained = subjectsForClass.reduce((acc, sub) => acc + (student.marks?.[cycle]?.[sub.key] ?? 0), 0);
+                                const cycleMax = subjectsForClass.filter(sub => student.marks?.[cycle]?.[sub.key] != null).length * 100;
                                 return (
                                     <React.Fragment key={cycle}>
                                         <TableCell className="text-center border-l">{cycleMax > 0 ? cycleObtained : '-'}</TableCell>
@@ -322,7 +325,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                     </Card>
                 </TabsContent>
                 <TabsContent value="results" className="mt-6">
-                    <ResultCard student={student} examType={'annual'} />
+                    <ResultCard student={student} examType={examType} />
                 </TabsContent>
                 <TabsContent value="attendance" className="mt-6">
                    <AttendanceHistory attendanceRecords={attendance} />

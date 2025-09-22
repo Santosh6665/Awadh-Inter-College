@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
@@ -17,8 +17,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import type { Student, ExamTypes } from '@/lib/types';
+import type { Student, ExamTypes, Marks } from '@/lib/types';
 import { updateStudentMarks, type MarksFormState } from './actions';
+import { SUBJECTS_BY_CLASS } from '@/lib/class-subjects';
 
 interface UpdateMarksFormProps {
   isOpen: boolean;
@@ -65,6 +66,11 @@ export function UpdateMarksForm({ isOpen, setIsOpen, student, examType }: Update
     }
   }, [state, toast, setIsOpen]);
 
+  const subjectsForClass = useMemo(() => {
+    if (!student?.class) return [];
+    return SUBJECTS_BY_CLASS[student.class as keyof typeof SUBJECTS_BY_CLASS] || [];
+  }, [student?.class]);
+
   if (!student) return null;
   
   const studentMarks = student.marks?.[examType];
@@ -76,35 +82,26 @@ export function UpdateMarksForm({ isOpen, setIsOpen, student, examType }: Update
         <DialogHeader>
           <DialogTitle>Update {examTitle} Marks for {student.name}</DialogTitle>
           <DialogDescription>
-            Enter the marks obtained out of 100 for each subject.
+            Enter the marks obtained out of 100 for each subject in class {student.class}.
           </DialogDescription>
         </DialogHeader>
-        <form action={formAction} className="grid gap-4 py-4">
+        <form action={formAction} className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto px-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="physics">Physics</Label>
-              <Input id="physics" name="physics" type="number" defaultValue={studentMarks?.physics} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="chemistry">Chemistry</Label>
-              <Input id="chemistry" name="chemistry" type="number" defaultValue={studentMarks?.chemistry} />
-            </div>
+            {subjectsForClass.map(subject => (
+                <div key={subject.key} className="space-y-2">
+                  <Label htmlFor={subject.key}>{subject.label}</Label>
+                  <Input 
+                    id={subject.key} 
+                    name={subject.key} 
+                    type="number" 
+                    defaultValue={studentMarks?.[subject.key as keyof Marks]} 
+                    min="0"
+                    max="100"
+                  />
+                </div>
+            ))}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="maths">Maths</Label>
-              <Input id="maths" name="maths" type="number" defaultValue={studentMarks?.maths} />
-            </div>
-             <div className="space-y-2">
-              <Label htmlFor="english">English</Label>
-              <Input id="english" name="english" type="number" defaultValue={studentMarks?.english} />
-            </div>
-          </div>
-           <div className="space-y-2">
-              <Label htmlFor="computerScience">Computer Science</Label>
-              <Input id="computerScience" name="computerScience" type="number" defaultValue={studentMarks?.computerScience} />
-            </div>
-          <DialogFooter>
+          <DialogFooter className="sticky bottom-0 bg-background pt-4">
             <Button variant="outline" onClick={() => setIsOpen(false)}>
               Cancel
             </Button>

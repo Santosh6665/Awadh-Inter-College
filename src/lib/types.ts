@@ -1,4 +1,5 @@
 
+
 import { z } from 'zod';
 
 export type NewsArticle = {
@@ -16,11 +17,21 @@ export type CalendarEvent = {
 };
 
 export type Marks = {
+  oral?: number;
+  englishOral?: number;
+  english?: number;
+  hindiOral?: number;
+  hindi?: number;
+  mathematicsOral?: number;
+  mathematics?: number;
+  science?: number;
+  computer?: number;
+  socialScience?: number;
+  art?: number;
+  homeScience?: number;
   physics?: number;
   chemistry?: number;
-  maths?: number;
-  english?: number;
-  computerScience?: number;
+  biology?: number;
 };
 
 export type ExamTypes = 'quarterly' | 'halfYearly' | 'annual';

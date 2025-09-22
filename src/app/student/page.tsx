@@ -1,4 +1,5 @@
 
+
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Header } from '@/components/layout/header';
@@ -36,10 +37,13 @@ export default async function StudentPage() {
        for (const examType of examTypes) {
             const classmates = await getStudentsByClass(student.class, examType);
             const studentsWithPercentage = classmates
-                .map(s => ({
-                    id: s.id,
-                    percentage: calculateCumulativePercentage(combineMarks(s.marks, examType).marks, combineMarks(s.marks, examType).examCyclesWithMarks),
-                }))
+                .map(s => {
+                    const { marks: combinedStudentMarks, examCyclesWithMarks } = combineMarks(s.marks, examType);
+                    return {
+                        id: s.id,
+                        percentage: calculateCumulativePercentage(combinedStudentMarks, examCyclesWithMarks, s.class),
+                    }
+                })
                 .filter(s => s.percentage !== null);
             
             studentsWithPercentage.sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0));

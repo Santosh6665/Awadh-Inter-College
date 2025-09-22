@@ -1,25 +1,7 @@
 
 import type { Marks, ExamTypes } from './types';
+import { SUBJECTS_BY_CLASS } from './class-subjects';
 
-export function calculatePercentage(marks: Marks | undefined | null): number | null {
-  if (!marks) {
-    return null;
-  }
-
-  const subjects = Object.entries(marks)
-    .filter(([key, value]) => typeof value === 'number')
-    .map(([, value]) => value as number);
-
-  if (subjects.length === 0) {
-    return null;
-  }
-
-  const totalMarks = subjects.reduce((sum, mark) => sum + (mark || 0), 0);
-  const totalSubjects = subjects.length;
-  const maxMarksPerSubject = 100;
-
-  return (totalMarks / (totalSubjects * maxMarksPerSubject)) * 100;
-}
 
 export function calculateGrade(value: number | null | undefined): string {
   if (value === null || value === undefined) {
@@ -37,24 +19,7 @@ export function calculateGrade(value: number | null | undefined): string {
   return 'F';
 }
 
-export function calculateTotals(marks: Marks | undefined | null): { totalObtainedMarks: number, totalMaxMarks: number } {
-  if (!marks) {
-    return { totalObtainedMarks: 0, totalMaxMarks: 0 };
-  }
-
-  const subjects = Object.entries(marks)
-    .filter(([key, value]) => typeof value === 'number')
-    .map(([, value]) => value as number);
-    
-  const totalObtainedMarks = subjects.reduce((sum, mark) => sum + (mark || 0), 0);
-  const totalMaxMarks = subjects.length * 100;
-
-  return { totalObtainedMarks, totalMaxMarks };
-}
-
 // New cumulative calculation logic
-const subjectKeys: (keyof Marks)[] = ['physics', 'chemistry', 'maths', 'english', 'computerScience'];
-
 export function combineMarks(
   allMarks: { [key in ExamTypes]?: Marks } | undefined,
   examType: ExamTypes
@@ -82,19 +47,22 @@ export function combineMarks(
     }
   });
 
+  const allSubjectKeys = Object.values(SUBJECTS_BY_CLASS).flat().map(s => s.key);
+  const uniqueSubjectKeys = [...new Set(allSubjectKeys)];
 
-  for (const subject of subjectKeys) {
+
+  for (const subject of uniqueSubjectKeys) {
     let total = 0;
     let hasValue = false;
     for (const exam of examsToCombine) {
-      const mark = allMarks?.[exam]?.[subject];
+      const mark = allMarks?.[exam]?.[subject as keyof Marks];
       if (typeof mark === 'number') {
         total += mark;
         hasValue = true;
       }
     }
     if (hasValue) {
-      combined[subject] = total;
+      combined[subject as keyof Marks] = total;
     }
   }
 
@@ -103,28 +71,33 @@ export function combineMarks(
 
 export function calculateCumulativeTotals(
   marks: Marks | undefined | null,
-  examCyclesWithMarks: ExamTypes[]
-): { totalObtainedMarks: number, totalMaxMarks: number, subjectCount: number } {
-  if (!marks) {
-    return { totalObtainedMarks: 0, totalMaxMarks: 0, subjectCount: 0 };
+  examCyclesWithMarks: ExamTypes[],
+  className: string
+): { totalObtainedMarks: number, totalMaxMarks: number } {
+  if (!marks || !className) {
+    return { totalObtainedMarks: 0, totalMaxMarks: 0 };
   }
 
+  const subjectsForClass = SUBJECTS_BY_CLASS[className as keyof typeof SUBJECTS_BY_CLASS] || [];
+  const subjectKeysForClass = subjectsForClass.map(s => s.key);
+
   const subjects = Object.entries(marks)
-    .filter(([key, value]) => typeof value === 'number');
+    .filter(([key, value]) => subjectKeysForClass.includes(key as keyof Marks) && typeof value === 'number');
 
   const totalObtainedMarks = subjects.reduce((sum, [, mark]) => sum + (mark as number || 0), 0);
   
-  const totalMaxMarks = subjects.length * 100 * examCyclesWithMarks.length;
+  const totalMaxMarks = subjectKeysForClass.length * 100 * examCyclesWithMarks.length;
 
-  return { totalObtainedMarks, totalMaxMarks, subjectCount: subjects.length };
+  return { totalObtainedMarks, totalMaxMarks };
 }
 
 
 export function calculateCumulativePercentage(
   marks: Marks | undefined | null,
-  examCyclesWithMarks: ExamTypes[]
+  examCyclesWithMarks: ExamTypes[],
+  className: string
 ): number | null {
-  const { totalObtainedMarks, totalMaxMarks } = calculateCumulativeTotals(marks, examCyclesWithMarks);
+  const { totalObtainedMarks, totalMaxMarks } = calculateCumulativeTotals(marks, examCyclesWithMarks, className);
   
   if (totalMaxMarks === 0) {
     return null;

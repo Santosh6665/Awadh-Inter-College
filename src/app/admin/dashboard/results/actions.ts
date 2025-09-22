@@ -7,11 +7,21 @@ import { revalidatePath } from 'next/cache';
 import { FieldValue } from 'firebase-admin/firestore';
 
 const MarksSchema = z.object({
+  oral: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  englishOral: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  english: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  hindiOral: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  hindi: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  mathematicsOral: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  mathematics: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  science: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  computer: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  socialScience: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  art: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  homeScience: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
   physics: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
   chemistry: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
-  maths: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
-  english: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
-  computerScience: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
+  biology: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
 });
 
 const ExamTypeSchema = z.enum(['quarterly', 'halfYearly', 'annual']);
@@ -54,7 +64,7 @@ export async function updateStudentMarks(
     
     // Convert empty strings to null for Firestore
     const marksForUpdate = Object.fromEntries(
-        Object.entries(marksData).map(([key, value]) => [key, value === '' ? null : value])
+        Object.entries(marksData).map(([key, value]) => [key, value === '' ? FieldValue.delete() : value])
     );
     
     const studentDoc = firestore.collection('students').doc(id);

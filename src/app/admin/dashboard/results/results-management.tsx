@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/table';
 import { Search, Edit, Trash2 } from 'lucide-react';
 import { UpdateMarksForm } from './update-marks-form';
-import { calculatePercentage, calculateGrade } from '@/lib/result-utils';
+import { calculatePercentage, calculateGrade, calculateCumulativePercentage, combineMarks } from '@/lib/result-utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   AlertDialog,
@@ -84,10 +84,13 @@ export function ResultsManagement({ students }: { students: Student[] }) {
   const studentRanks = useMemo(() => {
     const ranks = new Map<string, number>();
     const studentsWithPercentage = students
-      .map(student => ({
-        ...student,
-        percentage: calculatePercentage(student.marks?.[examType]),
-      }))
+      .map(student => {
+        const { marks: combinedStudentMarks, examCyclesWithMarks } = combineMarks(student.marks, examType);
+        return {
+          ...student,
+          percentage: calculateCumulativePercentage(combinedStudentMarks, examCyclesWithMarks, student.class),
+        }
+      })
       .filter(s => s.percentage !== null);
 
     const studentsByClass = studentsWithPercentage.reduce((acc, student) => {
@@ -160,11 +163,6 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                   <TableHead className="hidden md:table-cell">Roll No.</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead className="hidden md:table-cell">Class</TableHead>
-                  <TableHead className="hidden lg:table-cell">Physics</TableHead>
-                  <TableHead className="hidden lg:table-cell">Chemistry</TableHead>
-                  <TableHead className="hidden lg:table-cell">Maths</TableHead>
-                  <TableHead className="hidden lg:table-cell">English</TableHead>
-                  <TableHead className="hidden lg:table-cell">Comp. Sci.</TableHead>
                   <TableHead>Percentage</TableHead>
                   <TableHead>Grade</TableHead>
                   <TableHead>Rank</TableHead>
@@ -174,8 +172,8 @@ export function ResultsManagement({ students }: { students: Student[] }) {
               <TableBody>
                 {filteredStudents.length > 0 ? (
                   filteredStudents.map((student) => {
-                    const studentMarks = student.marks?.[examType];
-                    const percentage = calculatePercentage(studentMarks);
+                    const { marks: combinedStudentMarks, examCyclesWithMarks } = combineMarks(student.marks, examType);
+                    const percentage = calculateCumulativePercentage(combinedStudentMarks, examCyclesWithMarks, student.class);
                     const grade = calculateGrade(percentage);
                     const rank = studentRanks.get(student.id);
                     return (
@@ -183,11 +181,6 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                             <TableCell className="hidden md:table-cell">{student.rollNumber}</TableCell>
                             <TableCell>{student.name}</TableCell>
                             <TableCell className="hidden md:table-cell">{`${student.class}-${student.section}`}</TableCell>
-                            <TableCell className="hidden lg:table-cell">{studentMarks?.physics ?? 'N/A'}</TableCell>
-                            <TableCell className="hidden lg:table-cell">{studentMarks?.chemistry ?? 'N/A'}</TableCell>
-                            <TableCell className="hidden lg:table-cell">{studentMarks?.maths ?? 'N/A'}</TableCell>
-                            <TableCell className="hidden lg:table-cell">{studentMarks?.english ?? 'N/A'}</TableCell>
-                            <TableCell className="hidden lg:table-cell">{studentMarks?.computerScience ?? 'N/A'}</TableCell>
                             <TableCell>{percentage !== null ? `${percentage.toFixed(2)}%` : 'N/A'}</TableCell>
                             <TableCell>{grade}</TableCell>
                             <TableCell>{rank ?? 'N/A'}</TableCell>
@@ -204,7 +197,7 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={12} className="text-center">
+                    <TableCell colSpan={7} className="text-center">
                       No students found.
                     </TableCell>
                   </TableRow>
