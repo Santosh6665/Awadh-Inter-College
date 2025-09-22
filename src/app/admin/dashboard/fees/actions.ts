@@ -114,6 +114,33 @@ export async function recordPayment(
   }
 }
 
+async function getFeeSettings() {
+    const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
+    if (settingsDoc.exists) {
+        const settings = settingsDoc.data();
+        return {
+            feeStructure: settings?.feeStructure || {},
+            siblingDiscount: settings?.siblingDiscount || 0,
+        };
+    }
+    return { feeStructure: {}, siblingDiscount: 0 };
+}
+
+function calculateTotalFees(studentData: any, feeSettings: any, isSibling: boolean) {
+    const classFeeStructure = feeSettings.feeStructure[studentData.class] || {};
+    const studentFeeOverrides = studentData.feeStructure || {};
+    const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
+
+    const { tuition = 0, admission = 0, transport = 0, exam = 0, computer = 0, miscellaneous = 0, discount = 0 } = finalFeeStructure;
+    let totalFees = (tuition + admission + transport + exam + computer + miscellaneous) - discount;
+
+    if (isSibling && feeSettings.siblingDiscount > 0) {
+        totalFees -= feeSettings.siblingDiscount;
+    }
+    return totalFees;
+}
+
+
 export async function recordCombinedPayment(
   parentPhone: string,
   studentIds: string[],
@@ -135,43 +162,46 @@ export async function recordCombinedPayment(
   const paymentDate = validatedFields.data.date;
 
   try {
+    const feeSettings = await getFeeSettings();
+    const batch = firestore.batch();
+
     for (const studentId of studentIds) {
       if (totalAmountToDistribute <= 0) break;
 
       const studentDocRef = firestore.collection('students').doc(studentId);
       const studentDoc = await studentDocRef.get();
       if (!studentDoc.exists) continue;
-
-      const studentData = studentDoc.data();
-      const totalPaid = (studentData?.payments || []).reduce((acc: number, p: any) => acc + p.amount, 0);
       
-      // We need to fetch fee settings to calculate total fees. This is a simplification.
-      // A more robust solution would involve passing pre-calculated dues.
-      // For now, let's assume we need to calculate it here.
-      // NOTE: This calculation is simplified and doesn't account for complex fee structures.
-      // It's a placeholder for the actual fee calculation logic.
-      const totalFees = studentData?.feeStructure?.tuition || 30000; // Simplified
+      const studentData = studentDoc.data();
+      if (!studentData) continue;
+
+      // Determine if sibling discount applies (more than one child and not the first in the list)
+      const isSibling = studentIds.length > 1 && studentIds[0] !== studentId;
+      const totalFees = calculateTotalFees(studentData, feeSettings, isSibling);
+      const totalPaid = (studentData.payments || []).reduce((acc: number, p: any) => acc + p.amount, 0);
       const due = totalFees - totalPaid;
 
       if (due > 0) {
-        const amountToPay = Math.min(due, totalAmountToDistribute);
+        const amountToPayForThisStudent = Math.min(due, totalAmountToDistribute);
         
         const newPayment = {
             id: `${new Date().getTime().toString()}-${studentId}`,
-            amount: amountToPay,
+            amount: amountToPayForThisStudent,
             method: paymentMethod,
             date: paymentDate,
             month: new Date(paymentDate).toLocaleString('default', { month: 'long' }), // Defaulting month
         };
 
-        await studentDocRef.update({
+        batch.update(studentDocRef, {
             payments: FieldValue.arrayUnion(newPayment),
             updatedAt: new Date()
         });
 
-        totalAmountToDistribute -= amountToPay;
+        totalAmountToDistribute -= amountToPayForThisStudent;
       }
     }
+
+    await batch.commit();
     
     revalidatePath('/admin/dashboard');
     return { success: true, message: `Combined payment of Rs${validatedFields.data.amount} recorded successfully.` };
