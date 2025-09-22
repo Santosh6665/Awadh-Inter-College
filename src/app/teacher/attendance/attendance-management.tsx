@@ -24,7 +24,7 @@ import { cn } from '@/lib/utils';
 import { getAttendanceByDate, setAttendance as setAttendanceAction, getStudentAttendanceHistory } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { AttendanceHistoryDialog } from '@/app/admin/dashboard/attendance/attendance-history-dialog';
-import { isHoliday, getSchoolStatus } from '@/app/admin/dashboard/teacher-attendance/actions';
+import { isHoliday, getSchoolStatus } from '@/app/admin/dashboard/attendance/actions';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
