@@ -30,6 +30,12 @@ interface HeaderProps {
 
 export function Header({ student, teacher }: HeaderProps) {
   const pathname = usePathname();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  
   const loggedInPortal = student ? '/student' : teacher ? '/teacher' : null;
 
   const isStudentPage = pathname.startsWith('/student');
@@ -37,6 +43,7 @@ export function Header({ student, teacher }: HeaderProps) {
   const isInPortal = isStudentPage || isTeacherPage;
   
   const getInitials = (name: string) => {
+    if (!name) return '';
     const names = name.split(' ');
     if (names.length > 1) {
       return `${names[0][0]}${names[names.length - 1][0]}`;
@@ -94,7 +101,7 @@ export function Header({ student, teacher }: HeaderProps) {
   return (
     <header className={cn('sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm', 'print-hidden')}>
       <div className="flex items-center gap-2">
-         <Sheet>
+         {isClient && <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="md:hidden">
               <Menu className="h-5 w-5" />
@@ -154,7 +161,7 @@ export function Header({ student, teacher }: HeaderProps) {
                 </p>
             </div>
           </SheetContent>
-        </Sheet>
+        </Sheet>}
         <Link href="/" className="hidden items-center gap-2 md:flex">
             <Logo className="h-8 w-8" />
             <h1 className="text-xl font-bold tracking-tight text-primary">
@@ -187,7 +194,7 @@ export function Header({ student, teacher }: HeaderProps) {
       )}
       
       <div className="flex items-center gap-4">
-        {renderProfileIcon()}
+        {isClient && renderProfileIcon()}
         {isTeacherPage && (
           <Button asChild variant="ghost" size="sm" className="hidden md:flex">
             <Link href="/teacher/logout">
