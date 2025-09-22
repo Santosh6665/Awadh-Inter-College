@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { format } from "date-fns";
+import { format, isSameMonth, isSameYear } from "date-fns";
 import { Badge } from '@/components/ui/badge';
 import { getHolidays } from '@/app/admin/dashboard/notices/actions';
 
@@ -77,10 +77,14 @@ export function AttendanceHistory({ attendanceRecords }: AttendanceHistoryProps)
   const monthSummary = useMemo(() => {
     const present = presentDays.length;
     const absent = absentDays.length;
+    const monthlyHolidays = holidays.filter(h => {
+        const holidayDate = new Date(h);
+        return isSameMonth(holidayDate, currentMonth) && isSameYear(holidayDate, currentMonth);
+    }).length;
     const total = present + absent;
     const percentage = total > 0 ? (present / total) * 100 : 0;
-    return { present, absent, total, percentage };
-  }, [presentDays, absentDays]);
+    return { present, absent, total, percentage, holidays: monthlyHolidays };
+  }, [presentDays, absentDays, holidays, currentMonth]);
   
   const totalAttendancePercentage = useMemo(() => {
     if (filteredAttendanceRecords.length === 0) return '0.00%';
@@ -129,7 +133,7 @@ export function AttendanceHistory({ attendanceRecords }: AttendanceHistoryProps)
                     Attendance: {monthSummary.percentage.toFixed(2)}%
                 </Badge>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-2">
                     <div className="h-4 w-4 rounded-full bg-green-200" />
                     <span>Present: {monthSummary.present} days</span>
@@ -137,6 +141,10 @@ export function AttendanceHistory({ attendanceRecords }: AttendanceHistoryProps)
                 <div className="flex items-center gap-2">
                     <div className="h-4 w-4 rounded-full bg-red-200" />
                     <span>Absent: {monthSummary.absent} days</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 rounded-full bg-yellow-200" />
+                    <span>Holidays: {monthSummary.holidays} days</span>
                 </div>
             </div>
         </div>
