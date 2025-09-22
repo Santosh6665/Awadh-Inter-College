@@ -14,7 +14,7 @@ export const SUBJECTS_BY_CLASS: Record<string, Subject[]> = {
     { key: 'mathematicsOral', label: 'Mathematics Oral' },
     { key: 'mathematics', label: 'Mathematics' },
   ],
-  'L.K.G.': [
+  LKG: [
     { key: 'englishOral', label: 'English Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindiOral', label: 'Hindi Oral' },
@@ -22,7 +22,7 @@ export const SUBJECTS_BY_CLASS: Record<string, Subject[]> = {
     { key: 'mathematicsOral', label: 'Mathematics Oral' },
     { key: 'mathematics', label: 'Mathematics' },
   ],
-  'U.K.G.': [
+  UKG: [
     { key: 'englishOral', label: 'English Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindiOral', label: 'Hindi Oral' },
