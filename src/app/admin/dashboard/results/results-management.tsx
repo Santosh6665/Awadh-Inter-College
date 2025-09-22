@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useTransition } from 'react';
 import type { Student, ExamTypes } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -14,10 +14,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Edit } from 'lucide-react';
+import { Search, Edit, Trash2 } from 'lucide-react';
 import { UpdateMarksForm } from './update-marks-form';
 import { calculatePercentage, calculateGrade } from '@/lib/result-utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import { deleteStudentMarks } from './actions';
+
 
 export function ResultsManagement({ students }: { students: Student[] }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -25,10 +38,41 @@ export function ResultsManagement({ students }: { students: Student[] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
   const [examType, setExamType] = useState<ExamTypes>('annual');
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [studentToDeleteResult, setStudentToDeleteResult] = useState<Student | null>(null);
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
   
   const handleEdit = (student: Student) => {
     setSelectedStudent(student);
     setIsFormOpen(true);
+  };
+
+  const confirmDelete = (student: Student) => {
+    setStudentToDeleteResult(student);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    if (!studentToDeleteResult) return;
+
+    startTransition(async () => {
+      const result = await deleteStudentMarks(studentToDeleteResult.id, examType);
+      if (result.success) {
+        toast({
+          title: 'Success',
+          description: result.message,
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: result.message,
+          variant: 'destructive',
+        });
+      }
+      setIsDeleteDialogOpen(false);
+      setStudentToDeleteResult(null);
+    });
   };
 
   const filteredStudents = students.filter(student => {
@@ -147,9 +191,12 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                             <TableCell>{percentage !== null ? `${percentage.toFixed(2)}%` : 'N/A'}</TableCell>
                             <TableCell>{grade}</TableCell>
                             <TableCell>{rank ?? 'N/A'}</TableCell>
-                            <TableCell className="text-right">
-                                <Button variant="ghost" size="icon" onClick={() => handleEdit(student)}>
+                            <TableCell className="text-right space-x-1">
+                                <Button variant="ghost" size="icon" title="Edit Marks" onClick={() => handleEdit(student)}>
                                     <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" title="Delete Marks" onClick={() => confirmDelete(student)}>
+                                    <Trash2 className="h-4 w-4 text-destructive" />
                                 </Button>
                             </TableCell>
                         </TableRow>
@@ -174,6 +221,25 @@ export function ResultsManagement({ students }: { students: Student[] }) {
         student={selectedStudent}
         examType={examType}
       />
+      
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete the 
+                    <strong> {examType} exam results</strong> for 
+                    <strong> {studentToDeleteResult?.name}</strong>.
+                </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete} disabled={isPending} className="bg-destructive hover:bg-destructive/90">
+                  {isPending ? 'Deleting...' : 'Delete'}
+                </AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

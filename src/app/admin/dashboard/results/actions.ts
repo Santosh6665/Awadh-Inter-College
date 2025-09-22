@@ -4,6 +4,7 @@
 import { firestore } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import { FieldValue } from 'firebase-admin/firestore';
 
 const MarksSchema = z.object({
   physics: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
@@ -70,5 +71,31 @@ export async function updateStudentMarks(
   } catch (error) {
     console.error('Error updating student marks:', error);
     return { success: false, message: 'An unexpected error occurred while updating marks.' };
+  }
+}
+
+
+export async function deleteStudentMarks(studentId: string, examType: z.infer<typeof ExamTypeSchema>) {
+  if (!studentId || !examType) {
+    return { success: false, message: 'Student ID or exam type is missing.' };
+  }
+
+  const validatedExamType = ExamTypeSchema.safeParse(examType);
+  if (!validatedExamType.success) {
+    return { success: false, message: 'Invalid exam type.' };
+  }
+
+  try {
+    const studentDoc = firestore.collection('students').doc(studentId);
+    await studentDoc.update({
+      [`marks.${validatedExamType.data}`]: FieldValue.delete(),
+    });
+
+    revalidatePath('/admin/dashboard');
+    revalidatePath('/student');
+    return { success: true, message: `Results for ${examType} exam deleted successfully.` };
+  } catch (error) {
+    console.error('Error deleting student marks:', error);
+    return { success: false, message: 'An unexpected error occurred while deleting marks.' };
   }
 }
