@@ -7,8 +7,9 @@ interface LogoProps {
 }
 
 export function Logo({ className }: LogoProps) {
-  // Use a dynamic timestamp to ensure the browser always fetches the latest logo.
-  const cacheBuster = `?t=${new Date().getTime()}`;
+  // Use a static version number for cache busting.
+  // Manually increment this number when you update the logo image.
+  const cacheBuster = `?v=1`;
   return (
     <div className={cn('relative', className)}>
       <Image
