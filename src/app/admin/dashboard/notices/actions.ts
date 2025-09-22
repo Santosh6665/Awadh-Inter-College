@@ -168,3 +168,16 @@ export async function getNotices(): Promise<Notice[]> {
     return [];
   }
 }
+
+export async function getHolidays(): Promise<string[]> {
+  try {
+    const holidaysSnapshot = await firestore.collection('holidays').get();
+    if (holidaysSnapshot.empty) {
+      return [];
+    }
+    return holidaysSnapshot.docs.map(doc => doc.id);
+  } catch (error) {
+    console.error('Error fetching holidays:', error);
+    return [];
+  }
+}

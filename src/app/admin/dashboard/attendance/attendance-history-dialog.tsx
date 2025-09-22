@@ -17,6 +17,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, getMonth, getYear, startOfMonth } from "date-fns";
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { getHolidays } from '../notices/actions';
 
 interface AttendanceHistoryDialogProps {
   isOpen: boolean;
@@ -27,16 +28,26 @@ interface AttendanceHistoryDialogProps {
 
 export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attendanceRecords }: AttendanceHistoryDialogProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [holidays, setHolidays] = useState<string[]>([]);
+
+  useEffect(() => {
+    getHolidays().then(setHolidays);
+  }, []);
+
+  const filteredAttendanceRecords = useMemo(() => {
+    const holidaySet = new Set(holidays);
+    return attendanceRecords.filter(record => !holidaySet.has(record.date));
+  }, [attendanceRecords, holidays]);
 
   const monthlyData = useMemo(() => {
-    return attendanceRecords.reduce((acc, record) => {
+    return filteredAttendanceRecords.reduce((acc, record) => {
       const date = new Date(record.date);
       // Ensure we are comparing dates correctly without timezone issues
       const dateKey = format(new Date(date.valueOf() + date.getTimezoneOffset() * 60 * 1000), 'yyyy-MM-dd');
       acc[dateKey] = record.status;
       return acc;
     }, {} as Record<string, 'present' | 'absent'>);
-  }, [attendanceRecords]);
+  }, [filteredAttendanceRecords]);
 
   const presentDays = useMemo(() => {
     return Object.entries(monthlyData)
@@ -84,10 +95,10 @@ export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attenda
   }, [presentDays, absentDays]);
 
   const overallAttendance = useMemo(() => {
-    if (attendanceRecords.length === 0) return 0;
-    const presentCount = attendanceRecords.filter(r => r.status === 'present').length;
-    return (presentCount / attendanceRecords.length) * 100;
-  }, [attendanceRecords]);
+    if (filteredAttendanceRecords.length === 0) return 0;
+    const presentCount = filteredAttendanceRecords.filter(r => r.status === 'present').length;
+    return (presentCount / filteredAttendanceRecords.length) * 100;
+  }, [filteredAttendanceRecords]);
 
 
   if (!personName) return null;

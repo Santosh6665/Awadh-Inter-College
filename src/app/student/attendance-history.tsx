@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { AttendanceRecord } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -9,6 +9,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { format } from "date-fns";
 import { Badge } from '@/components/ui/badge';
+import { getHolidays } from '@/app/admin/dashboard/notices/actions';
 
 interface AttendanceHistoryProps {
   attendanceRecords: AttendanceRecord[];
@@ -16,16 +17,26 @@ interface AttendanceHistoryProps {
 
 export function AttendanceHistory({ attendanceRecords }: AttendanceHistoryProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [holidays, setHolidays] = useState<string[]>([]);
+
+  useEffect(() => {
+    getHolidays().then(setHolidays);
+  }, []);
+
+  const filteredAttendanceRecords = useMemo(() => {
+    const holidaySet = new Set(holidays);
+    return attendanceRecords.filter(record => !holidaySet.has(record.date));
+  }, [attendanceRecords, holidays]);
 
   const monthlyData = useMemo(() => {
-    return attendanceRecords.reduce((acc, record) => {
+    return filteredAttendanceRecords.reduce((acc, record) => {
       const date = new Date(record.date);
       // Ensure we are comparing dates correctly without timezone issues
       const dateKey = format(new Date(date.valueOf() + date.getTimezoneOffset() * 60 * 1000), 'yyyy-MM-dd');
       acc[dateKey] = record.status;
       return acc;
     }, {} as Record<string, 'present' | 'absent'>);
-  }, [attendanceRecords]);
+  }, [filteredAttendanceRecords]);
 
   const presentDays = useMemo(() => {
     return Object.entries(monthlyData)
@@ -72,10 +83,10 @@ export function AttendanceHistory({ attendanceRecords }: AttendanceHistoryProps)
   }, [presentDays, absentDays]);
   
   const totalAttendancePercentage = useMemo(() => {
-    if (attendanceRecords.length === 0) return '0.00%';
-    const totalPresent = attendanceRecords.filter(r => r.status === 'present').length;
-    return `${((totalPresent / attendanceRecords.length) * 100).toFixed(2)}%`;
-  }, [attendanceRecords]);
+    if (filteredAttendanceRecords.length === 0) return '0.00%';
+    const totalPresent = filteredAttendanceRecords.filter(r => r.status === 'present').length;
+    return `${((totalPresent / filteredAttendanceRecords.length) * 100).toFixed(2)}%`;
+  }, [filteredAttendanceRecords]);
 
   return (
     <Card>
