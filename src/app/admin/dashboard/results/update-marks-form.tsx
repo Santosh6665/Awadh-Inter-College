@@ -78,7 +78,7 @@ export function UpdateMarksForm({ isOpen, setIsOpen, student, examType }: Update
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Update {examTitle} Marks for {student.name}</DialogTitle>
           <DialogDescription>
