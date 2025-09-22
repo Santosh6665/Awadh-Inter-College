@@ -2,7 +2,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { Student, ExamTypes } from '@/lib/types';
+import type { Student, ExamTypes, Teacher } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,9 +19,9 @@ import { UpdateMarksForm } from './update-marks-form';
 import { calculateGrade, calculateCumulativePercentage, combineMarks } from '@/lib/result-utils';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ResultViewDialog } from '../admin/dashboard/results/result-view-dialog';
+import { ResultViewDialog } from './result-view-dialog';
 
-export function ResultsManagement({ students, teacher, settings }: { students: Student[], teacher: any, settings: any }) {
+export function ResultsManagement({ students, teacher, settings }: { students: Student[], teacher: Teacher, settings: any }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
