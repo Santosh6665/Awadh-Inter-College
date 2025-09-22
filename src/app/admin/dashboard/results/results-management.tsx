@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Edit, Trash2 } from 'lucide-react';
+import { Search, Edit, Trash2, Eye } from 'lucide-react';
 import { UpdateMarksForm } from './update-marks-form';
 import { calculatePercentage, calculateGrade, calculateCumulativePercentage, combineMarks } from '@/lib/result-utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -31,10 +31,12 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { deleteStudentMarks } from './actions';
 import { ResultSettings } from './result-settings';
+import { ResultViewDialog } from './result-view-dialog';
 
 
 export function ResultsManagement({ students, settings }: { students: Student[], settings: any }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
@@ -47,6 +49,11 @@ export function ResultsManagement({ students, settings }: { students: Student[],
   const handleEdit = (student: Student) => {
     setSelectedStudent(student);
     setIsFormOpen(true);
+  };
+  
+  const handleView = (student: Student) => {
+    setSelectedStudent(student);
+    setIsViewDialogOpen(true);
   };
 
   const confirmDelete = (student: Student) => {
@@ -187,6 +194,9 @@ export function ResultsManagement({ students, settings }: { students: Student[],
                             <TableCell>{grade}</TableCell>
                             <TableCell>{rank ?? 'N/A'}</TableCell>
                             <TableCell className="text-right space-x-1">
+                                <Button variant="ghost" size="icon" title="View Result" onClick={() => handleView(student)}>
+                                    <Eye className="h-4 w-4" />
+                                </Button>
                                 <Button variant="ghost" size="icon" title="Edit Marks" onClick={() => handleEdit(student)}>
                                     <Edit className="h-4 w-4" />
                                 </Button>
@@ -215,6 +225,15 @@ export function ResultsManagement({ students, settings }: { students: Student[],
         setIsOpen={setIsFormOpen}
         student={selectedStudent}
         examType={examType}
+      />
+      
+      <ResultViewDialog
+        isOpen={isViewDialogOpen}
+        setIsOpen={setIsViewDialogOpen}
+        student={selectedStudent}
+        examType={examType}
+        ranks={studentRanks}
+        settings={settings}
       />
       
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
