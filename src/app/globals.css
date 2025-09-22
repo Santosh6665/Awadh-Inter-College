@@ -145,20 +145,20 @@ body {
   body.print-result-card #result-card .p-4 {
     padding: 0.5rem; /* Reduce padding inside card content */
   }
-   body.print-result-card #result-card .space-y-4 {
+  body.print-result-card #result-card .space-y-4 {
     gap: 0.5rem; /* Reduce space between elements */
   }
   body.print-result-card #result-card .text-xs {
     font-size: 10px; /* Slightly smaller font for table cells */
   }
-  body.print-result-card #result-card td, 
+  body.print-result-card #result-card td,
   body.print-result-card #result-card th {
     padding: 0.25rem;
   }
-   body.print-result-card #result-card .pt-8 {
+  body.print-result-card #result-card .pt-8 {
     padding-top: 1rem;
   }
-   body.print-result-card #result-card .mb-8 {
+  body.print-result-card #result-card .mb-8 {
     margin-bottom: 1rem;
   }
   
