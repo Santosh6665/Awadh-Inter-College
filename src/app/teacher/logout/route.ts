@@ -1,10 +1,6 @@
-
-import { cookies } from 'next/headers';
+// This file is deprecated. The new global logout is at /logout
 import { redirect } from 'next/navigation';
-import type { NextRequest } from 'next/server';
 
-export async function GET(request: NextRequest) {
-  cookies().delete('teacher_id');
-  cookies().delete('force_teacher_password_reset');
-  redirect('/teacher');
+export async function GET() {
+  redirect('/logout');
 }

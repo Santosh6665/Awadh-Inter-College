@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
-import { getLoggedInStudent } from './student/actions';
-import { getLoggedInTeacher } from './teacher/actions';
+import { getLoggedInUser } from './auth/actions';
 import { Header } from '@/components/layout/header';
 
 export const metadata: Metadata = {
@@ -16,8 +15,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const student = await getLoggedInStudent();
-  const teacher = await getLoggedInTeacher();
+  const user = await getLoggedInUser();
   
   return (
     <html lang="en" suppressHydrationWarning>
@@ -30,7 +28,6 @@ export default async function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased')}>
-        {/* The header is now part of the layout for non-portal pages */}
         {children}
         <Toaster />
       </body>

@@ -1,18 +1,17 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { LogOut, Menu, User, CircleUserRound } from 'lucide-react';
+import { LogOut, Menu, User, CircleUserRound, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Logo } from './logo';
-import type { Student, Teacher } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-
+import { logout } from '@/app/auth/actions';
+import { useRouter } from 'next/navigation';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -23,78 +22,83 @@ const navLinks = [
   { href: '/#contact', label: 'Contact Us' },
 ];
 
-interface HeaderProps {
-    student?: Student | null;
-    teacher?: Teacher | null;
+interface User {
+    id: string;
+    type: string;
+    name: string;
 }
 
-export function Header({ student, teacher }: HeaderProps) {
+interface HeaderProps {
+    user?: User | null;
+}
+
+export function Header({ user }: HeaderProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
   
-  const loggedInPortal = student ? '/student' : teacher ? '/teacher' : null;
+  const handleLogout = async () => {
+    await logout();
+    router.push('/login');
+    router.refresh();
+  }
 
-  const isStudentPage = pathname.startsWith('/student');
-  const isTeacherPage = pathname.startsWith('/teacher');
-  const isInPortal = isStudentPage || isTeacherPage;
-  
+  const getDashboardLink = () => {
+    if (!user) return '/login';
+    switch (user.type) {
+      case 'student': return '/student';
+      case 'teacher': return '/teacher';
+      case 'admin': return '/admin/dashboard';
+      default: return '/login';
+    }
+  }
+
   const getInitials = (name: string) => {
     if (!name) return '';
     const names = name.split(' ');
     if (names.length > 1) {
       return `${names[0][0]}${names[names.length - 1][0]}`;
     }
-    return name.substring(0, 2);
+    return name.substring(0, 2).toUpperCase();
   };
 
   const renderProfileIcon = () => {
-    if (student) {
+    if (user) {
       return (
-        <Button asChild variant="ghost" size="icon" className="rounded-full border w-9 h-9">
-            <Link href="/student">
-                 <Avatar className="h-9 w-9">
-                    <AvatarImage src={student.photoUrl} alt={student.name} />
-                    <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
-                </Avatar>
-            </Link>
-        </Button>
-      );
-    }
-    if (teacher) {
-        return (
-            <Button asChild variant="ghost" size="icon" className="rounded-full border w-9 h-9">
-                <Link href="/teacher">
-                     <Avatar className="h-9 w-9">
-                        <AvatarImage src={teacher.photoUrl} alt={teacher.name} />
-                        <AvatarFallback>{getInitials(teacher.name)}</AvatarFallback>
-                    </Avatar>
-                </Link>
-            </Button>
-        )
-    }
-    return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full w-9 h-9">
-                    <CircleUserRound className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className="rounded-full border w-9 h-9">
+                     <Avatar className="h-9 w-9">
+                        <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                    </Avatar>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                    <Link href="/student">Student Portal</Link>
+                    <Link href={getDashboardLink()}>
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        <span>My Dashboard</span>
+                    </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                    <Link href="/teacher">Teacher Portal</Link>
-                </DropdownMenuItem>
-                 <DropdownMenuItem asChild>
-                    <Link href="/admin">Admin Portal</Link>
+                <DropdownMenuItem onClick={handleLogout} className="text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Logout</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
+      );
+    }
+    return (
+        <Button asChild variant="outline" size="sm">
+            <Link href="/login">
+                <CircleUserRound className="mr-2 h-4 w-4" />
+                Login
+            </Link>
+        </Button>
     );
   };
 
@@ -125,32 +129,18 @@ export function Header({ student, teacher }: HeaderProps) {
                 {link.label}
                 </Link>
             ))}
-            {!loggedInPortal && (
-                <>
-                    <Link href="/student" className="flex items-center gap-4 px-2.5 py-2 text-muted-foreground hover:text-foreground">
-                        Student Portal
-                    </Link>
-                    <Link href="/teacher" className="flex items-center gap-4 px-2.5 py-2 text-muted-foreground hover:text-foreground">
-                        Teacher Portal
-                    </Link>
-                </>
-            )}
-            {isStudentPage && (
-                 <Link
-                    href="/student/logout"
+            {user ? (
+                 <button
+                    onClick={handleLogout}
                     className="flex items-center gap-4 px-2.5 py-2 text-muted-foreground hover:text-destructive"
                     >
                     <LogOut className="h-5 w-5" />
                     Logout
-                </Link>
-            )}
-             {isTeacherPage && (
-                 <Link
-                    href="/teacher/logout"
-                    className="flex items-center gap-4 px-2.5 py-2 text-muted-foreground hover:text-destructive"
-                    >
-                    <LogOut className="h-5 w-5" />
-                    Logout
+                </button>
+            ) : (
+                 <Link href="/login" className="flex items-center gap-4 px-2.5 py-2 text-muted-foreground hover:text-foreground">
+                    <CircleUserRound className="h-5 w-5" />
+                    Login
                 </Link>
             )}
             </nav>
@@ -179,38 +169,20 @@ export function Header({ student, teacher }: HeaderProps) {
         </Link>
       </div>
 
-      {!isInPortal && (
-        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn("transition-colors hover:text-foreground", pathname === link.href ? "text-foreground" : "text-muted-foreground")}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-      )}
+      <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
+        {navLinks.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={cn("transition-colors hover:text-foreground", pathname === link.href ? "text-foreground" : "text-muted-foreground")}
+          >
+            {link.label}
+          </Link>
+        ))}
+      </nav>
       
       <div className="flex items-center gap-4">
         {isClient && renderProfileIcon()}
-        {isTeacherPage && (
-          <Button asChild variant="ghost" size="sm" className="hidden md:flex">
-            <Link href="/teacher/logout">
-              <LogOut className="mr-2 h-4 w-4"/>
-              Logout
-            </Link>
-          </Button>
-        )}
-         {isStudentPage && (
-          <Button asChild variant="ghost" size="sm" className="hidden md:flex">
-            <Link href="/student/logout">
-              <LogOut className="mr-2 h-4 w-4"/>
-              Logout
-            </Link>
-          </Button>
-        )}
       </div>
     </header>
   );

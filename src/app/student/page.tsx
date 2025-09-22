@@ -1,89 +1,74 @@
-
-
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Header } from '@/components/layout/header';
-import { StudentLoginForm } from '@/app/student/login-form';
 import { StudentDashboard } from '@/app/student/dashboard';
 import type { Student, AttendanceRecord, ExamTypes } from '@/lib/types';
 import { getStudentById, getStudentsByClass, getStudentAttendance } from './actions';
 import { calculateCumulativePercentage, combineMarks } from '@/lib/result-utils';
 import { firestore } from '@/lib/firebase-admin';
-import { getLoggedInStudent } from './actions';
-import { getLoggedInTeacher } from '../teacher/actions';
-
+import { getLoggedInUser } from '../auth/actions';
 
 export default async function StudentPage() {
-  const cookieStore = cookies();
-  const studentId = cookieStore.get('student_id')?.value;
-  const forcePasswordReset = cookieStore.get('force_password_reset')?.value === 'true';
+  const user = await getLoggedInUser();
 
-  let student: Student | null = null;
+  if (!user || user.type !== 'student') {
+    redirect('/login');
+  }
+  
+  const studentId = user.id;
+  const forcePasswordReset = cookies().get('force_password_reset')?.value === 'true';
+
+  const student = await getStudentById(studentId);
+  if (!student) {
+    // This could happen if the student was deleted but the cookie remains
+    redirect('/logout');
+  }
+
   let ranks: { [key in ExamTypes]?: number | null } = {};
   let attendance: AttendanceRecord[] = [];
   let settings: any = {};
   
-  const loggedInStudent = await getLoggedInStudent();
-  const loggedInTeacher = await getLoggedInTeacher();
+  const examTypes: ExamTypes[] = ['quarterly', 'halfYearly', 'annual'];
+  for (const examType of examTypes) {
+      const classmates = await getStudentsByClass(student.class, examType);
+      const studentsWithPercentage = classmates
+          .map(s => {
+              const { marks: combinedStudentMarks, examCyclesWithMarks } = combineMarks(s.marks, examType);
+              return {
+                  id: s.id,
+                  percentage: calculateCumulativePercentage(combinedStudentMarks, examCyclesWithMarks, s.class),
+              }
+          })
+          .filter(s => s.percentage !== null);
+      
+      studentsWithPercentage.sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0));
 
-  if (studentId) {
-    student = await getStudentById(studentId);
-    if (!student) {
-      // If cookie is invalid, redirect to clear it
-      redirect('/student/logout');
-    } else {
-       const examTypes: ExamTypes[] = ['quarterly', 'halfYearly', 'annual'];
+      let currentRank = 0;
+      for (let i = 0; i < studentsWithPercentage.length; i++) {
+          if (i === 0 || studentsWithPercentage[i].percentage! < studentsWithPercentage[i-1].percentage!) {
+              currentRank = i + 1;
+          }
+          if (studentsWithPercentage[i].id === student.id) {
+              ranks[examType] = currentRank;
+              break;
+          }
+      }
+  }
+  
+  attendance = await getStudentAttendance(studentId);
 
-       for (const examType of examTypes) {
-            const classmates = await getStudentsByClass(student.class, examType);
-            const studentsWithPercentage = classmates
-                .map(s => {
-                    const { marks: combinedStudentMarks, examCyclesWithMarks } = combineMarks(s.marks, examType);
-                    return {
-                        id: s.id,
-                        percentage: calculateCumulativePercentage(combinedStudentMarks, examCyclesWithMarks, s.class),
-                    }
-                })
-                .filter(s => s.percentage !== null);
-            
-            studentsWithPercentage.sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0));
-
-            let currentRank = 0;
-            for (let i = 0; i < studentsWithPercentage.length; i++) {
-                if (i === 0 || studentsWithPercentage[i].percentage! < studentsWithPercentage[i-1].percentage!) {
-                    currentRank = i + 1;
-                }
-                if (studentsWithPercentage[i].id === student.id) {
-                    ranks[examType] = currentRank;
-                    break;
-                }
-            }
-       }
-        
-        // Fetch attendance
-        attendance = await getStudentAttendance(studentId);
-
-        // Fetch fee settings
-        if (firestore) {
-            const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
-            if (settingsDoc.exists) {
-                settings = settingsDoc.data() || {};
-            }
-        }
-    }
+  if (firestore) {
+      const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
+      if (settingsDoc.exists) {
+          settings = settingsDoc.data() || {};
+      }
   }
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header student={loggedInStudent} teacher={loggedInTeacher} />
+      <Header user={user} />
       <main className="flex-1">
-        {student ? (
-          <StudentDashboard student={student} ranks={ranks} attendance={attendance} forcePasswordReset={forcePasswordReset} settings={settings} />
-        ) : (
-          <div className="flex items-center justify-center p-4 h-full bg-[rgb(231,249,254)]">
-            <StudentLoginForm />
-          </div>
-        )}
+        <StudentDashboard student={student} ranks={ranks} attendance={attendance} forcePasswordReset={forcePasswordReset} settings={settings} />
       </main>
     </div>
   );
