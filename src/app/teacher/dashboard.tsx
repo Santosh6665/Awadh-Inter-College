@@ -14,6 +14,7 @@ import { CheckCircle, XCircle, Download } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { SalarySlip } from '../admin/dashboard/salary/salary-slip';
+import { AttendanceHistory } from '../student/attendance-history';
 
 interface TeacherDashboardProps {
   teacher: Teacher;
@@ -33,25 +34,10 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
     return name.substring(0, 2);
   };
 
-  const attendancePercentage = useMemo(() => {
-    if (attendance.length === 0) return 'N/A';
-    const presentDays = attendance.filter(a => a.status === 'present').length;
-    return `${((presentDays / attendance.length) * 100).toFixed(2)}%`;
-  }, [attendance]);
-  
   const totalSalaryPaid = useMemo(() => {
     return (teacher.salaryPayments || []).reduce((acc, p) => acc + p.amount, 0);
   }, [teacher.salaryPayments]);
 
-
-  const getAttendanceStatusIcon = (status: 'present' | 'absent') => {
-    switch (status) {
-      case 'present':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'absent':
-        return <XCircle className="h-5 w-5 text-red-500" />;
-    }
-  };
   
   const handlePrintSlip = (payment: SalaryPayment) => {
     setSlipToPrint(payment);
@@ -192,48 +178,7 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                 </div>
                             </CardContent>
                         </Card>
-                        <Card>
-                        <CardHeader>
-                            <div className='flex flex-col md:flex-row items-center justify-between'>
-                            <div>
-                                <CardTitle>My Attendance History</CardTitle>
-                                <CardDescription>Your attendance record for the current session.</CardDescription>
-                            </div>
-                            <Badge className="mt-2 md:mt-0">Overall: {attendancePercentage}</Badge>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <div className='overflow-auto max-h-96'>
-                            <Table>
-                                <TableHeader>
-                                <TableRow>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead className="text-right">Status</TableHead>
-                                </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                {attendance.length > 0 ? (
-                                    attendance.map((record) => (
-                                    <TableRow key={record.date}>
-                                        <TableCell>{new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
-                                        <TableCell className="text-right flex items-center justify-end gap-2">
-                                        {getAttendanceStatusIcon(record.status)}
-                                        <span className="capitalize">{record.status}</span>
-                                        </TableCell>
-                                    </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                    <TableCell colSpan={2} className="text-center">
-                                        No attendance records found.
-                                    </TableCell>
-                                    </TableRow>
-                                )}
-                                </TableBody>
-                            </Table>
-                            </div>
-                        </CardContent>
-                        </Card>
+                        <AttendanceHistory attendanceRecords={attendance} />
                     </TabsContent>
                     <TabsContent value="results" className="mt-6">
                         <ResultsManagement students={students} />
