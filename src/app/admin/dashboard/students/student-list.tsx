@@ -75,13 +75,6 @@ export function StudentList({ students }: { students: Student[] }) {
     setStudentToDelete(null);
   };
 
-  const handleOpenChange = (open: boolean) => {
-    setIsFormOpen(open);
-    if (!open) {
-        setSelectedStudent(null);
-    }
-  };
-
   const filteredStudents = students
     .filter(student => {
       const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -209,7 +202,7 @@ export function StudentList({ students }: { students: Student[] }) {
 
       <StudentForm
         isOpen={isFormOpen}
-        setIsOpen={handleOpenChange}
+        setIsOpen={setIsFormOpen}
         student={selectedStudent}
       />
       
