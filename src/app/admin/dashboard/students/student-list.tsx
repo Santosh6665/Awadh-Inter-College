@@ -75,6 +75,12 @@ export function StudentList({ students }: { students: Student[] }) {
     setStudentToDelete(null);
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setIsFormOpen(open);
+    if (!open) {
+        setSelectedStudent(null);
+    }
+  };
 
   const filteredStudents = students
     .filter(student => {
@@ -203,7 +209,7 @@ export function StudentList({ students }: { students: Student[] }) {
 
       <StudentForm
         isOpen={isFormOpen}
-        setIsOpen={setIsFormOpen}
+        setIsOpen={handleOpenChange}
         student={selectedStudent}
       />
       
