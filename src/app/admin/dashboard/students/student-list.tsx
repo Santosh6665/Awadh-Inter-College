@@ -185,7 +185,7 @@ export function StudentList({ students }: { students: Student[] }) {
                               <Edit className="mr-2 h-4 w-4" />
                               <span>Edit</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => confirmDelete(student.id)} className="text-destructive">
+                            <DropdownMenuItem onClick={() => confirmDelete(student.id)} className="text-destructive focus:text-destructive">
                                <Trash2 className="mr-2 h-4 w-4" />
                                <span>Delete</span>
                             </DropdownMenuItem>

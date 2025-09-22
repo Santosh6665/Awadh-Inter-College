@@ -158,7 +158,7 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
                 <Input id="parentPhone" name="parentPhone" defaultValue={student?.parentPhone} placeholder="Enter a single phone number for all siblings" />
             </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsOpen(false)}>
+            <Button variant="outline" type="button" onClick={() => setIsOpen(false)}>
               Cancel
             </Button>
             <SubmitButton isEditing={isEditing} />

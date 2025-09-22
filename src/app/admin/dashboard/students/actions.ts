@@ -19,7 +19,7 @@ const StudentSchema = z.object({
 });
 
 // Update schema doesn't require password, as it's handled by the student now
-const UpdateStudentSchema = StudentSchema;
+const UpdateStudentSchema = StudentSchema.omit({ rollNumber: true });
 
 
 export type StudentFormState = {
@@ -75,8 +75,12 @@ export async function updateStudent(
   if (!id) {
     return { success: false, message: 'Student ID is missing.' };
   }
+  
+  const rawData = Object.fromEntries(formData.entries());
+  // The roll number is read-only and should not be part of the update.
+  delete rawData.rollNumber;
 
-  const validatedFields = UpdateStudentSchema.safeParse(Object.fromEntries(formData.entries()));
+  const validatedFields = UpdateStudentSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
     return {
