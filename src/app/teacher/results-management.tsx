@@ -25,6 +25,7 @@ export function ResultsManagement({ students, teacher }: { students: Student[], 
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
+  const [sectionFilter, setSectionFilter] = useState('');
   const [examType, setExamType] = useState<ExamTypes>('annual');
   const { toast } = useToast();
   
@@ -46,8 +47,9 @@ export function ResultsManagement({ students, teacher }: { students: Student[], 
   const filteredStudents = students.filter(student => {
     const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
     const classMatch = classFilter ? student.class === classFilter : true;
-    return nameMatch && classMatch;
-  });
+    const sectionMatch = sectionFilter ? student.section === sectionFilter : true;
+    return nameMatch && classMatch && sectionMatch;
+  }).sort((a, b) => a.name.localeCompare(b.name));
 
   const studentRanks = useMemo(() => {
     const ranks = new Map<string, number>();
@@ -120,12 +122,40 @@ export function ResultsManagement({ students, teacher }: { students: Student[], 
                     className="pl-8"
                 />
             </div>
-             <Input
-                placeholder="Filter by class..."
-                value={classFilter}
-                onChange={(e) => setClassFilter(e.target.value)}
-                className="w-full"
-            />
+             <Select value={classFilter} onValueChange={(value) => setClassFilter(value === 'all' ? '' : value)}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Filter by class..." />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Classes</SelectItem>
+                    <SelectItem value="Nursery">Nursery</SelectItem>
+                    <SelectItem value="LKG">LKG</SelectItem>
+                    <SelectItem value="UKG">UKG</SelectItem>
+                    <SelectItem value="1">Class 1</SelectItem>
+                    <SelectItem value="2">Class 2</SelectItem>
+                    <SelectItem value="3">Class 3</SelectItem>
+                    <SelectItem value="4">Class 4</SelectItem>
+                    <SelectItem value="5">Class 5</SelectItem>
+                    <SelectItem value="6">Class 6</SelectItem>
+                    <SelectItem value="7">Class 7</SelectItem>
+                    <SelectItem value="8">Class 8</SelectItem>
+                    <SelectItem value="9">Class 9</SelectItem>
+                    <SelectItem value="10">Class 10</SelectItem>
+                    <SelectItem value="11">Class 11</SelectItem>
+                    <SelectItem value="12">Class 12</SelectItem>
+                </SelectContent>
+            </Select>
+            <Select value={sectionFilter} onValueChange={(value) => setSectionFilter(value === 'all' ? '' : value)}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Filter by section..." />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Sections</SelectItem>
+                    <SelectItem value="A">A</SelectItem>
+                    <SelectItem value="B">B</SelectItem>
+                    <SelectItem value="C">C</SelectItem>
+                </SelectContent>
+            </Select>
           </div>
         </CardHeader>
         <CardContent>
