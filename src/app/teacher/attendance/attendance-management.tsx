@@ -18,12 +18,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon, Search, Eye } from "lucide-react";
+import { Calendar as CalendarIcon, Search, Eye, Tent, DoorClosed } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
 import { getAttendanceByDate, setAttendance as setAttendanceAction, getStudentAttendanceHistory } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { AttendanceHistoryDialog } from '@/app/admin/dashboard/attendance/attendance-history-dialog';
+import { isHoliday, getSchoolStatus } from '@/app/admin/dashboard/teacher-attendance/actions';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type AttendanceStatus = 'present' | 'absent';
 type AttendanceData = {
@@ -47,12 +49,31 @@ export function AttendanceManagement({ students, teacher }: AttendanceManagement
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [studentHistory, setStudentHistory] = useState<AttendanceRecord[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
+  
+  const [isDateHoliday, setIsDateHoliday] = useState(false);
+  const [holidayName, setHolidayName] = useState('');
+  const [isSchoolClosed, setIsSchoolClosed] = useState(false);
+  const [closedReason, setClosedReason] = useState('');
 
   const canEditAttendance = teacher?.canEditAttendance ?? false;
   const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
 
-  const fetchAttendance = useCallback(async () => {
+  const checkDateStatus = useCallback(async () => {
     setLoading(true);
+    const holidayStatus = await isHoliday(formattedDate);
+    setIsDateHoliday(holidayStatus.isHoliday);
+    setHolidayName(holidayStatus.name || 'Holiday');
+
+    if (!holidayStatus.isHoliday) {
+        const schoolStatus = await getSchoolStatus(formattedDate);
+        setIsSchoolClosed(schoolStatus.isClosed);
+        setClosedReason(schoolStatus.reason || 'School is closed');
+    } else {
+        setIsSchoolClosed(false);
+    }
+  }, [formattedDate]);
+
+  const fetchAttendance = useCallback(async () => {
     try {
         const data = await getAttendanceByDate(formattedDate);
         setAttendance(data || {});
@@ -70,8 +91,15 @@ export function AttendanceManagement({ students, teacher }: AttendanceManagement
   }, [formattedDate, toast]);
 
   useEffect(() => {
-    fetchAttendance();
-  }, [fetchAttendance]);
+    async function loadData() {
+        setLoading(true);
+        await checkDateStatus();
+        await fetchAttendance();
+        setLoading(false);
+    }
+    loadData();
+  }, [checkDateStatus, fetchAttendance]);
+
 
   const handleStatusChange = async (studentId: string, status: AttendanceStatus) => {
     if (!canEditAttendance) {
@@ -192,6 +220,23 @@ export function AttendanceManagement({ students, teacher }: AttendanceManagement
         </div>
       </CardHeader>
       <CardContent>
+        {isDateHoliday ? (
+          <Alert>
+            <Tent className="h-4 w-4" />
+            <AlertTitle>{holidayName}</AlertTitle>
+            <AlertDescription>
+              The selected date is marked as a holiday. Attendance cannot be recorded.
+            </AlertDescription>
+          </Alert>
+        ) : isSchoolClosed ? (
+          <Alert variant="destructive">
+            <DoorClosed className="h-4 w-4" />
+            <AlertTitle>School is Closed</AlertTitle>
+            <AlertDescription>
+              {closedReason} Attendance cannot be recorded.
+            </AlertDescription>
+          </Alert>
+        ) : (
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -251,6 +296,7 @@ export function AttendanceManagement({ students, teacher }: AttendanceManagement
             </TableBody>
           </Table>
         </div>
+        )}
       </CardContent>
     </Card>
      <AttendanceHistoryDialog
