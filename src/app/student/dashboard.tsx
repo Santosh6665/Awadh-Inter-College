@@ -179,30 +179,30 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                     </TableBody>
                     <TableFooter>
                         <TableRow className="font-semibold bg-muted/50">
-                            <TableCell>Total Obtained Marks</TableCell>
+                            <TableCell>Total Obtained</TableCell>
                              {examColumns.map(col => {
                                 const obtained = subjectKeys.reduce((acc, sub) => acc + (student.marks?.[col.key]?.[sub] ?? 0), 0);
                                 return (
-                                    <TableCell key={`${col.key}-obtained`} className="text-center">
-                                        {obtained}
+                                    <TableCell key={`${col.key}-obtained`} className="text-center font-mono">
+                                        {obtained > 0 ? obtained : '-'}
                                     </TableCell>
                                 );
                             })}
-                            <TableCell className="text-center text-base font-bold">{totals.totalObtainedMarks}</TableCell>
-                            <TableCell className="text-center text-base font-bold">{totals.totalMaxMarks}</TableCell>
+                            <TableCell className="text-center text-base font-bold font-mono">{totals.totalObtainedMarks}</TableCell>
+                            <TableCell className="text-center font-mono">{totals.totalMaxMarks}</TableCell>
                         </TableRow>
                         <TableRow className="font-semibold bg-muted/50">
-                            <TableCell>Maximum Marks</TableCell>
+                            <TableCell>Max Marks</TableCell>
                             {examColumns.map(col => {
                                 const max = subjectKeys.filter(sub => student.marks?.[col.key]?.[sub] !== undefined && student.marks?.[col.key]?.[sub] !== null).length * 100;
                                 return (
-                                    <TableCell key={`${col.key}-max`} className="text-center">
-                                        {max}
+                                    <TableCell key={`${col.key}-max`} className="text-center font-mono">
+                                        {max > 0 ? max : '-'}
                                     </TableCell>
                                 );
                             })}
-                            <TableCell className="text-center text-base font-bold">{totals.totalMaxMarks}</TableCell>
-                             <TableCell className="text-center text-base font-bold">{totals.totalMaxMarks}</TableCell>
+                            <TableCell className="text-center font-mono">{totals.totalMaxMarks}</TableCell>
+                             <TableCell className="text-center text-base font-bold font-mono">{totals.totalMaxMarks}</TableCell>
                         </TableRow>
                     </TableFooter>
                   </Table>
@@ -360,7 +360,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                                         {feeDetails.structuredFees.map((fee, index) => (
                                             <TableRow key={index}>
                                                 <TableCell>{fee.head}</TableCell>
-                                                <TableCell className={cn("text-right", fee.amount < 0 && 'text-green-600')}>{fee.amount.toFixed(2)}</TableCell>
+                                                <TableCell className={cn("text-right", fee.amount < 0 && 'text-green-600')}>Rs{fee.amount.toFixed(2)}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
