@@ -23,7 +23,7 @@ import { format } from "date-fns";
 import { cn } from '@/lib/utils';
 import { getAttendanceByDate, setAttendance as setAttendanceAction, getStudentAttendanceHistory, isHoliday, getSchoolStatus } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { AttendanceHistoryDialog } from '@/app/admin/dashboard/attendance/attendance-history-dialog';
+import { AttendanceHistoryDialog } from './attendance-history-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
