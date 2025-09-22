@@ -157,54 +157,89 @@ export async function recordCombinedPayment(
     return { success: false, message: 'Validation failed. Please check payment details.' };
   }
 
-  let totalAmountToDistribute = validatedFields.data.amount;
-  const paymentMethod = validatedFields.data.method;
-  const paymentDate = validatedFields.data.date;
+  const { amount: totalPayment, method, date } = validatedFields.data;
+  let remainingPayment = totalPayment;
 
   try {
     const feeSettings = await getFeeSettings();
     const batch = firestore.batch();
 
-    for (const studentId of studentIds) {
-      if (totalAmountToDistribute <= 0) break;
-
-      const studentDocRef = firestore.collection('students').doc(studentId);
-      const studentDoc = await studentDocRef.get();
-      if (!studentDoc.exists) continue;
-      
-      const studentData = studentDoc.data();
-      if (!studentData) continue;
-
-      // Determine if sibling discount applies (more than one child and not the first in the list)
-      const isSibling = studentIds.length > 1 && studentIds[0] !== studentId;
-      const totalFees = calculateTotalFees(studentData, feeSettings, isSibling);
-      const totalPaid = (studentData.payments || []).reduce((acc: number, p: any) => acc + p.amount, 0);
-      const due = totalFees - totalPaid;
-
-      if (due > 0) {
-        const amountToPayForThisStudent = Math.min(due, totalAmountToDistribute);
+    const studentDueDetails = await Promise.all(
+      studentIds.map(async (studentId) => {
+        const studentDoc = await firestore.collection('students').doc(studentId).get();
+        if (!studentDoc.exists) return null;
         
-        const newPayment = {
-            id: `${new Date().getTime().toString()}-${studentId}`,
-            amount: amountToPayForThisStudent,
-            method: paymentMethod,
-            date: paymentDate,
-            month: new Date(paymentDate).toLocaleString('default', { month: 'long' }),
-        };
+        const studentData = studentDoc.data();
+        if (!studentData) return null;
 
-        batch.update(studentDocRef, {
-            payments: FieldValue.arrayUnion(newPayment),
-            updatedAt: new Date()
-        });
+        const isSibling = studentIds.length > 1 && studentIds[0] !== studentId;
+        const totalFees = calculateTotalFees(studentData, feeSettings, isSibling);
+        const totalPaid = (studentData.payments || []).reduce((acc: number, p: any) => acc + p.amount, 0);
+        const due = Math.max(0, totalFees - totalPaid);
+        
+        return { id: studentId, due, ref: studentDoc.ref };
+      })
+    );
 
-        totalAmountToDistribute -= amountToPayForThisStudent;
-      }
+    let childrenWithDues = studentDueDetails.filter(s => s && s.due > 0) as { id: string; due: number; ref: FirebaseFirestore.DocumentReference }[];
+    let paymentDistribution: { [studentId: string]: number } = {};
+
+    // This loop continues as long as there's money to distribute and children who owe money
+    while (remainingPayment > 0 && childrenWithDues.length > 0) {
+        const totalDueOfRemainingChildren = childrenWithDues.reduce((acc, s) => acc + s.due, 0);
+        if (totalDueOfRemainingChildren === 0) break;
+
+        let surplus = 0;
+        
+        for (const student of childrenWithDues) {
+            // Proportional distribution for the current remaining amount
+            const proportionalShare = (student.due / totalDueOfRemainingChildren) * remainingPayment;
+            const amountToPay = Math.min(student.due, proportionalShare);
+            
+            paymentDistribution[student.id] = (paymentDistribution[student.id] || 0) + amountToPay;
+            student.due -= amountToPay;
+            surplus += (proportionalShare - amountToPay);
+        }
+
+        remainingPayment = surplus;
+        childrenWithDues = childrenWithDues.filter(s => s.due > 0);
+    }
+
+    // After loops, if there's still money, distribute it to anyone still owing
+    if (remainingPayment > 0 && childrenWithDues.length > 0) {
+        for (const student of childrenWithDues) {
+            const amountToPay = Math.min(student.due, remainingPayment);
+            paymentDistribution[student.id] = (paymentDistribution[student.id] || 0) + amountToPay;
+            student.due -= amountToPay;
+            remainingPayment -= amountToPay;
+            if (remainingPayment <= 0) break;
+        }
+    }
+
+
+    // Now, commit the payments to Firestore
+    for (const studentId in paymentDistribution) {
+        const paidAmount = paymentDistribution[studentId];
+        if (paidAmount > 0) {
+            const newPayment = {
+                id: `${new Date().getTime().toString()}-${studentId}`,
+                amount: paidAmount,
+                method: method,
+                date: date,
+                month: new Date(date).toLocaleString('default', { month: 'long' }),
+            };
+            const studentRef = firestore.collection('students').doc(studentId);
+            batch.update(studentRef, {
+                payments: FieldValue.arrayUnion(newPayment),
+                updatedAt: new Date()
+            });
+        }
     }
 
     await batch.commit();
     
     revalidatePath('/admin/dashboard');
-    return { success: true, message: `Combined payment of Rs${validatedFields.data.amount} recorded successfully.` };
+    return { success: true, message: `Combined payment of Rs${totalPayment} recorded successfully.` };
   } catch (error) {
     console.error('Error in combined payment:', error);
     return { success: false, message: 'An unexpected error occurred during combined payment.' };
