@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import type { Teacher } from '@/lib/types';
 import { addTeacher, updateTeacher, type TeacherFormState } from './actions';
+import { Switch } from '@/components/ui/switch';
 
 interface TeacherFormProps {
   isOpen: boolean;
@@ -108,6 +109,10 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
               <Input id="qualification" name="qualification" defaultValue={teacher?.qualification} />
             </div>
           </div>
+           <div className="flex items-center space-x-2">
+              <Switch id="canEditAttendance" name="canEditAttendance" defaultChecked={teacher?.canEditAttendance} />
+              <Label htmlFor="canEditAttendance">Allow Attendance Editing</Label>
+            </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsOpen(false)}>
               Cancel

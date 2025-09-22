@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import type { Student, AttendanceRecord } from '@/lib/types';
+import type { Student, AttendanceRecord, Teacher } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -30,7 +30,12 @@ type AttendanceData = {
   [studentId: string]: { status: AttendanceStatus };
 };
 
-export function AttendanceManagement({ students }: { students: Student[] }) {
+interface AttendanceManagementProps {
+  students: Student[];
+  teacher: Teacher;
+}
+
+export function AttendanceManagement({ students, teacher }: AttendanceManagementProps) {
   const [date, setDate] = useState<Date>(new Date());
   const [attendance, setAttendance] = useState<AttendanceData>({});
   const [loading, setLoading] = useState(false);
@@ -43,6 +48,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
   const [studentHistory, setStudentHistory] = useState<AttendanceRecord[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
+  const canEditAttendance = teacher?.canEditAttendance ?? false;
   const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
 
   const fetchAttendance = useCallback(async () => {
@@ -68,6 +74,15 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
   }, [fetchAttendance]);
 
   const handleStatusChange = async (studentId: string, status: AttendanceStatus) => {
+    if (!canEditAttendance) {
+        toast({
+            title: 'Permission Denied',
+            description: "You do not have permission to edit attendance.",
+            variant: 'destructive'
+        });
+        return;
+    }
+
     // Optimistic UI update
     setAttendance(prev => ({ ...prev, [studentId]: { status } }));
     
@@ -124,7 +139,12 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className='w-full'>
                 <CardTitle>Attendance Management</CardTitle>
-                <CardDescription>Mark and track student attendance for the selected date.</CardDescription>
+                <CardDescription>
+                    {canEditAttendance 
+                        ? "Mark and track student attendance for the selected date."
+                        : "View student attendance. You do not have permission to make changes."
+                    }
+                </CardDescription>
             </div>
             <Popover>
                 <PopoverTrigger asChild>
@@ -201,6 +221,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
                           onValueChange={(value) => handleStatusChange(student.id, value as AttendanceStatus)}
                           value={status}
                           className="flex justify-end gap-2 md:gap-4"
+                          disabled={!canEditAttendance}
                         >
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="present" id={`present-${student.id}`} />

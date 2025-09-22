@@ -13,6 +13,7 @@ const TeacherSchema = z.object({
   phone: z.string().min(10, 'Phone number must be at least 10 digits.'),
   dob: z.string().optional(),
   qualification: z.string().optional(),
+  canEditAttendance: z.preprocess((val) => val === 'on', z.boolean()).optional(),
 });
 
 export type TeacherFormState = {
@@ -135,5 +136,19 @@ export async function getTeachers(): Promise<Teacher[]> {
   } catch (error) {
     console.error('Error fetching teachers:', error);
     return [];
+  }
+}
+
+export async function toggleAttendancePermission(id: string, canEditAttendance: boolean) {
+  if (!id) {
+    return { success: false, message: 'Teacher ID is missing.' };
+  }
+  try {
+    await firestore.collection('teachers').doc(id).update({ canEditAttendance });
+    revalidatePath('/admin/dashboard');
+    return { success: true, message: 'Permission updated successfully.' };
+  } catch (error) {
+    console.error('Error updating permission:', error);
+    return { success: false, message: 'An unexpected error occurred.' };
   }
 }

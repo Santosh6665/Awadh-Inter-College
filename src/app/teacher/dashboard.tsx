@@ -184,7 +184,7 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                         <ResultsManagement students={students} />
                     </TabsContent>
                     <TabsContent value="attendance" className="mt-6">
-                        <AttendanceManagement students={students} />
+                        <AttendanceManagement students={students} teacher={teacher} />
                     </TabsContent>
                 </Tabs>
                 </CardContent>
