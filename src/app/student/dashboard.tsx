@@ -322,18 +322,6 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                     </Card>
                 </TabsContent>
                 <TabsContent value="results" className="mt-6">
-                    <div className="flex justify-end mb-4 print-hidden">
-                        <Select value={examType} onValueChange={(value) => setExamType(value as ExamTypes)}>
-                            <SelectTrigger className="w-full md:w-[180px]">
-                                <SelectValue placeholder="Select Exam" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="quarterly">Quarterly</SelectItem>
-                                <SelectItem value="halfYearly">Half-Yearly</SelectItem>
-                                <SelectItem value="annual">Annual</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
                     <ResultCard student={student} examType={examType} />
                 </TabsContent>
                 <TabsContent value="attendance" className="mt-6">
