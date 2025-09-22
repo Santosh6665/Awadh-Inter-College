@@ -14,6 +14,7 @@ const MarksSchema = z.object({
   remarks: z.string().optional(),
 });
 
+const ExamTypeSchema = z.enum(['quarterly', 'halfYearly', 'annual']);
 
 export type MarksFormState = {
   success: boolean;
@@ -25,11 +26,17 @@ export type MarksFormState = {
 
 export async function updateStudentMarks(
   id: string,
+  examType: z.infer<typeof ExamTypeSchema>,
   prevState: MarksFormState,
   formData: FormData
 ): Promise<MarksFormState> {
   if (!id) {
     return { success: false, message: 'Student ID is missing.' };
+  }
+  
+  const validatedExamType = ExamTypeSchema.safeParse(examType);
+  if(!validatedExamType.success) {
+    return { success: false, message: 'Invalid exam type.' };
   }
 
   const validatedFields = MarksSchema.safeParse(Object.fromEntries(formData.entries()));
@@ -51,10 +58,12 @@ export async function updateStudentMarks(
     );
     
     const studentDoc = firestore.collection('students').doc(id);
-    await studentDoc.update({
-        marks: marksForUpdate,
+    await studentDoc.set({
+        marks: {
+            [validatedExamType.data]: marksForUpdate
+        },
         updatedAt: new Date()
-    });
+    }, { merge: true });
 
     revalidatePath('/admin/dashboard');
     revalidatePath('/student');

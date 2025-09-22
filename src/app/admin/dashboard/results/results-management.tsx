@@ -2,7 +2,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { Student } from '@/lib/types';
+import type { Student, ExamTypes } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,12 +17,14 @@ import {
 import { Search, Edit } from 'lucide-react';
 import { UpdateMarksForm } from './update-marks-form';
 import { calculatePercentage, calculateGrade } from '@/lib/result-utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export function ResultsManagement({ students }: { students: Student[] }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
+  const [examType, setExamType] = useState<ExamTypes>('annual');
   
   const handleEdit = (student: Student) => {
     setSelectedStudent(student);
@@ -40,7 +42,7 @@ export function ResultsManagement({ students }: { students: Student[] }) {
     const studentsWithPercentage = students
       .map(student => ({
         ...student,
-        percentage: calculatePercentage(student.marks),
+        percentage: calculatePercentage(student.marks?.[examType]),
       }))
       .filter(s => s.percentage !== null);
 
@@ -58,14 +60,14 @@ export function ResultsManagement({ students }: { students: Student[] }) {
       
       let rank = 1;
       for (let i = 0; i < classStudents.length; i++) {
-        if (i > 0 && classStudents[i].percentage < classStudents[i - 1].percentage) {
+        if (i > 0 && classStudents[i].percentage! < classStudents[i - 1].percentage!) {
           rank = i + 1;
         }
         ranks.set(classStudents[i].id, rank);
       }
     }
     return ranks;
-  }, [students]);
+  }, [students, examType]);
 
 
   return (
@@ -75,8 +77,18 @@ export function ResultsManagement({ students }: { students: Student[] }) {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className='w-full'>
                 <CardTitle>Manage Student Results</CardTitle>
-                <CardDescription>Update marks and view grades for students.</CardDescription>
+                <CardDescription>Update marks and view grades for students for the selected exam.</CardDescription>
             </div>
+             <Select value={examType} onValueChange={(value) => setExamType(value as ExamTypes)}>
+                <SelectTrigger className="w-full md:w-[180px]">
+                    <SelectValue placeholder="Select Exam Type" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="quarterly">Quarterly</SelectItem>
+                    <SelectItem value="halfYearly">Half-Yearly</SelectItem>
+                    <SelectItem value="annual">Annual</SelectItem>
+                </SelectContent>
+            </Select>
           </div>
           <div className="mt-4 flex flex-col md:flex-row items-center gap-4">
             <div className="relative w-full">
@@ -118,7 +130,8 @@ export function ResultsManagement({ students }: { students: Student[] }) {
               <TableBody>
                 {filteredStudents.length > 0 ? (
                   filteredStudents.map((student) => {
-                    const percentage = calculatePercentage(student.marks);
+                    const studentMarks = student.marks?.[examType];
+                    const percentage = calculatePercentage(studentMarks);
                     const grade = calculateGrade(percentage);
                     const rank = studentRanks.get(student.id);
                     return (
@@ -126,11 +139,11 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                             <TableCell className="hidden md:table-cell">{student.rollNumber}</TableCell>
                             <TableCell>{student.name}</TableCell>
                             <TableCell className="hidden md:table-cell">{`${student.class}-${student.section}`}</TableCell>
-                            <TableCell className="hidden lg:table-cell">{student.marks?.physics ?? 'N/A'}</TableCell>
-                            <TableCell className="hidden lg:table-cell">{student.marks?.chemistry ?? 'N/A'}</TableCell>
-                            <TableCell className="hidden lg:table-cell">{student.marks?.maths ?? 'N/A'}</TableCell>
-                            <TableCell className="hidden lg:table-cell">{student.marks?.english ?? 'N/A'}</TableCell>
-                            <TableCell className="hidden lg:table-cell">{student.marks?.computerScience ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{studentMarks?.physics ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{studentMarks?.chemistry ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{studentMarks?.maths ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{studentMarks?.english ?? 'N/A'}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{studentMarks?.computerScience ?? 'N/A'}</TableCell>
                             <TableCell>{percentage !== null ? `${percentage.toFixed(2)}%` : 'N/A'}</TableCell>
                             <TableCell>{grade}</TableCell>
                             <TableCell>{rank ?? 'N/A'}</TableCell>
@@ -159,6 +172,7 @@ export function ResultsManagement({ students }: { students: Student[] }) {
         isOpen={isFormOpen}
         setIsOpen={setIsFormOpen}
         student={selectedStudent}
+        examType={examType}
       />
     </>
   );

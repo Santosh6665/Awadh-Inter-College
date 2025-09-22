@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import type { Student } from '@/lib/types';
+import type { Student, ExamTypes } from '@/lib/types';
 import { updateStudentMarks, type MarksFormState } from './actions';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -25,6 +25,7 @@ interface UpdateMarksFormProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   student?: Student | null;
+  examType: ExamTypes;
 }
 
 const initialState: MarksFormState = {
@@ -43,10 +44,10 @@ function SubmitButton() {
   );
 }
 
-export function UpdateMarksForm({ isOpen, setIsOpen, student }: UpdateMarksFormProps) {
+export function UpdateMarksForm({ isOpen, setIsOpen, student, examType }: UpdateMarksFormProps) {
   const { toast } = useToast();
   
-  const action = student ? updateStudentMarks.bind(null, student.id) : async () => initialState;
+  const action = student ? updateStudentMarks.bind(null, student.id, examType) : async () => initialState;
   const [state, formAction] = useActionState(action, initialState);
 
   useEffect(() => {
@@ -66,12 +67,15 @@ export function UpdateMarksForm({ isOpen, setIsOpen, student }: UpdateMarksFormP
   }, [state, toast, setIsOpen]);
 
   if (!student) return null;
+  
+  const studentMarks = student.marks?.[examType];
+  const examTitle = examType.charAt(0).toUpperCase() + examType.slice(1);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Update Marks for {student.name}</DialogTitle>
+          <DialogTitle>Update {examTitle} Marks for {student.name}</DialogTitle>
           <DialogDescription>
             Enter the marks obtained out of 100 for each subject.
           </DialogDescription>
@@ -80,30 +84,30 @@ export function UpdateMarksForm({ isOpen, setIsOpen, student }: UpdateMarksFormP
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="physics">Physics</Label>
-              <Input id="physics" name="physics" type="number" defaultValue={student.marks?.physics} />
+              <Input id="physics" name="physics" type="number" defaultValue={studentMarks?.physics} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="chemistry">Chemistry</Label>
-              <Input id="chemistry" name="chemistry" type="number" defaultValue={student.marks?.chemistry} />
+              <Input id="chemistry" name="chemistry" type="number" defaultValue={studentMarks?.chemistry} />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="maths">Maths</Label>
-              <Input id="maths" name="maths" type="number" defaultValue={student.marks?.maths} />
+              <Input id="maths" name="maths" type="number" defaultValue={studentMarks?.maths} />
             </div>
              <div className="space-y-2">
               <Label htmlFor="english">English</Label>
-              <Input id="english" name="english" type="number" defaultValue={student.marks?.english} />
+              <Input id="english" name="english" type="number" defaultValue={studentMarks?.english} />
             </div>
           </div>
            <div className="space-y-2">
               <Label htmlFor="computerScience">Computer Science</Label>
-              <Input id="computerScience" name="computerScience" type="number" defaultValue={student.marks?.computerScience} />
+              <Input id="computerScience" name="computerScience" type="number" defaultValue={studentMarks?.computerScience} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="remarks">Remarks</Label>
-              <Textarea id="remarks" name="remarks" defaultValue={student.marks?.remarks} placeholder="Enter remarks..."/>
+              <Textarea id="remarks" name="remarks" defaultValue={studentMarks?.remarks} placeholder="Enter remarks..."/>
             </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsOpen(false)}>

@@ -1,7 +1,7 @@
 
 'use client';
 
-import type { Student, AttendanceRecord, Payment } from '@/lib/types';
+import type { Student, AttendanceRecord, Payment, ExamTypes, Marks } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -16,18 +16,20 @@ import { cn } from '@/lib/utils';
 import { FeeReceipt } from './fee-receipt';
 import { Logo } from '@/components/layout/logo';
 import { AttendanceHistory } from './attendance-history';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 interface StudentDashboardProps {
   student: Student;
-  rank: number | null;
+  ranks: { [key in ExamTypes]?: number | null };
   attendance: AttendanceRecord[];
   forcePasswordReset: boolean;
   feeSettings: any;
 }
 
-export function StudentDashboard({ student, rank, attendance, forcePasswordReset, feeSettings }: StudentDashboardProps) {
+export function StudentDashboard({ student, ranks, attendance, forcePasswordReset, feeSettings }: StudentDashboardProps) {
   const [receiptToPrint, setReceiptToPrint] = useState<Payment | null>(null);
+  const [examType, setExamType] = useState<ExamTypes>('annual');
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -36,14 +38,7 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
     }
     return name.substring(0, 2);
   };
-
-  const percentage = calculatePercentage(student.marks);
-  const grade = calculateGrade(percentage);
-  const totals = calculateTotals(student.marks);
-  const resultStatus = grade === 'F' ? 'Fail' : 'Pass';
-
-  const hasMarks = student.marks && Object.values(student.marks).some(mark => typeof mark === 'number');
-
+  
   const handlePrintResult = () => {
     document.body.classList.add('print-result-card');
     window.print();
@@ -92,6 +87,120 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
 
     return { structuredFees, totalFees, totalPaid, due, paymentPlan };
   }, [student, feeSettings]);
+
+  const ResultCard = ({ marks, examType }: { marks?: Marks | null, examType: ExamTypes }) => {
+    const percentage = calculatePercentage(marks);
+    const grade = calculateGrade(percentage);
+    const totals = calculateTotals(marks);
+    const resultStatus = grade === 'F' ? 'Fail' : 'Pass';
+    const hasMarks = marks && Object.values(marks).some(mark => typeof mark === 'number');
+    const examTitle = examType.charAt(0).toUpperCase() + examType.slice(1);
+
+    return (
+      <div id="result-card-to-print" className="print-block">
+        <Card id="result-card" className="border-2 shadow-lg print-area">
+          <CardHeader className="p-4 bg-muted/30">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <Logo className="h-16 w-16" />
+                <div className="text-center sm:text-left">
+                  <h2 className="text-2xl font-bold text-primary">Awadh Inter College</h2>
+                  <p className="text-xs text-muted-foreground">Ghosiyari bazar, bansi, Siddharth Nagar, 272148</p>
+                  <div className="flex items-center justify-center sm:justify-start gap-2 text-xs text-muted-foreground mt-1">
+                    <Phone className="h-3 w-3" /> <span>+91 6393071946</span>
+                    <Mail className="h-3 w-3" /> <span>info@awadhcollege.edu</span>
+                  </div>
+                </div>
+              </div>
+              <Button onClick={handlePrintResult} variant="outline" size="sm" className="print-hidden self-start sm:self-center">
+                <Download className="mr-2 h-4 w-4" />
+                Download
+              </Button>
+            </div>
+            <div className="text-center mt-2">
+              <Badge variant="secondary" className="text-base font-bold tracking-wider">🎓 {examTitle} Exam Result Card</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {hasMarks ? (
+              <>
+                <div className="border rounded-lg p-4">
+                  <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><User className="h-5 w-5 text-primary" /> Student Details</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-1 text-sm">
+                    <div><strong>Name:</strong> {student.name}</div>
+                    <div><strong>Roll No.:</strong> {student.rollNumber}</div>
+                    <div><strong>Class/Section:</strong> {`${student.class}-${student.section}`}</div>
+                    <div><strong>Date of Birth:</strong> {new Date(student.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</div>
+                  </div>
+                </div>
+                <div className="border rounded-lg p-4">
+                  <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><BookOpen className="h-5 w-5 text-primary" /> Academic Performance</h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Subject</TableHead>
+                        <TableHead className="text-center">Maximum Marks</TableHead>
+                        <TableHead className="text-center">Marks Obtained</TableHead>
+                        <TableHead className="text-right">Grade</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {Object.entries(marks || {}).filter(([key]) => key !== 'remarks' && typeof marks?.[key as keyof typeof marks] === 'number').map(([subject, markValue]) => (
+                        <TableRow key={subject}>
+                          <TableCell className="capitalize">{subject.replace(/([A-Z])/g, ' $1')}</TableCell>
+                          <TableCell className="text-center">100</TableCell>
+                          <TableCell className="text-center">{markValue ?? 'N/A'}</TableCell>
+                          <TableCell className="text-right">{calculateGrade(markValue as number)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow className="font-bold bg-muted/50">
+                        <TableCell>Total</TableCell>
+                        <TableCell className="text-center">{totals.totalMaxMarks}</TableCell>
+                        <TableCell className="text-center">{totals.totalObtainedMarks}</TableCell>
+                        <TableCell className="text-right">—</TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="border rounded-lg p-4">
+                    <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><BarChart3 className="h-5 w-5 text-primary" /> Summary</h3>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between"><strong>Percentage:</strong> <span className="font-mono">{percentage?.toFixed(2)}%</span></div>
+                      <div className="flex justify-between"><strong>Overall Grade:</strong> <span className="font-mono">{grade}</span></div>
+                      <div className="flex justify-between"><strong>Class Rank:</strong> <span className="font-mono">{ranks[examType] ?? 'N/A'}</span></div>
+                      <div className="flex justify-between"><strong>Result Status:</strong> <Badge className={cn(resultStatus === 'Pass' ? 'bg-green-600' : 'bg-red-600', 'text-white')}>{resultStatus === 'Pass' ? '✅ Pass' : '❌ Fail'}</Badge></div>
+                    </div>
+                  </div>
+                  <div className="border rounded-lg p-4">
+                    <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><GraduationCap className="h-5 w-5 text-primary" /> Remarks</h3>
+                    <p className="text-sm text-muted-foreground italic">
+                      “{marks?.remarks || 'Good effort. Keep improving.'}”
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-8">
+                  <h3 className="font-semibold text-lg mb-8 text-center flex items-center justify-center gap-2">🔖 Signatures</h3>
+                  <div className="flex justify-between text-center">
+                    <div>
+                      <p className="border-t-2 border-dashed pt-2">Class Teacher</p>
+                    </div>
+                    <div>
+                      <p className="border-t-2 border-dashed pt-2">Principal</p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="text-muted-foreground text-center py-8">No results are available for the {examTitle} exam.</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
 
 
   return (
@@ -171,110 +280,19 @@ export function StudentDashboard({ student, rank, attendance, forcePasswordReset
                     </Card>
                 </TabsContent>
                 <TabsContent value="results" className="mt-6">
-                    <div id="result-card-to-print" className="print-block">
-                        <Card id="result-card" className="border-2 shadow-lg print-area">
-                            <CardHeader className="p-4 bg-muted/30">
-                                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                                    <div className="flex items-center gap-4">
-                                        <Logo className="h-16 w-16" />
-                                        <div className="text-center sm:text-left">
-                                            <h2 className="text-2xl font-bold text-primary">Awadh Inter College</h2>
-                                            <p className="text-xs text-muted-foreground">Ghosiyari bazar, bansi, Siddharth Nagar, 272148</p>
-                                            <div className="flex items-center justify-center sm:justify-start gap-2 text-xs text-muted-foreground mt-1">
-                                            <Phone className="h-3 w-3" /> <span>+91 6393071946</span>
-                                            <Mail className="h-3 w-3" /> <span>info@awadhcollege.edu</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <Button onClick={handlePrintResult} variant="outline" size="sm" className="print-hidden self-start sm:self-center">
-                                        <Download className="mr-2 h-4 w-4" />
-                                        Download
-                                </Button>
-                                </div>
-                                <div className="text-center mt-2">
-                                    <Badge variant="secondary" className="text-base font-bold tracking-wider">🎓 STUDENT RESULT CARD</Badge>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {hasMarks ? (
-                                    <>
-                                        <div className="border rounded-lg p-4">
-                                            <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><User className="h-5 w-5 text-primary"/> Student Details</h3>
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-1 text-sm">
-                                                <div><strong>Name:</strong> {student.name}</div>
-                                                <div><strong>Roll No.:</strong> {student.rollNumber}</div>
-                                                <div><strong>Class/Section:</strong> {`${student.class}-${student.section}`}</div>
-                                                <div><strong>Date of Birth:</strong> {new Date(student.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</div>
-                                            </div>
-                                        </div>
-
-                                        <div className="border rounded-lg p-4">
-                                            <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><BookOpen className="h-5 w-5 text-primary" /> Academic Performance</h3>
-                                            <Table>
-                                                <TableHeader>
-                                                    <TableRow>
-                                                        <TableHead>Subject</TableHead>
-                                                        <TableHead className="text-center">Maximum Marks</TableHead>
-                                                        <TableHead className="text-center">Marks Obtained</TableHead>
-                                                        <TableHead className="text-right">Grade</TableHead>
-                                                    </TableRow>
-                                                </TableHeader>
-                                                <TableBody>
-                                                    {Object.entries(student.marks || {}).filter(([key]) => key !== 'remarks' && typeof student.marks?.[key as keyof typeof student.marks] === 'number').map(([subject, marks]) => (
-                                                    <TableRow key={subject}>
-                                                        <TableCell className="capitalize">{subject.replace(/([A-Z])/g, ' $1')}</TableCell>
-                                                        <TableCell className="text-center">100</TableCell>
-                                                        <TableCell className="text-center">{marks ?? 'N/A'}</TableCell>
-                                                        <TableCell className="text-right">{calculateGrade(marks as number)}</TableCell>
-                                                    </TableRow>
-                                                    ))}
-                                                </TableBody>
-                                                <TableFooter>
-                                                    <TableRow className="font-bold bg-muted/50">
-                                                        <TableCell>Total</TableCell>
-                                                        <TableCell className="text-center">{totals.totalMaxMarks}</TableCell>
-                                                        <TableCell className="text-center">{totals.totalObtainedMarks}</TableCell>
-                                                        <TableCell className="text-right">—</TableCell>
-                                                    </TableRow>
-                                                </TableFooter>
-                                            </Table>
-                                        </div>
-                                        
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="border rounded-lg p-4">
-                                            <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><BarChart3 className="h-5 w-5 text-primary" /> Summary</h3>
-                                            <div className="space-y-1 text-sm">
-                                                <div className="flex justify-between"><strong>Percentage:</strong> <span className="font-mono">{percentage?.toFixed(2)}%</span></div>
-                                                <div className="flex justify-between"><strong>Overall Grade:</strong> <span className="font-mono">{grade}</span></div>
-                                                <div className="flex justify-between"><strong>Result Status:</strong> <Badge className={cn(resultStatus === 'Pass' ? 'bg-green-600' : 'bg-red-600', 'text-white')}>{resultStatus === 'Pass' ? '✅ Pass' : '❌ Fail'}</Badge></div>
-                                            </div>
-                                            </div>
-                                            <div className="border rounded-lg p-4">
-                                            <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><GraduationCap className="h-5 w-5 text-primary" /> Remarks</h3>
-                                            <p className="text-sm text-muted-foreground italic">
-                                                “{student.marks?.remarks || 'Good effort. Keep improving.'}”
-                                            </p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="pt-8">
-                                            <h3 className="font-semibold text-lg mb-8 text-center flex items-center justify-center gap-2">🔖 Signatures</h3>
-                                            <div className="flex justify-between text-center">
-                                            <div>
-                                                <p className="border-t-2 border-dashed pt-2">Class Teacher</p>
-                                            </div>
-                                            <div>
-                                                <p className="border-t-2 border-dashed pt-2">Principal</p>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <p className="text-muted-foreground text-center py-8">No exam results are available at the moment.</p>
-                                )}
-                            </CardContent>
-                        </Card>
+                    <div className="flex justify-end mb-4 print-hidden">
+                        <Select value={examType} onValueChange={(value) => setExamType(value as ExamTypes)}>
+                            <SelectTrigger className="w-full md:w-[180px]">
+                                <SelectValue placeholder="Select Exam" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="quarterly">Quarterly</SelectItem>
+                                <SelectItem value="halfYearly">Half-Yearly</SelectItem>
+                                <SelectItem value="annual">Annual</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
+                    <ResultCard marks={student.marks?.[examType]} examType={examType} />
                 </TabsContent>
                 <TabsContent value="attendance" className="mt-6">
                    <AttendanceHistory attendanceRecords={attendance} />

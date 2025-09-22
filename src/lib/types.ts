@@ -24,6 +24,8 @@ export type Marks = {
   remarks?: string;
 };
 
+export type ExamTypes = 'quarterly' | 'halfYearly' | 'annual';
+
 export type FeeStructure = {
   tuition?: number;
   transport?: number;
@@ -54,7 +56,11 @@ export type Student = {
     fatherName: string;
     address: string;
     photoUrl?: string;
-    marks?: Marks;
+    marks?: {
+      quarterly?: Marks;
+      halfYearly?: Marks;
+      annual?: Marks;
+    };
     // Password should not be sent to client, but exists in DB
     password?: string;
     feeStructure?: FeeStructure;

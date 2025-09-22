@@ -120,7 +120,7 @@ export async function getStudentById(id: string): Promise<Student | null> {
   }
 }
 
-export async function getStudentsByClass(className: string): Promise<Student[]> {
+export async function getStudentsByClass(className: string, examType: 'quarterly' | 'halfYearly' | 'annual'): Promise<Student[]> {
   if (!className) return [];
   try {
     const studentsSnapshot = await firestore.collection('students').where('class', '==', className).get();
