@@ -18,10 +18,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon, Search, Eye, XCircle, Tent } from "lucide-react";
+import { Calendar as CalendarIcon, Search, Eye, XCircle, Tent, DoorClosed } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
-import { getTeacherAttendanceByDate, setTeacherAttendance as setTeacherAttendanceAction, getTeacherAttendanceHistory, clearTeacherAttendance as clearTeacherAttendanceAction, isHoliday } from './actions';
+import { getTeacherAttendanceByDate, setTeacherAttendance as setTeacherAttendanceAction, getTeacherAttendanceHistory, clearTeacherAttendance as clearTeacherAttendanceAction, isHoliday, getSchoolStatus } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { AttendanceHistoryDialog } from '../attendance/attendance-history-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -44,15 +44,26 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [teacherHistory, setTeacherHistory] = useState<AttendanceRecord[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
+  
   const [isDateHoliday, setIsDateHoliday] = useState(false);
   const [holidayName, setHolidayName] = useState('');
+  const [isSchoolClosed, setIsSchoolClosed] = useState(false);
+  const [closedReason, setClosedReason] = useState('');
 
   const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
 
-  const checkIsHoliday = useCallback(async () => {
+  const checkDateStatus = useCallback(async () => {
     const holidayStatus = await isHoliday(formattedDate);
     setIsDateHoliday(holidayStatus.isHoliday);
     setHolidayName(holidayStatus.name || 'Holiday');
+
+    if (!holidayStatus.isHoliday) {
+        const schoolStatus = await getSchoolStatus(formattedDate);
+        setIsSchoolClosed(schoolStatus.isClosed);
+        setClosedReason(schoolStatus.reason || 'School is closed');
+    } else {
+        setIsSchoolClosed(false);
+    }
   }, [formattedDate]);
 
   const fetchAttendance = useCallback(async () => {
@@ -75,8 +86,8 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
 
   useEffect(() => {
     fetchAttendance();
-    checkIsHoliday();
-  }, [fetchAttendance, checkIsHoliday]);
+    checkDateStatus();
+  }, [fetchAttendance, checkDateStatus]);
 
   const handleStatusChange = async (teacherId: string, status: AttendanceStatus) => {
     // Optimistic UI update
@@ -211,6 +222,14 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
             <AlertTitle>{holidayName}</AlertTitle>
             <AlertDescription>
               The selected date is marked as a holiday. Attendance cannot be recorded.
+            </AlertDescription>
+          </Alert>
+        ) : isSchoolClosed ? (
+          <Alert variant="destructive">
+            <DoorClosed className="h-4 w-4" />
+            <AlertTitle>School is Closed</AlertTitle>
+            <AlertDescription>
+              {closedReason} Attendance cannot be recorded.
             </AlertDescription>
           </Alert>
         ) : (

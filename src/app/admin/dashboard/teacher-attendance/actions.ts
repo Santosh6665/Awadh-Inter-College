@@ -88,3 +88,19 @@ export async function isHoliday(date: string): Promise<{ isHoliday: boolean; nam
     return { isHoliday: false };
   }
 }
+
+export async function getSchoolStatus(date: string): Promise<{ isClosed: boolean; reason?: string }> {
+  try {
+    const statusDoc = await firestore.collection('schoolStatus').doc(date).get();
+    if (statusDoc.exists) {
+      const data = statusDoc.data();
+      if (data?.status === 'closed') {
+        return { isClosed: true, reason: data.reason || 'School is closed today.' };
+      }
+    }
+    return { isClosed: false };
+  } catch (error) {
+    console.error('Error checking for school status:', error);
+    return { isClosed: false };
+  }
+}
