@@ -1,4 +1,3 @@
-
 import type { Marks } from './types';
 
 type Subject = {
@@ -31,7 +30,7 @@ export const SUBJECTS_BY_CLASS: Record<string, Subject[]> = {
     { key: 'mathematicsOral', label: 'Mathematics Oral' },
     { key: 'mathematics', label: 'Mathematics' },
   ],
-  '1st': [
+  '1': [
     { key: 'oral', label: 'Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindi', label: 'Hindi' },
@@ -39,7 +38,7 @@ export const SUBJECTS_BY_CLASS: Record<string, Subject[]> = {
     { key: 'science', label: 'Science' },
     { key: 'computer', label: 'Computer' },
   ],
-  '2nd': [
+  '2': [
     { key: 'oral', label: 'Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindi', label: 'Hindi' },
@@ -47,7 +46,7 @@ export const SUBJECTS_BY_CLASS: Record<string, Subject[]> = {
     { key: 'science', label: 'Science' },
     { key: 'computer', label: 'Computer' },
   ],
-  '3rd': [
+  '3': [
     { key: 'oral', label: 'Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindi', label: 'Hindi' },
@@ -55,7 +54,7 @@ export const SUBJECTS_BY_CLASS: Record<string, Subject[]> = {
     { key: 'science', label: 'Science' },
     { key: 'computer', label: 'Computer' },
   ],
-  '4th': [
+  '4': [
     { key: 'oral', label: 'Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindi', label: 'Hindi' },
@@ -63,7 +62,7 @@ export const SUBJECTS_BY_CLASS: Record<string, Subject[]> = {
     { key: 'science', label: 'Science' },
     { key: 'computer', label: 'Computer' },
   ],
-  '5th': [
+  '5': [
     { key: 'oral', label: 'Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindi', label: 'Hindi' },
@@ -71,16 +70,7 @@ export const SUBJECTS_BY_CLASS: Record<string, Subject[]> = {
     { key: 'science', label: 'Science' },
     { key: 'computer', label: 'Computer' },
   ],
-  '6th': [
-    { key: 'oral', label: 'Oral' },
-    { key: 'english', label: 'English' },
-    { key: 'hindi', label: 'Hindi' },
-    { key: 'mathematics', label: 'Mathematics' },
-    { key: 'science', label: 'Science' },
-    { key: 'socialScience', label: 'Social Science' },
-    { key: 'computer', label: 'Computer' },
-  ],
-  '7th': [
+  '6': [
     { key: 'oral', label: 'Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindi', label: 'Hindi' },
@@ -89,7 +79,7 @@ export const SUBJECTS_BY_CLASS: Record<string, Subject[]> = {
     { key: 'socialScience', label: 'Social Science' },
     { key: 'computer', label: 'Computer' },
   ],
-  '8th': [
+  '7': [
     { key: 'oral', label: 'Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindi', label: 'Hindi' },
@@ -98,25 +88,34 @@ export const SUBJECTS_BY_CLASS: Record<string, Subject[]> = {
     { key: 'socialScience', label: 'Social Science' },
     { key: 'computer', label: 'Computer' },
   ],
-  '9th': [
+  '8': [
     { key: 'oral', label: 'Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindi', label: 'Hindi' },
-    { key: 'mathematics', label: 'Mathematics/Home Science' },
+    { key: 'mathematics', label: 'Mathematics' },
     { key: 'science', label: 'Science' },
     { key: 'socialScience', label: 'Social Science' },
-    { key: 'art', label: 'Art' },
+    { key: 'computer', label: 'Computer' },
   ],
-  '10th': [
+  '9': [
     { key: 'oral', label: 'Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindi', label: 'Hindi' },
-    { key: 'mathematics', label: 'Mathematics/Home Science' },
+    { key: 'mathematics', label: 'Mathematics/Home science' },
     { key: 'science', label: 'Science' },
     { key: 'socialScience', label: 'Social Science' },
     { key: 'art', label: 'Art' },
   ],
-  '11th': [
+  '10': [
+    { key: 'oral', label: 'Oral' },
+    { key: 'english', label: 'English' },
+    { key: 'hindi', label: 'Hindi' },
+    { key: 'mathematics', label: 'Mathematics/Home science' },
+    { key: 'science', label: 'Science' },
+    { key: 'socialScience', label: 'Social Science' },
+    { key: 'art', label: 'Art' },
+  ],
+  '11': [
     { key: 'oral', label: 'Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindi', label: 'Hindi' },
@@ -124,7 +123,7 @@ export const SUBJECTS_BY_CLASS: Record<string, Subject[]> = {
     { key: 'chemistry', label: 'Chemistry' },
     { key: 'biology', label: 'Biology' },
   ],
-  '12th': [
+  '12': [
     { key: 'oral', label: 'Oral' },
     { key: 'english', label: 'English' },
     { key: 'hindi', label: 'Hindi' },
