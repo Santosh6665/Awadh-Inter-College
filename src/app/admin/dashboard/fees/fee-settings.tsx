@@ -4,16 +4,13 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { saveSettings } from './actions';
 import { Loader2 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 
 export function SettingsManagement({ settings }: { settings: any }) {
-  const [feeStructure, setFeeStructure] = useState(settings?.feeStructure || {});
   const [resultVisibility, setResultVisibility] = useState(settings?.resultVisibility || {
     quarterly: false,
     halfYearly: false,
@@ -21,16 +18,6 @@ export function SettingsManagement({ settings }: { settings: any }) {
   });
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
-
-  const handleFeeChange = (className: string, field: string, value: string) => {
-    setFeeStructure((prev: any) => ({
-      ...prev,
-      [className]: {
-        ...prev[className],
-        [field]: value === '' ? null : Number(value),
-      },
-    }));
-  };
   
   const handleResultVisibilityChange = (exam: 'quarterly' | 'halfYearly' | 'annual', checked: boolean) => {
     setResultVisibility((prev: any) => ({
@@ -41,7 +28,7 @@ export function SettingsManagement({ settings }: { settings: any }) {
 
   const handleSaveChanges = async () => {
     setIsSaving(true);
-    const result = await saveSettings({ feeStructure, resultVisibility });
+    const result = await saveSettings({ resultVisibility });
     if (result.success) {
       toast({
         title: 'Success',
@@ -56,9 +43,6 @@ export function SettingsManagement({ settings }: { settings: any }) {
     }
     setIsSaving(false);
   };
-  
-  const classes = ['Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-  const feeHeads = ['tuition', 'transport', 'exam', 'computer', 'miscellaneous', 'discount'];
 
   return (
     <div className="space-y-6">
@@ -109,42 +93,11 @@ export function SettingsManagement({ settings }: { settings: any }) {
             </div>
         </CardContent>
       </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Default Fee Structure</CardTitle>
-          <CardDescription>Set the default fee amounts for each class. These can be overridden for individual students.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Accordion type="single" collapsible className="w-full">
-            {classes.map((className) => (
-              <AccordionItem value={className} key={className}>
-                <AccordionTrigger>Class {className}</AccordionTrigger>
-                <AccordionContent>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {feeHeads.map((head) => (
-                      <div key={head} className="space-y-1">
-                        <label className="text-sm font-medium capitalize">{head}</label>
-                        <Input
-                          type="number"
-                          placeholder="Amount"
-                          value={feeStructure[className]?.[head] || ''}
-                          onChange={(e) => handleFeeChange(className, head, e.target.value)}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </CardContent>
-      </Card>
       
       <div className="flex justify-end">
         <Button onClick={handleSaveChanges} disabled={isSaving}>
           {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Save All Settings
+          Save Settings
         </Button>
       </div>
     </div>
