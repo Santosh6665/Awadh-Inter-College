@@ -20,7 +20,7 @@ import { login } from '../auth/actions';
 import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
-  emailOrRollNumber: z.string().min(1, { message: 'Please enter your email or roll number.' }),
+  emailOrRollNumber: z.string().min(1, { message: 'Please enter your email, roll number, or phone number.' }),
   password: z.string().min(1, { message: 'Password is required.' }),
 });
 
@@ -68,7 +68,7 @@ export function LoginForm() {
           name="emailOrRollNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email or Roll Number</FormLabel>
+              <FormLabel>Email / Roll Number / Parent Phone</FormLabel>
               <FormControl>
                 <Input placeholder="user@example.com or 12345" {...field} />
               </FormControl>

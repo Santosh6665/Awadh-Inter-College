@@ -6,6 +6,7 @@ const protectedRoutes: { [key: string]: string[] } = {
   '/admin': ['admin'],
   '/student': ['student'],
   '/teacher': ['teacher'],
+  '/parent': ['parent'],
 };
 
 // Define the default redirect paths for each user type
@@ -13,6 +14,7 @@ const defaultPaths: { [key: string]: string } = {
   admin: '/admin',
   student: '/student',
   teacher: '/teacher',
+  parent: '/parent',
 };
 
 export function middleware(request: NextRequest) {

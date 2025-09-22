@@ -10,6 +10,7 @@ export default async function LoginPage() {
     if (user.type === 'admin') redirect('/admin');
     if (user.type === 'teacher') redirect('/teacher');
     if (user.type === 'student') redirect('/student');
+    if (user.type === 'parent') redirect('/parent');
   }
 
   return (

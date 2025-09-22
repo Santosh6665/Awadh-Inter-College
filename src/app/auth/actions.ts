@@ -19,11 +19,13 @@ export async function logout() {
   cookieStore.delete('user_name');
   cookieStore.delete('force_password_reset');
   cookieStore.delete('force_teacher_password_reset');
+  cookieStore.delete('force_parent_password_reset');
 
   // Revalidate all portal paths
   revalidatePath('/student');
   revalidatePath('/teacher');
   revalidatePath('/admin');
+  revalidatePath('/parent');
   revalidatePath('/');
 }
 
@@ -38,9 +40,11 @@ export async function login(credentials: z.infer<typeof loginSchema>) {
   }
 
   const { emailOrRollNumber, password } = validatedCredentials.data;
+  const isEmail = emailOrRollNumber.includes('@');
+  const isNumeric = /^\d+$/.test(emailOrRollNumber);
 
   // Try logging in as Admin or Teacher first (email-based)
-  if (emailOrRollNumber.includes('@')) {
+  if (isEmail) {
     const email = emailOrRollNumber;
 
     // Check Admins
@@ -85,6 +89,36 @@ export async function login(credentials: z.infer<typeof loginSchema>) {
     }
   }
 
+  // Try logging in as Parent (phone number based)
+  if (isNumeric && emailOrRollNumber.length >= 10) {
+    const phone = emailOrRollNumber;
+    const parentQuery = await firestore.collection('students').where('parentPhone', '==', phone).limit(1).get();
+    
+    if (!parentQuery.empty) {
+      const firstChildDoc = parentQuery.docs[0];
+      const firstChildData = firstChildDoc.data() as Student;
+      const parentName = firstChildData.fatherName;
+      
+      let needsPasswordReset = false;
+      // For parents, password is based on their first child's details
+      // A parent password isn't stored separately; it's always derived.
+      const firstNameRaw = firstChildData.name.split(' ')[0];
+      const firstName = firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1);
+      const yearOfBirth = new Date(firstChildData.dob).getFullYear();
+      const defaultPassword = `${firstName}@${yearOfBirth}`;
+
+      if (password !== defaultPassword) {
+        // Continue to check if it's a roll number before failing
+      } else {
+         // Since parents don't have their own password field, we don't set a reset cookie.
+         // They will always log in with the derived password.
+         setAuthCookies(phone, 'parent', parentName);
+         return { success: true, message: 'Parent login successful', redirect: '/parent' };
+      }
+    }
+  }
+
+
   // Try logging in as Student (roll number based)
   const rollNumber = emailOrRollNumber;
   const studentDoc = await firestore.collection('students').doc(rollNumber).get();
@@ -116,7 +150,7 @@ export async function login(credentials: z.infer<typeof loginSchema>) {
   return { success: false, message: 'Invalid credentials. User not found.' };
 }
 
-function setAuthCookies(id: string, type: 'student' | 'teacher' | 'admin', name: string, resetCookieName?: string) {
+function setAuthCookies(id: string, type: 'student' | 'teacher' | 'admin' | 'parent', name: string, resetCookieName?: string) {
     const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

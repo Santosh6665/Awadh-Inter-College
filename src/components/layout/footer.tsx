@@ -1,4 +1,3 @@
-
 import { Logo } from '@/components/layout/logo';
 import Link from 'next/link';
 import { Mail, MapPin, Phone } from 'lucide-react';
@@ -37,6 +36,7 @@ export function Footer() {
                 <nav className="flex flex-col space-y-2 text-sm">
                   <Link href="/student" className="text-muted-foreground hover:text-foreground">Student Portal</Link>
                   <Link href="/teacher" className="text-muted-foreground hover:text-foreground">Teacher Portal</Link>
+                   <Link href="/parent" className="text-muted-foreground hover:text-foreground">Parent Portal</Link>
                   <Link href="/admin" className="text-muted-foreground hover:text-foreground">Admin Portal</Link>
                 </nav>
               </div>
