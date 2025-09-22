@@ -53,6 +53,7 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
   const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
 
   const checkDateStatus = useCallback(async () => {
+    setLoading(true);
     const holidayStatus = await isHoliday(formattedDate);
     setIsDateHoliday(holidayStatus.isHoliday);
     setHolidayName(holidayStatus.name || 'Holiday');
@@ -67,7 +68,6 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
   }, [formattedDate]);
 
   const fetchAttendance = useCallback(async () => {
-    setLoading(true);
     try {
         const data = await getTeacherAttendanceByDate(formattedDate);
         setAttendance(data || {});
@@ -85,9 +85,14 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
   }, [formattedDate, toast]);
 
   useEffect(() => {
-    fetchAttendance();
-    checkDateStatus();
-  }, [fetchAttendance, checkDateStatus]);
+    async function loadData() {
+        setLoading(true);
+        await checkDateStatus();
+        await fetchAttendance();
+        setLoading(false);
+    }
+    loadData();
+  }, [checkDateStatus, fetchAttendance]);
 
   const handleStatusChange = async (teacherId: string, status: AttendanceStatus) => {
     // Optimistic UI update

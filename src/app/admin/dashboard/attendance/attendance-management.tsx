@@ -52,6 +52,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
   const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
 
   const checkDateStatus = useCallback(async () => {
+    setLoading(true);
     const holidayStatus = await isHoliday(formattedDate);
     setIsDateHoliday(holidayStatus.isHoliday);
     setHolidayName(holidayStatus.name || 'Holiday');
@@ -61,12 +62,11 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
         setIsSchoolClosed(schoolStatus.isClosed);
         setClosedReason(schoolStatus.reason || 'School is closed');
     } else {
-        setIsSchoolClosed(false);
+        setIsSchoolClosed(false); // Reset school closed if it's a holiday
     }
   }, [formattedDate]);
 
   const fetchAttendance = useCallback(async () => {
-    setLoading(true);
     try {
         const data = await getAttendanceByDate(formattedDate);
         setAttendance(data || {});
@@ -84,9 +84,14 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
   }, [formattedDate, toast]);
 
   useEffect(() => {
-    fetchAttendance();
-    checkDateStatus();
-  }, [fetchAttendance, checkDateStatus]);
+    async function loadData() {
+        setLoading(true);
+        await checkDateStatus();
+        await fetchAttendance();
+        setLoading(false);
+    }
+    loadData();
+  }, [checkDateStatus, fetchAttendance]);
 
   const handleStatusChange = async (studentId: string, status: AttendanceStatus) => {
     // Optimistic UI update
