@@ -7,7 +7,7 @@ export function calculatePercentage(marks: Marks | undefined | null): number | n
   }
 
   const subjects = Object.entries(marks)
-    .filter(([key, value]) => key !== 'remarks' && typeof value === 'number')
+    .filter(([key, value]) => typeof value === 'number')
     .map(([, value]) => value as number);
 
   if (subjects.length === 0) {
@@ -43,7 +43,7 @@ export function calculateTotals(marks: Marks | undefined | null): { totalObtaine
   }
 
   const subjects = Object.entries(marks)
-    .filter(([key, value]) => key !== 'remarks' && typeof value === 'number')
+    .filter(([key, value]) => typeof value === 'number')
     .map(([, value]) => value as number);
     
   const totalObtainedMarks = subjects.reduce((sum, mark) => sum + (mark || 0), 0);
@@ -58,9 +58,8 @@ const subjectKeys: (keyof Marks)[] = ['physics', 'chemistry', 'maths', 'english'
 export function combineMarks(
   allMarks: { [key in ExamTypes]?: Marks } | undefined,
   examType: ExamTypes
-): { marks: Marks | null, remarks: string | null } {
+): { marks: Marks | null } {
   const combined: Marks = {};
-  let remarks: string[] = [];
   const examsToCombine: ExamTypes[] = [];
 
   switch (examType) {
@@ -90,14 +89,7 @@ export function combineMarks(
     }
   }
 
-  for (const exam of examsToCombine) {
-    const remark = allMarks?.[exam]?.remarks;
-    if (remark) {
-      remarks.push(`${exam.charAt(0).toUpperCase() + exam.slice(1)}: ${remark}`);
-    }
-  }
-
-  return { marks: combined, remarks: remarks.join(' | ') || null };
+  return { marks: combined };
 }
 
 export function calculateCumulativeTotals(
@@ -109,7 +101,7 @@ export function calculateCumulativeTotals(
   }
 
   const subjects = Object.entries(marks)
-    .filter(([key, value]) => key !== 'remarks' && typeof value === 'number')
+    .filter(([key, value]) => typeof value === 'number')
     .map(([, value]) => value as number);
 
   const totalObtainedMarks = subjects.reduce((sum, mark) => sum + (mark || 0), 0);

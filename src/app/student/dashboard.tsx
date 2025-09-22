@@ -90,10 +90,10 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
   }, [student, feeSettings]);
 
   const ResultCard = ({ student, examType }: { student: Student, examType: ExamTypes }) => {
-    const { remarks } = combineMarks(student.marks, examType);
-    const percentage = calculateCumulativePercentage(combineMarks(student.marks, examType).marks, examType);
+    const { marks } = combineMarks(student.marks, examType);
+    const percentage = calculateCumulativePercentage(marks, examType);
     const grade = calculateGrade(percentage);
-    const totals = calculateCumulativeTotals(combineMarks(student.marks, examType).marks, examType);
+    const totals = calculateCumulativeTotals(marks, examType);
     const resultStatus = grade === 'F' ? 'Fail' : 'Pass';
     const hasMarks = Object.values(student.marks || {}).some(examMarks => examMarks && Object.keys(examMarks).length > 0);
     const examTitle = examType.charAt(0).toUpperCase() + examType.slice(1);
@@ -211,22 +211,16 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                     </TableFooter>
                   </Table>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="border rounded-lg p-4">
+                <div className="border rounded-lg p-4">
                     <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><BarChart3 className="h-5 w-5 text-primary" /> Summary</h3>
-                    <div className="space-y-1 text-sm">
-                      <div className="flex justify-between"><strong>Percentage:</strong> <span className="font-mono">{percentage?.toFixed(2)}%</span></div>
-                      <div className="flex justify-between"><strong>Overall Grade:</strong> <span className="font-mono">{grade}</span></div>
-                      <div className="flex justify-between"><strong>Class Rank:</strong> <span className="font-mono">{ranks[examType] ?? 'N/A'}</span></div>
-                      <div className="flex justify-between"><strong>Result Status:</strong> <Badge className={cn(resultStatus === 'Pass' ? 'bg-green-600' : 'bg-red-600', 'text-white')}>{resultStatus === 'Pass' ? '✅ Pass' : '❌ Fail'}</Badge></div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1 text-sm">
+                        <div className="flex justify-between"><strong>Percentage:</strong> <span className="font-mono">{percentage?.toFixed(2)}%</span></div>
+                        <div className="flex justify-between"><strong>Overall Grade:</strong> <span className="font-mono">{grade}</span></div>
+                        <div className="flex justify-between"><strong>Class Rank:</strong> <span className="font-mono">{ranks[examType] ?? 'N/A'}</span></div>
+                        <div className="flex justify-between"><strong>Result Status:</strong> <Badge className={cn(resultStatus === 'Pass' ? 'bg-green-600' : 'bg-red-600', 'text-white')}>{resultStatus === 'Pass' ? '✅ Pass' : '❌ Fail'}</Badge></div>
+                        </div>
                     </div>
-                  </div>
-                  <div className="border rounded-lg p-4">
-                    <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><GraduationCap className="h-5 w-5 text-primary" /> Remarks</h3>
-                    <p className="text-sm text-muted-foreground italic">
-                      “{remarks || 'Good effort. Keep improving.'}”
-                    </p>
-                  </div>
                 </div>
                 <div className="pt-8">
                   <h3 className="font-semibold text-lg mb-8 text-center flex items-center justify-center gap-2">🔖 Signatures</h3>

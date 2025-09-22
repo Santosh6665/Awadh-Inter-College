@@ -146,7 +146,6 @@ const MarksSchema = z.object({
   maths: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
   english: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
   computerScience: z.coerce.number().min(0).max(100).optional().or(z.literal('')),
-  remarks: z.string().optional(),
 });
 
 const ExamTypeSchema = z.enum(['quarterly', 'halfYearly', 'annual']);

@@ -19,7 +19,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import type { Student, ExamTypes } from '@/lib/types';
 import { updateStudentMarks, type MarksFormState } from './actions';
-import { Textarea } from '@/components/ui/textarea';
 
 interface UpdateMarksFormProps {
   isOpen: boolean;
@@ -104,10 +103,6 @@ export function UpdateMarksForm({ isOpen, setIsOpen, student, examType }: Update
            <div className="space-y-2">
               <Label htmlFor="computerScience">Computer Science</Label>
               <Input id="computerScience" name="computerScience" type="number" defaultValue={studentMarks?.computerScience} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="remarks">Remarks</Label>
-              <Textarea id="remarks" name="remarks" defaultValue={studentMarks?.remarks} placeholder="Enter remarks..."/>
             </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsOpen(false)}>
