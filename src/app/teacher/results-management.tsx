@@ -14,14 +14,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Edit } from 'lucide-react';
+import { Search, Edit, Eye } from 'lucide-react';
 import { UpdateMarksForm } from './update-marks-form';
 import { calculateGrade, calculateCumulativePercentage, combineMarks } from '@/lib/result-utils';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ResultViewDialog } from '../admin/dashboard/results/result-view-dialog';
 
-export function ResultsManagement({ students, teacher }: { students: Student[], teacher: any }) {
+export function ResultsManagement({ students, teacher, settings }: { students: Student[], teacher: any, settings: any }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
@@ -42,6 +44,11 @@ export function ResultsManagement({ students, teacher }: { students: Student[], 
     }
     setSelectedStudent(student);
     setIsFormOpen(true);
+  };
+
+  const handleView = (student: Student) => {
+    setSelectedStudent(student);
+    setIsViewDialogOpen(true);
   };
 
   const filteredStudents = students.filter(student => {
@@ -188,6 +195,9 @@ export function ResultsManagement({ students, teacher }: { students: Student[], 
                             <TableCell>{grade}</TableCell>
                             <TableCell>{rank ?? 'N/A'}</TableCell>
                             <TableCell className="text-right">
+                                <Button variant="ghost" size="icon" title="View Result" onClick={() => handleView(student)}>
+                                    <Eye className="h-4 w-4" />
+                                </Button>
                                 <Button variant="ghost" size="icon" onClick={() => handleEdit(student)} disabled={!canEditResults}>
                                     <Edit className="h-4 w-4" />
                                 </Button>
@@ -213,6 +223,15 @@ export function ResultsManagement({ students, teacher }: { students: Student[], 
         setIsOpen={setIsFormOpen}
         student={selectedStudent}
         examType={examType}
+      />
+
+      <ResultViewDialog
+        isOpen={isViewDialogOpen}
+        setIsOpen={setIsViewDialogOpen}
+        student={selectedStudent}
+        examType={examType}
+        ranks={studentRanks}
+        settings={settings}
       />
     </>
   );

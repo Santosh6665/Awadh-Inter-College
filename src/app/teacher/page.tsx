@@ -8,6 +8,7 @@ import type { Student, Teacher, AttendanceRecord } from '@/lib/types';
 import { getTeacherById, getTeacherAttendance, getLoggedInTeacher } from './actions';
 import { getStudents } from '../admin/dashboard/students/actions';
 import { getLoggedInStudent } from '../student/actions';
+import { firestore } from '@/lib/firebase-admin';
 
 
 export default async function TeacherPage() {
@@ -18,6 +19,7 @@ export default async function TeacherPage() {
   let teacher: Teacher | null = null;
   let students: Student[] = [];
   let attendance: AttendanceRecord[] = [];
+  let settings: any = {};
   
   const loggedInStudent = await getLoggedInStudent();
   const loggedInTeacher = await getLoggedInTeacher();
@@ -32,6 +34,14 @@ export default async function TeacherPage() {
       students = await getStudents();
       // Fetch teacher's own attendance
       attendance = await getTeacherAttendance(teacherId);
+
+       // Fetch settings
+      if (firestore) {
+          const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
+          if (settingsDoc.exists) {
+              settings = settingsDoc.data() || {};
+          }
+      }
     }
   }
 
@@ -40,7 +50,7 @@ export default async function TeacherPage() {
       <Header student={loggedInStudent} teacher={loggedInTeacher} />
       <main className="flex-1">
         {teacher ? (
-          <TeacherDashboard teacher={teacher} students={students} attendance={attendance} forcePasswordReset={forcePasswordReset} />
+          <TeacherDashboard teacher={teacher} students={students} attendance={attendance} forcePasswordReset={forcePasswordReset} settings={settings} />
         ) : (
           <div className="flex items-center justify-center p-4 h-full bg-[rgb(231,249,244)]">
             <TeacherLoginForm />
