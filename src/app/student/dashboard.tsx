@@ -137,6 +137,8 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                     <div><strong>Roll No.:</strong> {student.rollNumber}</div>
                     <div><strong>Class/Section:</strong> {`${student.class}-${student.section}`}</div>
                     <div><strong>Date of Birth:</strong> {new Date(student.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</div>
+                    <div><strong>Father's Name:</strong> {student.fatherName}</div>
+                    <div><strong>Contact No.:</strong> {student.phone}</div>
                   </div>
                 </div>
                 <div className="border rounded-lg p-4">
