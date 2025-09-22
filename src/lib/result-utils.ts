@@ -22,12 +22,12 @@ export function calculateGrade(value: number | null | undefined): string {
 // New cumulative calculation logic
 export function combineMarks(
   allMarks: { [key in ExamTypes]?: Marks } | undefined,
-  examType: ExamTypes
+  examType: ExamTypes,
+  visibleExams: ExamTypes[] = ['quarterly', 'halfYearly', 'annual']
 ): { marks: Marks | null, examCyclesWithMarks: ExamTypes[] } {
   const combined: Marks = {};
-  const examsToCombine: ExamTypes[] = [];
+  let examsToCombine: ExamTypes[] = [];
   const examCyclesWithMarks: ExamTypes[] = [];
-
 
   switch (examType) {
     case 'quarterly':
@@ -40,6 +40,9 @@ export function combineMarks(
       examsToCombine.push('quarterly', 'halfYearly', 'annual');
       break;
   }
+
+  // Filter examsToCombine based on what is visible
+  examsToCombine = examsToCombine.filter(cycle => visibleExams.includes(cycle));
   
   examsToCombine.forEach(cycle => {
     if (allMarks?.[cycle] && Object.values(allMarks[cycle]!).some(mark => mark != null)) {
@@ -49,7 +52,6 @@ export function combineMarks(
 
   const allSubjectKeys = Object.values(SUBJECTS_BY_CLASS).flat().map(s => s.key);
   const uniqueSubjectKeys = [...new Set(allSubjectKeys)];
-
 
   for (const subject of uniqueSubjectKeys) {
     let total = 0;
@@ -74,7 +76,7 @@ export function calculateCumulativeTotals(
   examCyclesWithMarks: ExamTypes[],
   className: string
 ): { totalObtainedMarks: number, totalMaxMarks: number } {
-  if (!marks || !className) {
+  if (!marks || !className || examCyclesWithMarks.length === 0) {
     return { totalObtainedMarks: 0, totalMaxMarks: 0 };
   }
 
