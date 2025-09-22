@@ -74,3 +74,32 @@ export async function getStudentAttendanceHistory(studentId: string): Promise<At
     return [];
   }
 }
+
+export async function isHoliday(date: string): Promise<{ isHoliday: boolean; name?: string }> {
+  try {
+    const holidayDoc = await firestore.collection('holidays').doc(date).get();
+    if (holidayDoc.exists) {
+      return { isHoliday: true, name: holidayDoc.data()?.name || 'Holiday' };
+    }
+    return { isHoliday: false };
+  } catch (error) {
+    console.error('Error checking for holiday:', error);
+    return { isHoliday: false };
+  }
+}
+
+export async function getSchoolStatus(date: string): Promise<{ isClosed: boolean; reason?: string }> {
+  try {
+    const statusDoc = await firestore.collection('schoolStatus').doc(date).get();
+    if (statusDoc.exists) {
+      const data = statusDoc.data();
+      if (data?.status === 'closed') {
+        return { isClosed: true, reason: data.reason || 'School is closed today.' };
+      }
+    }
+    return { isClosed: false };
+  } catch (error) {
+    console.error('Error checking for school status:', error);
+    return { isClosed: false };
+  }
+}

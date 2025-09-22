@@ -21,10 +21,9 @@ import { Calendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon, Search, Eye, Tent, DoorClosed } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
-import { getAttendanceByDate, setAttendance as setAttendanceAction, getStudentAttendanceHistory } from './actions';
+import { getAttendanceByDate, setAttendance as setAttendanceAction, getStudentAttendanceHistory, isHoliday, getSchoolStatus } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { AttendanceHistoryDialog } from '@/app/admin/dashboard/attendance/attendance-history-dialog';
-import { isHoliday, getSchoolStatus } from '@/app/admin/dashboard/attendance/actions';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
