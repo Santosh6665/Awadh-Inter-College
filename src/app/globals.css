@@ -96,7 +96,7 @@ body {
 @media print {
   @page {
     size: A4;
-    margin: 1cm;
+    margin: 0.5cm;
   }
 
   body {
@@ -149,11 +149,11 @@ body {
     gap: 0.5rem; /* Reduce space between elements */
   }
   body.print-result-card #result-card .text-xs {
-    font-size: 10px; /* Slightly smaller font for table cells */
+    font-size: 9px; /* Slightly smaller font for table cells */
   }
   body.print-result-card #result-card td,
   body.print-result-card #result-card th {
-    padding: 0.25rem;
+    padding: 2px 4px; /* Tighter padding for table cells */
   }
   body.print-result-card #result-card .pt-8 {
     padding-top: 1rem;
@@ -161,7 +161,16 @@ body {
   body.print-result-card #result-card .mb-8 {
     margin-bottom: 1rem;
   }
-  
+  body.print-result-card #result-card .text-2xl {
+    font-size: 1.25rem; /* Reduce header font size */
+  }
+   body.print-result-card #result-card .h-16 {
+    height: 3rem; /* Reduce logo size */
+  }
+  body.print-result-card #result-card .w-16 {
+    width: 3rem; /* Reduce logo size */
+  }
+
   body.print-fee-receipt * {
     visibility: hidden;
   }
