@@ -2,95 +2,16 @@
 'use server';
 
 import { z } from 'zod';
-import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { firestore } from '@/lib/firebase-admin';
 import type { Teacher, AttendanceRecord } from '@/lib/types';
 import { FieldValue } from 'firebase-admin/firestore';
+import { getLoggedInUser } from '../auth/actions';
 
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
-});
 
 const setPasswordSchema = z.object({
     password: z.string().min(6, 'Password must be at least 6 characters.'),
 });
-
-export async function loginTeacher(credentials: z.infer<typeof loginSchema>) {
-  try {
-    const validatedCredentials = loginSchema.safeParse(credentials);
-    if (!validatedCredentials.success) {
-      return { success: false, message: 'Invalid credentials format.' };
-    }
-
-    const { email, password } = validatedCredentials.data;
-
-    const teachersCollection = firestore.collection('teachers');
-    const teacherQuery = await teachersCollection.where('email', '==', email).limit(1).get();
-
-    if (teacherQuery.empty) {
-      return { success: false, message: 'Teacher not found.' };
-    }
-    
-    const teacherDoc = teacherQuery.docs[0];
-    const teacherData = teacherDoc.data();
-    
-    // Security Check: Ensure the user is marked as a teacher.
-    if (teacherData.isTeacher !== true) {
-        return { success: false, message: 'You do not have permission to log in.' };
-    }
-    
-    let needsPasswordReset = false;
-    
-    if (teacherData.password) {
-        if (teacherData.password !== password) {
-            return { success: false, message: 'Incorrect password.' };
-        }
-    } else {
-        const firstNameRaw = teacherData.name.split(' ')[0];
-        const firstName = firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1);
-        const phoneFragment = teacherData.phone.substring(0, 5);
-        const defaultPassword = `${firstName}@${phoneFragment}`;
-
-        if (password !== defaultPassword) {
-            return { success: false, message: 'Incorrect password.' };
-        }
-        needsPasswordReset = true;
-    }
-
-    cookies().set('teacher_id', teacherDoc.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: '/',
-    });
-    
-    if (needsPasswordReset) {
-        cookies().set('force_teacher_password_reset', 'true', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 60 * 15, // 15 minutes to reset password
-            path: '/',
-        });
-    } else {
-        cookies().delete('force_teacher_password_reset');
-    }
-
-    revalidatePath('/teacher');
-    return { success: true, message: 'Login successful' };
-  } catch (error) {
-    console.error('Login error:', error);
-    return { success: false, message: 'An unexpected error occurred.' };
-  }
-}
-
-export async function logoutTeacher() {
-  cookies().delete('teacher_id');
-  cookies().delete('force_teacher_password_reset');
-  revalidatePath('/teacher');
-}
 
 export async function getTeacherById(id: string): Promise<Teacher | null> {
   try {
@@ -120,6 +41,11 @@ export async function getTeacherById(id: string): Promise<Teacher | null> {
 }
 
 export async function setTeacherPassword(teacherId: string, formData: FormData) {
+    const user = await getLoggedInUser();
+    if (!user || user.id !== teacherId || user.type !== 'teacher') {
+        return { success: false, message: 'Unauthorized.' };
+    }
+
     const password = formData.get('password');
     const validatedFields = setPasswordSchema.safeParse({ password });
 
@@ -131,7 +57,6 @@ export async function setTeacherPassword(teacherId: string, formData: FormData) 
         const teacherDocRef = firestore.collection('teachers').doc(teacherId);
         await teacherDocRef.update({ password: validatedFields.data.password });
 
-        cookies().delete('force_teacher_password_reset');
         revalidatePath('/teacher');
         return { success: true, message: 'Password updated successfully.' };
 
@@ -176,13 +101,12 @@ export async function updateStudentMarksByTeacher(
   prevState: MarksFormState,
   formData: FormData
 ): Promise<MarksFormState> {
-  // Basic auth check: ensure a teacher is logged in
-  const teacherId = cookies().get('teacher_id')?.value;
-  if (!teacherId) {
+  const user = await getLoggedInUser();
+  if (!user || user.type !== 'teacher') {
     return { success: false, message: 'Unauthorized. Please log in.' };
   }
   
-  const teacher = await getTeacherById(teacherId);
+  const teacher = await getTeacherById(user.id);
   if (!teacher?.canEditResults) {
     return { success: false, message: 'You do not have permission to edit results.' };
   }
@@ -252,12 +176,4 @@ export async function getTeacherAttendance(teacherId: string): Promise<Attendanc
     console.error(`Error fetching attendance for teacher ${teacherId}:`, error);
     return [];
   }
-}
-
-export async function getLoggedInTeacher(): Promise<Teacher | null> {
-    const teacherId = cookies().get('teacher_id')?.value;
-    if (teacherId) {
-        return await getTeacherById(teacherId);
-    }
-    return null;
 }
