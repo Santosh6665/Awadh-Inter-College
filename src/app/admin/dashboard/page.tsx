@@ -16,7 +16,6 @@ import { getNotices } from "./notices/actions";
 import { format } from 'date-fns';
 import { TeacherAttendanceManagement } from "./teacher-attendance/teacher-attendance-management";
 import { SalaryManagement } from "./salary/salary-management";
-import { SettingsManagement } from "./fees/fee-settings";
 
 export default async function AdminDashboardPage() {
   let students: Student[] = [];
@@ -194,7 +193,6 @@ export default async function AdminDashboardPage() {
                 <TabsTrigger value="fees">Fee Management</TabsTrigger>
                 <TabsTrigger value="teacher-salary">Teacher Salary</TabsTrigger>
                 <TabsTrigger value="notices">Events &amp; Notices</TabsTrigger>
-                <TabsTrigger value="settings">Fee &amp; Result Settings</TabsTrigger>
                 </TabsList>
             </div>
           <TabsContent value="students" className="mt-4">
@@ -204,7 +202,7 @@ export default async function AdminDashboardPage() {
             <TeacherList teachers={teachers} />
           </TabsContent>
            <TabsContent value="results" className="mt-4">
-            <ResultsManagement students={students} />
+            <ResultsManagement students={students} settings={settings} />
           </TabsContent>
           <TabsContent value="attendance" className="mt-4">
             <AttendanceManagement students={students} />
@@ -220,9 +218,6 @@ export default async function AdminDashboardPage() {
           </TabsContent>
           <TabsContent value="notices" className="mt-4">
             <NoticeManagement notices={notices} />
-          </TabsContent>
-          <TabsContent value="settings" className="mt-4">
-            <SettingsManagement settings={settings} />
           </TabsContent>
         </Tabs>
       </div>

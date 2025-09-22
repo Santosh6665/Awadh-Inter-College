@@ -10,7 +10,7 @@ import { Loader2 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 
-export function SettingsManagement({ settings }: { settings: any }) {
+export function ResultSettings({ settings }: { settings: any }) {
   const [resultVisibility, setResultVisibility] = useState(settings?.resultVisibility || {
     quarterly: false,
     halfYearly: false,
@@ -50,7 +50,7 @@ export function SettingsManagement({ settings }: { settings: any }) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mb-8">
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">

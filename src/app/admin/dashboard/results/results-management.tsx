@@ -30,9 +30,10 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { deleteStudentMarks } from './actions';
+import { ResultSettings } from './result-settings';
 
 
-export function ResultsManagement({ students }: { students: Student[] }) {
+export function ResultsManagement({ students, settings }: { students: Student[], settings: any }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -119,6 +120,7 @@ export function ResultsManagement({ students }: { students: Student[] }) {
 
   return (
     <>
+      <ResultSettings settings={settings} />
       <Card>
         <CardHeader>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
