@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useFormStatus } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -46,7 +46,7 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
   const isEditing = !!teacher;
 
   const action = isEditing ? updateTeacher.bind(null, teacher.id) : addTeacher;
-  const [state, formAction] = useFormState(action, initialState);
+  const [state, formAction] = useActionState(action, initialState);
 
   useEffect(() => {
     if (state.success) {
