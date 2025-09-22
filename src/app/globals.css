@@ -147,32 +147,32 @@ body {
   }
   
   /* Result Card Specific Print Optimizations */
-  #result-card .p-4 {
+  #result-card-to-print .p-4 {
     padding: 0.5rem; /* Reduce padding inside card content */
   }
-  #result-card .space-y-4 {
+  #result-card-to-print .space-y-4 {
     gap: 0.5rem; /* Reduce space between elements */
   }
-  #result-card .text-xs {
+  #result-card-to-print .text-xs {
     font-size: 9px; /* Slightly smaller font for table cells */
   }
-  #result-card td,
-  #result-card th {
+  #result-card-to-print td,
+  #result-card-to-print th {
     padding: 2px 4px; /* Tighter padding for table cells */
   }
-  #result-card .pt-8 {
+  #result-card-to-print .pt-8 {
     padding-top: 1rem;
   }
-  #result-card .mb-8 {
+  #result-card-to-print .mb-8 {
     margin-bottom: 1rem;
   }
-  #result-card .text-2xl {
+  #result-card-to-print .text-2xl {
     font-size: 1.25rem; /* Reduce header font size */
   }
-  #result-card .h-16 {
+  #result-card-to-print .h-16 {
     height: 3rem; /* Reduce logo size */
   }
-  #result-card .w-16 {
+  #result-card-to-print .w-16 {
     width: 3rem; /* Reduce logo size */
   }
 
