@@ -168,6 +168,11 @@ export async function updateStudentMarksByTeacher(
   if (!teacherId) {
     return { success: false, message: 'Unauthorized. Please log in.' };
   }
+  
+  const teacher = await getTeacherById(teacherId);
+  if (!teacher?.canEditResults) {
+    return { success: false, message: 'You do not have permission to edit results.' };
+  }
 
   if (!id) {
     return { success: false, message: 'Student ID is missing.' };

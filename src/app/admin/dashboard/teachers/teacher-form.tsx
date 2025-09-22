@@ -2,8 +2,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useActionState, useFormStatus } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -113,6 +112,10 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
            <div className="flex items-center space-x-2">
               <Switch id="canEditAttendance" name="canEditAttendance" defaultChecked={teacher?.canEditAttendance} />
               <Label htmlFor="canEditAttendance">Allow Attendance Editing</Label>
+            </div>
+             <div className="flex items-center space-x-2">
+              <Switch id="canEditResults" name="canEditResults" defaultChecked={teacher?.canEditResults} />
+              <Label htmlFor="canEditResults">Allow Result Editing</Label>
             </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsOpen(false)}>

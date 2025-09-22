@@ -27,7 +27,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { PlusCircle, Search, Edit, Trash2, MoreVertical } from 'lucide-react';
 import { TeacherForm } from './teacher-form';
-import { deleteTeacher, toggleAttendancePermission } from './actions';
+import { deleteTeacher, toggleAttendancePermission, toggleResultsPermission } from './actions';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
 
@@ -73,9 +73,10 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
     setTeacherToDelete(null);
   };
 
-  const handlePermissionToggle = async (id: string, canEdit: boolean) => {
-    const result = await toggleAttendancePermission(id, canEdit);
-    if (result.success) {
+  const handlePermissionToggle = async (id: string, canEdit: boolean, type: 'attendance' | 'results') => {
+    const action = type === 'attendance' ? toggleAttendancePermission : toggleResultsPermission;
+    const result = await action(id, canEdit);
+     if (result.success) {
       toast({
         title: 'Success',
         description: result.message,
@@ -103,7 +104,7 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="w-full">
                 <CardTitle>Manage Teachers</CardTitle>
-                <CardDescription>Add, edit, or remove teacher records.</CardDescription>
+                <CardDescription>Add, edit, or remove teacher records and set permissions.</CardDescription>
             </div>
             <Button onClick={handleAddNew} size="sm" className="w-full md:w-auto">
               <PlusCircle className="mr-2 h-4 w-4" /> Add Teacher
@@ -129,6 +130,7 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
                   <TableHead>Name</TableHead>
                   <TableHead className="hidden md:table-cell">Subject</TableHead>
                   <TableHead>Attendance Editing</TableHead>
+                  <TableHead>Result Editing</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -141,8 +143,15 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
                       <TableCell>
                         <Switch
                           checked={teacher.canEditAttendance}
-                          onCheckedChange={(checked) => handlePermissionToggle(teacher.id, checked)}
+                          onCheckedChange={(checked) => handlePermissionToggle(teacher.id, checked, 'attendance')}
                           aria-label="Toggle attendance editing permission"
+                        />
+                      </TableCell>
+                       <TableCell>
+                        <Switch
+                          checked={teacher.canEditResults}
+                          onCheckedChange={(checked) => handlePermissionToggle(teacher.id, checked, 'results')}
+                          aria-label="Toggle result editing permission"
                         />
                       </TableCell>
                       <TableCell className="text-right">
@@ -169,7 +178,7 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center">
+                    <TableCell colSpan={5} className="text-center">
                       No teachers found.
                     </TableCell>
                   </TableRow>

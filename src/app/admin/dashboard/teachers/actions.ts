@@ -14,6 +14,7 @@ const TeacherSchema = z.object({
   dob: z.string().optional(),
   qualification: z.string().optional(),
   canEditAttendance: z.preprocess((val) => val === 'on', z.boolean()).optional(),
+  canEditResults: z.preprocess((val) => val === 'on', z.boolean()).optional(),
 });
 
 export type TeacherFormState = {
@@ -145,6 +146,20 @@ export async function toggleAttendancePermission(id: string, canEditAttendance: 
   }
   try {
     await firestore.collection('teachers').doc(id).update({ canEditAttendance });
+    revalidatePath('/admin/dashboard');
+    return { success: true, message: 'Permission updated successfully.' };
+  } catch (error) {
+    console.error('Error updating permission:', error);
+    return { success: false, message: 'An unexpected error occurred.' };
+  }
+}
+
+export async function toggleResultsPermission(id: string, canEditResults: boolean) {
+  if (!id) {
+    return { success: false, message: 'Teacher ID is missing.' };
+  }
+  try {
+    await firestore.collection('teachers').doc(id).update({ canEditResults });
     revalidatePath('/admin/dashboard');
     return { success: true, message: 'Permission updated successfully.' };
   } catch (error) {

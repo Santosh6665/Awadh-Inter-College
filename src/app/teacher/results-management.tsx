@@ -17,14 +17,27 @@ import {
 import { Search, Edit } from 'lucide-react';
 import { UpdateMarksForm } from './update-marks-form';
 import { calculatePercentage, calculateGrade } from '@/lib/result-utils';
+import { getLoggedInTeacher } from './actions';
+import { useToast } from '@/hooks/use-toast';
 
-export function ResultsManagement({ students }: { students: Student[] }) {
+export function ResultsManagement({ students, teacher }: { students: Student[], teacher: any }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
+  const { toast } = useToast();
   
+  const canEditResults = teacher?.canEditResults ?? false;
+
   const handleEdit = (student: Student) => {
+     if (!canEditResults) {
+      toast({
+        title: 'Permission Denied',
+        description: "You do not have permission to edit student results.",
+        variant: 'destructive',
+      });
+      return;
+    }
     setSelectedStudent(student);
     setIsFormOpen(true);
   };
@@ -75,7 +88,12 @@ export function ResultsManagement({ students }: { students: Student[] }) {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className='w-full'>
                 <CardTitle>Manage Student Results</CardTitle>
-                <CardDescription>Update marks and view grades for students.</CardDescription>
+                <CardDescription>
+                  {canEditResults 
+                    ? "Update marks and view grades for students."
+                    : "View student results. You do not have permission to make changes."
+                  }
+                </CardDescription>
             </div>
           </div>
           <div className="mt-4 flex flex-col md:flex-row items-center gap-4">
@@ -135,7 +153,7 @@ export function ResultsManagement({ students }: { students: Student[] }) {
                             <TableCell>{grade}</TableCell>
                             <TableCell>{rank ?? 'N/A'}</TableCell>
                             <TableCell className="text-right">
-                                <Button variant="ghost" size="icon" onClick={() => handleEdit(student)}>
+                                <Button variant="ghost" size="icon" onClick={() => handleEdit(student)} disabled={!canEditResults}>
                                     <Edit className="h-4 w-4" />
                                 </Button>
                             </TableCell>

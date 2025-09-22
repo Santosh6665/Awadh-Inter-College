@@ -82,6 +82,7 @@ export type Teacher = {
     baseSalary?: number;
     salaryPayments?: SalaryPayment[];
     canEditAttendance?: boolean;
+    canEditResults?: boolean;
 };
 
 export type Book = {
