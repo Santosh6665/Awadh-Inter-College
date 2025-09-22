@@ -1,6 +1,7 @@
 
 'use client';
 
+import * as React from 'react';
 import type { Student, AttendanceRecord, Payment, ExamTypes, Marks } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -147,7 +148,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                             <TableHead colSpan={2} className="text-center border-l">Quarterly</TableHead>
                             <TableHead colSpan={2} className="text-center border-l">Half-Yearly</TableHead>
                             <TableHead colSpan={2} className="text-center border-l">Annual</TableHead>
-                            <TableHead colSpan={2} className="text-center border-l bg-muted/50">Total ({examTitle})</TableHead>
+                            <TableHead colSpan={2} className="text-center border-l bg-muted/50">Total</TableHead>
                         </TableRow>
                         <TableRow>
                             <TableHead className="text-center border-l">Obtained</TableHead>
