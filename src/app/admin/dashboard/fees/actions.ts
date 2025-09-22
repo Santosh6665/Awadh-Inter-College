@@ -189,7 +189,7 @@ export async function recordCombinedPayment(
             amount: amountToPayForThisStudent,
             method: paymentMethod,
             date: paymentDate,
-            month: new Date(paymentDate).toLocaleString('default', { month: 'long' }), // Defaulting month
+            month: new Date(paymentDate).toLocaleString('default', { month: 'long' }),
         };
 
         batch.update(studentDocRef, {
