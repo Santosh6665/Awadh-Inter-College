@@ -20,6 +20,7 @@ import { Loader2 } from 'lucide-react';
 import type { Student } from '@/lib/types';
 import { recordPayment, type FormState } from './actions';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface RecordPaymentFormProps {
   isOpen: boolean;
@@ -103,17 +104,17 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student }: RecordPaymentF
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="month">Payment Month</Label>
-            <Select name="month">
-              <SelectTrigger>
-                <SelectValue placeholder="Select month (optional)" />
-              </SelectTrigger>
-              <SelectContent>
-                {months.map(m => (
-                  <SelectItem key={m} value={m}>{m}</SelectItem>
+            <Label>Payment for Months</Label>
+            <div className="grid grid-cols-3 gap-2 rounded-md border p-2">
+                {months.map(month => (
+                    <div key={month} className="flex items-center space-x-2">
+                        <Checkbox id={`month-${month}-${student.id}`} name="months" value={month} />
+                        <Label htmlFor={`month-${month}-${student.id}`} className="text-sm font-normal">
+                            {month}
+                        </Label>
+                    </div>
                 ))}
-              </SelectContent>
-            </Select>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsOpen(false)}>
