@@ -24,6 +24,7 @@ export function FeeSettings({ settings }: { settings: any }) {
   const [feeStructure, setFeeStructure] = useState(settings?.feeStructure || {});
   const [lateFee, setLateFee] = useState(settings?.lateFee || { amount: '', per: 'day' });
   const [siblingDiscount, setSiblingDiscount] = useState(settings?.siblingDiscount || '');
+  const [sessionStartDate, setSessionStartDate] = useState(settings?.sessionStartDate || '');
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
@@ -46,7 +47,12 @@ export function FeeSettings({ settings }: { settings: any }) {
 
   const handleSave = async () => {
     setIsSaving(true);
-    const result = await saveSettings({ feeStructure, lateFee, siblingDiscount: Number(siblingDiscount) || 0 });
+    const result = await saveSettings({ 
+        feeStructure, 
+        lateFee, 
+        sessionStartDate,
+        siblingDiscount: Number(siblingDiscount) || 0 
+    });
     if (result.success) {
       toast({
         title: 'Success',
@@ -78,7 +84,38 @@ export function FeeSettings({ settings }: { settings: any }) {
           </div>
         </CardHeader>
         <CardContent className='space-y-6'>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader>
+                    <CardTitle className="text-lg">Session Start Date</CardTitle>
+                    <CardDescription className="text-sm">The start of the academic year for fee calculations (e.g., 2024-04-01).</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Input
+                        type="date"
+                        value={sessionStartDate}
+                        onChange={(e) => setSessionStartDate(e.target.value)}
+                    />
+                </CardContent>
+              </Card>
+               <Card>
+                <CardHeader>
+                    <CardTitle className="text-lg">Sibling Discount</CardTitle>
+                    <CardDescription className="text-sm">A fixed monthly discount for each sibling after the first child.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="sibling-discount">Discount Amount (Rs)</Label>
+                    <Input
+                        id="sibling-discount"
+                        type="number"
+                        placeholder="e.g., 500"
+                        value={siblingDiscount}
+                        onChange={(e) => setSiblingDiscount(e.target.value)}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
               <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">Late Fee Settings</CardTitle>
@@ -102,24 +139,6 @@ export function FeeSettings({ settings }: { settings: any }) {
                         placeholder="e.g., day or week"
                         value={lateFee.per || ''}
                         onChange={(e) => handleLateFeeChange('per', e.target.value)}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-               <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">Sibling Discount</CardTitle>
-                    <CardDescription className="text-sm">Set a fixed discount amount for each sibling after the first child.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="sibling-discount">Discount Amount (Rs)</Label>
-                    <Input
-                        id="sibling-discount"
-                        type="number"
-                        placeholder="e.g., 500"
-                        value={siblingDiscount}
-                        onChange={(e) => setSiblingDiscount(e.target.value)}
                     />
                   </div>
                 </CardContent>

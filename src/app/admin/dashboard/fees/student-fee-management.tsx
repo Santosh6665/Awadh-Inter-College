@@ -19,6 +19,7 @@ import { UpdateFeeStructureForm } from './update-fee-structure-form';
 import { RecordPaymentForm } from './record-payment-form';
 import { FeeHistoryDialog } from './fee-history-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { calculateMonthlyDue } from '@/lib/fee-utils';
 
 interface StudentFeeManagementProps {
   students: Student[];
@@ -33,18 +34,6 @@ export function StudentFeeManagement({ students, feeSettings }: StudentFeeManage
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
   const [sectionFilter, setSectionFilter] = useState('');
-
-  const studentsByParentPhone = useMemo(() => {
-    return students.reduce((acc, student) => {
-      if (student.parentPhone) {
-        if (!acc[student.parentPhone]) {
-          acc[student.parentPhone] = [];
-        }
-        acc[student.parentPhone].push(student.id);
-      }
-      return acc;
-    }, {} as Record<string, string[]>);
-  }, [students]);
   
   const handleEditFeeStructure = (student: Student) => {
     setSelectedStudent(student);
@@ -69,42 +58,6 @@ export function StudentFeeManagement({ students, feeSettings }: StudentFeeManage
       return nameMatch && classMatch && sectionMatch;
     })
     .sort((a, b) => a.name.localeCompare(b.name));
-
-  const calculateFeeStatus = (student: Student) => {
-    const classFeeStructure = feeSettings[student.class] || {};
-    const studentFeeOverrides = student.feeStructure || {};
-
-    const finalFeeStructure = {
-      ...classFeeStructure,
-      ...studentFeeOverrides,
-    };
-    
-    const { 
-      tuition = 0,
-      admission = 0,
-      transport = 0, 
-      exam = 0, 
-      computer = 0, 
-      miscellaneous = 0,
-      discount = 0 
-    } = finalFeeStructure;
-
-    let totalFees = (tuition + admission + transport + exam + computer + miscellaneous) - discount;
-    
-    // Apply sibling discount if applicable
-    const siblings = student.parentPhone ? studentsByParentPhone[student.parentPhone] : [];
-    if (siblings && siblings.length > 1 && feeSettings.siblingDiscount > 0) {
-      // Simple logic: apply discount if not the first child in the list
-      if (siblings[0] !== student.id) {
-          totalFees -= feeSettings.siblingDiscount;
-      }
-    }
-
-    const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
-    const due = totalFees - totalPaid;
-
-    return { totalFees, totalPaid, due };
-  };
 
   return (
     <>
@@ -170,24 +123,24 @@ export function StudentFeeManagement({ students, feeSettings }: StudentFeeManage
                   <TableHead className="hidden md:table-cell">Roll No.</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead className="hidden md:table-cell">Class</TableHead>
-                  <TableHead>Total Fees</TableHead>
+                  <TableHead>Total Dues</TableHead>
+                  <TableHead>Annual Fees</TableHead>
                   <TableHead>Fees Paid</TableHead>
-                  <TableHead>Balance Due</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredStudents.length > 0 ? (
                   filteredStudents.map((student) => {
-                    const { totalFees, totalPaid, due } = calculateFeeStatus(student);
+                    const { due, totalAnnualFee, totalPaid } = calculateMonthlyDue(student, feeSettings, false);
                     return (
                         <TableRow key={student.id}>
                             <TableCell className="hidden md:table-cell">{student.rollNumber}</TableCell>
                             <TableCell>{student.name}</TableCell>
                             <TableCell className="hidden md:table-cell">{`${student.class}-${student.section}`}</TableCell>
-                            <TableCell>Rs{totalFees.toFixed(2)}</TableCell>
-                            <TableCell>Rs{totalPaid.toFixed(2)}</TableCell>
                             <TableCell className={due > 0 ? 'text-destructive font-semibold' : ''}>Rs{due.toFixed(2)}</TableCell>
+                            <TableCell>Rs{totalAnnualFee.toFixed(2)}</TableCell>
+                            <TableCell>Rs{totalPaid.toFixed(2)}</TableCell>
                             <TableCell className="text-right space-x-2">
                                 <Button variant="ghost" size="icon" title="View Details" onClick={() => handleViewHistory(student)}>
                                     <Eye className="h-4 w-4" />

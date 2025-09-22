@@ -23,6 +23,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { CombinedFeeHistoryDialog } from './combined-fee-history-dialog';
+import { calculateMonthlyDue } from '@/lib/fee-utils';
 
 interface ParentFeeManagementProps {
   students: Student[];
@@ -52,38 +53,6 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
     setIsHistoryDialogOpen(true);
   };
 
-  const studentsByParentPhone = useMemo(() => {
-    return students.reduce((acc, student) => {
-      if (student.parentPhone) {
-        if (!acc[student.parentPhone]) {
-          acc[student.parentPhone] = [];
-        }
-        acc[student.parentPhone].push(student.id);
-      }
-      return acc;
-    }, {} as Record<string, string[]>);
-  }, [students]);
-
-  const calculateFeeStatus = (student: Student) => {
-    const classFeeStructure = feeSettings[student.class] || {};
-    const studentFeeOverrides = student.feeStructure || {};
-    const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
-    
-    const { tuition = 0, admission = 0, transport = 0, exam = 0, computer = 0, miscellaneous = 0, discount = 0 } = finalFeeStructure;
-    let totalFees = (tuition + admission + transport + exam + computer + miscellaneous) - discount;
-
-    const siblings = student.parentPhone ? studentsByParentPhone[student.parentPhone] : [];
-    if (siblings && siblings.length > 1 && feeSettings.siblingDiscount > 0) {
-      if (siblings[0] !== student.id) {
-          totalFees -= feeSettings.siblingDiscount;
-      }
-    }
-
-    const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
-    const due = totalFees - totalPaid;
-    return { totalFees, totalPaid, due };
-  };
-
   const parentsData = useMemo<Parent[]>(() => {
     const parentsMap: Record<string, { parentName: string, children: Student[] }> = {};
     students.forEach(student => {
@@ -98,18 +67,23 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
     return Object.entries(parentsMap).map(([phone, data]) => {
       let totalFees = 0;
       let totalPaid = 0;
-      data.children.forEach(child => {
-        const status = calculateFeeStatus(child);
-        totalFees += status.totalFees;
-        totalPaid += status.totalPaid;
+      let totalDue = 0;
+
+      data.children.forEach((child, index) => {
+        const isSibling = index > 0;
+        const { due, totalAnnualFee, paid } = calculateMonthlyDue(child, feeSettings, isSibling);
+        totalDue += due;
+        totalFees += totalAnnualFee;
+        totalPaid += paid;
       });
+
       return {
         id: phone,
         parentName: data.parentName,
         children: data.children.sort((a,b) => a.name.localeCompare(b.name)),
         totalFees,
         totalPaid,
-        totalDue: totalFees - totalPaid,
+        totalDue,
       };
     });
   }, [students, feeSettings]);
@@ -179,22 +153,23 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                             <TableRow>
                               <TableHead>Child Name</TableHead>
                               <TableHead>Class</TableHead>
-                              <TableHead>Total Fee</TableHead>
+                              <TableHead>Total Dues</TableHead>
+                              <TableHead>Annual Fee</TableHead>
                               <TableHead>Paid</TableHead>
-                              <TableHead>Balance</TableHead>
                               <TableHead>Status</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {parent.children.map(child => {
-                                const { totalFees, totalPaid, due } = calculateFeeStatus(child);
+                            {parent.children.map((child, index) => {
+                                const isSibling = index > 0;
+                                const { due, totalAnnualFee, totalPaid } = calculateMonthlyDue(child, feeSettings, isSibling);
                                 return (
                                 <TableRow key={child.id}>
                                     <TableCell>{child.name}</TableCell>
                                     <TableCell>{`${child.class}-${child.section}`}</TableCell>
-                                    <TableCell>Rs{totalFees.toFixed(2)}</TableCell>
-                                    <TableCell>Rs{totalPaid.toFixed(2)}</TableCell>
                                     <TableCell className={due > 0 ? 'text-destructive font-semibold' : ''}>Rs{due.toFixed(2)}</TableCell>
+                                    <TableCell>Rs{totalAnnualFee.toFixed(2)}</TableCell>
+                                    <TableCell>Rs{totalPaid.toFixed(2)}</TableCell>
                                     <TableCell>
                                         <Badge variant={due > 0 ? 'destructive' : 'secondary'}>
                                             {due > 0 ? 'Pending' : 'Paid'}
