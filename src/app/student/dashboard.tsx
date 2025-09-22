@@ -96,6 +96,22 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
     const resultStatus = grade === 'F' ? 'Fail' : 'Pass';
     const hasMarks = combined.marks && Object.values(combined.marks).some(mark => typeof mark === 'number');
     const examTitle = examType.charAt(0).toUpperCase() + examType.slice(1);
+    
+    const subjectKeys: (keyof Marks)[] = ['physics', 'chemistry', 'maths', 'english', 'computerScience'];
+
+    const examColumns = useMemo(() => {
+        const columns: { key: ExamTypes; label: string }[] = [];
+        if (examType === 'quarterly' || examType === 'halfYearly' || examType === 'annual') {
+            columns.push({ key: 'quarterly', label: 'Quarterly' });
+        }
+        if (examType === 'halfYearly' || examType === 'annual') {
+            columns.push({ key: 'halfYearly', label: 'Half-Yearly' });
+        }
+        if (examType === 'annual') {
+            columns.push({ key: 'annual', label: 'Annual' });
+        }
+        return columns;
+    }, [examType]);
 
     return (
       <div id="result-card-to-print" className="print-block">
@@ -140,27 +156,37 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                     <TableHeader>
                       <TableRow>
                         <TableHead>Subject</TableHead>
-                        <TableHead className="text-center">Maximum Marks</TableHead>
-                        <TableHead className="text-center">Marks Obtained</TableHead>
-                        <TableHead className="text-right">Grade</TableHead>
+                        {examColumns.map(col => <TableHead key={col.key} className="text-center">{col.label}</TableHead>)}
+                        <TableHead className="text-center">Total Obtained</TableHead>
+                        <TableHead className="text-center">Max Marks</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {Object.entries(combined.marks || {}).filter(([key]) => key !== 'remarks' && typeof combined.marks?.[key as keyof typeof combined.marks] === 'number').map(([subject, markValue]) => (
+                      {subjectKeys.map(subject => (
                         <TableRow key={subject}>
-                          <TableCell className="capitalize">{subject.replace(/([A-Z])/g, ' $1')}</TableCell>
-                          <TableCell className="text-center">{totals.totalMaxMarks / totals.subjectCount}</TableCell>
-                          <TableCell className="text-center">{markValue ?? 'N/A'}</TableCell>
-                          <TableCell className="text-right">{calculateGrade((markValue as number / (totals.totalMaxMarks / totals.subjectCount)) * 100)}</TableCell>
+                            <TableCell className="capitalize">{subject.replace(/([A-Z])/g, ' $1')}</TableCell>
+                             {examColumns.map(col => (
+                                <TableCell key={col.key} className="text-center">
+                                    {student.marks?.[col.key]?.[subject] ?? 'N/A'}
+                                </TableCell>
+                            ))}
+                            <TableCell className="text-center font-semibold">
+                                {combined.marks?.[subject] ?? 'N/A'}
+                            </TableCell>
+                            <TableCell className="text-center">{100 * examColumns.length}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                     <TableFooter>
                       <TableRow className="font-bold bg-muted/50">
                         <TableCell>Total</TableCell>
-                        <TableCell className="text-center">{totals.totalMaxMarks}</TableCell>
+                        {examColumns.map(col => (
+                           <TableCell key={col.key} className="text-center">
+                              {subjectKeys.reduce((acc, sub) => acc + (student.marks?.[col.key]?.[sub] ?? 0), 0)}
+                           </TableCell>
+                        ))}
                         <TableCell className="text-center">{totals.totalObtainedMarks}</TableCell>
-                        <TableCell className="text-right">—</TableCell>
+                        <TableCell className="text-center">{totals.totalMaxMarks}</TableCell>
                       </TableRow>
                     </TableFooter>
                   </Table>
