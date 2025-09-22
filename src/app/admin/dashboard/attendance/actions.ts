@@ -4,6 +4,7 @@
 import { firestore } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
 import type { AttendanceRecord } from '@/lib/types';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export async function getAttendanceByDate(date: string) {
   try {
@@ -34,6 +35,23 @@ export async function setAttendance(studentId: string, date: string, status: 'pr
     console.error('Error setting attendance:', error);
     return { success: false, message: 'An unexpected error occurred.' };
   }
+}
+
+export async function clearAttendance(studentId: string, date: string) {
+    try {
+        const attendanceDocRef = firestore.collection('attendance').doc(date);
+        await attendanceDocRef.update({
+            [studentId]: FieldValue.delete()
+        });
+        
+        revalidatePath('/admin/dashboard');
+        revalidatePath('/student');
+
+        return { success: true, message: `Attendance for ${studentId} cleared.` };
+    } catch (error) {
+        console.error('Error clearing attendance:', error);
+        return { success: false, message: 'An unexpected error occurred while clearing attendance.' };
+    }
 }
 
 export async function getStudentAttendanceHistory(studentId: string): Promise<AttendanceRecord[]> {

@@ -18,10 +18,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon, Search, Eye } from "lucide-react";
+import { Calendar as CalendarIcon, Search, Eye, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
-import { getAttendanceByDate, setAttendance as setAttendanceAction, getStudentAttendanceHistory } from './actions';
+import { getAttendanceByDate, setAttendance as setAttendanceAction, getStudentAttendanceHistory, clearAttendance as clearAttendanceAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { AttendanceHistoryDialog } from './attendance-history-dialog';
 
@@ -84,6 +84,28 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
       });
       // Revert if API call fails by re-fetching the original state
       await fetchAttendance();
+    }
+  };
+
+  const handleClearAttendance = async (studentId: string) => {
+    const currentAttendance = { ...attendance };
+    // Optimistic UI update
+    setAttendance(prev => {
+        const newState = { ...prev };
+        delete newState[studentId];
+        return newState;
+    });
+
+    const result = await clearAttendanceAction(studentId, formattedDate);
+
+    if (!result.success) {
+      toast({
+        title: 'Error',
+        description: result.message,
+        variant: 'destructive',
+      });
+      // Revert UI on failure
+      setAttendance(currentAttendance);
     }
   };
   
@@ -197,20 +219,27 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
                       <TableCell>{student.name}</TableCell>
                       <TableCell>{`${student.class}-${student.section}`}</TableCell>
                       <TableCell className="text-right">
-                        <RadioGroup
-                          onValueChange={(value) => handleStatusChange(student.id, value as AttendanceStatus)}
-                          value={status}
-                          className="flex justify-end gap-2 md:gap-4"
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="present" id={`present-${student.id}`} />
-                            <Label htmlFor={`present-${student.id}`}>Present</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="absent" id={`absent-${student.id}`} />
-                            <Label htmlFor={`absent-${student.id}`}>Absent</Label>
-                          </div>
-                        </RadioGroup>
+                        <div className="flex items-center justify-end gap-2 md:gap-4">
+                            <RadioGroup
+                            onValueChange={(value) => handleStatusChange(student.id, value as AttendanceStatus)}
+                            value={status}
+                            className="flex items-center gap-2 md:gap-4"
+                            >
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="present" id={`present-${student.id}`} />
+                                <Label htmlFor={`present-${student.id}`}>Present</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="absent" id={`absent-${student.id}`} />
+                                <Label htmlFor={`absent-${student.id}`}>Absent</Label>
+                            </div>
+                            </RadioGroup>
+                             {status && (
+                                <Button variant="ghost" size="icon" title="Clear Attendance" onClick={() => handleClearAttendance(student.id)}>
+                                    <XCircle className="h-4 w-4 text-muted-foreground" />
+                                </Button>
+                             )}
+                        </div>
                       </TableCell>
                        <TableCell className="text-right">
                         <Button variant="ghost" size="icon" title="View Attendance History" onClick={() => handleViewHistory(student)}>
