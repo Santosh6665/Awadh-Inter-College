@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -7,6 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StudentDashboard } from '@/app/student/dashboard';
 import { useMemo } from 'react';
+import { Button } from '@/components/ui/button';
+import { Phone, Banknote } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface ParentDashboardProps {
   parent: { id: string; type: string; name: string };
@@ -51,19 +55,43 @@ export function ParentDashboard({ parent, childrenWithDetails, settings }: Paren
                 </Avatar>
                 <div className="flex-1">
                     <CardTitle className="text-2xl md:text-3xl">Welcome, {parent.name}</CardTitle>
-                    <CardDescription className="text-base">
-                        Viewing dashboard for: {childrenNames}. 
-                        <span className="font-bold ml-4">Total Due: Rs{totalDue.toFixed(2)}</span>
+                    <CardDescription className="text-base mt-1">
+                        Viewing dashboard for: <span className="font-semibold">{childrenNames}</span>.
                     </CardDescription>
+                    {totalDue > 0 && (
+                         <Alert variant="destructive" className="mt-2">
+                            <Banknote className="h-4 w-4" />
+                            <AlertTitle>Outstanding Balance</AlertTitle>
+                            <AlertDescription>
+                                The total pending fee for your children is <strong>Rs{totalDue.toFixed(2)}</strong>. Please see payment instructions below.
+                            </AlertDescription>
+                        </Alert>
+                    )}
                 </div>
             </CardHeader>
             <CardContent>
                  <Tabs defaultValue={childrenWithDetails[0].id} className="w-full">
-                    <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-nowrap">
-                        {childrenWithDetails.map(child => (
-                            <TabsTrigger key={child.id} value={child.id}>{child.name}</TabsTrigger>
-                        ))}
-                    </TabsList>
+                    <div className="flex flex-col md:flex-row gap-4 mb-6 print-hidden">
+                        <TabsList className="w-full justify-start overflow-x-auto whitespace-nowrap md:w-auto">
+                            {childrenWithDetails.map(child => (
+                                <TabsTrigger key={child.id} value={child.id}>{child.name}</TabsTrigger>
+                            ))}
+                        </TabsList>
+                         <Card className="flex-1">
+                            <CardContent className="p-4">
+                                <h4 className="font-semibold text-lg mb-2">How to Pay Fees</h4>
+                                <p className="text-sm text-muted-foreground mb-4">
+                                    Online payment is not yet available. Please pay fees at the school office or contact us for bank transfer details.
+                                </p>
+                                <Button asChild>
+                                    <a href="tel:+916393071946">
+                                        <Phone className="mr-2 h-4 w-4"/>
+                                        Contact School Office
+                                    </a>
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </div>
                     {childrenWithDetails.map(child => (
                         <TabsContent key={child.id} value={child.id} className="mt-6">
                             <StudentDashboard
