@@ -1,5 +1,4 @@
 
-
 import { z } from 'zod';
 
 export type NewsArticle = {
@@ -42,7 +41,9 @@ export type FeeStructure = {
   exam?: number;
   computer?: number;
   miscellaneous?: number;
+  admission?: number;
   discount?: number;
+  discountType?: 'percentage' | 'fixed';
   paymentPlan?: 'monthly' | 'quarterly' | 'yearly';
 };
 
@@ -99,6 +100,7 @@ export type Teacher = {
     salaryPayments?: SalaryPayment[];
     canEditAttendance?: boolean;
     canEditResults?: boolean;
+    isTeacher?: boolean;
 };
 
 export type Book = {

@@ -45,6 +45,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
 
     const feeHeads = [
       { key: 'tuition', label: 'Tuition Fee' },
+      { key: 'admission', label: 'Admission Fee' },
       { key: 'transport', label: 'Transport Fee' },
       { key: 'exam', label: 'Exam Fee' },
       { key: 'computer', label: 'Computer Fee' },

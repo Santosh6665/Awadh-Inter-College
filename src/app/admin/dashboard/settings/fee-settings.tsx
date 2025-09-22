@@ -1,0 +1,137 @@
+
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { saveSettings } from './actions';
+import { Loader2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
+const classes = ["Nursery", "LKG", "UKG", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+const feeHeads = [
+    { key: 'tuition', label: 'Tuition Fee' },
+    { key: 'admission', label: 'Admission Fee' },
+    { key: 'exam', label: 'Exam Fee' },
+    { key: 'transport', label: 'Transport Fee' },
+    { key: 'miscellaneous', label: 'Miscellaneous' },
+];
+
+export function FeeSettings({ settings }: { settings: any }) {
+  const [feeStructure, setFeeStructure] = useState(settings?.feeStructure || {});
+  const [lateFee, setLateFee] = useState(settings?.lateFee || { amount: '', per: 'day' });
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
+
+  const handleFeeChange = (className: string, feeHead: string, value: string) => {
+    setFeeStructure((prev: any) => ({
+      ...prev,
+      [className]: {
+        ...prev[className],
+        [feeHead]: value === '' ? undefined : Number(value),
+      },
+    }));
+  };
+  
+  const handleLateFeeChange = (field: 'amount' | 'per', value: string) => {
+    setLateFee((prev: any) => ({
+      ...prev,
+      [field]: field === 'amount' ? (value === '' ? undefined : Number(value)) : value,
+    }));
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    const result = await saveSettings({ feeStructure, lateFee });
+    if (result.success) {
+      toast({
+        title: 'Success',
+        description: 'Fee settings saved successfully.',
+      });
+    } else {
+      toast({
+        title: 'Error',
+        description: result.message,
+        variant: 'destructive',
+      });
+    }
+    setIsSaving(false);
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Fee Structure Settings</CardTitle>
+              <CardDescription>Define the default fee structure for each class.</CardDescription>
+            </div>
+            <Button onClick={handleSave} disabled={isSaving}>
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save All Fee Settings
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Accordion type="single" collapsible className="w-full">
+            {classes.map((className) => (
+              <AccordionItem value={className} key={className}>
+                <AccordionTrigger>Class {className}</AccordionTrigger>
+                <AccordionContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-2">
+                    {feeHeads.map(head => (
+                      <div key={head.key} className="space-y-2">
+                        <Label htmlFor={`${className}-${head.key}`}>{head.label}</Label>
+                        <Input
+                          id={`${className}-${head.key}`}
+                          type="number"
+                          placeholder="Amount"
+                          value={feeStructure[className]?.[head.key] || ''}
+                          onChange={(e) => handleFeeChange(className, head.key, e.target.value)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </CardContent>
+      </Card>
+      
+       <Card>
+        <CardHeader>
+            <CardTitle>Late Fee Settings</CardTitle>
+            <CardDescription>Set the penalty for late fee payments.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="late-fee-amount">Late Fee Amount (Rs)</Label>
+                <Input
+                    id="late-fee-amount"
+                    type="number"
+                    placeholder="e.g., 50"
+                    value={lateFee.amount || ''}
+                    onChange={(e) => handleLateFeeChange('amount', e.target.value)}
+                />
+              </div>
+               <div className="space-y-2">
+                <Label htmlFor="late-fee-per">Per</Label>
+                 <Input
+                    id="late-fee-per"
+                    placeholder="e.g., day or week"
+                    value={lateFee.per || ''}
+                    onChange={(e) => handleLateFeeChange('per', e.target.value)}
+                />
+              </div>
+           </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

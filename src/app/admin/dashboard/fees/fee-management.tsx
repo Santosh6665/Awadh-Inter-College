@@ -67,7 +67,8 @@ export function FeeManagement({ students, feeSettings }: { students: Student[], 
     };
     
     const { 
-      tuition = 0, 
+      tuition = 0,
+      admission = 0,
       transport = 0, 
       exam = 0, 
       computer = 0, 
@@ -75,7 +76,7 @@ export function FeeManagement({ students, feeSettings }: { students: Student[], 
       discount = 0 
     } = finalFeeStructure;
 
-    const totalFees = (tuition + transport + exam + computer + miscellaneous) - discount;
+    const totalFees = (tuition + admission + transport + exam + computer + miscellaneous) - discount;
     const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
     const due = totalFees - totalPaid;
 

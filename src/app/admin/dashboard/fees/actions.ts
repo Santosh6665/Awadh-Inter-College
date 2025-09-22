@@ -8,6 +8,7 @@ import { FieldValue } from 'firebase-admin/firestore';
 
 const FeeStructureSchema = z.object({
   tuition: z.coerce.number().min(0).optional().or(z.literal('')),
+  admission: z.coerce.number().min(0).optional().or(z.literal('')),
   transport: z.coerce.number().min(0).optional().or(z.literal('')),
   exam: z.coerce.number().min(0).optional().or(z.literal('')),
   computer: z.coerce.number().min(0).optional().or(z.literal('')),
@@ -103,18 +104,5 @@ export async function recordPayment(
   } catch (error) {
     console.error('Error recording payment:', error);
     return { success: false, message: 'An unexpected error occurred.' };
-  }
-}
-
-export async function saveSettings(settings: any) {
-  try {
-    const settingsDocRef = firestore.collection('settings').doc('schoolSettings');
-    await settingsDocRef.set(settings, { merge: true });
-    revalidatePath('/admin/dashboard');
-    revalidatePath('/student');
-    return { success: true, message: 'Settings saved successfully.' };
-  } catch (error) {
-    console.error('Error saving settings:', error);
-    return { success: false, message: 'An unexpected error occurred while saving settings.' };
   }
 }

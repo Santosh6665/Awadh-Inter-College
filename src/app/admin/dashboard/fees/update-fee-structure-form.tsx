@@ -84,18 +84,20 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
             Enter the fee amounts for each category. Blank fields will use class defaults.
           </DialogDescription>
         </DialogHeader>
-        <form action={formAction} className="grid gap-4 py-4">
+        <form action={formAction} className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="tuition">Tuition Fee</Label>
               <Input id="tuition" name="tuition" type="number" defaultValue={getFeeValue('tuition')} placeholder={classDefaults.tuition || '0'} />
             </div>
+             <div className="space-y-2">
+              <Label htmlFor="admission">Admission Fee</Label>
+              <Input id="admission" name="admission" type="number" defaultValue={getFeeValue('admission')} placeholder={classDefaults.admission || '0'} />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="transport">Transport Fee</Label>
               <Input id="transport" name="transport" type="number" defaultValue={getFeeValue('transport')} placeholder={classDefaults.transport || '0'} />
             </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="exam">Exam Fee</Label>
               <Input id="exam" name="exam" type="number" defaultValue={getFeeValue('exam')} placeholder={classDefaults.exam || '0'} />
@@ -104,8 +106,6 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
               <Label htmlFor="computer">Computer Fee</Label>
               <Input id="computer" name="computer" type="number" defaultValue={getFeeValue('computer')} placeholder={classDefaults.computer || '0'} />
             </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="miscellaneous">Miscellaneous</Label>
               <Input id="miscellaneous" name="miscellaneous" type="number" defaultValue={getFeeValue('miscellaneous')} placeholder={classDefaults.miscellaneous || '0'} />
