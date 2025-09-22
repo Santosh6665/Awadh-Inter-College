@@ -76,6 +76,10 @@ export async function getStudentAttendanceHistory(studentId: string): Promise<At
 }
 
 export async function isHoliday(date: string): Promise<{ isHoliday: boolean; name?: string }> {
+  const teacherId = cookies().get('teacher_id')?.value;
+  if (!teacherId) {
+    throw new Error('Unauthorized: You must be logged in as a teacher.');
+  }
   try {
     const holidayDoc = await firestore.collection('holidays').doc(date).get();
     if (holidayDoc.exists) {
@@ -89,6 +93,10 @@ export async function isHoliday(date: string): Promise<{ isHoliday: boolean; nam
 }
 
 export async function getSchoolStatus(date: string): Promise<{ isClosed: boolean; reason?: string }> {
+  const teacherId = cookies().get('teacher_id')?.value;
+  if (!teacherId) {
+    throw new Error('Unauthorized: You must be logged in as a teacher.');
+  }
   try {
     const statusDoc = await firestore.collection('schoolStatus').doc(date).get();
     if (statusDoc.exists) {
@@ -105,6 +113,10 @@ export async function getSchoolStatus(date: string): Promise<{ isClosed: boolean
 }
 
 export async function getHolidays(): Promise<string[]> {
+  const teacherId = cookies().get('teacher_id')?.value;
+  if (!teacherId) {
+    throw new Error('Unauthorized: You must be logged in as a teacher.');
+  }
   try {
     const holidaysSnapshot = await firestore.collection('holidays').get();
     if (holidaysSnapshot.empty) {
