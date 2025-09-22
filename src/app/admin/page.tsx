@@ -1,22 +1,22 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Users, UserCheck } from "lucide-react";
-import { StudentList } from "./students/student-list";
-import { getStudents } from "./students/actions";
-import { TeacherList } from "./teachers/teacher-list";
-import { getTeachers } from "./teachers/actions";
+import { StudentList } from "./dashboard/students/student-list";
+import { getStudents } from "./dashboard/students/actions";
+import { TeacherList } from "./dashboard/teachers/teacher-list";
+import { getTeachers } from "./dashboard/teachers/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ResultsManagement } from "./results/results-management";
-import { AttendanceManagement } from "./attendance/attendance-management";
+import { ResultsManagement } from "./dashboard/results/results-management";
+import { AttendanceManagement } from "./dashboard/attendance/attendance-management";
 import type { Student, Teacher, Notice } from "@/lib/types";
 import { firestore } from "@/lib/firebase-admin";
-import { FeeManagement } from "./fees/fee-management";
-import { NoticeManagement } from "./notices/notice-management";
-import { getNotices } from "./notices/actions";
+import { FeeManagement } from "./dashboard/fees/fee-management";
+import { NoticeManagement } from "./dashboard/notices/notice-management";
+import { getNotices } from "./dashboard/notices/actions";
 import { format } from 'date-fns';
-import { TeacherAttendanceManagement } from "./teacher-attendance/teacher-attendance-management";
-import { SalaryManagement } from "./salary/salary-management";
-import { Settings } from "./settings/settings";
+import { TeacherAttendanceManagement } from "./dashboard/teacher-attendance/teacher-attendance-management";
+import { SalaryManagement } from "./dashboard/salary/salary-management";
+import { Settings } from "./dashboard/settings/settings";
 
 export default async function AdminDashboardPage() {
   let students: Student[] = [];
