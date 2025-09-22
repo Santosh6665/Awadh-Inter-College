@@ -42,6 +42,16 @@ export async function addNotice(
     };
     await firestore.collection('notices').add(noticeData);
 
+    // If the notice is a holiday, add it to the holidays collection
+    if (noticeData.category === 'Holiday') {
+        const holidayDocRef = firestore.collection('holidays').doc(noticeData.date);
+        await holidayDocRef.set({
+            name: noticeData.title,
+            description: noticeData.description,
+        }, { merge: true });
+    }
+
+
     revalidatePath('/admin/dashboard');
     revalidatePath('/notices');
     return { success: true, message: 'Notice added successfully.' };
@@ -71,11 +81,31 @@ export async function updateNotice(
   }
 
   try {
+    const noticeDocRef = firestore.collection('notices').doc(id);
+    const oldNoticeDoc = await noticeDocRef.get();
+    const oldNoticeData = oldNoticeDoc.data();
+
     const noticeData = {
         ...validatedFields.data,
         updatedAt: new Date()
     };
-    await firestore.collection('notices').doc(id).update(noticeData);
+    await noticeDocRef.update(noticeData);
+    
+    // Handle holiday changes
+    if (oldNoticeData?.category === 'Holiday' && noticeData.category !== 'Holiday') {
+        // If it was a holiday and now it's not, delete it from holidays
+        await firestore.collection('holidays').doc(oldNoticeData.date).delete();
+    } else if (noticeData.category === 'Holiday') {
+        // If it's a holiday, add/update it in holidays
+        if (oldNoticeData?.date !== noticeData.date && oldNoticeData?.category === 'Holiday') {
+            // If date changed, delete the old one
+            await firestore.collection('holidays').doc(oldNoticeData.date).delete();
+        }
+        await firestore.collection('holidays').doc(noticeData.date).set({
+            name: noticeData.title,
+            description: noticeData.description,
+        });
+    }
 
     revalidatePath('/admin/dashboard');
     revalidatePath('/notices');
@@ -91,7 +121,17 @@ export async function deleteNotice(id: string) {
     return { success: false, message: 'Notice ID is missing.' };
   }
   try {
-    await firestore.collection('notices').doc(id).delete();
+    const noticeDocRef = firestore.collection('notices').doc(id);
+    const noticeDoc = await noticeDocRef.get();
+    const noticeData = noticeDoc.data();
+
+    await noticeDocRef.delete();
+
+    // If the deleted notice was a holiday, remove it from the holidays collection
+    if (noticeData?.category === 'Holiday') {
+        await firestore.collection('holidays').doc(noticeData.date).delete();
+    }
+
     revalidatePath('/admin/dashboard');
     revalidatePath('/notices');
     return { success: true, message: 'Notice deleted successfully.' };

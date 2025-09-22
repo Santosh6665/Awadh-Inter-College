@@ -75,3 +75,16 @@ export async function getTeacherAttendanceHistory(teacherId: string): Promise<At
     return [];
   }
 }
+
+export async function isHoliday(date: string): Promise<{ isHoliday: boolean; name?: string }> {
+  try {
+    const holidayDoc = await firestore.collection('holidays').doc(date).get();
+    if (holidayDoc.exists) {
+      return { isHoliday: true, name: holidayDoc.data()?.name || 'Holiday' };
+    }
+    return { isHoliday: false };
+  } catch (error) {
+    console.error('Error checking for holiday:', error);
+    return { isHoliday: false };
+  }
+}

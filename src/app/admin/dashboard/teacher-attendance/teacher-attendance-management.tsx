@@ -18,12 +18,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon, Search, Eye, XCircle } from "lucide-react";
+import { Calendar as CalendarIcon, Search, Eye, XCircle, Tent } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
-import { getTeacherAttendanceByDate, setTeacherAttendance as setTeacherAttendanceAction, getTeacherAttendanceHistory, clearTeacherAttendance as clearTeacherAttendanceAction } from './actions';
+import { getTeacherAttendanceByDate, setTeacherAttendance as setTeacherAttendanceAction, getTeacherAttendanceHistory, clearTeacherAttendance as clearTeacherAttendanceAction, isHoliday } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { AttendanceHistoryDialog } from '../attendance/attendance-history-dialog';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 
 type AttendanceStatus = 'present' | 'absent';
@@ -43,8 +44,16 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [teacherHistory, setTeacherHistory] = useState<AttendanceRecord[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [isDateHoliday, setIsDateHoliday] = useState(false);
+  const [holidayName, setHolidayName] = useState('');
 
   const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
+
+  const checkIsHoliday = useCallback(async () => {
+    const holidayStatus = await isHoliday(formattedDate);
+    setIsDateHoliday(holidayStatus.isHoliday);
+    setHolidayName(holidayStatus.name || 'Holiday');
+  }, [formattedDate]);
 
   const fetchAttendance = useCallback(async () => {
     setLoading(true);
@@ -66,7 +75,8 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
 
   useEffect(() => {
     fetchAttendance();
-  }, [fetchAttendance]);
+    checkIsHoliday();
+  }, [fetchAttendance, checkIsHoliday]);
 
   const handleStatusChange = async (teacherId: string, status: AttendanceStatus) => {
     // Optimistic UI update
@@ -195,69 +205,79 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
         </div>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Subject</TableHead>
-                <TableHead className="text-right">Status</TableHead>
-                <TableHead className="text-right">History</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
+        {isDateHoliday ? (
+          <Alert>
+            <Tent className="h-4 w-4" />
+            <AlertTitle>{holidayName}</AlertTitle>
+            <AlertDescription>
+              The selected date is marked as a holiday. Attendance cannot be recorded.
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center">Loading attendance...</TableCell>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Subject</TableHead>
+                  <TableHead className="text-right">Status</TableHead>
+                  <TableHead className="text-right">History</TableHead>
                 </TableRow>
-              ) : filteredTeachers.length > 0 ? (
-                filteredTeachers.map((teacher) => {
-                  const status = attendance[teacher.id]?.status;
-                  return (
-                    <TableRow key={teacher.id}>
-                      <TableCell>{teacher.name}</TableCell>
-                      <TableCell>{teacher.subject}</TableCell>
-                      <TableCell className="text-right">
-                         <div className="flex items-center justify-end gap-2 md:gap-4">
-                            <RadioGroup
-                            onValueChange={(value) => handleStatusChange(teacher.id, value as AttendanceStatus)}
-                            value={status}
-                            className="flex items-center gap-2 md:gap-4"
-                            >
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="present" id={`present-${teacher.id}`} />
-                                <Label htmlFor={`present-${teacher.id}`}>Present</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="absent" id={`absent-${teacher.id}`} />
-                                <Label htmlFor={`absent-${teacher.id}`}>Absent</Label>
-                            </div>
-                            </RadioGroup>
-                            {status && (
-                            <Button variant="ghost" size="icon" title="Clear Attendance" onClick={() => handleClearAttendance(teacher.id)}>
-                                <XCircle className="h-4 w-4 text-muted-foreground" />
-                            </Button>
-                            )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" title="View Attendance History" onClick={() => handleViewHistory(teacher)}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  )
-                })
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center">
-                    No teachers found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center">Loading attendance...</TableCell>
+                  </TableRow>
+                ) : filteredTeachers.length > 0 ? (
+                  filteredTeachers.map((teacher) => {
+                    const status = attendance[teacher.id]?.status;
+                    return (
+                      <TableRow key={teacher.id}>
+                        <TableCell>{teacher.name}</TableCell>
+                        <TableCell>{teacher.subject}</TableCell>
+                        <TableCell className="text-right">
+                           <div className="flex items-center justify-end gap-2 md:gap-4">
+                              <RadioGroup
+                              onValueChange={(value) => handleStatusChange(teacher.id, value as AttendanceStatus)}
+                              value={status}
+                              className="flex items-center gap-2 md:gap-4"
+                              >
+                              <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="present" id={`present-${teacher.id}`} />
+                                  <Label htmlFor={`present-${teacher.id}`}>Present</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="absent" id={`absent-${teacher.id}`} />
+                                  <Label htmlFor={`absent-${teacher.id}`}>Absent</Label>
+                              </div>
+                              </RadioGroup>
+                              {status && (
+                              <Button variant="ghost" size="icon" title="Clear Attendance" onClick={() => handleClearAttendance(teacher.id)}>
+                                  <XCircle className="h-4 w-4 text-muted-foreground" />
+                              </Button>
+                              )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="icon" title="View Attendance History" onClick={() => handleViewHistory(teacher)}>
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center">
+                      No teachers found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </CardContent>
     </Card>
       <AttendanceHistoryDialog
