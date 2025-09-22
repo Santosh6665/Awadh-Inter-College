@@ -95,7 +95,21 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
             <Label htmlFor="rollNumber">Roll No.</Label>
             <Input id="rollNumber" name="rollNumber" defaultValue={student?.rollNumber} readOnly={isEditing} />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div className="space-y-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input id="phone" name="phone" defaultValue={student?.phone} />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="fatherName">Father's Name</Label>
+                <Input id="fatherName" name="fatherName" defaultValue={student?.fatherName} />
+            </div>
+          </div>
+           <div className="space-y-2">
+              <Label htmlFor="address">Address</Label>
+              <Input id="address" name="address" defaultValue={student?.address} />
+            </div>
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
              <div className="space-y-2">
               <Label htmlFor="class">Class</Label>
                 <Select name="class" defaultValue={student?.class}>
@@ -139,20 +153,6 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
                 <Input id="dob" name="dob" type="date" defaultValue={formattedDob} />
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" name="phone" defaultValue={student?.phone} />
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor="fatherName">Father's Name</Label>
-                <Input id="fatherName" name="fatherName" defaultValue={student?.fatherName} />
-            </div>
-          </div>
-           <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
-              <Input id="address" name="address" defaultValue={student?.address} />
-            </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsOpen(false)}>
               Cancel
