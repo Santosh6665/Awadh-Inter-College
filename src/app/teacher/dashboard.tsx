@@ -8,10 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFooter } from '@/components/ui/table';
 import { SetPasswordDialog } from './set-password-dialog';
 import { ResultsManagement } from './results-management';
-import { AttendanceManagement } from './attendance/attendance-management';
 import { useMemo, useState } from 'react';
-import { CheckCircle, XCircle, Download } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SalarySlip } from '../admin/dashboard/salary/salary-slip';
 import { AttendanceHistory } from '../student/attendance-history';
@@ -76,7 +74,6 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                     <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-nowrap">
                     <TabsTrigger value="profile">Profile</TabsTrigger>
                     <TabsTrigger value="results">Manage Results</TabsTrigger>
-                    <TabsTrigger value="attendance">Manage Student Attendance</TabsTrigger>
                     </TabsList>
                     <TabsContent value="profile" className="mt-6 space-y-6">
                         <Card>
@@ -183,9 +180,6 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                     </TabsContent>
                     <TabsContent value="results" className="mt-6">
                         <ResultsManagement students={students} teacher={teacher} settings={settings} />
-                    </TabsContent>
-                    <TabsContent value="attendance" className="mt-6">
-                        <AttendanceManagement students={students} teacher={teacher} />
                     </TabsContent>
                 </Tabs>
                 </CardContent>
