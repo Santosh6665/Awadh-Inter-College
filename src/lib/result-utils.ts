@@ -58,9 +58,11 @@ const subjectKeys: (keyof Marks)[] = ['physics', 'chemistry', 'maths', 'english'
 export function combineMarks(
   allMarks: { [key in ExamTypes]?: Marks } | undefined,
   examType: ExamTypes
-): { marks: Marks | null } {
+): { marks: Marks | null, examCyclesWithMarks: ExamTypes[] } {
   const combined: Marks = {};
   const examsToCombine: ExamTypes[] = [];
+  const examCyclesWithMarks: ExamTypes[] = [];
+
 
   switch (examType) {
     case 'quarterly':
@@ -73,6 +75,13 @@ export function combineMarks(
       examsToCombine.push('quarterly', 'halfYearly', 'annual');
       break;
   }
+  
+  examsToCombine.forEach(cycle => {
+    if (allMarks?.[cycle] && Object.values(allMarks[cycle]!).some(mark => mark != null)) {
+      examCyclesWithMarks.push(cycle);
+    }
+  });
+
 
   for (const subject of subjectKeys) {
     let total = 0;
@@ -89,37 +98,33 @@ export function combineMarks(
     }
   }
 
-  return { marks: combined };
+  return { marks: combined, examCyclesWithMarks };
 }
 
 export function calculateCumulativeTotals(
   marks: Marks | undefined | null,
-  examType: ExamTypes
+  examCyclesWithMarks: ExamTypes[]
 ): { totalObtainedMarks: number, totalMaxMarks: number, subjectCount: number } {
   if (!marks) {
     return { totalObtainedMarks: 0, totalMaxMarks: 0, subjectCount: 0 };
   }
 
   const subjects = Object.entries(marks)
-    .filter(([key, value]) => typeof value === 'number')
-    .map(([, value]) => value as number);
+    .filter(([key, value]) => typeof value === 'number');
 
-  const totalObtainedMarks = subjects.reduce((sum, mark) => sum + (mark || 0), 0);
+  const totalObtainedMarks = subjects.reduce((sum, [, mark]) => sum + (mark as number || 0), 0);
   
-  let examMultiplier = 1;
-  if (examType === 'halfYearly') examMultiplier = 2;
-  if (examType === 'annual') examMultiplier = 3;
-
-  const totalMaxMarks = subjects.length * 100 * examMultiplier;
+  const totalMaxMarks = subjects.length * 100 * examCyclesWithMarks.length;
 
   return { totalObtainedMarks, totalMaxMarks, subjectCount: subjects.length };
 }
 
+
 export function calculateCumulativePercentage(
   marks: Marks | undefined | null,
-  examType: ExamTypes
+  examCyclesWithMarks: ExamTypes[]
 ): number | null {
-  const { totalObtainedMarks, totalMaxMarks } = calculateCumulativeTotals(marks, examType);
+  const { totalObtainedMarks, totalMaxMarks } = calculateCumulativeTotals(marks, examCyclesWithMarks);
   
   if (totalMaxMarks === 0) {
     return null;

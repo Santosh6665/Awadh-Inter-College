@@ -38,7 +38,7 @@ export default async function StudentPage() {
             const studentsWithPercentage = classmates
                 .map(s => ({
                     id: s.id,
-                    percentage: calculateCumulativePercentage(combineMarks(s.marks, examType).marks, examType),
+                    percentage: calculateCumulativePercentage(combineMarks(s.marks, examType).marks, combineMarks(s.marks, examType).examCyclesWithMarks),
                 }))
                 .filter(s => s.percentage !== null);
             

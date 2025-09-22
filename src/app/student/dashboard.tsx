@@ -90,10 +90,10 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
   }, [student, feeSettings]);
 
   const ResultCard = ({ student, examType }: { student: Student, examType: ExamTypes }) => {
-    const { marks: combinedStudentMarks } = useMemo(() => combineMarks(student.marks, examType), [student.marks, examType]);
-    const percentage = calculateCumulativePercentage(combinedStudentMarks, examType);
+    const { marks: combinedStudentMarks, examCyclesWithMarks } = useMemo(() => combineMarks(student.marks, examType), [student.marks, examType]);
+    const percentage = calculateCumulativePercentage(combinedStudentMarks, examCyclesWithMarks);
     const grade = calculateGrade(percentage);
-    const totals = calculateCumulativeTotals(combinedStudentMarks, examType);
+    const totals = calculateCumulativeTotals(combinedStudentMarks, examCyclesWithMarks);
     const resultStatus = grade === 'F' ? 'Fail' : 'Pass';
     const hasMarks = combinedStudentMarks && Object.keys(combinedStudentMarks).length > 0;
     const examTitle = examType.charAt(0).toUpperCase() + examType.slice(1);
@@ -322,7 +322,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                     </Card>
                 </TabsContent>
                 <TabsContent value="results" className="mt-6">
-                    <ResultCard student={student} examType={examType} />
+                    <ResultCard student={student} examType={'annual'} />
                 </TabsContent>
                 <TabsContent value="attendance" className="mt-6">
                    <AttendanceHistory attendanceRecords={attendance} />
