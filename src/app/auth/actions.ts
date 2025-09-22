@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from 'zod';
@@ -99,22 +100,17 @@ export async function login(credentials: z.infer<typeof loginSchema>) {
       const firstChildData = firstChildDoc.data() as Student;
       const parentName = firstChildData.fatherName;
       
-      let needsPasswordReset = false;
-      // For parents, password is based on their first child's details
-      // A parent password isn't stored separately; it's always derived.
       const firstNameRaw = firstChildData.name.split(' ')[0];
       const firstName = firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1);
       const yearOfBirth = new Date(firstChildData.dob).getFullYear();
       const defaultPassword = `${firstName}@${yearOfBirth}`;
 
       if (password !== defaultPassword) {
-        // Continue to check if it's a roll number before failing
-      } else {
-         // Since parents don't have their own password field, we don't set a reset cookie.
-         // They will always log in with the derived password.
-         setAuthCookies(phone, 'parent', parentName);
-         return { success: true, message: 'Parent login successful', redirect: '/parent' };
+        return { success: false, message: 'Incorrect password.' };
       }
+      
+      setAuthCookies(phone, 'parent', parentName);
+      return { success: true, message: 'Parent login successful', redirect: '/parent' };
     }
   }
 
