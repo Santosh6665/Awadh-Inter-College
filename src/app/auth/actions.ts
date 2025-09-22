@@ -49,7 +49,7 @@ export async function login(credentials: z.infer<typeof loginSchema>) {
       const adminData = adminDoc.data();
       if (adminData?.isAdmin === true && adminData?.password === password) {
         setAuthCookies(email, 'admin', adminData.name || 'Admin');
-        return { success: true, message: 'Admin login successful', redirect: '/admin/dashboard' };
+        return { success: true, message: 'Admin login successful', redirect: '/admin' };
       }
     }
 

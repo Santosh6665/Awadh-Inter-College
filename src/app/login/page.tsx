@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 export default async function LoginPage() {
   const user = await getLoggedInUser();
   if (user) {
-    if (user.type === 'admin') redirect('/admin/dashboard');
+    if (user.type === 'admin') redirect('/admin');
     if (user.type === 'teacher') redirect('/teacher');
     if (user.type === 'student') redirect('/student');
   }

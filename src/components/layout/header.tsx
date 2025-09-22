@@ -52,7 +52,7 @@ export function Header({ user }: HeaderProps) {
     switch (user.type) {
       case 'student': return '/student';
       case 'teacher': return '/teacher';
-      case 'admin': return '/admin/dashboard';
+      case 'admin': return '/admin';
       default: return '/login';
     }
   }
