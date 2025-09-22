@@ -81,45 +81,45 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
         <DialogHeader>
           <DialogTitle>Update Fee Structure for {student.name}</DialogTitle>
           <DialogDescription>
-            Enter the fee amounts for each category. Blank fields will use class defaults.
+            Enter specific fees for this student to override class defaults. Blank fields will use the defaults set for Class {student.class}.
           </DialogDescription>
         </DialogHeader>
         <form action={formAction} className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="tuition">Tuition Fee</Label>
-              <Input id="tuition" name="tuition" type="number" defaultValue={getFeeValue('tuition')} placeholder={classDefaults.tuition || '0'} />
+              <Input id="tuition" name="tuition" type="number" defaultValue={getFeeValue('tuition')} placeholder={`Default: ${classDefaults.tuition || '0'}`} />
             </div>
              <div className="space-y-2">
               <Label htmlFor="admission">Admission Fee</Label>
-              <Input id="admission" name="admission" type="number" defaultValue={getFeeValue('admission')} placeholder={classDefaults.admission || '0'} />
+              <Input id="admission" name="admission" type="number" defaultValue={getFeeValue('admission')} placeholder={`Default: ${classDefaults.admission || '0'}`} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="transport">Transport Fee</Label>
-              <Input id="transport" name="transport" type="number" defaultValue={getFeeValue('transport')} placeholder={classDefaults.transport || '0'} />
+              <Input id="transport" name="transport" type="number" defaultValue={getFeeValue('transport')} placeholder={`Default: ${classDefaults.transport || '0'}`} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="exam">Exam Fee</Label>
-              <Input id="exam" name="exam" type="number" defaultValue={getFeeValue('exam')} placeholder={classDefaults.exam || '0'} />
+              <Input id="exam" name="exam" type="number" defaultValue={getFeeValue('exam')} placeholder={`Default: ${classDefaults.exam || '0'}`} />
             </div>
              <div className="space-y-2">
               <Label htmlFor="computer">Computer Fee</Label>
-              <Input id="computer" name="computer" type="number" defaultValue={getFeeValue('computer')} placeholder={classDefaults.computer || '0'} />
+              <Input id="computer" name="computer" type="number" defaultValue={getFeeValue('computer')} placeholder={`Default: ${classDefaults.computer || '0'}`} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="miscellaneous">Miscellaneous</Label>
-              <Input id="miscellaneous" name="miscellaneous" type="number" defaultValue={getFeeValue('miscellaneous')} placeholder={classDefaults.miscellaneous || '0'} />
+              <Input id="miscellaneous" name="miscellaneous" type="number" defaultValue={getFeeValue('miscellaneous')} placeholder={`Default: ${classDefaults.miscellaneous || '0'}`} />
             </div>
              <div className="space-y-2">
               <Label htmlFor="discount">Discount/Concession</Label>
-              <Input id="discount" name="discount" type="number" defaultValue={getFeeValue('discount')} placeholder={classDefaults.discount || '0'} />
+              <Input id="discount" name="discount" type="number" defaultValue={getFeeValue('discount')} placeholder={`Default: ${classDefaults.discount || '0'}`} />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="paymentPlan">Payment Plan</Label>
             <Select name="paymentPlan" defaultValue={getFeeValue('paymentPlan')}>
               <SelectTrigger>
-                <SelectValue placeholder="Select a payment plan" />
+                <SelectValue placeholder="Use class default plan" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="monthly">Monthly</SelectItem>

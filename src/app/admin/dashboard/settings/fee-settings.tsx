@@ -17,6 +17,7 @@ const feeHeads = [
     { key: 'admission', label: 'Admission Fee' },
     { key: 'exam', label: 'Exam Fee' },
     { key: 'transport', label: 'Transport Fee' },
+    { key: 'computer', label: 'Computer Fee' },
     { key: 'miscellaneous', label: 'Miscellaneous' },
 ];
 
@@ -152,7 +153,7 @@ export function FeeSettings({ settings }: { settings: any }) {
                 <AccordionItem value={className} key={className}>
                   <AccordionTrigger>Class {className}</AccordionTrigger>
                   <AccordionContent>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-2">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 p-2">
                       {feeHeads.map(head => (
                         <div key={head.key} className="space-y-2">
                           <Label htmlFor={`${className}-${head.key}`}>{head.label}</Label>

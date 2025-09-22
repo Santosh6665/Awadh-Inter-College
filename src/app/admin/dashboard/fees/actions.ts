@@ -230,7 +230,7 @@ export async function recordCombinedPayment(
         
         if(remainingTotalDue > 0) {
             for (const student of remainingChildrenWithDues) {
-                const dueAfterInitialPayment = student.due - (paymentDistribution[student.id] || 0);
+                const dueAfterInitialPayment = student.due - (paymentDistribution[s.id] || 0);
                 const proportionalShareOfSurplus = (dueAfterInitialPayment / remainingTotalDue) * surplus;
                 paymentDistribution[student.id] += proportionalShareOfSurplus;
             }
