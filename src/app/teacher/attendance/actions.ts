@@ -4,6 +4,7 @@
 import { firestore } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
+import type { AttendanceRecord } from '@/lib/types';
 
 export async function getAttendanceByDate(date: string) {
   const teacherId = cookies().get('teacher_id')?.value;
@@ -42,5 +43,34 @@ export async function setAttendance(studentId: string, date: string, status: 'pr
   } catch (error) {
     console.error('Error setting attendance:', error);
     return { success: false, message: 'An unexpected error occurred.' };
+  }
+}
+
+export async function getStudentAttendanceHistory(studentId: string): Promise<AttendanceRecord[]> {
+  const teacherId = cookies().get('teacher_id')?.value;
+  if (!teacherId) {
+    throw new Error('Unauthorized: You must be logged in as a teacher.');
+  }
+
+  try {
+    const attendanceSnapshot = await firestore.collection('attendance').get();
+    const attendanceRecords: AttendanceRecord[] = [];
+    
+    attendanceSnapshot.forEach(doc => {
+      const date = doc.id;
+      const data = doc.data();
+      if (data && data[studentId]) {
+        attendanceRecords.push({
+          date,
+          status: data[studentId].status,
+        });
+      }
+    });
+
+    // Sort by date descending
+    return attendanceRecords.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  } catch (error) {
+    console.error(`Error fetching attendance for student ${studentId}:`, error);
+    return [];
   }
 }

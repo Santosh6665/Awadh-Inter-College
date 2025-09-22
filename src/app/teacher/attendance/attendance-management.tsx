@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import type { Student } from '@/lib/types';
+import type { Student, AttendanceRecord } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,11 +18,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon, Search } from "lucide-react";
+import { Calendar as CalendarIcon, Search, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
-import { getAttendanceByDate, setAttendance as setAttendanceAction } from './actions';
+import { getAttendanceByDate, setAttendance as setAttendanceAction, getStudentAttendanceHistory } from './actions';
 import { useToast } from '@/hooks/use-toast';
+import { AttendanceHistoryDialog } from '@/app/admin/dashboard/attendance/attendance-history-dialog';
 
 type AttendanceStatus = 'present' | 'absent';
 type AttendanceData = {
@@ -36,6 +37,11 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
   const { toast } = useToast();
+
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [studentHistory, setStudentHistory] = useState<AttendanceRecord[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
 
@@ -80,6 +86,16 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
       await fetchAttendance();
     }
   };
+  
+  const handleViewHistory = async (student: Student) => {
+    setSelectedStudent(student);
+    setHistoryLoading(true);
+    setIsHistoryDialogOpen(true);
+    const history = await getStudentAttendanceHistory(student.id);
+    setStudentHistory(history);
+    setHistoryLoading(false);
+  };
+
 
   const filteredStudents = useMemo(() => students.filter(student => {
     const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -102,6 +118,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
 
 
   return (
+    <>
     <Card>
       <CardHeader>
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -162,13 +179,14 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
                 <TableHead>Roll No.</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Class</TableHead>
-                <TableHead className="text-right">Status</TableHead>
+                <TableHead className="text-right w-1/3">Status</TableHead>
+                <TableHead className="text-right">History</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center">Loading attendance...</TableCell>
+                  <TableCell colSpan={5} className="text-center">Loading attendance...</TableCell>
                 </TableRow>
               ) : filteredStudents.length > 0 ? (
                 filteredStudents.map((student) => {
@@ -194,12 +212,17 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
                           </div>
                         </RadioGroup>
                       </TableCell>
+                       <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" title="View Attendance History" onClick={() => handleViewHistory(student)}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   )
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center">
+                  <TableCell colSpan={5} className="text-center">
                     No students found.
                   </TableCell>
                 </TableRow>
@@ -209,5 +232,12 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
         </div>
       </CardContent>
     </Card>
+     <AttendanceHistoryDialog
+        isOpen={isHistoryDialogOpen}
+        setIsOpen={setIsHistoryDialogOpen}
+        personName={selectedStudent?.name ?? null}
+        attendanceRecords={historyLoading ? [] : studentHistory}
+      />
+    </>
   );
 }
