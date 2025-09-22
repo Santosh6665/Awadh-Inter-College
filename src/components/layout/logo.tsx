@@ -7,10 +7,12 @@ interface LogoProps {
 }
 
 export function Logo({ className }: LogoProps) {
+  // Add a version query to bust the cache when the logo is updated.
+  const cacheBuster = `?v=2`;
   return (
     <div className={cn('relative', className)}>
       <Image
-        src="/images/logo.png"
+        src={`/images/logo.png${cacheBuster}`}
         alt="Awadh Inter College Logo"
         width={50}
         height={50}
