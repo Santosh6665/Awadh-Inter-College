@@ -25,6 +25,7 @@ import { getAttendanceByDate, setAttendance as setAttendanceAction, getStudentAt
 import { useToast } from '@/hooks/use-toast';
 import { AttendanceHistoryDialog } from './attendance-history-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type AttendanceStatus = 'present' | 'absent';
 type AttendanceData = {
@@ -207,12 +208,29 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
                   className="pl-8"
               />
           </div>
-            <Input
-              placeholder="Filter by class..."
-              value={classFilter}
-              onChange={(e) => setClassFilter(e.target.value)}
-              className="w-full"
-          />
+            <Select value={classFilter} onValueChange={(value) => setClassFilter(value === 'all' ? '' : value)}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Filter by class..." />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Classes</SelectItem>
+                    <SelectItem value="Nursery">Nursery</SelectItem>
+                    <SelectItem value="LKG">LKG</SelectItem>
+                    <SelectItem value="UKG">UKG</SelectItem>
+                    <SelectItem value="1">Class 1</SelectItem>
+                    <SelectItem value="2">Class 2</SelectItem>
+                    <SelectItem value="3">Class 3</SelectItem>
+                    <SelectItem value="4">Class 4</SelectItem>
+                    <SelectItem value="5">Class 5</SelectItem>
+                    <SelectItem value="6">Class 6</SelectItem>
+                    <SelectItem value="7">Class 7</SelectItem>
+                    <SelectItem value="8">Class 8</SelectItem>
+                    <SelectItem value="9">Class 9</SelectItem>
+                    <SelectItem value="10">Class 10</SelectItem>
+                    <SelectItem value="11">Class 11</SelectItem>
+                    <SelectItem value="12">Class 12</SelectItem>
+                </SelectContent>
+            </Select>
         </div>
         <div className="mt-4 text-sm text-muted-foreground">
           <strong>Summary for filtered students:</strong> Present: {attendanceSummary.present} | Absent: {attendanceSummary.absent} | 
