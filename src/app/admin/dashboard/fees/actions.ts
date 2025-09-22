@@ -21,6 +21,7 @@ const PaymentSchema = z.object({
     amount: z.coerce.number().min(1, 'Amount must be greater than 0.'),
     method: z.enum(['Cash', 'Card', 'Online']),
     date: z.string().min(1, 'Date is required.'),
+    month: z.string().optional(),
 });
 
 

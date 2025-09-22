@@ -32,6 +32,11 @@ const initialState: FormState = {
   message: '',
 };
 
+const months = [
+  'January', 'February', 'March', 'April', 'May', 'June', 
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
@@ -95,6 +100,19 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student }: RecordPaymentF
                     <SelectItem value="Card">Card</SelectItem>
                     <SelectItem value="Online">Online</SelectItem>
                 </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="month">Payment Month</Label>
+            <Select name="month">
+              <SelectTrigger>
+                <SelectValue placeholder="Select month (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                {months.map(m => (
+                  <SelectItem key={m} value={m}>{m}</SelectItem>
+                ))}
+              </SelectContent>
             </Select>
           </div>
           <DialogFooter>

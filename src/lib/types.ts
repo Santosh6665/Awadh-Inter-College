@@ -52,6 +52,7 @@ export type Payment = {
   date: string;
   amount: number;
   method: 'Cash' | 'Card' | 'Online';
+  month?: string;
 };
 
 

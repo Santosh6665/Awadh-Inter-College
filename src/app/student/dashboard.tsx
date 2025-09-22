@@ -221,6 +221,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead>Date</TableHead>
+                                            <TableHead className="hidden sm:table-cell">Month</TableHead>
                                             <TableHead className="hidden sm:table-cell">Method</TableHead>
                                             <TableHead className="text-right">Amount (Rs)</TableHead>
                                             <TableHead className="text-right print-hidden">Actions</TableHead>
@@ -231,6 +232,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                                             student.payments.map(payment => (
                                                 <TableRow key={payment.id}>
                                                     <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
+                                                    <TableCell className="hidden sm:table-cell">{payment.month || 'N/A'}</TableCell>
                                                     <TableCell className="hidden sm:table-cell">{payment.method}</TableCell>
                                                     <TableCell className="text-right">Rs{payment.amount.toFixed(2)}</TableCell>
                                                     <TableCell className="text-right print-hidden">
@@ -243,7 +245,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                                             ))
                                         ) : (
                                             <TableRow>
-                                                <TableCell colSpan={4} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
+                                                <TableCell colSpan={5} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
                                             </TableRow>
                                         )}
                                     </TableBody>
