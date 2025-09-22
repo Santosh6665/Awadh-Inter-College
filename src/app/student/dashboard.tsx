@@ -89,29 +89,17 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
   }, [student, feeSettings]);
 
   const ResultCard = ({ student, examType }: { student: Student, examType: ExamTypes }) => {
-    const combined = combineMarks(student.marks, examType);
-    const percentage = calculateCumulativePercentage(combined.marks, examType);
+    const { remarks } = combineMarks(student.marks, examType);
+    const percentage = calculateCumulativePercentage(combineMarks(student.marks, examType).marks, examType);
     const grade = calculateGrade(percentage);
-    const totals = calculateCumulativeTotals(combined.marks, examType);
+    const totals = calculateCumulativeTotals(combineMarks(student.marks, examType).marks, examType);
     const resultStatus = grade === 'F' ? 'Fail' : 'Pass';
-    const hasMarks = combined.marks && Object.values(combined.marks).some(mark => typeof mark === 'number');
+    const hasMarks = Object.values(student.marks || {}).some(examMarks => examMarks && Object.keys(examMarks).length > 0);
     const examTitle = examType.charAt(0).toUpperCase() + examType.slice(1);
     
     const subjectKeys: (keyof Marks)[] = ['physics', 'chemistry', 'maths', 'english', 'computerScience'];
 
-    const examColumns = useMemo(() => {
-        const columns: { key: ExamTypes; label: string }[] = [];
-        if (examType === 'quarterly' || examType === 'halfYearly' || examType === 'annual') {
-            columns.push({ key: 'quarterly', label: 'Quarterly' });
-        }
-        if (examType === 'halfYearly' || examType === 'annual') {
-            columns.push({ key: 'halfYearly', label: 'Half-Yearly' });
-        }
-        if (examType === 'annual') {
-            columns.push({ key: 'annual', label: 'Annual' });
-        }
-        return columns;
-    }, [examType]);
+    const examCycles: ExamTypes[] = ['quarterly', 'halfYearly', 'annual'];
 
     return (
       <div id="result-card-to-print" className="print-block">
@@ -152,57 +140,72 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                 </div>
                 <div className="border rounded-lg p-4">
                   <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><BookOpen className="h-5 w-5 text-primary" /> Academic Performance</h3>
-                  <Table>
+                  <Table className="[&_td]:p-2 [&_th]:p-2">
                     <TableHeader>
-                      <TableRow>
-                        <TableHead>Subject</TableHead>
-                        {examColumns.map(col => <TableHead key={col.key} className="text-center">{col.label}</TableHead>)}
-                        <TableHead className="text-center">Total Obtained</TableHead>
-                        <TableHead className="text-center">Max Marks</TableHead>
-                      </TableRow>
+                        <TableRow>
+                            <TableHead rowSpan={2} className="align-bottom text-center">Subject</TableHead>
+                            <TableHead colSpan={2} className="text-center border-l">Quarterly</TableHead>
+                            <TableHead colSpan={2} className="text-center border-l">Half-Yearly</TableHead>
+                            <TableHead colSpan={2} className="text-center border-l">Annual</TableHead>
+                            <TableHead colSpan={2} className="text-center border-l bg-muted/50">Total ({examTitle})</TableHead>
+                        </TableRow>
+                        <TableRow>
+                            <TableHead className="text-center border-l">Obtained</TableHead>
+                            <TableHead className="text-center">Max</TableHead>
+                            <TableHead className="text-center border-l">Obtained</TableHead>
+                            <TableHead className="text-center">Max</TableHead>
+                            <TableHead className="text-center border-l">Obtained</TableHead>
+                            <TableHead className="text-center">Max</TableHead>
+                            <TableHead className="text-center border-l bg-muted/50">Obtained</TableHead>
+                            <TableHead className="text-center bg-muted/50">Max</TableHead>
+                        </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {subjectKeys.map(subject => (
-                        <TableRow key={subject}>
-                            <TableCell className="capitalize">{subject.replace(/([A-Z])/g, ' $1')}</TableCell>
-                             {examColumns.map(col => (
-                                <TableCell key={col.key} className="text-center">
-                                    {student.marks?.[col.key]?.[subject] ?? 'N/A'}
-                                </TableCell>
-                            ))}
-                            <TableCell className="text-center font-semibold">
-                                {combined.marks?.[subject] ?? 'N/A'}
-                            </TableCell>
-                            <TableCell className="text-center">{100 * examColumns.length}</TableCell>
-                        </TableRow>
-                      ))}
+                      {subjectKeys.map(subject => {
+                          const examsToCombine: ExamTypes[] = [];
+                            switch (examType) {
+                                case 'quarterly': examsToCombine.push('quarterly'); break;
+                                case 'halfYearly': examsToCombine.push('quarterly', 'halfYearly'); break;
+                                case 'annual': examsToCombine.push('quarterly', 'halfYearly', 'annual'); break;
+                            }
+
+                          const totalObtained = examsToCombine.reduce((acc, cycle) => acc + (student.marks?.[cycle]?.[subject] ?? 0), 0);
+                          const totalMax = examsToCombine.filter(cycle => student.marks?.[cycle]?.[subject] != null).length * 100;
+
+                          return (
+                            <TableRow key={subject}>
+                                <TableCell className="capitalize font-medium">{subject.replace(/([A-Z])/g, ' $1')}</TableCell>
+                                {examCycles.map(cycle => {
+                                    const obtained = student.marks?.[cycle]?.[subject];
+                                    const max = obtained != null ? 100 : '-';
+                                    return (
+                                        <React.Fragment key={cycle}>
+                                            <TableCell className="text-center border-l">{obtained ?? '-'}</TableCell>
+                                            <TableCell className="text-center">{max}</TableCell>
+                                        </React.Fragment>
+                                    );
+                                })}
+                                <TableCell className="text-center border-l bg-muted/50 font-bold">{totalMax > 0 ? totalObtained : '-'}</TableCell>
+                                <TableCell className="text-center bg-muted/50 font-semibold">{totalMax > 0 ? totalMax : '-'}</TableCell>
+                            </TableRow>
+                          )
+                      })}
                     </TableBody>
                     <TableFooter>
-                        <TableRow className="font-semibold bg-muted/50">
-                            <TableCell>Total Obtained</TableCell>
-                             {examColumns.map(col => {
-                                const obtained = subjectKeys.reduce((acc, sub) => acc + (student.marks?.[col.key]?.[sub] ?? 0), 0);
+                        <TableRow className="font-bold bg-muted/50 text-base">
+                            <TableCell>Grand Total</TableCell>
+                            {examCycles.map(cycle => {
+                                const cycleObtained = subjectKeys.reduce((acc, sub) => acc + (student.marks?.[cycle]?.[sub] ?? 0), 0);
+                                const cycleMax = subjectKeys.filter(sub => student.marks?.[cycle]?.[sub] != null).length * 100;
                                 return (
-                                    <TableCell key={`${col.key}-obtained`} className="text-center font-mono">
-                                        {obtained > 0 ? obtained : '-'}
-                                    </TableCell>
+                                    <React.Fragment key={cycle}>
+                                        <TableCell className="text-center border-l">{cycleMax > 0 ? cycleObtained : '-'}</TableCell>
+                                        <TableCell className="text-center">{cycleMax > 0 ? cycleMax : '-'}</TableCell>
+                                    </React.Fragment>
                                 );
                             })}
-                            <TableCell className="text-center text-base font-bold font-mono">{totals.totalObtainedMarks}</TableCell>
-                            <TableCell className="text-center font-mono">{totals.totalMaxMarks}</TableCell>
-                        </TableRow>
-                        <TableRow className="font-semibold bg-muted/50">
-                            <TableCell>Max Marks</TableCell>
-                            {examColumns.map(col => {
-                                const max = subjectKeys.filter(sub => student.marks?.[col.key]?.[sub] !== undefined && student.marks?.[col.key]?.[sub] !== null).length * 100;
-                                return (
-                                    <TableCell key={`${col.key}-max`} className="text-center font-mono">
-                                        {max > 0 ? max : '-'}
-                                    </TableCell>
-                                );
-                            })}
-                            <TableCell className="text-center font-mono">{totals.totalMaxMarks}</TableCell>
-                             <TableCell className="text-center text-base font-bold font-mono">{totals.totalMaxMarks}</TableCell>
+                             <TableCell className="text-center border-l">{totals.totalObtainedMarks}</TableCell>
+                             <TableCell className="text-center">{totals.totalMaxMarks}</TableCell>
                         </TableRow>
                     </TableFooter>
                   </Table>
@@ -220,7 +223,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                   <div className="border rounded-lg p-4">
                     <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><GraduationCap className="h-5 w-5 text-primary" /> Remarks</h3>
                     <p className="text-sm text-muted-foreground italic">
-                      “{combined.remarks || 'Good effort. Keep improving.'}”
+                      “{remarks || 'Good effort. Keep improving.'}”
                     </p>
                   </div>
                 </div>
