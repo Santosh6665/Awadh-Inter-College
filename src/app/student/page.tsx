@@ -6,7 +6,7 @@ import { StudentLoginForm } from '@/app/student/login-form';
 import { StudentDashboard } from '@/app/student/dashboard';
 import type { Student, AttendanceRecord, ExamTypes } from '@/lib/types';
 import { getStudentById, getStudentsByClass, getStudentAttendance } from './actions';
-import { calculatePercentage } from '@/lib/result-utils';
+import { calculateCumulativePercentage, combineMarks } from '@/lib/result-utils';
 import { firestore } from '@/lib/firebase-admin';
 import { getLoggedInStudent } from './actions';
 import { getLoggedInTeacher } from '../teacher/actions';
@@ -38,7 +38,7 @@ export default async function StudentPage() {
             const studentsWithPercentage = classmates
                 .map(s => ({
                     id: s.id,
-                    percentage: calculatePercentage(s.marks?.[examType]),
+                    percentage: calculateCumulativePercentage(combineMarks(s.marks, examType).marks, examType),
                 }))
                 .filter(s => s.percentage !== null);
             

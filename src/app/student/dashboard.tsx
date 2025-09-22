@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFooter } from '@/components/ui/table';
 import { SetPasswordDialog } from './set-password-dialog';
-import { calculatePercentage, calculateGrade, calculateTotals } from '@/lib/result-utils';
+import { calculateCumulativePercentage, calculateGrade, calculateCumulativeTotals, combineMarks } from '@/lib/result-utils';
 import { Download, CheckCircle, XCircle, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, Edit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useMemo, useState } from 'react';
@@ -88,12 +88,13 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
     return { structuredFees, totalFees, totalPaid, due, paymentPlan };
   }, [student, feeSettings]);
 
-  const ResultCard = ({ marks, examType }: { marks?: Marks | null, examType: ExamTypes }) => {
-    const percentage = calculatePercentage(marks);
+  const ResultCard = ({ student, examType }: { student: Student, examType: ExamTypes }) => {
+    const combined = combineMarks(student.marks, examType);
+    const percentage = calculateCumulativePercentage(combined.marks, examType);
     const grade = calculateGrade(percentage);
-    const totals = calculateTotals(marks);
+    const totals = calculateCumulativeTotals(combined.marks, examType);
     const resultStatus = grade === 'F' ? 'Fail' : 'Pass';
-    const hasMarks = marks && Object.values(marks).some(mark => typeof mark === 'number');
+    const hasMarks = combined.marks && Object.values(combined.marks).some(mark => typeof mark === 'number');
     const examTitle = examType.charAt(0).toUpperCase() + examType.slice(1);
 
     return (
@@ -145,12 +146,12 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {Object.entries(marks || {}).filter(([key]) => key !== 'remarks' && typeof marks?.[key as keyof typeof marks] === 'number').map(([subject, markValue]) => (
+                      {Object.entries(combined.marks || {}).filter(([key]) => key !== 'remarks' && typeof combined.marks?.[key as keyof typeof combined.marks] === 'number').map(([subject, markValue]) => (
                         <TableRow key={subject}>
                           <TableCell className="capitalize">{subject.replace(/([A-Z])/g, ' $1')}</TableCell>
-                          <TableCell className="text-center">100</TableCell>
+                          <TableCell className="text-center">{totals.totalMaxMarks / totals.subjectCount}</TableCell>
                           <TableCell className="text-center">{markValue ?? 'N/A'}</TableCell>
-                          <TableCell className="text-right">{calculateGrade(markValue as number)}</TableCell>
+                          <TableCell className="text-right">{calculateGrade((markValue as number / (totals.totalMaxMarks / totals.subjectCount)) * 100)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -177,7 +178,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                   <div className="border rounded-lg p-4">
                     <h3 className="font-semibold text-lg mb-2 flex items-center gap-2"><GraduationCap className="h-5 w-5 text-primary" /> Remarks</h3>
                     <p className="text-sm text-muted-foreground italic">
-                      “{marks?.remarks || 'Good effort. Keep improving.'}”
+                      “{combined.remarks || 'Good effort. Keep improving.'}”
                     </p>
                   </div>
                 </div>
@@ -292,7 +293,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                             </SelectContent>
                         </Select>
                     </div>
-                    <ResultCard marks={student.marks?.[examType]} examType={examType} />
+                    <ResultCard student={student} examType={examType} />
                 </TabsContent>
                 <TabsContent value="attendance" className="mt-6">
                    <AttendanceHistory attendanceRecords={attendance} />
