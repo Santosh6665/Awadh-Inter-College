@@ -14,14 +14,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, PlusCircle, ChevronsUpDown, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, PlusCircle, ChevronsUpDown, ChevronDown, ChevronUp, Eye } from 'lucide-react';
 import { RecordCombinedPaymentForm } from './record-combined-payment-form';
 import { Badge } from '@/components/ui/badge';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
+import { CombinedFeeHistoryDialog } from './combined-fee-history-dialog';
 
 interface ParentFeeManagementProps {
   students: Student[];
@@ -30,6 +31,7 @@ interface ParentFeeManagementProps {
 
 export function ParentFeeManagement({ students, feeSettings }: ParentFeeManagementProps) {
   const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false);
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
   const [selectedParent, setSelectedParent] = useState<Parent | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [openCollapsibles, setOpenCollapsibles] = useState<string[]>([]);
@@ -43,6 +45,11 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
   const handleRecordPayment = (parent: Parent) => {
     setSelectedParent(parent);
     setIsPaymentFormOpen(true);
+  };
+  
+  const handleViewHistory = (parent: Parent) => {
+    setSelectedParent(parent);
+    setIsHistoryDialogOpen(true);
   };
 
   const studentsByParentPhone = useMemo(() => {
@@ -150,11 +157,15 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                                 </div>
                             </div>
                         </CollapsibleTrigger>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
                             <div className="text-right">
                                 <p className="text-sm text-muted-foreground">Total Balance Due</p>
                                 <p className="text-xl font-bold text-destructive">Rs{parent.totalDue.toFixed(2)}</p>
                             </div>
+                             <Button size="sm" variant="outline" onClick={() => handleViewHistory(parent)}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Summary
+                            </Button>
                             <Button size="sm" onClick={() => handleRecordPayment(parent)}>
                                 <PlusCircle className="mr-2 h-4 w-4" />
                                 Combined Payment
@@ -213,6 +224,13 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
         isOpen={isPaymentFormOpen}
         setIsOpen={setIsPaymentFormOpen}
         parent={selectedParent}
+      />
+
+      <CombinedFeeHistoryDialog
+        isOpen={isHistoryDialogOpen}
+        setIsOpen={setIsHistoryDialogOpen}
+        parent={selectedParent}
+        feeSettings={feeSettings}
       />
     </>
   );
