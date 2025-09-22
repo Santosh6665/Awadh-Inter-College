@@ -89,8 +89,8 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
                       <TableRow key={teacher.id}>
                         <TableCell>{teacher.name}</TableCell>
                         <TableCell className="hidden md:table-cell">{teacher.subject}</TableCell>
-                        <TableCell>₹{baseSalary.toFixed(2)}</TableCell>
-                        <TableCell>₹{totalPaid.toFixed(2)}</TableCell>
+                        <TableCell>Rs{baseSalary.toFixed(2)}</TableCell>
+                        <TableCell>Rs{totalPaid.toFixed(2)}</TableCell>
                         <TableCell className="text-right space-x-2">
                           <Button variant="ghost" size="icon" title="View History" onClick={() => handleViewHistory(teacher)}>
                             <Eye className="h-4 w-4" />

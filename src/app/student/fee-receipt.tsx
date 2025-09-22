@@ -82,7 +82,7 @@ export function FeeReceipt({ student, payment, feeDetails }: FeeReceiptProps) {
                 <TableHeader>
                     <TableRow>
                         <TableHead>Description</TableHead>
-                        <TableHead className="text-right">Amount (₹)</TableHead>
+                        <TableHead className="text-right">Amount (Rs)</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -97,7 +97,7 @@ export function FeeReceipt({ student, payment, feeDetails }: FeeReceiptProps) {
                 <TableFooter>
                     <TableRow className="font-bold text-base">
                         <TableCell>Total Amount Paid</TableCell>
-                        <TableCell className="text-right font-mono">₹{payment.amount.toFixed(2)}</TableCell>
+                        <TableCell className="text-right font-mono">Rs{payment.amount.toFixed(2)}</TableCell>
                     </TableRow>
                 </TableFooter>
             </Table>
@@ -112,7 +112,7 @@ export function FeeReceipt({ student, payment, feeDetails }: FeeReceiptProps) {
                         <CardTitle className="text-xs text-muted-foreground">Total Fees</CardTitle>
                     </CardHeader>
                     <CardContent className="p-1">
-                        <p className="text-lg font-bold">₹{feeDetails.totalFees.toFixed(2)}</p>
+                        <p className="text-lg font-bold">Rs{feeDetails.totalFees.toFixed(2)}</p>
                     </CardContent>
                 </Card>
                  <Card className="p-2 bg-muted/50">
@@ -120,7 +120,7 @@ export function FeeReceipt({ student, payment, feeDetails }: FeeReceiptProps) {
                         <CardTitle className="text-xs text-muted-foreground">Balance Due After Payment</CardTitle>
                     </CardHeader>
                     <CardContent className="p-1">
-                        <p className="text-lg font-bold text-destructive">₹{(feeDetails.due).toFixed(2)}</p>
+                        <p className="text-lg font-bold text-destructive">Rs{(feeDetails.due).toFixed(2)}</p>
                     </CardContent>
                 </Card>
             </div>

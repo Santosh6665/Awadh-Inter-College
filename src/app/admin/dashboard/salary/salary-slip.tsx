@@ -77,7 +77,7 @@ export function SalarySlip({ teacher, payment }: SalarySlipProps) {
                 <TableHeader>
                     <TableRow>
                         <TableHead>Description</TableHead>
-                        <TableHead className="text-right">Amount (₹)</TableHead>
+                        <TableHead className="text-right">Amount (Rs)</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -93,7 +93,7 @@ export function SalarySlip({ teacher, payment }: SalarySlipProps) {
                 <TableFooter>
                     <TableRow className="font-bold text-base">
                         <TableCell>Total Amount Paid</TableCell>
-                        <TableCell className="text-right font-mono">₹{payment.amount.toFixed(2)}</TableCell>
+                        <TableCell className="text-right font-mono">Rs{payment.amount.toFixed(2)}</TableCell>
                     </TableRow>
                 </TableFooter>
             </Table>

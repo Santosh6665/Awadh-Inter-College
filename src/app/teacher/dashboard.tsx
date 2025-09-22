@@ -124,11 +124,11 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <Card className="p-4">
                                         <CardTitle className="text-sm text-muted-foreground">Base Salary (Monthly)</CardTitle>
-                                        <p className="text-2xl font-bold">₹{(teacher.baseSalary || 0).toFixed(2)}</p>
+                                        <p className="text-2xl font-bold">Rs{(teacher.baseSalary || 0).toFixed(2)}</p>
                                     </Card>
                                     <Card className="p-4">
                                         <CardTitle className="text-sm text-muted-foreground">Total Paid (All Time)</CardTitle>
-                                        <p className="text-2xl font-bold text-green-600">₹{totalSalaryPaid.toFixed(2)}</p>
+                                        <p className="text-2xl font-bold text-green-600">Rs{totalSalaryPaid.toFixed(2)}</p>
                                     </Card>
                                 </div>
                                 <div>
@@ -140,7 +140,7 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                                 <TableHead>Date</TableHead>
                                                 <TableHead>Method</TableHead>
                                                 <TableHead>Month</TableHead>
-                                                <TableHead className="text-right">Amount (₹)</TableHead>
+                                                <TableHead className="text-right">Amount (Rs)</TableHead>
                                                 <TableHead className="text-right print-hidden">Actions</TableHead>
                                             </TableRow>
                                         </TableHeader>
@@ -151,7 +151,7 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                                     <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
                                                     <TableCell>{payment.method}</TableCell>
                                                     <TableCell>{payment.month || 'N/A'}</TableCell>
-                                                    <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
+                                                    <TableCell className="text-right">Rs{payment.amount.toFixed(2)}</TableCell>
                                                     <TableCell className="text-right print-hidden">
                                                         <Button variant="outline" size="sm" onClick={() => handlePrintSlip(payment)}>
                                                             <Download className="mr-2 h-4 w-4" />
@@ -169,7 +169,7 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                         <TableFooter>
                                             <TableRow className="font-bold text-base bg-muted/50">
                                                 <TableCell colSpan={3}>Total Paid</TableCell>
-                                                <TableCell className="text-right">₹{totalSalaryPaid.toFixed(2)}</TableCell>
+                                                <TableCell className="text-right">Rs{totalSalaryPaid.toFixed(2)}</TableCell>
                                                 <TableCell className="print-hidden"></TableCell>
                                             </TableRow>
                                         </TableFooter>

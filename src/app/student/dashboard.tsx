@@ -310,7 +310,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead>Fee Head</TableHead>
-                                            <TableHead className="text-right">Amount (₹)</TableHead>
+                                            <TableHead className="text-right">Amount (Rs)</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -324,7 +324,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                                     <TableFooter>
                                         <TableRow className="font-bold text-base">
                                             <TableCell>Total Fees</TableCell>
-                                            <TableCell className="text-right">₹{feeDetails.totalFees.toFixed(2)}</TableCell>
+                                            <TableCell className="text-right">Rs{feeDetails.totalFees.toFixed(2)}</TableCell>
                                         </TableRow>
                                     </TableFooter>
                                 </Table>
@@ -332,15 +332,15 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
                                 <Card className="p-4">
                                     <CardTitle className="text-sm text-muted-foreground">Total Fees</CardTitle>
-                                    <p className="text-xl md:text-2xl font-bold">₹{feeDetails.totalFees.toFixed(2)}</p>
+                                    <p className="text-xl md:text-2xl font-bold">Rs{feeDetails.totalFees.toFixed(2)}</p>
                                 </Card>
                                 <Card className="p-4">
                                     <CardTitle className="text-sm text-muted-foreground">Total Paid</CardTitle>
-                                    <p className="text-xl md:text-2xl font-bold text-green-600">₹{feeDetails.totalPaid.toFixed(2)}</p>
+                                    <p className="text-xl md:text-2xl font-bold text-green-600">Rs{feeDetails.totalPaid.toFixed(2)}</p>
                                 </Card>
                                 <Card className="p-4">
                                     <CardTitle className="text-sm text-muted-foreground">Balance Due</CardTitle>
-                                    <p className={cn("text-xl md:text-2xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>₹{feeDetails.due.toFixed(2)}</p>
+                                    <p className={cn("text-xl md:text-2xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>Rs{feeDetails.due.toFixed(2)}</p>
                                 </Card>
                                 <Card className="p-4">
                                     <CardTitle className="text-sm text-muted-foreground">Payment Plan</CardTitle>
@@ -354,7 +354,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                                         <TableRow>
                                             <TableHead>Date</TableHead>
                                             <TableHead className="hidden sm:table-cell">Method</TableHead>
-                                            <TableHead className="text-right">Amount (₹)</TableHead>
+                                            <TableHead className="text-right">Amount (Rs)</TableHead>
                                             <TableHead className="text-right print-hidden">Actions</TableHead>
                                         </TableRow>
                                     </TableHeader>
@@ -364,7 +364,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                                                 <TableRow key={payment.id}>
                                                     <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
                                                     <TableCell className="hidden sm:table-cell">{payment.method}</TableCell>
-                                                    <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
+                                                    <TableCell className="text-right">Rs{payment.amount.toFixed(2)}</TableCell>
                                                     <TableCell className="text-right print-hidden">
                                                         <Button variant="outline" size="sm" onClick={() => handlePrintReceipt(payment)}>
                                                             <Download className="mr-2 h-4 w-4" />

@@ -128,9 +128,9 @@ export function FeeManagement({ students, feeSettings }: { students: Student[], 
                             <TableCell className="hidden md:table-cell">{student.rollNumber}</TableCell>
                             <TableCell>{student.name}</TableCell>
                             <TableCell className="hidden md:table-cell">{`${student.class}-${student.section}`}</TableCell>
-                            <TableCell>₹{totalFees.toFixed(2)}</TableCell>
-                            <TableCell>₹{totalPaid.toFixed(2)}</TableCell>
-                            <TableCell className={due > 0 ? 'text-destructive font-semibold' : ''}>₹{due.toFixed(2)}</TableCell>
+                            <TableCell>Rs{totalFees.toFixed(2)}</TableCell>
+                            <TableCell>Rs{totalPaid.toFixed(2)}</TableCell>
+                            <TableCell className={due > 0 ? 'text-destructive font-semibold' : ''}>Rs{due.toFixed(2)}</TableCell>
                             <TableCell className="text-right space-x-2">
                                 <Button variant="ghost" size="icon" title="View Details" onClick={() => handleViewHistory(student)}>
                                     <Eye className="h-4 w-4" />

@@ -100,11 +100,11 @@ export function SalaryHistoryDialog({ isOpen, setIsOpen, teacher }: SalaryHistor
                         <div className="grid grid-cols-2 gap-4 text-center">
                             <div className="p-2 rounded-md bg-muted">
                                 <p className="text-sm text-muted-foreground">Base Salary (Monthly)</p>
-                                <p className="text-xl font-bold">₹{salaryDetails.baseSalary.toFixed(2)}</p>
+                                <p className="text-xl font-bold">Rs{salaryDetails.baseSalary.toFixed(2)}</p>
                             </div>
                             <div className="p-2 rounded-md bg-muted">
                                 <p className="text-sm text-muted-foreground">Total Paid (All Time)</p>
-                                <p className="text-xl font-bold text-green-600">₹{salaryDetails.totalPaid.toFixed(2)}</p>
+                                <p className="text-xl font-bold text-green-600">Rs{salaryDetails.totalPaid.toFixed(2)}</p>
                             </div>
                         </div>
                     </div>
@@ -117,7 +117,7 @@ export function SalaryHistoryDialog({ isOpen, setIsOpen, teacher }: SalaryHistor
                             <TableHead>Date</TableHead>
                             <TableHead>Method</TableHead>
                              <TableHead>Month</TableHead>
-                            <TableHead className="text-right">Amount (₹)</TableHead>
+                            <TableHead className="text-right">Amount (Rs)</TableHead>
                             <TableHead className="text-right print-hidden">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -128,7 +128,7 @@ export function SalaryHistoryDialog({ isOpen, setIsOpen, teacher }: SalaryHistor
                                 <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
                                 <TableCell>{payment.method}</TableCell>
                                 <TableCell>{payment.month || 'N/A'}</TableCell>
-                                <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
+                                <TableCell className="text-right">Rs{payment.amount.toFixed(2)}</TableCell>
                                 <TableCell className="text-right print-hidden">
                                     <Button variant="outline" size="sm" onClick={() => handlePrintSlip(payment)}>
                                         <Download className="mr-2 h-4 w-4" />
@@ -146,7 +146,7 @@ export function SalaryHistoryDialog({ isOpen, setIsOpen, teacher }: SalaryHistor
                          <TableFooter>
                             <TableRow className="font-bold text-base bg-muted/50">
                             <TableCell colSpan={3}>Total Paid</TableCell>
-                            <TableCell className="text-right">₹{salaryDetails.totalPaid.toFixed(2)}</TableCell>
+                            <TableCell className="text-right">Rs{salaryDetails.totalPaid.toFixed(2)}</TableCell>
                             <TableCell className="print-hidden"></TableCell>
                             </TableRow>
                         </TableFooter>

@@ -160,7 +160,7 @@ export default async function AdminDashboardPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{totalFeesCollectedSoFarThisMonth.toLocaleString('en-IN')}</div>
+            <div className="text-2xl font-bold">Rs{totalFeesCollectedSoFarThisMonth.toLocaleString('en-IN')}</div>
             <p className="text-xs text-muted-foreground">
               {feesPercentageChangeText}
             </p>

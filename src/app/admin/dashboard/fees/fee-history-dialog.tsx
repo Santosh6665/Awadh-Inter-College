@@ -135,7 +135,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
                 <TableHeader>
                     <TableRow>
                     <TableHead>Fee Head</TableHead>
-                    <TableHead className="text-right">Amount (₹)</TableHead>
+                    <TableHead className="text-right">Amount (Rs)</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -149,7 +149,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
                 <TableFooter>
                     <TableRow className="font-bold text-base bg-muted/50">
                     <TableCell>Total Fees</TableCell>
-                    <TableCell className="text-right">₹{feeDetails.totalFees.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">Rs{feeDetails.totalFees.toFixed(2)}</TableCell>
                     </TableRow>
                 </TableFooter>
                 </Table>
@@ -162,7 +162,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
                     <TableRow>
                     <TableHead>Date</TableHead>
                     <TableHead>Method</TableHead>
-                    <TableHead className="text-right">Amount (₹)</TableHead>
+                    <TableHead className="text-right">Amount (Rs)</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -171,7 +171,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
                         <TableRow key={payment.id}>
                         <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
                         <TableCell>{payment.method}</TableCell>
-                        <TableCell className="text-right">₹{payment.amount.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">Rs{payment.amount.toFixed(2)}</TableCell>
                         </TableRow>
                     ))
                     ) : (
@@ -186,15 +186,15 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center border-t pt-4">
                 <div className="p-2 rounded-md bg-muted">
                 <p className="text-sm text-muted-foreground">Total Fees</p>
-                <p className="text-xl font-bold">₹{feeDetails.totalFees.toFixed(2)}</p>
+                <p className="text-xl font-bold">Rs{feeDetails.totalFees.toFixed(2)}</p>
                 </div>
                 <div className="p-2 rounded-md bg-muted">
                 <p className="text-sm text-muted-foreground">Total Paid</p>
-                <p className="text-xl font-bold text-green-600">₹{feeDetails.totalPaid.toFixed(2)}</p>
+                <p className="text-xl font-bold text-green-600">Rs{feeDetails.totalPaid.toFixed(2)}</p>
                 </div>
                 <div className="p-2 rounded-md bg-muted">
                 <p className="text-sm text-muted-foreground">Balance Due</p>
-                <p className={cn("text-xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>₹{feeDetails.due.toFixed(2)}</p>
+                <p className={cn("text-xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>Rs{feeDetails.due.toFixed(2)}</p>
                 </div>
             </div>
             <div className="pt-8">
