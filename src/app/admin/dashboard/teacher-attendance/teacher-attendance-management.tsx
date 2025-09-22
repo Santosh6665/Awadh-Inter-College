@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import type { Teacher } from '@/lib/types';
+import type { Teacher, AttendanceRecord } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,11 +18,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon, Search } from "lucide-react";
+import { Calendar as CalendarIcon, Search, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
-import { getTeacherAttendanceByDate, setTeacherAttendance as setTeacherAttendanceAction } from './actions';
+import { getTeacherAttendanceByDate, setTeacherAttendance as setTeacherAttendanceAction, getTeacherAttendanceHistory } from './actions';
 import { useToast } from '@/hooks/use-toast';
+import { AttendanceHistoryDialog } from '../attendance/attendance-history-dialog';
+
 
 type AttendanceStatus = 'present' | 'absent';
 type AttendanceData = {
@@ -36,6 +38,11 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
   const [searchQuery, setSearchQuery] = useState('');
   const [subjectFilter, setSubjectFilter] = useState('');
   const { toast } = useToast();
+  
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
+  const [teacherHistory, setTeacherHistory] = useState<AttendanceRecord[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
 
@@ -80,6 +87,16 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
       await fetchAttendance();
     }
   };
+  
+  const handleViewHistory = async (teacher: Teacher) => {
+    setSelectedTeacher(teacher);
+    setHistoryLoading(true);
+    setIsHistoryDialogOpen(true);
+    const history = await getTeacherAttendanceHistory(teacher.id);
+    setTeacherHistory(history);
+    setHistoryLoading(false);
+  };
+
 
   const filteredTeachers = useMemo(() => teachers.filter(teacher => {
     const nameMatch = teacher.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -102,6 +119,7 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
 
 
   return (
+    <>
     <Card>
       <CardHeader>
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -162,12 +180,13 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
                 <TableHead>Name</TableHead>
                 <TableHead>Subject</TableHead>
                 <TableHead className="text-right">Status</TableHead>
+                <TableHead className="text-right">History</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={3} className="text-center">Loading attendance...</TableCell>
+                  <TableCell colSpan={4} className="text-center">Loading attendance...</TableCell>
                 </TableRow>
               ) : filteredTeachers.length > 0 ? (
                 filteredTeachers.map((teacher) => {
@@ -192,12 +211,17 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
                           </div>
                         </RadioGroup>
                       </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" title="View Attendance History" onClick={() => handleViewHistory(teacher)}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   )
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={3} className="text-center">
+                  <TableCell colSpan={4} className="text-center">
                     No teachers found.
                   </TableCell>
                 </TableRow>
@@ -207,5 +231,12 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
         </div>
       </CardContent>
     </Card>
+      <AttendanceHistoryDialog
+        isOpen={isHistoryDialogOpen}
+        setIsOpen={setIsHistoryDialogOpen}
+        personName={selectedTeacher?.name ?? null}
+        attendanceRecords={historyLoading ? [] : teacherHistory}
+      />
+    </>
   );
 }

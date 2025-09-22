@@ -3,6 +3,7 @@
 
 import { firestore } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
+import type { AttendanceRecord } from '@/lib/types';
 
 export async function getTeacherAttendanceByDate(date: string) {
   try {
@@ -31,5 +32,29 @@ export async function setTeacherAttendance(teacherId: string, date: string, stat
   } catch (error) {
     console.error('Error setting teacher attendance:', error);
     return { success: false, message: 'An unexpected error occurred.' };
+  }
+}
+
+export async function getTeacherAttendanceHistory(teacherId: string): Promise<AttendanceRecord[]> {
+  try {
+    const attendanceSnapshot = await firestore.collection('teacherAttendance').get();
+    const attendanceRecords: AttendanceRecord[] = [];
+    
+    attendanceSnapshot.forEach(doc => {
+      const date = doc.id;
+      const data = doc.data();
+      if (data && data[teacherId]) {
+        attendanceRecords.push({
+          date,
+          status: data[teacherId].status,
+        });
+      }
+    });
+
+    // Sort by date descending
+    return attendanceRecords.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  } catch (error) {
+    console.error(`Error fetching attendance for teacher ${teacherId}:`, error);
+    return [];
   }
 }
