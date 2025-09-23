@@ -35,9 +35,9 @@ export function ResultCard({ student, ranks, settings }: ResultCardProps) {
     printContainer.appendChild(cardNode);
     document.body.appendChild(printContainer);
   
-    document.body.classList.add('printing-result-card');
+    document.body.classList.add('printing');
     window.print();
-    document.body.classList.remove('printing-result-card');
+    document.body.classList.remove('printing');
   
     document.body.removeChild(printContainer);
   };

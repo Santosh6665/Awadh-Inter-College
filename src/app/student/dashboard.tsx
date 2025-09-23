@@ -42,9 +42,21 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
   const handlePrintReceipt = (payment: Payment) => {
     setReceiptToPrint(payment);
     setTimeout(() => {
-        document.body.classList.add('print-fee-receipt');
+        const printContainer = document.createElement('div');
+        printContainer.id = 'print-container';
+        const receiptNode = document.getElementById('fee-receipt-to-print-content')?.cloneNode(true);
+        if (receiptNode) {
+          printContainer.appendChild(receiptNode);
+          document.body.appendChild(printContainer);
+        }
+
+        document.body.classList.add('printing');
         window.print();
-        document.body.classList.remove('print-fee-receipt');
+        document.body.classList.remove('printing');
+
+        if (receiptNode) {
+          document.body.removeChild(printContainer);
+        }
         setReceiptToPrint(null);
     }, 100);
   };
@@ -96,9 +108,11 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
   return (
     <>
       <SetPasswordDialog isOpen={forcePasswordReset} studentId={student.id} />
-       <div id="fee-receipt-to-print" className="hidden print-block">
+       <div className="hidden">
           {receiptToPrint && (
-            <FeeReceipt student={student} payment={receiptToPrint} feeDetails={feeDetails} />
+            <div id="fee-receipt-to-print-content">
+                <FeeReceipt student={student} payment={receiptToPrint} feeDetails={feeDetails} />
+            </div>
           )}
        </div>
       <div id="student-dashboard" className="bg-muted/50">
@@ -116,7 +130,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
             </CardHeader>
             <CardContent className="pt-0 p-4 md:p-6">
                 <Tabs defaultValue="profile" className="w-full">
-                <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-nowrap">
+                <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-rap">
                     <TabsTrigger value="profile">Profile</TabsTrigger>
                     <TabsTrigger value="results">Exam Results</TabsTrigger>
                     <TabsTrigger value="attendance">Attendance</TabsTrigger>

@@ -126,7 +126,7 @@ body {
   }
 
   /* Universal print styles */
-  body.printing-result-card * {
+  body.printing * {
     visibility: hidden;
   }
   
@@ -173,37 +173,5 @@ body {
   }
   #print-container .w-16 {
     width: 3rem !important;
-  }
-
-  body.print-fee-receipt * {
-    visibility: hidden;
-  }
-  
-  body.print-fee-receipt #fee-receipt-to-print,
-  body.print-fee-receipt #fee-receipt-to-print * {
-    visibility: visible;
-  }
-  
-  body.print-fee-receipt #fee-receipt-to-print {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-  }
-
-  body.print-salary-slip * {
-    visibility: hidden;
-  }
-  
-  body.print-salary-slip #slip-to-print,
-  body.print-salary-slip #slip-to-print * {
-    visibility: visible;
-  }
-  
-  body.print-salary-slip #slip-to-print {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
   }
 }

@@ -30,20 +30,18 @@ export function SalarySlipDialog({ isOpen, setIsOpen, teacher, salaryDetails, mo
 
   const handlePrint = () => {
     if (!slipRef.current) return;
-    const printContent = slipRef.current.innerHTML;
-    const printWindow = window.open('', '', 'height=800,width=800');
-    if (printWindow) {
-      printWindow.document.write('<html><head><title>Salary Slip</title>');
-      printWindow.document.write('</head><body>');
-      printWindow.document.write(printContent);
-      printWindow.document.write('</body></html>');
-      printWindow.document.close();
-      printWindow.focus();
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-      }, 250);
-    }
+
+    const printContainer = document.createElement('div');
+    printContainer.id = 'print-container';
+    const cardNode = slipRef.current.cloneNode(true) as HTMLElement;
+    printContainer.appendChild(cardNode);
+    document.body.appendChild(printContainer);
+
+    document.body.classList.add('printing');
+    window.print();
+    document.body.classList.remove('printing');
+    
+    document.body.removeChild(printContainer);
   };
 
   return (
