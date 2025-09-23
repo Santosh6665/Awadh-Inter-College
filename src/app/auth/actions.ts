@@ -122,12 +122,13 @@ export async function login(credentials: z.infer<typeof loginSchema>) {
   if (studentDoc.exists) {
     const studentData = studentDoc.data() as Student;
     
-    let needsPasswordReset = false;
+    // If password field exists, check against it.
     if (studentData.password) {
         if (studentData.password !== password) {
             return { success: false, message: 'Incorrect password.' };
         }
     } else {
+        // Otherwise, check against the default password.
         const firstNameRaw = studentData.name.split(' ')[0];
         const firstName = firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1);
         const yearOfBirth = new Date(studentData.dob).getFullYear();
@@ -136,10 +137,10 @@ export async function login(credentials: z.infer<typeof loginSchema>) {
         if (password !== defaultPassword) {
             return { success: false, message: 'Incorrect password or password not set.' };
         }
-        needsPasswordReset = true;
     }
 
-    setAuthCookies(studentDoc.id, 'student', studentData.name, needsPasswordReset ? 'force_password_reset' : undefined);
+    // Remove the logic that forces a password reset
+    setAuthCookies(studentDoc.id, 'student', studentData.name);
     return { success: true, message: 'Student login successful', redirect: '/student' };
   }
 

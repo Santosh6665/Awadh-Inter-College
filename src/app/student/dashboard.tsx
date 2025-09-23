@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFooter } from '@/components/ui/table';
-import { SetPasswordDialog } from './set-password-dialog';
 import { Download, CheckCircle, XCircle, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, Edit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useMemo, useState } from 'react';
@@ -24,11 +23,10 @@ interface StudentDashboardProps {
   student: Student;
   ranks: { [key in ExamTypes]?: number | null };
   attendance: AttendanceRecord[];
-  forcePasswordReset: boolean;
   settings: any;
 }
 
-export function StudentDashboard({ student, ranks, attendance, forcePasswordReset, settings }: StudentDashboardProps) {
+export function StudentDashboard({ student, ranks, attendance, settings }: StudentDashboardProps) {
   const [receiptToPrint, setReceiptToPrint] = useState<Payment | null>(null);
   const [isFeeHistoryOpen, setIsFeeHistoryOpen] = useState(false);
 
@@ -85,7 +83,6 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
 
   return (
     <>
-      <SetPasswordDialog isOpen={forcePasswordReset} studentId={student.id} />
        <div className="hidden">
           {receiptToPrint && (
             <div id="fee-receipt-to-print-content">

@@ -1,3 +1,4 @@
+
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Header } from '@/components/layout/header';
@@ -16,7 +17,6 @@ export default async function StudentPage() {
   }
   
   const studentId = user.id;
-  const forcePasswordReset = cookies().get('force_password_reset')?.value === 'true';
 
   const student = await getStudentById(studentId);
   if (!student) {
@@ -68,7 +68,7 @@ export default async function StudentPage() {
     <div className="flex min-h-screen flex-col">
       <Header user={user} />
       <main className="flex-1">
-        <StudentDashboard student={student} ranks={ranks} attendance={attendance} forcePasswordReset={forcePasswordReset} settings={settings} />
+        <StudentDashboard student={student} ranks={ranks} attendance={attendance} settings={settings} />
       </main>
     </div>
   );
