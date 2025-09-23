@@ -115,7 +115,7 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
 
   const currentYear = getYear(new Date());
   const yearOptions = Array.from({ length: 6 }, (_, i) => {
-    const year = currentYear + 1 - i;
+    const year = currentYear + 3 - i;
     return { value: year.toString(), label: year.toString() };
   });
   
