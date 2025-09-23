@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Eye, Loader2, Banknote } from 'lucide-react';
+import { Search, Eye, Loader2, Banknote, AlertCircle } from 'lucide-react';
 import { SalarySlipDialog } from '../admin/dashboard/salary/salary-slip-dialog';
 import { calculateSalary, SalaryDetails } from '@/lib/salary-utils';
 import { getTeacherAttendanceForMonth, getHolidaysInMonth } from '../admin/dashboard/salary/actions';
@@ -24,9 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { format, getYear } from 'date-fns';
+import { format, getYear, startOfMonth, isBefore } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export function TeacherSalaryView({ teacher }: { teacher: Teacher }) {
   const [isSlipDialogOpen, setIsSlipDialogOpen] = useState(false);
@@ -89,9 +90,22 @@ export function TeacherSalaryView({ teacher }: { teacher: Teacher }) {
   });
 
   const yearOptions = Array.from({ length: 5 }, (_, i) => {
-    const year = getYear(new Date()) - i;
+    const year = getYear(new Date()) + 2 - i; // Allow viewing 2 years in future
     return { value: year.toString(), label: year.toString() };
   });
+
+  const isMonthBeforeJoining = useMemo(() => {
+    if (!teacher.dateOfJoining) {
+      return false; // If no joining date, can't check, so allow.
+    }
+    const joiningDate = new Date(teacher.dateOfJoining);
+    const startOfSelectedMonth = startOfMonth(currentMonth);
+    
+    // isBefore checks if the first date is before the second one.
+    // If startOfSelectedMonth is before startOfMonth(joiningDate), then it's a month before they joined.
+    return isBefore(startOfSelectedMonth, startOfMonth(joiningDate));
+  }, [currentMonth, teacher.dateOfJoining]);
+
 
   return (
     <>
@@ -147,43 +161,55 @@ export function TeacherSalaryView({ teacher }: { teacher: Teacher }) {
                     <span>Loading salary data...</span>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardDescription>Base Salary</CardDescription>
-                            <CardTitle className="text-2xl">Rs{teacherWithSalary.baseSalary?.toFixed(2) || '0.00'}</CardTitle>
-                        </CardHeader>
-                    </Card>
-                     <Card>
-                        <CardHeader className="pb-2">
-                            <CardDescription>Deductions</CardDescription>
-                            <CardTitle className="text-2xl text-destructive">Rs{teacherWithSalary.deductionAmount.toFixed(2)}</CardTitle>
-                        </CardHeader>
-                    </Card>
-                     <Card>
-                        <CardHeader className="pb-2">
-                            <CardDescription>Net Salary</CardDescription>
-                            <CardTitle className="text-2xl text-primary">Rs{teacherWithSalary.netSalary.toFixed(2)}</CardTitle>
-                        </CardHeader>
-                    </Card>
-                     <Card>
-                        <CardHeader className="pb-2">
-                            <CardDescription>Status</CardDescription>
-                            <CardTitle>
-                                <Badge variant={teacherWithSalary.status === 'paid' ? 'secondary' : 'destructive'} className="text-lg">
-                                    {teacherWithSalary.status.charAt(0).toUpperCase() + teacherWithSalary.status.slice(1)}
-                                </Badge>
-                            </CardTitle>
-                        </CardHeader>
-                    </Card>
-                    <Card className="md:col-span-2 lg:col-span-4">
-                        <CardContent className="p-4 flex items-center justify-center">
-                             <Button size="lg" onClick={handleViewSlip}>
-                                <Eye className="mr-2 h-5 w-5" />
-                                View Full Salary Slip for {format(currentMonth, 'MMMM yyyy')}
-                            </Button>
-                        </CardContent>
-                    </Card>
+                <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <Card>
+                            <CardHeader className="pb-2">
+                                <CardDescription>Base Salary</CardDescription>
+                                <CardTitle className="text-2xl">Rs{teacherWithSalary.baseSalary?.toFixed(2) || '0.00'}</CardTitle>
+                            </CardHeader>
+                        </Card>
+                        <Card>
+                            <CardHeader className="pb-2">
+                                <CardDescription>Deductions</CardDescription>
+                                <CardTitle className="text-2xl text-destructive">Rs{teacherWithSalary.deductionAmount.toFixed(2)}</CardTitle>
+                            </CardHeader>
+                        </Card>
+                        <Card>
+                            <CardHeader className="pb-2">
+                                <CardDescription>Net Salary</CardDescription>
+                                <CardTitle className="text-2xl text-primary">Rs{teacherWithSalary.netSalary.toFixed(2)}</CardTitle>
+                            </CardHeader>
+                        </Card>
+                        <Card>
+                            <CardHeader className="pb-2">
+                                <CardDescription>Status</CardDescription>
+                                <CardTitle>
+                                    <Badge variant={teacherWithSalary.status === 'paid' ? 'secondary' : 'destructive'} className="text-lg">
+                                        {teacherWithSalary.status.charAt(0).toUpperCase() + teacherWithSalary.status.slice(1)}
+                                    </Badge>
+                                </CardTitle>
+                            </CardHeader>
+                        </Card>
+                    </div>
+                    {isMonthBeforeJoining ? (
+                         <Alert variant="destructive">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Invalid Period Selected</AlertTitle>
+                            <AlertDescription>
+                                You cannot view a salary slip for a month before your joining date of {format(new Date(teacher.dateOfJoining!), 'do MMMM, yyyy')}.
+                            </AlertDescription>
+                        </Alert>
+                    ) : (
+                         <Card>
+                            <CardContent className="p-4 flex items-center justify-center">
+                                <Button size="lg" onClick={handleViewSlip} disabled={isMonthBeforeJoining}>
+                                    <Eye className="mr-2 h-5 w-5" />
+                                    View Full Salary Slip for {format(currentMonth, 'MMMM yyyy')}
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
             )}
         </CardContent>
