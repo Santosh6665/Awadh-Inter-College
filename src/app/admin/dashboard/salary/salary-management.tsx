@@ -235,21 +235,14 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
                             </Badge>
                         </TableCell>
                         <TableCell className="text-right space-x-2">
-                            {teacher.status === 'pending' ? (
-                                <>
-                                    <Button variant="outline" size="sm" onClick={() => handleViewSlip(teacher)}>
-                                        <Eye className="mr-2 h-4 w-4" />
-                                        View Slip
-                                    </Button>
-                                    <Button size="sm" onClick={() => handleRecordPayment(teacher)}>
-                                        <Banknote className="mr-2 h-4 w-4" />
-                                        Pay
-                                    </Button>
-                                </>
-                            ) : (
-                                <Button variant="outline" size="sm" onClick={() => handleViewSlip(teacher)}>
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    View Slip
+                            <Button variant="outline" size="sm" onClick={() => handleViewSlip(teacher)}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Slip
+                            </Button>
+                            {teacher.status === 'pending' && (
+                                <Button size="sm" onClick={() => handleRecordPayment(teacher)}>
+                                    <Banknote className="mr-2 h-4 w-4" />
+                                    Pay
                                 </Button>
                             )}
                         </TableCell>
