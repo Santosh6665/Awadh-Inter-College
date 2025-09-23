@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useMemo } from 'react';
@@ -15,7 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CheckCircle2 } from 'lucide-react';
 import type { Student } from '@/lib/types';
 import { recordPayment, type FormState } from './actions';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -83,6 +84,12 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student, feeSettings }: R
     return student.feeStructure?.paymentPlan || classDefaults.paymentPlan || 'monthly';
   }, [student, feeSettings]);
 
+  const paidMonths = useMemo(() => {
+    if (!student?.payments) return new Set();
+    const allPaidMonths = student.payments.flatMap(p => p.months || []);
+    return new Set(allPaidMonths);
+  }, [student]);
+
 
   if (!student) return null;
 
@@ -122,22 +129,58 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student, feeSettings }: R
           <div className="space-y-2">
             <Label>Payment for Period (Plan: <span className="capitalize font-semibold">{paymentPlan}</span>)</Label>
             <div className="grid grid-cols-2 gap-2 rounded-md border p-2">
-                {paymentPlan === 'monthly' && months.map(month => (
-                    <div key={month} className="flex items-center space-x-2">
-                        <Checkbox id={`month-${month}-${student.id}`} name="months" value={month} />
-                        <Label htmlFor={`month-${month}-${student.id}`} className="text-sm font-normal">{month}</Label>
-                    </div>
-                ))}
-                {paymentPlan === 'quarterly' && quarters.map(q => (
-                    <div key={q.label} className="flex items-center space-x-2 col-span-2">
-                        <Checkbox id={`q-${q.label}-${student.id}`} name="months" value={q.months.join(',')} />
-                        <Label htmlFor={`q-${q.label}-${student.id}`} className="text-sm font-normal">{q.label}</Label>
-                    </div>
-                ))}
+                {paymentPlan === 'monthly' && months.map(month => {
+                    const isPaid = paidMonths.has(month);
+                    return (
+                        <div key={month} className="flex items-center space-x-2">
+                            <Checkbox 
+                                id={`month-${month}-${student.id}`} 
+                                name="months" 
+                                value={month} 
+                                disabled={isPaid}
+                                checked={isPaid}
+                            />
+                            <Label 
+                                htmlFor={`month-${month}-${student.id}`} 
+                                className="text-sm font-normal flex items-center gap-1.5"
+                            >
+                                {month}
+                                {isPaid && <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />}
+                            </Label>
+                        </div>
+                    )
+                })}
+                {paymentPlan === 'quarterly' && quarters.map(q => {
+                    const areAllMonthsPaid = q.months.every(m => paidMonths.has(m));
+                    return (
+                        <div key={q.label} className="flex items-center space-x-2 col-span-2">
+                            <Checkbox 
+                                id={`q-${q.label}-${student.id}`} 
+                                name="months" 
+                                value={q.months.join(',')} 
+                                disabled={areAllMonthsPaid}
+                                checked={areAllMonthsPaid}
+                            />
+                            <Label htmlFor={`q-${q.label}-${student.id}`} className="text-sm font-normal flex items-center gap-1.5">
+                                {q.label}
+                                {areAllMonthsPaid && <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />}
+                            </Label>
+                        </div>
+                    )
+                })}
                 {paymentPlan === 'yearly' && (
                     <div className="flex items-center space-x-2 col-span-2">
-                        <Checkbox id={`yearly-${student.id}`} name="months" value={months.join(',')} />
-                        <Label htmlFor={`yearly-${student.id}`} className="text-sm font-normal">Full Session (April - March)</Label>
+                        <Checkbox 
+                            id={`yearly-${student.id}`} 
+                            name="months" 
+                            value={months.join(',')}
+                            disabled={paidMonths.size >= 12}
+                            checked={paidMonths.size >= 12}
+                        />
+                        <Label htmlFor={`yearly-${student.id}`} className="text-sm font-normal flex items-center gap-1.5">
+                            Full Session (April - March)
+                            {paidMonths.size >= 12 && <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />}
+                        </Label>
                     </div>
                 )}
             </div>
@@ -153,3 +196,4 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student, feeSettings }: R
     </Dialog>
   );
 }
+
