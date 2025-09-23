@@ -8,14 +8,16 @@ import { Mail, Phone } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { SalaryDetails } from '@/lib/salary-utils';
 import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface SalarySlipProps {
   teacher: Teacher;
   salaryDetails: SalaryDetails;
   month: Date;
+  status: 'paid' | 'pending';
 }
 
-export function SalarySlip({ teacher, salaryDetails, month }: SalarySlipProps) {
+export function SalarySlip({ teacher, salaryDetails, month, status }: SalarySlipProps) {
     const amountInWords = (amount: number): string => {
         const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
         const teens = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
@@ -49,6 +51,9 @@ export function SalarySlip({ teacher, salaryDetails, month }: SalarySlipProps) {
                     </div>
                 </div>
             </div>
+             <Badge className={cn("text-sm", status === 'paid' ? 'bg-green-600 text-white' : 'bg-yellow-500 text-white')}>
+                Status: {status.charAt(0).toUpperCase() + status.slice(1)}
+            </Badge>
             </div>
             <div className="text-center mt-2">
                 <Badge variant="secondary" className="text-base font-bold tracking-wider">💰 SALARY SLIP - {format(month, 'MMMM yyyy')}</Badge>

@@ -18,7 +18,7 @@ import { useRef } from 'react';
 interface SalarySlipDialogProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  teacher: Teacher | null;
+  teacher: (Teacher & { status?: 'paid' | 'pending' }) | null;
   salaryDetails: SalaryDetails | null;
   month: Date;
 }
@@ -55,7 +55,7 @@ export function SalarySlipDialog({ isOpen, setIsOpen, teacher, salaryDetails, mo
         </DialogHeader>
         <div className="max-h-[70vh] overflow-y-auto p-1">
           <div ref={slipRef}>
-            <SalarySlip teacher={teacher} salaryDetails={salaryDetails} month={month} />
+            <SalarySlip teacher={teacher} salaryDetails={salaryDetails} month={month} status={teacher.status || 'pending'} />
           </div>
         </div>
         <DialogFooter className="print-hidden">
