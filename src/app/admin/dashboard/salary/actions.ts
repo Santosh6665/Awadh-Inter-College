@@ -32,18 +32,21 @@ export type FormState = {
 export async function getHolidaysInMonth(date: Date) {
     await checkAuth();
     try {
-        const holidaysSnapshot = await firestore.collection('holidays').get();
-        const holidaysInMonth: string[] = [];
-        const month = date.getMonth();
-        const year = date.getFullYear();
+        // Get the start and end of the month in UTC to match Firestore's date strings
+        const start = format(startOfMonth(date), 'yyyy-MM-dd');
+        const end = format(endOfMonth(date), 'yyyy-MM-dd');
 
-        holidaysSnapshot.forEach(doc => {
-            const holidayDate = new Date(doc.id);
-            if (holidayDate.getMonth() === month && holidayDate.getFullYear() === year) {
-                holidaysInMonth.push(doc.id);
-            }
-        });
-        return holidaysInMonth;
+        // Firestore stores document IDs as strings. We can perform a string comparison.
+        const holidaysSnapshot = await firestore.collection('holidays')
+            .where(FieldPath.documentId(), '>=', start)
+            .where(FieldPath.documentId(), '<=', end)
+            .get();
+            
+        if (holidaysSnapshot.empty) {
+            return [];
+        }
+
+        return holidaysSnapshot.docs.map(doc => doc.id);
     } catch (error) {
         console.error('Error fetching holidays:', error);
         return [];
