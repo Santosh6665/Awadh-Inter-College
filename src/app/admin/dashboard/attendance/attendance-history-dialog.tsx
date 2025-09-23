@@ -86,7 +86,9 @@ export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attenda
     const absent = absentDays.length;
     const monthlyHolidays = holidays.filter(h => {
         const holidayDate = new Date(h);
-        return isSameMonth(holidayDate, currentMonth) && isSameYear(holidayDate, currentMonth);
+        // Adjust for timezone when comparing dates from different sources
+        const utcHolidayDate = new Date(holidayDate.valueOf() + holidayDate.getTimezoneOffset() * 60 * 1000);
+        return isSameMonth(utcHolidayDate, currentMonth) && isSameYear(utcHolidayDate, currentMonth);
     }).length;
     const total = present + absent;
     const percentage = total > 0 ? (present / total) * 100 : 0;
