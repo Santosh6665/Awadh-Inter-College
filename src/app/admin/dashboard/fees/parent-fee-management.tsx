@@ -144,7 +144,11 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                                 {openCollapsibles.includes(parent.id) ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                                 <div>
                                     <h4 className="text-lg font-semibold">{parent.parentName}</h4>
-                                    <p className="text-sm text-muted-foreground">{parent.id} ({parent.children.length} children)</p>
+                                    <div className="text-sm text-muted-foreground flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                                        <span>{parent.id}</span>
+                                        <span className="hidden sm:inline-block">|</span>
+                                        <span className="truncate max-w-xs">{parent.children.map(c => c.name).join(', ')} ({parent.children.length} children)</span>
+                                    </div>
                                 </div>
                             </div>
                         </CollapsibleTrigger>
