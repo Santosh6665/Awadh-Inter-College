@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -14,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, PlusCircle, ChevronDown, ChevronUp, Eye, Edit } from 'lucide-react';
+import { Search, PlusCircle, ChevronDown, ChevronUp, Eye, Edit, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   Collapsible,
@@ -154,6 +153,11 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                                 <p className="text-sm text-muted-foreground">Family Balance Due</p>
                                 <p className="text-xl font-bold text-destructive">Rs{parent.totalDue.toFixed(2)}</p>
                             </div>
+                             {parent.children.length > 1 && (
+                                <Button variant="ghost" size="icon" title="View Family Summary" onClick={() => handleViewCombinedHistory(parent)}>
+                                    <Users className="h-5 w-5" />
+                                </Button>
+                            )}
                         </div>
                     </CardHeader>
                     <CollapsibleContent>
