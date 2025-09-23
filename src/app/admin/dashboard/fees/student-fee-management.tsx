@@ -51,27 +51,31 @@ export function StudentFeeManagement({ students, feeSettings }: StudentFeeManage
   };
   
   const siblingMap = useMemo(() => {
-    const parentToChildren: Record<string, Student[]> = {};
+    const parentToChildren: Record<string, string[]> = {};
     students.forEach(student => {
       if (student.parentPhone) {
         if (!parentToChildren[student.parentPhone]) {
           parentToChildren[student.parentPhone] = [];
         }
-        parentToChildren[student.parentPhone].push(student);
+        parentToChildren[student.parentPhone].push(student.id);
       }
     });
 
     const map = new Map<string, boolean>();
-    Object.values(parentToChildren).forEach(siblings => {
-      if (siblings.length > 1) {
+    const studentDobMap = new Map(students.map(s => [s.id, s.dob]));
+
+    Object.values(parentToChildren).forEach(siblingIds => {
+      if (siblingIds.length > 1) {
         // Sort by date of birth to determine the oldest
-        siblings.sort((a, b) => new Date(a.dob).getTime() - new Date(b.dob).getTime());
+        siblingIds.sort((a, b) => new Date(studentDobMap.get(a)!).getTime() - new Date(studentDobMap.get(b)!).getTime());
         // The first child (oldest) is not considered a sibling for discount purposes
-        map.set(siblings[0].id, false);
+        map.set(siblingIds[0], false);
         // All other children get the discount
-        for (let i = 1; i < siblings.length; i++) {
-          map.set(siblings[i].id, true);
+        for (let i = 1; i < siblingIds.length; i++) {
+          map.set(siblingIds[i], true);
         }
+      } else if (siblingIds.length === 1) {
+        map.set(siblingIds[0], false);
       }
     });
     return map;
@@ -208,6 +212,7 @@ export function StudentFeeManagement({ students, feeSettings }: StudentFeeManage
         isOpen={isPaymentFormOpen}
         setIsOpen={setIsPaymentFormOpen}
         student={selectedStudent}
+        feeSettings={feeSettings}
       />
       
       <FeeHistoryDialog

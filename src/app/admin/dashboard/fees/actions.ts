@@ -22,8 +22,11 @@ const PaymentSchema = z.object({
     method: z.enum(['Cash', 'Card', 'Online']),
     date: z.string().min(1, 'Date is required.'),
     months: z.preprocess((val) => {
-        if (Array.isArray(val)) return val;
-        if (typeof val === 'string') return [val];
+        if (Array.isArray(val)) {
+             // Flatten the array if it contains comma-separated strings
+            return val.flatMap(item => typeof item === 'string' ? item.split(',') : item);
+        }
+        if (typeof val === 'string') return val.split(',');
         return [];
     }, z.array(z.string()).optional()),
 });

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
@@ -34,8 +34,15 @@ const initialState: FormState = {
 };
 
 const months = [
-  'January', 'February', 'March', 'April', 'May', 'June', 
-  'July', 'August', 'September', 'October', 'November', 'December'
+  'April', 'May', 'June', 'July', 'August', 'September', 
+  'October', 'November', 'December', 'January', 'February', 'March'
+];
+
+const quarters = [
+    { label: 'Quarter 1 (Apr-Jun)', months: ['April', 'May', 'June'] },
+    { label: 'Quarter 2 (Jul-Sep)', months: ['July', 'August', 'September'] },
+    { label: 'Quarter 3 (Oct-Dec)', months: ['October', 'November', 'December'] },
+    { label: 'Quarter 4 (Jan-Mar)', months: ['January', 'February', 'March'] },
 ];
 
 function SubmitButton() {
@@ -108,7 +115,8 @@ export function RecordCombinedPaymentForm({ isOpen, setIsOpen, parent }: RecordC
           </div>
            <div className="space-y-2">
             <Label>Payment for Months</Label>
-            <div className="grid grid-cols-3 gap-2 rounded-md border p-2">
+            <p className="text-xs text-muted-foreground">Note: Month selection is for all children and record-keeping purposes.</p>
+            <div className="grid grid-cols-2 gap-2 rounded-md border p-2">
                 {months.map(month => (
                     <div key={month} className="flex items-center space-x-2">
                         <Checkbox id={`month-${month}`} name="months" value={month} />

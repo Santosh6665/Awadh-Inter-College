@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,7 @@ interface RecordPaymentFormProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   student?: Student | null;
+  feeSettings: any;
 }
 
 const initialState: FormState = {
@@ -34,8 +35,15 @@ const initialState: FormState = {
 };
 
 const months = [
-  'January', 'February', 'March', 'April', 'May', 'June', 
-  'July', 'August', 'September', 'October', 'November', 'December'
+  'April', 'May', 'June', 'July', 'August', 'September', 
+  'October', 'November', 'December', 'January', 'February', 'March'
+];
+
+const quarters = [
+    { label: 'Quarter 1 (Apr-Jun)', months: ['April', 'May', 'June'] },
+    { label: 'Quarter 2 (Jul-Sep)', months: ['July', 'August', 'September'] },
+    { label: 'Quarter 3 (Oct-Dec)', months: ['October', 'November', 'December'] },
+    { label: 'Quarter 4 (Jan-Mar)', months: ['January', 'February', 'March'] },
 ];
 
 function SubmitButton() {
@@ -48,7 +56,7 @@ function SubmitButton() {
   );
 }
 
-export function RecordPaymentForm({ isOpen, setIsOpen, student }: RecordPaymentFormProps) {
+export function RecordPaymentForm({ isOpen, setIsOpen, student, feeSettings }: RecordPaymentFormProps) {
   const { toast } = useToast();
   
   const action = student ? recordPayment.bind(null, student.id) : async () => initialState;
@@ -70,6 +78,13 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student }: RecordPaymentF
     }
   }, [state, toast, setIsOpen]);
 
+  const paymentPlan = useMemo(() => {
+    if (!student) return 'monthly';
+    const classDefaults = feeSettings[student.class] || {};
+    return student.feeStructure?.paymentPlan || classDefaults.paymentPlan || 'monthly';
+  }, [student, feeSettings]);
+
+
   if (!student) return null;
 
   return (
@@ -84,15 +99,15 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student }: RecordPaymentF
         <form action={formAction} className="grid gap-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="amount">Amount</Label>
-            <Input id="amount" name="amount" type="number" placeholder="Enter amount" />
+            <Input id="amount" name="amount" type="number" placeholder="Enter amount" required/>
           </div>
            <div className="space-y-2">
             <Label htmlFor="date">Payment Date</Label>
-            <Input id="date" name="date" type="date" defaultValue={new Date().toISOString().split('T')[0]} />
+            <Input id="date" name="date" type="date" defaultValue={new Date().toISOString().split('T')[0]} required/>
           </div>
           <div className="space-y-2">
              <Label htmlFor="method">Payment Method</Label>
-             <Select name="method" defaultValue="Cash">
+             <Select name="method" defaultValue="Cash" required>
                 <SelectTrigger>
                     <SelectValue placeholder="Select method" />
                 </SelectTrigger>
@@ -104,16 +119,26 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student }: RecordPaymentF
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Payment for Months</Label>
-            <div className="grid grid-cols-3 gap-2 rounded-md border p-2">
-                {months.map(month => (
+            <Label>Payment for Period (Plan: <span className="capitalize font-semibold">{paymentPlan}</span>)</Label>
+            <div className="grid grid-cols-2 gap-2 rounded-md border p-2">
+                {paymentPlan === 'monthly' && months.map(month => (
                     <div key={month} className="flex items-center space-x-2">
                         <Checkbox id={`month-${month}-${student.id}`} name="months" value={month} />
-                        <Label htmlFor={`month-${month}-${student.id}`} className="text-sm font-normal">
-                            {month}
-                        </Label>
+                        <Label htmlFor={`month-${month}-${student.id}`} className="text-sm font-normal">{month}</Label>
                     </div>
                 ))}
+                {paymentPlan === 'quarterly' && quarters.map(q => (
+                    <div key={q.label} className="flex items-center space-x-2 col-span-2">
+                        <Checkbox id={`q-${q.label}-${student.id}`} name="months" value={q.months.join(',')} />
+                        <Label htmlFor={`q-${q.label}-${student.id}`} className="text-sm font-normal">{q.label}</Label>
+                    </div>
+                ))}
+                {paymentPlan === 'yearly' && (
+                    <div className="flex items-center space-x-2 col-span-2">
+                        <Checkbox id={`yearly-${student.id}`} name="months" value={months.join(',')} />
+                        <Label htmlFor={`yearly-${student.id}`} className="text-sm font-normal">Full Session (April - March)</Label>
+                    </div>
+                )}
             </div>
           </div>
           <DialogFooter>
