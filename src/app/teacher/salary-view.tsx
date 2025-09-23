@@ -89,8 +89,9 @@ export function TeacherSalaryView({ teacher }: { teacher: Teacher }) {
     };
   });
 
-  const yearOptions = Array.from({ length: 5 }, (_, i) => {
-    const year = getYear(new Date()) - i;
+  const currentYear = getYear(new Date());
+  const yearOptions = Array.from({ length: 6 }, (_, i) => {
+    const year = currentYear + 1 - i;
     return { value: year.toString(), label: year.toString() };
   });
 
