@@ -94,7 +94,7 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
 
   if (!student) return null;
 
-  const classDefaults = feeSettings[student.class] || {};
+  const classDefaults = feeSettings?.feeStructure?.[student.class] || {};
   const studentFeeStructure = student.feeStructure || {};
   const feeMultipliers = { ...defaultMultipliers, ...(feeSettings?.feeMultipliers || {}) };
 

@@ -213,7 +213,7 @@ export default async function AdminDashboardPage() {
             <TeacherAttendanceManagement teachers={teachers} />
           </TabsContent>
            <TabsContent value="fees" className="mt-4">
-            <FeeManagement students={students} feeSettings={settings?.feeStructure || {}} />
+            <FeeManagement students={students} feeSettings={settings} />
           </TabsContent>
            <TabsContent value="teacher-salary" className="mt-4">
             <SalaryManagement teachers={teachers} />
