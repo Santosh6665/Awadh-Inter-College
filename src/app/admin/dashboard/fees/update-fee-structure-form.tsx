@@ -80,7 +80,7 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
 
   const getFeeValue = (feeHead: string) => {
     // Prioritize student-specific fee, then class default, then empty string
-    return studentFeeStructure[feeHead] ?? classDefaults[feeHead] ?? '';
+    return studentFeeStructure[feeHead] ?? '';
   };
   
   const getPaymentPlanDefaultValue = () => {
@@ -143,7 +143,7 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
             </Select>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsOpen(false)}>
+            <Button variant="outline" type="button" onClick={() => setIsOpen(false)}>
               Cancel
             </Button>
             <SubmitButton />
@@ -153,4 +153,3 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
     </Dialog>
   );
 }
-
