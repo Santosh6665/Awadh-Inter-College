@@ -138,7 +138,6 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student, feeSettings }: R
                                 name="months" 
                                 value={month} 
                                 disabled={isPaid}
-                                checked={isPaid}
                             />
                             <Label 
                                 htmlFor={`month-${month}-${student.id}`} 
@@ -159,7 +158,6 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student, feeSettings }: R
                                 name="months" 
                                 value={q.months.join(',')} 
                                 disabled={areAllMonthsPaid}
-                                checked={areAllMonthsPaid}
                             />
                             <Label htmlFor={`q-${q.label}-${student.id}`} className="text-sm font-normal flex items-center gap-1.5">
                                 {q.label}
@@ -175,7 +173,6 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student, feeSettings }: R
                             name="months" 
                             value={months.join(',')}
                             disabled={paidMonths.size >= 12}
-                            checked={paidMonths.size >= 12}
                         />
                         <Label htmlFor={`yearly-${student.id}`} className="text-sm font-normal flex items-center gap-1.5">
                             Full Session (April - March)
@@ -196,4 +193,3 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student, feeSettings }: R
     </Dialog>
   );
 }
-
