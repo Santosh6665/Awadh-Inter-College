@@ -1,3 +1,4 @@
+
 import { z } from 'zod';
 
 export type NewsArticle = {
@@ -84,7 +85,7 @@ export type SalaryPayment = {
   date: string;
   amount: number;
   method: 'Cash' | 'Bank Transfer' | 'Cheque';
-  month?: string;
+  month: string; // Should be in 'yyyy-MM' format
 };
 
 export type Teacher = {

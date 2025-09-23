@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useState, useMemo, useEffect, useTransition } from 'react';
-import type { Teacher } from '@/lib/types';
+import type { Teacher, SalaryPayment } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Eye, Loader2 } from 'lucide-react';
+import { Search, Eye, Loader2, Banknote } from 'lucide-react';
 import { SalarySlipDialog } from './salary-slip-dialog';
 import { calculateSalary, SalaryDetails } from '@/lib/salary-utils';
 import { getHolidaysInMonth, getTeacherAttendanceForMonth } from './actions';
@@ -26,12 +27,18 @@ import {
 } from '@/components/ui/select';
 import { format, getYear } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
+import { RecordSalaryPaymentForm } from './record-salary-payment-form';
+
+type StatusFilter = 'all' | 'paid' | 'pending';
 
 export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
   const [isSlipDialogOpen, setIsSlipDialogOpen] = useState(false);
+  const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [selectedSalaryDetails, setSelectedSalaryDetails] = useState<SalaryDetails | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [attendance, setAttendance] = useState<any>({});
@@ -58,17 +65,44 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
       }
     });
   }, [currentMonth, toast]);
+  
+  const handleRecordPayment = (teacher: Teacher) => {
+    const salaryDetails = calculateSalary(teacher, currentMonth, attendance, holidays);
+    setSelectedTeacher(teacher);
+    setSelectedSalaryDetails(salaryDetails);
+    setIsPaymentFormOpen(true);
+  };
 
-  const handleViewSlip = (teacher: Teacher) => {
+  const handleViewSlip = (teacher: Teacher, payment: SalaryPayment) => {
     const salaryDetails = calculateSalary(teacher, currentMonth, attendance, holidays);
     setSelectedTeacher(teacher);
     setSelectedSalaryDetails(salaryDetails);
     setIsSlipDialogOpen(true);
   };
   
-  const filteredTeachers = teachers.filter(teacher =>
-    teacher.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const teachersWithSalary = useMemo(() => {
+    const selectedMonthStr = format(currentMonth, 'yyyy-MM');
+    return teachers.map(teacher => {
+      const salaryDetails = calculateSalary(teacher, currentMonth, attendance, holidays);
+      const paymentForMonth = (teacher.salaryPayments || []).find(p => p.month === selectedMonthStr);
+      const status = paymentForMonth ? 'paid' : 'pending';
+      return {
+        ...teacher,
+        ...salaryDetails,
+        status,
+        paymentForMonth,
+      };
+    });
+  }, [teachers, currentMonth, attendance, holidays]);
+  
+  const filteredTeachers = useMemo(() => {
+    return teachersWithSalary.filter(teacher => {
+        const nameMatch = teacher.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const statusMatch = statusFilter === 'all' || teacher.status === statusFilter;
+        return nameMatch && statusMatch;
+    });
+  }, [teachersWithSalary, searchQuery, statusFilter]);
+
   
   const monthOptions = Array.from({ length: 12 }, (_, i) => {
     const date = new Date();
@@ -86,10 +120,9 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
   
   const totalMonthlySalaryExpense = useMemo(() => {
     return filteredTeachers.reduce((total, teacher) => {
-      const { netSalary } = calculateSalary(teacher, currentMonth, attendance, holidays);
-      return total + netSalary;
+      return total + teacher.netSalary;
     }, 0);
-  }, [filteredTeachers, currentMonth, attendance, holidays]);
+  }, [filteredTeachers]);
 
 
   return (
@@ -138,14 +171,26 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
                 </Select>
             </div>
           </div>
-          <div className="mt-4 relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by teacher name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8"
-            />
+          <div className="mt-4 flex flex-col md:flex-row items-center gap-4">
+            <div className="relative w-full">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                placeholder="Search by teacher name..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8"
+                />
+            </div>
+            <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as StatusFilter)}>
+                <SelectTrigger className="w-full md:w-[180px]">
+                    <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="paid">Paid</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                </SelectContent>
+            </Select>
           </div>
            <div className="mt-4 text-sm text-muted-foreground flex items-center gap-2">
               <strong>Total Salary Expense for {format(currentMonth, 'MMMM yyyy')}:</strong> 
@@ -161,16 +206,15 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead className="hidden md:table-cell">Base Salary</TableHead>
-                  <TableHead className="hidden md:table-cell">Deduction</TableHead>
                   <TableHead>Net Salary</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isPending ? (
                    <TableRow>
-                    <TableCell colSpan={5} className="text-center h-24">
+                    <TableCell colSpan={4} className="text-center h-24">
                         <div className="flex items-center justify-center gap-2">
                             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                             <span>Loading salary data...</span>
@@ -178,29 +222,36 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
                     </TableCell>
                   </TableRow>
                 ) : filteredTeachers.length > 0 ? (
-                  filteredTeachers.map((teacher) => {
-                    const { netSalary, deductionAmount } = calculateSalary(teacher, currentMonth, attendance, holidays);
-                    return (
+                  filteredTeachers.map((teacher) => (
                       <TableRow key={teacher.id}>
                         <TableCell>
                             <div className="font-medium">{teacher.name}</div>
                             <div className="text-xs text-muted-foreground">{teacher.employeeId}</div>
                         </TableCell>
-                        <TableCell className="hidden md:table-cell">Rs{(teacher.baseSalary || 0).toFixed(2)}</TableCell>
-                        <TableCell className="hidden md:table-cell text-destructive">Rs{deductionAmount.toFixed(2)}</TableCell>
-                        <TableCell className="font-semibold">Rs{netSalary.toFixed(2)}</TableCell>
+                        <TableCell className="font-semibold">Rs{teacher.netSalary.toFixed(2)}</TableCell>
+                        <TableCell>
+                            <Badge variant={teacher.status === 'paid' ? 'secondary' : 'destructive'}>
+                                {teacher.status.charAt(0).toUpperCase() + teacher.status.slice(1)}
+                            </Badge>
+                        </TableCell>
                         <TableCell className="text-right space-x-2">
-                          <Button variant="outline" size="sm" onClick={() => handleViewSlip(teacher)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Slip
-                          </Button>
+                            {teacher.status === 'pending' ? (
+                                <Button size="sm" onClick={() => handleRecordPayment(teacher)}>
+                                    <Banknote className="mr-2 h-4 w-4" />
+                                    Pay
+                                </Button>
+                            ) : (
+                                <Button variant="outline" size="sm" onClick={() => handleViewSlip(teacher, teacher.paymentForMonth!)}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    View Slip
+                                </Button>
+                            )}
                         </TableCell>
                       </TableRow>
-                    );
-                  })
+                    ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center">
+                    <TableCell colSpan={4} className="text-center">
                       No teachers found.
                     </TableCell>
                   </TableRow>
@@ -211,6 +262,14 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
         </CardContent>
       </Card>
 
+      <RecordSalaryPaymentForm
+        isOpen={isPaymentFormOpen}
+        setIsOpen={setIsPaymentFormOpen}
+        teacher={selectedTeacher}
+        netSalary={selectedSalaryDetails?.netSalary || 0}
+        month={currentMonth}
+      />
+      
       <SalarySlipDialog
         isOpen={isSlipDialogOpen}
         setIsOpen={setIsSlipDialogOpen}
