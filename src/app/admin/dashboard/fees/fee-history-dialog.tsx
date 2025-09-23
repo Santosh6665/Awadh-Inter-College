@@ -79,22 +79,35 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
   const handlePrint = () => {
     const printContent = document.getElementById('fee-history-print-content');
     if (printContent) {
-      const printHtml = printContent.innerHTML;
-      
       const printWindow = window.open('', '', 'height=800,width=800');
       if (printWindow) {
         printWindow.document.write('<html><head><title>Fee Receipt</title>');
-        // This links to the global CSS file for consistent styling
+
+        // Link to all stylesheets
         const styles = Array.from(document.styleSheets)
-            .map(styleSheet => styleSheet.href ? `<link rel="stylesheet" href="${styleSheet.href}">` : '')
-            .join('');
+          .map(styleSheet => {
+            try {
+              return Array.from(styleSheet.cssRules)
+                .map(rule => rule.cssText)
+                .join('');
+            } catch (e) {
+              if (styleSheet.href) {
+                return `<link rel="stylesheet" href="${styleSheet.href}">`;
+              }
+              return '';
+            }
+          })
+          .join('\n');
+          
+        printWindow.document.write('<style>');
         printWindow.document.write(styles);
-        printWindow.document.write('</head><body>');
-        printWindow.document.write(printHtml);
+        printWindow.document.write('</style></head><body>');
+        printWindow.document.write(printContent.innerHTML);
         printWindow.document.write('</body></html>');
         printWindow.document.close();
-        printWindow.focus();
+
         setTimeout(() => {
+          printWindow.focus();
           printWindow.print();
           printWindow.close();
         }, 250);
@@ -251,7 +264,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
         </DialogContent>
       </Dialog>
       {/* Hidden div for printing */}
-      <div className="hidden">
+      <div className="hidden print-block">
         <div id="fee-history-print-content">
           <FeeHistoryContent />
         </div>

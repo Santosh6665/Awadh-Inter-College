@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { Teacher } from '@/lib/types';
@@ -24,25 +25,44 @@ interface SalarySlipDialogProps {
 }
 
 export function SalarySlipDialog({ isOpen, setIsOpen, teacher, salaryDetails, month }: SalarySlipDialogProps) {
-  const slipRef = useRef<HTMLDivElement>(null);
-
   if (!teacher || !salaryDetails) return null;
   
-
   const handlePrint = () => {
-    if (!slipRef.current) return;
+    const printContent = document.getElementById('salary-slip-print-content');
+    if (printContent) {
+      const printWindow = window.open('', '', 'height=800,width=800');
+      if (printWindow) {
+        printWindow.document.write('<html><head><title>Salary Slip</title>');
 
-    const printContainer = document.createElement('div');
-    printContainer.id = 'print-container';
-    const cardNode = slipRef.current.cloneNode(true) as HTMLElement;
-    printContainer.appendChild(cardNode);
-    document.body.appendChild(printContainer);
+        const styles = Array.from(document.styleSheets)
+          .map(styleSheet => {
+            try {
+              return Array.from(styleSheet.cssRules)
+                .map(rule => rule.cssText)
+                .join('');
+            } catch (e) {
+              if (styleSheet.href) {
+                return `<link rel="stylesheet" href="${styleSheet.href}">`;
+              }
+              return '';
+            }
+          })
+          .join('\n');
+          
+        printWindow.document.write('<style>');
+        printWindow.document.write(styles);
+        printWindow.document.write('</style></head><body>');
+        printWindow.document.write(printContent.innerHTML);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
 
-    document.body.classList.add('printing');
-    window.print();
-    document.body.classList.remove('printing');
-    
-    document.body.removeChild(printContainer);
+        setTimeout(() => {
+          printWindow.focus();
+          printWindow.print();
+          printWindow.close();
+        }, 250);
+      }
+    }
   };
 
   return (
@@ -55,9 +75,7 @@ export function SalarySlipDialog({ isOpen, setIsOpen, teacher, salaryDetails, mo
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[70vh] overflow-y-auto p-1">
-          <div ref={slipRef}>
             <SalarySlip teacher={teacher} salaryDetails={salaryDetails} month={month} status={teacher.status || 'pending'} />
-          </div>
         </div>
         <DialogFooter className="print-hidden">
           <Button variant="outline" onClick={() => setIsOpen(false)}>Close</Button>
@@ -66,6 +84,11 @@ export function SalarySlipDialog({ isOpen, setIsOpen, teacher, salaryDetails, mo
             Download Slip
           </Button>
         </DialogFooter>
+        <div className="hidden print-block">
+          <div id="salary-slip-print-content">
+             <SalarySlip teacher={teacher} salaryDetails={salaryDetails} month={month} status={teacher.status || 'pending'} />
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

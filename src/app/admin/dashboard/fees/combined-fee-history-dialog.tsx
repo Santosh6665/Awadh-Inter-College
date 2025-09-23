@@ -51,23 +51,37 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
   const handlePrint = () => {
     const printContent = document.getElementById('combined-fee-history-print-content');
     if (printContent) {
-      const printHtml = printContent.innerHTML;
       const printWindow = window.open('', '', 'height=800,width=800');
       if (printWindow) {
         printWindow.document.write('<html><head><title>Combined Fee Summary</title>');
-        
-        // Link to the application's global stylesheets
-        const styles = Array.from(document.styleSheets)
-            .map(styleSheet => styleSheet.href ? `<link rel="stylesheet" href="${styleSheet.href}">` : '')
-            .join('');
-        printWindow.document.write(styles);
 
-        printWindow.document.write('</head><body>');
-        printWindow.document.write(printHtml);
+        // Link to all stylesheets
+        const styles = Array.from(document.styleSheets)
+          .map(styleSheet => {
+            try {
+              return Array.from(styleSheet.cssRules)
+                .map(rule => rule.cssText)
+                .join('');
+            } catch (e) {
+              // This can happen with external stylesheets due to CORS
+              if (styleSheet.href) {
+                return `<link rel="stylesheet" href="${styleSheet.href}">`;
+              }
+              return '';
+            }
+          })
+          .join('\n');
+          
+        printWindow.document.write('<style>');
+        printWindow.document.write(styles);
+        printWindow.document.write('</style></head><body>');
+        printWindow.document.write(printContent.innerHTML);
         printWindow.document.write('</body></html>');
         printWindow.document.close();
-        printWindow.focus();
+
+        // Use a small timeout to ensure styles are loaded before printing
         setTimeout(() => {
+          printWindow.focus();
           printWindow.print();
           printWindow.close();
         }, 250);
@@ -227,7 +241,7 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
         </DialogContent>
       </Dialog>
       {/* Hidden div for printing */}
-      <div className="hidden">
+      <div className="hidden print-block">
         <div id="combined-fee-history-print-content">
           <CombinedFeeHistoryContent />
         </div>
