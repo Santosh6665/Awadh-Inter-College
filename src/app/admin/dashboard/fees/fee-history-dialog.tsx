@@ -2,7 +2,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import type { Student } from '@/lib/types';
+import type { Student, Payment } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -98,6 +98,16 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
     }
   };
 
+  const getPaymentPeriod = (payment: Payment) => {
+    if (payment.months?.length === 12) {
+      return 'Full Session';
+    }
+    if (payment.months && payment.months.length > 0) {
+      return payment.months.join(', ');
+    }
+    return payment.month || 'N/A';
+  }
+
   const FeeHistoryContent = () => (
     <div className="space-y-6">
        <Card>
@@ -162,6 +172,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
                 <TableHeader>
                     <TableRow>
                     <TableHead>Date</TableHead>
+                    <TableHead>Period</TableHead>
                     <TableHead>Method</TableHead>
                     <TableHead className="text-right">Amount (Rs)</TableHead>
                     </TableRow>
@@ -170,14 +181,15 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
                     {student.payments && student.payments.length > 0 ? (
                     student.payments.map(payment => (
                         <TableRow key={payment.id}>
-                        <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
-                        <TableCell>{payment.method}</TableCell>
-                        <TableCell className="text-right">Rs{payment.amount.toFixed(2)}</TableCell>
+                          <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
+                          <TableCell>{getPaymentPeriod(payment)}</TableCell>
+                          <TableCell>{payment.method}</TableCell>
+                          <TableCell className="text-right">Rs{payment.amount.toFixed(2)}</TableCell>
                         </TableRow>
                     ))
                     ) : (
                     <TableRow>
-                        <TableCell colSpan={3} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
+                        <TableCell colSpan={4} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
                     </TableRow>
                     )}
                 </TableBody>
