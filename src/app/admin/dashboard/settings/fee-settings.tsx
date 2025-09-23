@@ -47,20 +47,13 @@ export function FeeSettings({ settings }: { settings: any }) {
       },
     }));
   };
-
-  const handleMultiplierChange = (feeHead: string, value: string) => {
-    setFeeMultipliers((prev: any) => ({
-        ...prev,
-        [feeHead]: value === '' ? undefined : Number(value)
-    }));
-  };
   
   const handleSave = async () => {
     setIsSaving(true);
     const result = await saveSettings({ 
         feeStructure, 
         sessionStartDate,
-        feeMultipliers
+        feeMultipliers: { ...feeMultipliers, exam: 3 }, // Ensure exam multiplier is 3
     });
     if (result.success) {
       toast({
