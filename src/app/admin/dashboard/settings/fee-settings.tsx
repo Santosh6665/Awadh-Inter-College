@@ -12,18 +12,29 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 
 const classes = ["Nursery", "LKG", "UKG", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 const feeHeads = [
-    { key: 'tuition', label: 'Tuition Fee (Monthly)' },
-    { key: 'transport', label: 'Transport Fee (Monthly)' },
-    { key: 'computer', label: 'Computer Fee (Monthly)' },
-    { key: 'admission', label: 'Admission Fee (Annual)' },
-    { key: 'exam', label: 'Exam Fee (Per Term)' },
-    { key: 'miscellaneous', label: 'Miscellaneous (Annual)' },
+    { key: 'tuition', label: 'Tuition Fee' },
+    { key: 'transport', label: 'Transport Fee' },
+    { key: 'computer', label: 'Computer Fee' },
+    { key: 'admission', label: 'Admission Fee' },
+    { key: 'exam', label: 'Exam Fee' },
+    { key: 'miscellaneous', label: 'Miscellaneous/Enrolment' },
 ];
+
+const defaultMultipliers = {
+    tuition: 12,
+    transport: 12,
+    computer: 12,
+    admission: 1,
+    exam: 3,
+    miscellaneous: 1,
+};
+
 
 export function FeeSettings({ settings }: { settings: any }) {
   const [feeStructure, setFeeStructure] = useState(settings?.feeStructure || {});
   const [siblingDiscount, setSiblingDiscount] = useState(settings?.siblingDiscount || '');
   const [sessionStartDate, setSessionStartDate] = useState(settings?.sessionStartDate || '');
+  const [feeMultipliers, setFeeMultipliers] = useState(settings?.feeMultipliers || defaultMultipliers);
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
@@ -36,13 +47,21 @@ export function FeeSettings({ settings }: { settings: any }) {
       },
     }));
   };
+
+  const handleMultiplierChange = (feeHead: string, value: string) => {
+    setFeeMultipliers((prev: any) => ({
+        ...prev,
+        [feeHead]: value === '' ? undefined : Number(value)
+    }));
+  };
   
   const handleSave = async () => {
     setIsSaving(true);
     const result = await saveSettings({ 
         feeStructure, 
         sessionStartDate,
-        siblingDiscount: Number(siblingDiscount) || 0 
+        siblingDiscount: Number(siblingDiscount) || 0,
+        feeMultipliers
     });
     if (result.success) {
       toast({
@@ -108,6 +127,30 @@ export function FeeSettings({ settings }: { settings: any }) {
                 </CardContent>
               </Card>
           </div>
+          
+          <Card>
+            <CardHeader>
+                <CardTitle className="text-lg">Fee Multipliers</CardTitle>
+                <CardDescription className="text-sm">Define how many times each fee is charged annually.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    {feeHeads.map(head => (
+                        <div key={head.key} className="space-y-2">
+                            <Label htmlFor={`multiplier-${head.key}`}>{head.label}</Label>
+                            <Input
+                                id={`multiplier-${head.key}`}
+                                type="number"
+                                placeholder={`e.g., ${defaultMultipliers[head.key as keyof typeof defaultMultipliers]}`}
+                                value={feeMultipliers[head.key] || ''}
+                                onChange={(e) => handleMultiplierChange(head.key, e.target.value)}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </CardContent>
+          </Card>
+
 
           <div>
             <h3 className="text-lg font-semibold mb-2">Class-wise Fee Structure Defaults</h3>

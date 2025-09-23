@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -27,6 +26,14 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Logo } from '@/components/layout/logo';
 
+const defaultMultipliers = {
+    tuition: 12,
+    transport: 12,
+    computer: 12,
+    admission: 1,
+    exam: 3,
+    miscellaneous: 1,
+};
 
 interface FeeHistoryDialogProps {
   isOpen: boolean;
@@ -38,27 +45,30 @@ interface FeeHistoryDialogProps {
 export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: FeeHistoryDialogProps) {
   const feeDetails = useMemo(() => {
     if (!student) return null;
+    
+    const feeMultipliers = { ...defaultMultipliers, ...(feeSettings?.feeMultipliers || {}) };
 
-    const classFeeStructure = feeSettings[student.class] || {};
+    const classFeeStructure = feeSettings.feeStructure?.[student.class] || {};
     const studentFeeOverrides = student.feeStructure || {};
     const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
 
     const feeHeads = [
-      { key: 'tuition', label: 'Tuition Fee', multiplier: 12 },
-      { key: 'transport', label: 'Transport Fee', multiplier: 12 },
-      { key: 'computer', label: 'Computer Fee', multiplier: 12 },
-      { key: 'admission', label: 'Admission Fee', multiplier: 1 },
-      { key: 'exam', label: 'Exam Fee', multiplier: 3 },
-      { key: 'miscellaneous', label: 'Miscellaneous/Enrolment', multiplier: 1 },
+      { key: 'tuition', label: 'Tuition Fee' },
+      { key: 'transport', label: 'Transport Fee' },
+      { key: 'computer', label: 'Computer Fee' },
+      { key: 'admission', label: 'Admission Fee' },
+      { key: 'exam', label: 'Exam Fee' },
+      { key: 'miscellaneous', label: 'Miscellaneous/Enrolment' },
     ];
     
     const structuredFees = feeHeads
       .map(head => {
         const amount = finalFeeStructure[head.key] || 0;
+        const multiplier = feeMultipliers[head.key as keyof typeof feeMultipliers] || 1;
         return {
             head: head.label,
-            calculation: `Rs ${amount} × ${head.multiplier}`,
-            amount: amount * head.multiplier,
+            calculation: `Rs ${amount} × ${multiplier}`,
+            amount: amount * multiplier,
         }
       })
       .filter(fee => fee.amount > 0);
