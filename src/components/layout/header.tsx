@@ -117,6 +117,7 @@ export function Header({ user }: HeaderProps) {
           </SheetTrigger>
           <SheetContent side="left" className="flex flex-col p-6">
              <SheetHeader className="mb-4">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <Link href="/" className="flex items-center gap-2">
                     <Logo className="h-8 w-8" />
                     <span className="text-xl font-bold">Awadh Inter College</span>
