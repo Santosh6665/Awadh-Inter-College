@@ -44,24 +44,28 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
     const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
 
     const feeHeads = [
-      { key: 'tuition', label: 'Tuition Fee' },
-      { key: 'admission', label: 'Admission Fee' },
-      { key: 'transport', label: 'Transport Fee' },
-      { key: 'exam', label: 'Exam Fee' },
-      { key: 'computer', label: 'Computer Fee' },
-      { key: 'miscellaneous', label: 'Miscellaneous' },
+      { key: 'tuition', label: 'Tuition Fee', multiplier: 12 },
+      { key: 'transport', label: 'Transport Fee', multiplier: 12 },
+      { key: 'computer', label: 'Computer Fee', multiplier: 12 },
+      { key: 'admission', label: 'Admission Fee', multiplier: 1 },
+      { key: 'exam', label: 'Exam Fee', multiplier: 3 },
+      { key: 'miscellaneous', label: 'Miscellaneous/Enrolment', multiplier: 1 },
     ];
     
     const structuredFees = feeHeads
-      .map(head => ({
-        head: head.label,
-        amount: finalFeeStructure[head.key] || 0,
-      }))
+      .map(head => {
+        const amount = finalFeeStructure[head.key] || 0;
+        return {
+            head: head.label,
+            calculation: `Rs ${amount} × ${head.multiplier}`,
+            amount: amount * head.multiplier,
+        }
+      })
       .filter(fee => fee.amount > 0);
 
     const discount = finalFeeStructure.discount || 0;
     if (discount > 0) {
-      structuredFees.push({ head: 'Discount/Concession', amount: -discount });
+      structuredFees.push({ head: 'Discount/Concession', calculation: '', amount: -discount });
     }
 
     const totalFees = structuredFees.reduce((acc, fee) => acc + fee.amount, 0);
@@ -141,11 +145,12 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
             </div>
             
             <div>
-                <h3 className="text-lg font-semibold mb-2">Fee Structure</h3>
+                <h3 className="text-lg font-semibold mb-2">Fee Structure (Annual)</h3>
                 <Table>
                 <TableHeader>
                     <TableRow>
                     <TableHead>Fee Head</TableHead>
+                    <TableHead className="hidden sm:table-cell">Calculation</TableHead>
                     <TableHead className="text-right">Amount (Rs)</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -153,13 +158,14 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
                     {feeDetails.structuredFees.map((fee, index) => (
                     <TableRow key={index}>
                         <TableCell>{fee.head}</TableCell>
+                        <TableCell className="hidden sm:table-cell text-muted-foreground">{fee.calculation}</TableCell>
                         <TableCell className={cn("text-right", fee.amount < 0 && 'text-green-600')}>{fee.amount.toFixed(2)}</TableCell>
                     </TableRow>
                     ))}
                 </TableBody>
                 <TableFooter>
                     <TableRow className="font-bold text-base bg-muted/50">
-                    <TableCell>Total Fees</TableCell>
+                    <TableCell colSpan={2}>Total Annual Fees</TableCell>
                     <TableCell className="text-right">Rs{feeDetails.totalFees.toFixed(2)}</TableCell>
                     </TableRow>
                 </TableFooter>

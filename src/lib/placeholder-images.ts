@@ -8,5 +8,5 @@ export type ImagePlaceholder = {
 };
 
 // Safely access the placeholderImages array, providing an empty array as a fallback
-// This prevents "Unexpected end of JSON input" errors if the JSON file is empty.
+// This prevents "Unexpected end of JSON input" errors if the JSON file is empty or malformed.
 export const PlaceHolderImages: ImagePlaceholder[] = (data && data.placeholderImages) ? data.placeholderImages : [];
