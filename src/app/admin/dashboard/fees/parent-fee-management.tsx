@@ -161,12 +161,6 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                                 <p className="text-sm text-muted-foreground">Family Balance Due</p>
                                 <p className="text-xl font-bold text-destructive">Rs{parent.totalDue.toFixed(2)}</p>
                             </div>
-                             {parent.children.length > 1 && (
-                                <Button size="sm" onClick={() => handleRecordCombinedPayment(parent)}>
-                                    <PlusCircle className="mr-2 h-4 w-4" />
-                                    Combined Pay
-                                </Button>
-                            )}
                         </div>
                     </CardHeader>
                     <CollapsibleContent>
