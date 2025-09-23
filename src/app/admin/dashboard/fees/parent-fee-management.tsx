@@ -26,6 +26,8 @@ import { calculateAnnualDue } from '@/lib/fee-utils';
 import { UpdateFeeStructureForm } from './update-fee-structure-form';
 import { RecordPaymentForm } from './record-payment-form';
 import { FeeHistoryDialog } from './fee-history-dialog';
+import { RecordCombinedPaymentForm } from './record-combined-payment-form';
+
 
 interface ParentFeeManagementProps {
   students: Student[];
@@ -41,6 +43,7 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
   const [isFeeStructureFormOpen, setIsFeeStructureFormOpen] = useState(false);
   const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false);
   const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
+  const [isCombinedPaymentFormOpen, setIsCombinedPaymentFormOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   
   const toggleCollapsible = (id: string) => {
@@ -67,6 +70,11 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
   const handleViewHistory = (student: Student) => {
     setSelectedStudent(student);
     setIsHistoryDialogOpen(true);
+  };
+
+   const handleRecordCombinedPayment = (parent: Parent) => {
+    setSelectedParent(parent);
+    setIsCombinedPaymentFormOpen(true);
   };
 
   const parentsData = useMemo<Parent[]>(() => {
@@ -113,7 +121,7 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Fee Management</CardTitle>
+          <CardTitle>Fee Management by Family</CardTitle>
           <CardDescription>View family-wise fee summaries and record individual or combined payments.</CardDescription>
           <div className="mt-4 relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -164,14 +172,15 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                     </CardHeader>
                     <CollapsibleContent>
                         <CardContent className="p-4 pt-0">
+                        <div className="overflow-x-auto">
                         <Table>
                           <TableHeader>
                             <TableRow>
                               <TableHead>Child Name</TableHead>
-                              <TableHead>Class</TableHead>
+                              <TableHead className="hidden sm:table-cell">Class</TableHead>
                               <TableHead>Total Dues</TableHead>
-                              <TableHead>Annual Fee</TableHead>
-                              <TableHead>Paid</TableHead>
+                              <TableHead className="hidden md:table-cell">Annual Fee</TableHead>
+                              <TableHead className="hidden md:table-cell">Paid</TableHead>
                               <TableHead>Status</TableHead>
                               <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
@@ -182,10 +191,10 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                                 return (
                                 <TableRow key={child.id}>
                                     <TableCell>{child.name}</TableCell>
-                                    <TableCell>{`${child.class}-${child.section}`}</TableCell>
+                                    <TableCell className="hidden sm:table-cell">{`${child.class}-${child.section}`}</TableCell>
                                     <TableCell className={due > 0 ? 'text-destructive font-semibold' : ''}>Rs{due.toFixed(2)}</TableCell>
-                                    <TableCell>Rs{totalAnnualFee.toFixed(2)}</TableCell>
-                                    <TableCell>Rs{totalPaid.toFixed(2)}</TableCell>
+                                    <TableCell className="hidden md:table-cell">Rs{totalAnnualFee.toFixed(2)}</TableCell>
+                                    <TableCell className="hidden md:table-cell">Rs{totalPaid.toFixed(2)}</TableCell>
                                     <TableCell>
                                         <Badge variant={due > 0 ? 'destructive' : 'secondary'}>
                                             {due > 0 ? 'Pending' : 'Paid'}
@@ -207,6 +216,15 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                             })}
                           </TableBody>
                         </Table>
+                        </div>
+                         {parent.children.length > 1 && (
+                            <div className="flex justify-end mt-4">
+                                <Button onClick={() => handleRecordCombinedPayment(parent)}>
+                                    <PlusCircle className="mr-2 h-4 w-4" />
+                                    Record Combined Payment
+                                </Button>
+                            </div>
+                        )}
                         </CardContent>
                     </CollapsibleContent>
                   </Card>
@@ -226,6 +244,12 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
         setIsOpen={setIsCombinedHistoryDialogOpen}
         parent={selectedParent}
         feeSettings={feeSettings}
+      />
+
+       <RecordCombinedPaymentForm
+        isOpen={isCombinedPaymentFormOpen}
+        setIsOpen={setIsCombinedPaymentFormOpen}
+        parent={selectedParent}
       />
 
       {/* Individual Student Modals */}

@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Users, UserCheck } from "lucide-react";
 import { StudentList } from "./dashboard/students/student-list";
@@ -219,7 +220,7 @@ export default async function AdminDashboardPage() {
               <TeacherAttendanceManagement teachers={teachers} />
             </TabsContent>
             <TabsContent value="fees" className="mt-4">
-              <FeeManagement students={students} feeSettings={settings?.feeStructure || {}} />
+              <FeeManagement students={students} feeSettings={settings || {}} />
             </TabsContent>
             <TabsContent value="teacher-salary" className="mt-4">
               <SalaryManagement teachers={teachers} />
