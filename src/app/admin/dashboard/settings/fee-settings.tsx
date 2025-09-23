@@ -34,7 +34,6 @@ const defaultMultipliers = {
 export function FeeSettings({ settings }: { settings: any }) {
   const [feeStructure, setFeeStructure] = useState(settings?.feeStructure || {});
   const [sessionStartDate, setSessionStartDate] = useState(settings?.sessionStartDate || '');
-  const [feeMultipliers, setFeeMultipliers] = useState(settings?.feeMultipliers || defaultMultipliers);
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
@@ -50,10 +49,11 @@ export function FeeSettings({ settings }: { settings: any }) {
   
   const handleSave = async () => {
     setIsSaving(true);
+    // The feeMultipliers are now managed by default in fee-utils.ts
+    // We only save the structure and start date.
     const result = await saveSettings({ 
         feeStructure, 
         sessionStartDate,
-        feeMultipliers: { ...feeMultipliers, exam: 3 }, // Ensure exam multiplier is 3
     });
     if (result.success) {
       toast({
@@ -106,7 +106,7 @@ export function FeeSettings({ settings }: { settings: any }) {
             <h3 className="text-lg font-semibold mb-2">Class-wise Fee Structure Defaults</h3>
              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 p-3 rounded-md mb-4">
                 <Info className="h-4 w-4" />
-                <span>Enter the base amount for each fee head here (e.g., monthly tuition fee). The multipliers above will be applied to these amounts.</span>
+                <span>Enter the base amount for each fee head here (e.g., monthly tuition fee). Annual totals are calculated automatically.</span>
             </div>
             <Accordion type="single" collapsible className="w-full">
               {classes.map((className) => (

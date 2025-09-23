@@ -6,7 +6,7 @@ const defaultMultipliers = {
     transport: 12,
     computer: 12,
     admission: 1,
-    exam: 3,
+    exam: 3, // Hardcoded to 3
     miscellaneous: 1,
 };
 
@@ -20,7 +20,8 @@ const defaultMultipliers = {
  */
 function calculateTotalAnnualFee(finalFeeStructure: any, multipliers: any) {
   let totalAnnualFee = 0;
-  const currentMultipliers = { ...defaultMultipliers, ...multipliers };
+  // Ensure exam multiplier is always 3, overriding any saved setting.
+  const currentMultipliers = { ...defaultMultipliers, ...multipliers, exam: 3 };
 
   // Dynamically calculate fees based on multipliers
   for (const head in currentMultipliers) {
@@ -43,7 +44,7 @@ export function calculateAnnualDue(
   student: Student,
   feeSettings: any
 ) {
-  const { feeStructure = {}, feeMultipliers = defaultMultipliers } = feeSettings;
+  const { feeStructure = {}, feeMultipliers = {} } = feeSettings || {};
 
   const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
 
@@ -51,7 +52,9 @@ export function calculateAnnualDue(
   const studentFeeOverrides = student.feeStructure || {};
   const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
 
-  let totalAnnualFee = calculateTotalAnnualFee(finalFeeStructure, feeMultipliers);
+  // Pass the combined multipliers, but the function will enforce exam: 3
+  const combinedMultipliers = { ...defaultMultipliers, ...feeMultipliers };
+  let totalAnnualFee = calculateTotalAnnualFee(finalFeeStructure, combinedMultipliers);
   
   const due = totalAnnualFee - totalPaid;
 
@@ -62,5 +65,3 @@ export function calculateAnnualDue(
     paid: totalPaid,
   };
 }
-
-    
