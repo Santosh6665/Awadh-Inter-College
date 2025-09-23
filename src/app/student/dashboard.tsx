@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { FeeReceipt } from './fee-receipt';
 import { AttendanceHistory } from './attendance-history';
 import { ResultCard } from './result-card';
+import { calculateAnnualDue } from '@/lib/fee-utils';
 
 
 interface StudentDashboardProps {
@@ -24,13 +25,11 @@ interface StudentDashboardProps {
   attendance: AttendanceRecord[];
   forcePasswordReset: boolean;
   settings: any;
+  isSibling: boolean;
 }
 
-export function StudentDashboard({ student, ranks, attendance, forcePasswordReset, settings }: StudentDashboardProps) {
+export function StudentDashboard({ student, ranks, attendance, forcePasswordReset, settings, isSibling }: StudentDashboardProps) {
   const [receiptToPrint, setReceiptToPrint] = useState<Payment | null>(null);
-  
-  const feeSettings = settings?.feeStructure || {};
-  const feeMultipliers = settings?.feeMultipliers || {};
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -61,45 +60,17 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
         setReceiptToPrint(null);
     }, 100);
   };
-
+  
   const feeDetails = useMemo(() => {
-    const classFeeStructure = feeSettings[student.class] || {};
+    const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(student, settings, isSibling);
+    const classFeeStructure = settings.feeStructure?.[student.class] || {};
     const studentFeeOverrides = student.feeStructure || {};
     const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
-
-    const feeHeads = [
-      { key: 'tuition', label: 'Tuition Fee' },
-      { key: 'transport', label: 'Transport Fee' },
-      { key: 'computer', label: 'Computer Fee' },
-      { key: 'admission', label: 'Admission Fee' },
-      { key: 'exam', label: 'Exam Fee' },
-      { key: 'miscellaneous', label: 'Miscellaneous/Enrolment' },
-    ];
-    
-    let structuredFees = feeHeads
-      .map(head => {
-        const amount = finalFeeStructure[head.key] || 0;
-        const multiplier = feeMultipliers[head.key as keyof typeof feeMultipliers] || 1;
-        return {
-            head: head.label,
-            calculation: `Rs ${amount} × ${multiplier}`,
-            amount: amount * multiplier,
-        }
-      })
-      .filter(fee => fee.amount > 0);
-    
-    const discount = finalFeeStructure.discount || 0;
-    if (discount > 0) {
-      structuredFees.push({ head: 'Discount/Concession', calculation: `Rs ${discount} × 1`, amount: -discount });
-    }
-
-    const totalFees = structuredFees.reduce((acc, fee) => acc + fee.amount, 0);
-    const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
-    const due = totalFees - totalPaid;
     const paymentPlan = finalFeeStructure.paymentPlan || 'Not set';
 
-    return { structuredFees, totalFees, totalPaid, due, paymentPlan };
-  }, [student, feeSettings, feeMultipliers]);
+    return { totalFees: totalAnnualFee, totalPaid, due, paymentPlan };
+  }, [student, settings, isSibling]);
+
 
   const getPaymentPeriod = (payment: Payment) => {
     if (payment.months?.length === 12) {
@@ -202,33 +173,6 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                             <CardDescription>A summary of your fee structure and payment history.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            <div>
-                                <h3 className="text-lg font-semibold mb-2">Fee Structure (Annual)</h3>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Fee Head</TableHead>
-                                            <TableHead className="hidden sm:table-cell">Calculation</TableHead>
-                                            <TableHead className="text-right">Amount (Rs)</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {feeDetails.structuredFees.map((fee, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell>{fee.head}</TableCell>
-                                                <TableCell className="hidden sm:table-cell text-muted-foreground">{fee.calculation}</TableCell>
-                                                <TableCell className={cn("text-right", fee.amount < 0 && 'text-green-600')}>{fee.amount.toFixed(2)}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                    <TableFooter>
-                                        <TableRow className="font-bold text-base">
-                                            <TableCell colSpan={2}>Total Annual Fees</TableCell>
-                                            <TableCell className="text-right">Rs{feeDetails.totalFees.toFixed(2)}</TableCell>
-                                        </TableRow>
-                                    </TableFooter>
-                                </Table>
-                            </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
                                 <Card className="p-4">
                                     <CardTitle className="text-sm text-muted-foreground">Total Fees</CardTitle>

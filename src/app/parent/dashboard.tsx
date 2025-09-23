@@ -10,10 +10,11 @@ import { StudentDashboard } from '@/app/student/dashboard';
 import { useMemo } from 'react';
 import { Banknote } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { calculateAnnualDue } from '@/lib/fee-utils';
 
 interface ParentDashboardProps {
   parent: { id: string; type: string; name: string };
-  childrenWithDetails: (Student & { ranks: { [key in ExamTypes]?: number | null }, attendance: AttendanceRecord[] })[];
+  childrenWithDetails: (Student & { ranks: { [key in ExamTypes]?: number | null }, attendance: AttendanceRecord[], isSibling: boolean })[];
   settings: any;
 }
 
@@ -28,16 +29,8 @@ export function ParentDashboard({ parent, childrenWithDetails, settings }: Paren
   };
 
   const totalDue = useMemo(() => {
-    const feeSettings = settings?.feeStructure || {};
     return childrenWithDetails.reduce((parentTotal, student) => {
-        const classFeeStructure = feeSettings[student.class] || {};
-        const studentFeeOverrides = student.feeStructure || {};
-        const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
-
-        const { tuition = 0, admission = 0, transport = 0, exam = 0, computer = 0, miscellaneous = 0, discount = 0 } = finalFeeStructure;
-        const totalFees = (tuition + admission + transport + exam + computer + miscellaneous) - discount;
-        const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
-        const due = totalFees - totalPaid;
+        const { due } = calculateAnnualDue(student, settings, student.isSibling);
         return parentTotal + due;
     }, 0);
   }, [childrenWithDetails, settings]);
@@ -93,6 +86,7 @@ export function ParentDashboard({ parent, childrenWithDetails, settings }: Paren
                                 attendance={child.attendance}
                                 forcePasswordReset={false} // Parents don't reset passwords this way
                                 settings={settings}
+                                isSibling={child.isSibling}
                             />
                         </TabsContent>
                     ))}

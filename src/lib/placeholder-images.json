@@ -1,10 +1,88 @@
 {
   "placeholderImages": [
     {
-      "id": "1",
-      "description": "A placeholder image for the school campus",
-      "imageUrl": "https://images.unsplash.com/photo-1527891751199-7225231a68dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzY2hvb2wlMjBjYW1wdXN8ZW58MHx8fHwxNzU4NTg1MTA5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "school-campus",
+      "description": "A beautiful view of the main school campus building and grounds.",
+      "imageUrl": "https://images.unsplash.com/photo-1559323940-f4551075a7da?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzY2hvb2wlMjBjYW1wdXN8ZW58MHx8fHwxNzU4NTg1MTA5fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "school campus"
+    },
+    {
+      "id": "students-library",
+      "description": "Students studying and reading books in the well-lit school library.",
+      "imageUrl": "https://images.unsplash.com/photo-1693921398753-c5d114e8ae6a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxzdHVkZW50cyUyMGxpYnJhcnl8ZW58MHx8fHwxNzU4NTg1MTA5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "students library"
+    },
+    {
+      "id": "science-lab",
+      "description": "A modern science laboratory with equipment ready for experiments.",
+      "imageUrl": "https://images.unsplash.com/photo-1581093577421-f561a654a353?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzY2llbmNlJTIwbGFifGVufDB8fHx8MTc1ODU4NDY0N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "science lab"
+    },
+    {
+      "id": "sports-day",
+      "description": "Students participating in a race on the school's annual sports day.",
+      "imageUrl": "https://images.unsplash.com/photo-1510766461678-4a8420db04d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxzcG9ydHMlMjBldmVudHxlbnwwfHx8fDE3NTg2NTAyODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sports event"
+    },
+    {
+      "id": "classroom-session",
+      "description": "An engaging classroom session with a teacher and students.",
+      "imageUrl": "https://images.unsplash.com/photo-1514355315815-2b64b0216b14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjbGFzc3Jvb20lMjBzdHVkZW50c3xlbnwwfHx8fDE3NTg1OTE1NTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "classroom students"
+    },
+    {
+      "id": "annual-function",
+      "description": "Students performing on stage during the school's annual function.",
+      "imageUrl": "https://images.unsplash.com/photo-1643321445548-d9c645336d57?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzY2hvb2wlMjBldmVudHxlbnwwfHx8fDE3NTg2NTAyODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "school event"
+    },
+    {
+      "id": "art-competition",
+      "description": "Students showing their creative skills during an art competition.",
+      "imageUrl": "https://images.unsplash.com/photo-1621863622358-c2851384f82d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhcnQlMjBjb21wZXRpdGlvbnxlbnwwfHx8fDE3NTg2NTAyODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "art competition"
+    },
+    {
+      "id": "computer-lab",
+      "description": "Students working on computers in the school's computer lab.",
+      "imageUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjb21wdXRlciUyMGxhYnxlbnwwfHx8fDE3NTg2NTAyODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "computer lab"
+    },
+    {
+      "id": "hero-1",
+      "description": "Hero image of the college campus for the homepage.",
+      "imageUrl": "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb2xsZWdlJTIwY2FtcHVzfGVufDB8fHx8MTc1ODU5NTIyNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "college campus"
+    },
+    {
+      "id": "hero-2",
+      "description": "Hero image of students learning in a classroom.",
+      "imageUrl": "https://images.unsplash.com/photo-1514355315815-2b64b0216b14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3R1ZGVudHMlMjBjbGFzc3Jvb218ZW58MHx8fHwxNzU4NTk1MjI1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "students classroom"
+    },
+    {
+      "id": "hero-3",
+      "description": "Hero image of the university library with students.",
+      "imageUrl": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx1bml2ZXJzaXR5JTIwbGlicmFyeXxlbnwwfHx8fDE3NTg1OTUyMjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "university library"
+    },
+    {
+      "id": "principal-photo",
+      "description": "Portrait of the school principal.",
+      "imageUrl": "https://images.unsplash.com/photo-1488282396544-0212eea56a21?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwcmluY2lwYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTg2NTAyODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "principal portrait"
+    },
+    {
+      "id": "founder-photo",
+      "description": "Portrait of the school founder.",
+      "imageUrl": "https://images.unsplash.com/photo-1750926013613-13c1796133e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxmb3VuZGVyJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzU4NTg3MTYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "founder portrait"
+    },
+    {
+      "id": "director-photo",
+      "description": "Portrait of the school director.",
+      "imageUrl": "https://images.unsplash.com/photo-1560714759-60e6eb4e1db6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxkaXJlY3RvciUyMHBvcnRyYWl0fGVufDB8fHx8MTc1ODY1MDI4MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "director portrait"
     }
   ]
 }

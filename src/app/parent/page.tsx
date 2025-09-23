@@ -3,7 +3,7 @@ import { Header } from '@/components/layout/header';
 import type { Student, AttendanceRecord, ExamTypes } from '@/lib/types';
 import { getLoggedInUser } from '../auth/actions';
 import { getChildrenForParent } from './actions';
-import { getStudentAttendance, getStudentsByClass } from '@/app/student/actions';
+import { getStudentAttendance, getStudentsByClass, checkSiblingStatus } from '@/app/student/actions';
 import { calculateCumulativePercentage, combineMarks } from '@/lib/result-utils';
 import { firestore } from '@/lib/firebase-admin';
 import { ParentDashboard } from './dashboard';
@@ -63,8 +63,9 @@ export default async function ParentPage() {
     }
     
     const attendance = await getStudentAttendance(child.id);
+    const isSibling = await checkSiblingStatus(child);
 
-    return { ...child, ranks, attendance };
+    return { ...child, ranks, attendance, isSibling };
   }));
 
   return (
