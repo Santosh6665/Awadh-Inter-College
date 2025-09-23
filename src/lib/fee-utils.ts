@@ -26,7 +26,7 @@ function calculateTotalAnnualFee(finalFeeStructure: any) {
     totalAnnualFee += finalFeeStructure[head] || 0;
   }
   
-  // Exam fee (x3)
+  // Exam fee (x3) - Assuming 3 terms per year
   totalAnnualFee += (finalFeeStructure.exam || 0) * 3;
 
   // Student-specific discount is subtracted from the total annual fee
@@ -109,13 +109,9 @@ export function calculateAnnualDue(
   feeSettings: any,
   isSibling: boolean
 ) {
-  const { feeStructure, siblingDiscount = 0 } = feeSettings;
+  const { feeStructure = {}, siblingDiscount = 0 } = feeSettings;
 
   const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
-
-  if (!feeStructure) {
-    return { due: 0, totalAnnualFee: 0, totalPaid, paid: totalPaid };
-  }
 
   const classFeeStructure = feeStructure[student.class] || {};
   const studentFeeOverrides = student.feeStructure || {};
