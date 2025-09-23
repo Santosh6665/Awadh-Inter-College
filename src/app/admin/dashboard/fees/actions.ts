@@ -230,44 +230,52 @@ function distributePayment(
     totalPayment: number, 
     childrenWithDues: { id: string; due: number }[]
 ): { [studentId: string]: number } {
-    let paymentDistribution: { [studentId: string]: number } = {};
+    const paymentDistribution: { [studentId: string]: number } = {};
     childrenWithDues.forEach(child => paymentDistribution[child.id] = 0);
     
     let remainingPayment = totalPayment;
-    let childrenStillWithDues = [...childrenWithDues];
 
-    // Continue as long as there's payment left and children with dues
+    // Distribute payment iteratively to handle surpluses correctly
+    let childrenStillWithDues = childrenWithDues.filter(c => c.due > 0);
+    
     while (remainingPayment > 0.01 && childrenStillWithDues.length > 0) {
-        const totalRemainingDue = childrenStillWithDues.reduce((acc, s) => acc + (s.due - paymentDistribution[s.id]), 0);
+        const totalRemainingDue = childrenStillWithDues.reduce((acc, s) => acc + s.due, 0);
         if (totalRemainingDue <= 0) break;
 
         let surplus = 0;
-
-        // Proportional distribution pass
+        
+        // Proportional distribution for this pass
         for (const student of childrenStillWithDues) {
-            const currentDue = student.due - paymentDistribution[student.id];
-            const proportionalShare = (currentDue / totalRemainingDue) * remainingPayment;
+            const proportionalShare = (student.due / totalRemainingDue) * remainingPayment;
             
-            const amountToPay = Math.min(currentDue, proportionalShare);
+            // Pay the smaller of the due amount or the proportional share
+            const amountToPay = Math.min(student.due, proportionalShare);
             
-            paymentDistribution[student.id] += amountToPay;
+            paymentDistribution[student.id] = (paymentDistribution[student.id] || 0) + amountToPay;
+            student.due -= amountToPay;
         }
 
         const paidInThisPass = Object.values(paymentDistribution).reduce((acc, val) => acc + val, 0);
-        
-        let remainingPaymentAfterPass = totalPayment - paidInThisPass;
+        remainingPayment = totalPayment - paidInThisPass;
 
-        // If there's a tiny amount left due to rounding, try to allocate it
-        if(remainingPaymentAfterPass > 0.01 && remainingPaymentAfterPass < remainingPayment) {
-            childrenStillWithDues = childrenWithDues.filter(s => paymentDistribution[s.id] < s.due);
-            remainingPayment = remainingPaymentAfterPass;
-        } else {
-            // Break if no progress is made to prevent infinite loops
-            break;
+        // Filter out children who are now fully paid
+        const previouslyStillWithDuesCount = childrenStillWithDues.length;
+        childrenStillWithDues = childrenStillWithDues.filter(s => s.due > 0.01);
+
+        // Break if no progress is made to prevent infinite loops (e.g., due to rounding)
+        if (childrenStillWithDues.length === previouslyStillWithDuesCount && remainingPayment > 0.01) {
+             // If there's still money and children with dues, but no progress,
+             // it might be due to rounding. Give the remainder to the child with the highest due.
+            if (childrenStillWithDues.length > 0) {
+                childrenStillWithDues.sort((a,b) => b.due - a.due);
+                const amountToPay = Math.min(childrenStillWithDues[0].due, remainingPayment);
+                paymentDistribution[childrenStillWithDues[0].id] += amountToPay;
+            }
+            break; // Exit after this forced allocation
         }
     }
     
-    // Final rounding to 2 decimal places
+    // Final rounding to 2 decimal places to avoid floating point issues
     for(const id in paymentDistribution) {
         paymentDistribution[id] = Math.round(paymentDistribution[id] * 100) / 100;
     }
