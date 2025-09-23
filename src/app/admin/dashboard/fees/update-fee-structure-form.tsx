@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
@@ -32,6 +32,25 @@ const initialState: FormState = {
   success: false,
   message: '',
 };
+
+const defaultMultipliers = {
+    tuition: 12,
+    transport: 12,
+    computer: 12,
+    admission: 1,
+    exam: 3,
+    miscellaneous: 1,
+};
+
+const feeHeads = [
+    { key: 'tuition', label: 'Tuition Fee' },
+    { key: 'transport', label: 'Transport Fee' },
+    { key: 'computer', label: 'Computer Fee' },
+    { key: 'admission', label: 'Admission Fee' },
+    { key: 'exam', label: 'Exam Fee' },
+    { key: 'miscellaneous', label: 'Miscellaneous' },
+    { key: 'discount', label: 'Discount/Concession' },
+];
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -77,6 +96,8 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
 
   const classDefaults = feeSettings[student.class] || {};
   const studentFeeStructure = student.feeStructure || {};
+  const feeMultipliers = { ...defaultMultipliers, ...(feeSettings?.feeMultipliers || {}) };
+
 
   const getFeeValue = (feeHead: string) => {
     // Prioritize student-specific fee, then class default, then empty string
@@ -98,35 +119,26 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
           </DialogDescription>
         </DialogHeader>
         <form action={formAction} className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-2">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="tuition">Tuition Fee</Label>
-              <Input id="tuition" name="tuition" type="number" defaultValue={getFeeValue('tuition')} placeholder={`Default: ${classDefaults.tuition || '0'}`} />
-            </div>
-             <div className="space-y-2">
-              <Label htmlFor="admission">Admission Fee</Label>
-              <Input id="admission" name="admission" type="number" defaultValue={getFeeValue('admission')} placeholder={`Default: ${classDefaults.admission || '0'}`} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="transport">Transport Fee</Label>
-              <Input id="transport" name="transport" type="number" defaultValue={getFeeValue('transport')} placeholder={`Default: ${classDefaults.transport || '0'}`} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="exam">Exam Fee</Label>
-              <Input id="exam" name="exam" type="number" defaultValue={getFeeValue('exam')} placeholder={`Default: ${classDefaults.exam || '0'}`} />
-            </div>
-             <div className="space-y-2">
-              <Label htmlFor="computer">Computer Fee</Label>
-              <Input id="computer" name="computer" type="number" defaultValue={getFeeValue('computer')} placeholder={`Default: ${classDefaults.computer || '0'}`} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="miscellaneous">Miscellaneous</Label>
-              <Input id="miscellaneous" name="miscellaneous" type="number" defaultValue={getFeeValue('miscellaneous')} placeholder={`Default: ${classDefaults.miscellaneous || '0'}`} />
-            </div>
-             <div className="space-y-2">
-              <Label htmlFor="discount">Discount/Concession</Label>
-              <Input id="discount" name="discount" type="number" defaultValue={getFeeValue('discount')} placeholder={`Default: ${classDefaults.discount || '0'}`} />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+            {feeHeads.map(head => (
+                 <div key={head.key} className="space-y-2">
+                    <div className="flex justify-between items-center">
+                        <Label htmlFor={head.key}>{head.label}</Label>
+                        {head.key !== 'discount' && (
+                             <span className="text-xs text-muted-foreground">
+                                Annual: (x{feeMultipliers[head.key as keyof typeof feeMultipliers] || 1})
+                            </span>
+                        )}
+                    </div>
+                    <Input 
+                        id={head.key} 
+                        name={head.key} 
+                        type="number" 
+                        defaultValue={getFeeValue(head.key)} 
+                        placeholder={`Default: ${classDefaults[head.key] || '0'}`}
+                    />
+                </div>
+            ))}
           </div>
           <div className="space-y-2">
             <Label htmlFor="paymentPlan">Payment Plan</Label>
