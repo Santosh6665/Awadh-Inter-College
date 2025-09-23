@@ -32,7 +32,7 @@ const defaultMultipliers = {
     transport: 12,
     computer: 12,
     admission: 1,
-    exam: 3,
+    exam: 1,
     miscellaneous: 1,
 };
 
@@ -271,3 +271,5 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
     </>
   );
 }
+
+    

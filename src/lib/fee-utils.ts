@@ -1,3 +1,4 @@
+
 import type { Student } from './types';
 
 const defaultMultipliers = {
@@ -5,7 +6,7 @@ const defaultMultipliers = {
     transport: 12,
     computer: 12,
     admission: 1,
-    exam: 3,
+    exam: 1,
     miscellaneous: 1,
 };
 
@@ -61,3 +62,5 @@ export function calculateAnnualDue(
     paid: totalPaid,
   };
 }
+
+    
