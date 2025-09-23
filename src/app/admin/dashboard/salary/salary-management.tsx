@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useTransition } from 'react';
 import type { Teacher } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -13,10 +13,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Eye } from 'lucide-react';
+import { Search, Eye, Loader2 } from 'lucide-react';
 import { SalarySlipDialog } from './salary-slip-dialog';
 import { calculateSalary, SalaryDetails } from '@/lib/salary-utils';
-import { getHolidaysInMonth } from './actions';
+import { getHolidaysInMonth, getTeacherAttendanceForMonth } from './actions';
 import {
   Select,
   SelectContent,
@@ -24,15 +24,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { format, getYear, getMonth } from 'date-fns';
+import { format, getYear } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 
-export function SalaryManagement({ teachers, attendance, holidays }: { teachers: Teacher[], attendance: any, holidays: any }) {
+export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
   const [isSlipDialogOpen, setIsSlipDialogOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [selectedSalaryDetails, setSelectedSalaryDetails] = useState<SalaryDetails | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [attendance, setAttendance] = useState<any>({});
+  const [holidays, setHolidays] = useState<string[]>([]);
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    startTransition(async () => {
+      try {
+        const [newAttendance, newHolidays] = await Promise.all([
+          getTeacherAttendanceForMonth(currentMonth),
+          getHolidaysInMonth(currentMonth),
+        ]);
+        setAttendance(newAttendance);
+        setHolidays(newHolidays);
+      } catch (error) {
+        console.error("Failed to fetch salary data:", error);
+        toast({
+          title: "Error",
+          description: "Could not fetch attendance and holiday data for the selected month.",
+          variant: "destructive",
+        });
+      }
+    });
+  }, [currentMonth, toast]);
 
   const handleViewSlip = (teacher: Teacher) => {
     const salaryDetails = calculateSalary(teacher, currentMonth, attendance, holidays);
@@ -49,7 +74,7 @@ export function SalaryManagement({ teachers, attendance, holidays }: { teachers:
     const date = new Date();
     date.setMonth(i);
     return {
-      value: format(date, 'yyyy-MM'),
+      value: i.toString(),
       label: format(date, 'MMMM'),
     };
   });
@@ -78,10 +103,10 @@ export function SalaryManagement({ teachers, attendance, holidays }: { teachers:
             </div>
              <div className="flex gap-2 w-full md:w-auto">
                 <Select
-                    value={format(currentMonth, 'MMMM')}
+                    value={currentMonth.getMonth().toString()}
                     onValueChange={(month) => {
                         const newDate = new Date(currentMonth);
-                        newDate.setMonth(monthOptions.findIndex(m => m.label === month));
+                        newDate.setMonth(parseInt(month, 10));
                         setCurrentMonth(newDate);
                     }}
                 >
@@ -90,7 +115,7 @@ export function SalaryManagement({ teachers, attendance, holidays }: { teachers:
                     </SelectTrigger>
                     <SelectContent>
                         {monthOptions.map(option => (
-                            <SelectItem key={option.value} value={option.label}>{option.label}</SelectItem>
+                            <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
@@ -122,9 +147,12 @@ export function SalaryManagement({ teachers, attendance, holidays }: { teachers:
               className="pl-8"
             />
           </div>
-           <div className="mt-4 text-sm text-muted-foreground">
+           <div className="mt-4 text-sm text-muted-foreground flex items-center gap-2">
               <strong>Total Salary Expense for {format(currentMonth, 'MMMM yyyy')}:</strong> 
-              <span className="font-bold text-lg text-primary"> Rs{totalMonthlySalaryExpense.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              {isPending 
+                ? <Loader2 className="h-5 w-5 animate-spin" />
+                : <span className="font-bold text-lg text-primary"> Rs{totalMonthlySalaryExpense.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              }
             </div>
         </CardHeader>
         <CardContent>
@@ -140,7 +168,16 @@ export function SalaryManagement({ teachers, attendance, holidays }: { teachers:
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTeachers.length > 0 ? (
+                {isPending ? (
+                   <TableRow>
+                    <TableCell colSpan={5} className="text-center h-24">
+                        <div className="flex items-center justify-center gap-2">
+                            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                            <span>Loading salary data...</span>
+                        </div>
+                    </TableCell>
+                  </TableRow>
+                ) : filteredTeachers.length > 0 ? (
                   filteredTeachers.map((teacher) => {
                     const { netSalary, deductionAmount } = calculateSalary(teacher, currentMonth, attendance, holidays);
                     return (

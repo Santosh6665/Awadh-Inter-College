@@ -4,8 +4,17 @@
 import { firestore } from '@/lib/firebase-admin';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
 import { FieldPath } from 'firebase-admin/firestore';
+import { getLoggedInUser } from '@/app/auth/actions';
+
+async function checkAuth() {
+    const user = await getLoggedInUser();
+    if (!user || user.type !== 'admin') {
+        throw new Error('Unauthorized');
+    }
+}
 
 export async function getHolidaysInMonth(date: Date) {
+    await checkAuth();
     try {
         const holidaysSnapshot = await firestore.collection('holidays').get();
         const holidaysInMonth: string[] = [];
@@ -26,6 +35,7 @@ export async function getHolidaysInMonth(date: Date) {
 }
 
 export async function getTeacherAttendanceForMonth(date: Date) {
+    await checkAuth();
     try {
         const start = startOfMonth(date);
         const end = endOfMonth(date);

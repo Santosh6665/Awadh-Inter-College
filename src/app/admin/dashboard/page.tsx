@@ -16,7 +16,6 @@ import { format } from 'date-fns';
 import { TeacherAttendanceManagement } from "./teacher-attendance/teacher-attendance-management";
 import { SalaryManagement } from "./salary/salary-management";
 import { Settings } from "./settings/settings";
-import { getTeacherAttendanceForMonth, getHolidaysInMonth } from "./salary/actions";
 
 export default async function AdminDashboardPage() {
   let students: Student[] = [];
@@ -25,8 +24,6 @@ export default async function AdminDashboardPage() {
   let notices: Notice[] = [];
   let todayAttendanceData: any = {};
   let yesterdayAttendanceData: any = {};
-  let monthlyTeacherAttendance: any = {};
-  let monthlyHolidays: any = [];
 
   // Only attempt to fetch data if firestore was successfully initialized
   if (firestore) {
@@ -35,8 +32,6 @@ export default async function AdminDashboardPage() {
       students = await getStudents();
       teachers = await getTeachers();
       notices = await getNotices();
-      monthlyTeacherAttendance = await getTeacherAttendanceForMonth(today);
-      monthlyHolidays = await getHolidaysInMonth(today);
 
       const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
       if (settingsDoc.exists) {
@@ -221,7 +216,7 @@ export default async function AdminDashboardPage() {
             <FeeManagement students={students} feeSettings={settings?.feeStructure || {}} />
           </TabsContent>
            <TabsContent value="teacher-salary" className="mt-4">
-            <SalaryManagement teachers={teachers} attendance={monthlyTeacherAttendance} holidays={monthlyHolidays} />
+            <SalaryManagement teachers={teachers} />
           </TabsContent>
           <TabsContent value="notices" className="mt-4">
             <NoticeManagement notices={notices} />
