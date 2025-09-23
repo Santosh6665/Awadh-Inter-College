@@ -55,8 +55,13 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
       const printWindow = window.open('', '', 'height=800,width=800');
       if (printWindow) {
         printWindow.document.write('<html><head><title>Combined Fee Summary</title>');
-        // Add minimal styles for printing
-        printWindow.document.write('<style>body{font-family:sans-serif;}.print-area{border:none!important;box-shadow:none!important;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:8px;text-align:left;}h2,h3{margin-top:1.5rem;margin-bottom:0.5rem;}</style>');
+        
+        // Link to the application's global stylesheets
+        const styles = Array.from(document.styleSheets)
+            .map(styleSheet => styleSheet.href ? `<link rel="stylesheet" href="${styleSheet.href}">` : '')
+            .join('');
+        printWindow.document.write(styles);
+
         printWindow.document.write('</head><body>');
         printWindow.document.write(printHtml);
         printWindow.document.write('</body></html>');
