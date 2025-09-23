@@ -96,13 +96,15 @@ body {
 @media print {
   @page {
     size: A4;
-    margin: 1cm;
+    margin: 0;
   }
 
   body {
     background: white !important;
     color: black !important;
     -webkit-print-color-adjust: exact;
+    padding-top: 1cm; /* Add padding to body instead of margin to page */
+    padding-bottom: 1cm;
   }
   
   header, footer, .print-hidden {
