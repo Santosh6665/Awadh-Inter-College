@@ -21,7 +21,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon, Search, Eye, Tent, DoorClosed } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
-import { getAttendanceByDate, setAttendance as setAttendanceAction, getStudentAttendanceHistory, isHoliday, getSchoolStatus } from './actions';
+import { getAttendanceByDate, setAttendance as setAttendanceAction, getStudentAttendanceHistory, isHoliday, getSchoolStatus, getHolidays } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { AttendanceHistoryDialog } from './attendance-history-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -55,6 +55,7 @@ export function AttendanceManagement({ students, teacher }: AttendanceManagement
   const [holidayName, setHolidayName] = useState('');
   const [isSchoolClosed, setIsSchoolClosed] = useState(false);
   const [closedReason, setClosedReason] = useState('');
+  const [holidays, setHolidays] = useState<string[]>([]);
 
   const canEditAttendance = teacher?.canEditAttendance ?? false;
   const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
@@ -96,6 +97,7 @@ export function AttendanceManagement({ students, teacher }: AttendanceManagement
         setLoading(true);
         await checkDateStatus();
         await fetchAttendance();
+        getHolidays().then(setHolidays);
         setLoading(false);
     }
     loadData();
@@ -334,6 +336,7 @@ export function AttendanceManagement({ students, teacher }: AttendanceManagement
         setIsOpen={setIsHistoryDialogOpen}
         personName={selectedStudent?.name ?? null}
         attendanceRecords={historyLoading ? [] : studentHistory}
+        holidays={holidays}
       />
     </>
   );

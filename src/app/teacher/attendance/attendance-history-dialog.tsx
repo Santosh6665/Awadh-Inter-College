@@ -17,22 +17,17 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, getMonth, getYear, startOfMonth, isSameMonth, isSameYear } from "date-fns";
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { getHolidays } from './actions';
 
 interface AttendanceHistoryDialogProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   personName: string | null;
   attendanceRecords: AttendanceRecord[];
+  holidays: string[];
 }
 
-export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attendanceRecords }: AttendanceHistoryDialogProps) {
+export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attendanceRecords, holidays }: AttendanceHistoryDialogProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [holidays, setHolidays] = useState<string[]>([]);
-
-  useEffect(() => {
-    getHolidays().then(setHolidays);
-  }, []);
 
   const filteredAttendanceRecords = useMemo(() => {
     const holidaySet = new Set(holidays);
