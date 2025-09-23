@@ -43,6 +43,15 @@ const feeHeads = [
     { key: 'discount', label: 'Discount/Concession' },
 ];
 
+const defaultMultipliers = {
+    tuition: 12,
+    transport: 12,
+    computer: 12,
+    admission: 1,
+    exam: 3,
+    miscellaneous: 1,
+};
+
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
@@ -57,8 +66,6 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
   const { toast } = useToast();
   
   const actionWithFormData = (prevState: FormState, formData: FormData) => {
-    // If paymentPlan is 'default', we remove it so it's not sent to the server action.
-    // The server action interprets a missing field as "use the default".
     if (formData.get('paymentPlan') === 'default') {
       formData.set('paymentPlan', '');
     }
@@ -87,11 +94,10 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
 
   const classDefaults = feeSettings?.feeStructure?.[student.class] || {};
   const studentFeeStructure = student.feeStructure || {};
-  const feeMultipliers = feeSettings?.feeMultipliers || {};
+  const feeMultipliers = { ...defaultMultipliers, ...(feeSettings?.feeMultipliers || {}) };
 
 
   const getFeeValue = (feeHead: string) => {
-    // Prioritize student-specific fee, then class default, then empty string
     return studentFeeStructure[feeHead] ?? '';
   };
   
