@@ -192,7 +192,7 @@ export function TeacherSalaryView({ teacher }: { teacher: Teacher }) {
       <SalarySlipDialog
         isOpen={isSlipDialogOpen}
         setIsOpen={setIsSlipDialogOpen}
-        teacher={teacher}
+        teacher={teacherWithSalary}
         salaryDetails={selectedSalaryDetails}
         month={currentMonth}
       />
