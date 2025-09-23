@@ -91,7 +91,6 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
   const handlePrint = () => {
     const printContent = document.getElementById('fee-history-print-content');
     if (printContent) {
-      const originalContents = document.body.innerHTML;
       const printHtml = printContent.innerHTML;
       
       const printWindow = window.open('', '', 'height=800,width=800');
@@ -102,7 +101,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
             .map(styleSheet => styleSheet.href ? `<link rel="stylesheet" href="${styleSheet.href}">` : '')
             .join('');
         printWindow.document.write(styles);
-        printWindow.document.write('</head><body >');
+        printWindow.document.write('</head><body>');
         printWindow.document.write(printHtml);
         printWindow.document.write('</body></html>');
         printWindow.document.close();
@@ -251,7 +250,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
               A complete overview of the fee structure and payments.
             </DialogDescription>
           </DialogHeader>
-          <div className="max-h-[70vh] overflow-y-auto p-4">
+          <div className="max-h-[70vh] overflow-y-auto p-1">
              <FeeHistoryContent />
           </div>
           <DialogFooter className="print-hidden">
@@ -272,6 +271,3 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
     </>
   );
 }
-
-    
-    
