@@ -27,6 +27,7 @@ export function SalarySlipDialog({ isOpen, setIsOpen, teacher, salaryDetails, mo
   const slipRef = useRef<HTMLDivElement>(null);
 
   if (!teacher || !salaryDetails) return null;
+  
 
   const handlePrint = () => {
     if (!slipRef.current) return;

@@ -32,21 +32,18 @@ export function calculateSalary(
   const actualDaysInMonth = getDaysInMonth(month);
   let absentDays = 0;
   let presentDays = 0;
-  let holidayDays = 0;
+  let holidayDays = holidaySet.size;
 
   for (let i = 1; i <= actualDaysInMonth; i++) {
     const date = new Date(month.getFullYear(), month.getMonth(), i);
     const dateStr = format(date, 'yyyy-MM-dd');
 
+
     // Ignore Sundays (day 0)
     if (date.getDay() === 0) continue;
 
     // Prioritize holidays: if it's a holiday, count it and skip other checks
-    if (holidaySet.has(dateStr)) {
-      holidayDays++;
-      continue;
-    }
-
+    
     if (teacherAttendance[dateStr] === 'absent') {
       absentDays++;
     } else if (teacherAttendance[dateStr] === 'present') {

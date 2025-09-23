@@ -19,7 +19,7 @@ import { UpdateFeeStructureForm } from './update-fee-structure-form';
 import { RecordPaymentForm } from './record-payment-form';
 import { FeeHistoryDialog } from './fee-history-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { calculateMonthlyDue } from '@/lib/fee-utils';
+import { calculateAnnualDue } from '@/lib/fee-utils';
 
 interface StudentFeeManagementProps {
   students: Student[];
@@ -165,7 +165,7 @@ export function StudentFeeManagement({ students, feeSettings }: StudentFeeManage
                 {filteredStudents.length > 0 ? (
                   filteredStudents.map((student) => {
                     const isSibling = siblingMap.get(student.id) || false;
-                    const { due, totalAnnualFee, totalPaid } = calculateMonthlyDue(student, feeSettings, isSibling);
+                    const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(student, feeSettings, isSibling);
                     return (
                         <TableRow key={student.id}>
                             <TableCell className="hidden md:table-cell">{student.rollNumber}</TableCell>

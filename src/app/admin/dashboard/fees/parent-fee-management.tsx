@@ -23,7 +23,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { CombinedFeeHistoryDialog } from './combined-fee-history-dialog';
-import { calculateMonthlyDue } from '@/lib/fee-utils';
+import { calculateAnnualDue } from '@/lib/fee-utils';
 
 interface ParentFeeManagementProps {
   students: Student[];
@@ -71,7 +71,7 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
 
       data.children.forEach((child, index) => {
         const isSibling = index > 0;
-        const { due, totalAnnualFee, paid } = calculateMonthlyDue(child, feeSettings, isSibling);
+        const { due, totalAnnualFee, paid } = calculateAnnualDue(child, feeSettings, isSibling);
         totalDue += due;
         totalFees += totalAnnualFee;
         totalPaid += paid;
@@ -162,7 +162,7 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                           <TableBody>
                             {parent.children.map((child, index) => {
                                 const isSibling = index > 0;
-                                const { due, totalAnnualFee, totalPaid } = calculateMonthlyDue(child, feeSettings, isSibling);
+                                const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(child, feeSettings, isSibling);
                                 return (
                                 <TableRow key={child.id}>
                                     <TableCell>{child.name}</TableCell>

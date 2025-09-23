@@ -1,3 +1,4 @@
+
 import type { Student } from './types';
 
 // Defines which fee heads are considered monthly recurring costs
@@ -92,5 +93,47 @@ export function calculateMonthlyDue(
     totalAnnualFee, 
     totalPaid,
     paid: totalPaid // Keep 'paid' for backward compatibility in some components
+  };
+}
+
+
+/**
+ * Calculates the total annual due, total annual fee, and total paid for a student.
+ * @param student The student object.
+ * @param feeSettings The school's fee settings, including feeStructure.
+ * @param isSibling A boolean indicating if the student is a sibling (eligible for discount).
+ * @returns An object with due, totalAnnualFee, and totalPaid amounts.
+ */
+export function calculateAnnualDue(
+  student: Student,
+  feeSettings: any,
+  isSibling: boolean
+) {
+  const { feeStructure, siblingDiscount = 0 } = feeSettings;
+
+  const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
+
+  if (!feeStructure) {
+    return { due: 0, totalAnnualFee: 0, totalPaid, paid: totalPaid };
+  }
+
+  const classFeeStructure = feeStructure[student.class] || {};
+  const studentFeeOverrides = student.feeStructure || {};
+  const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
+
+  let totalAnnualFee = calculateTotalAnnualFee(finalFeeStructure);
+
+  // If student is a sibling, apply the sibling discount for 12 months
+  if (isSibling && siblingDiscount > 0) {
+    totalAnnualFee -= siblingDiscount * 12;
+  }
+  
+  const due = totalAnnualFee - totalPaid;
+
+  return {
+    due: Math.max(0, due), // Due amount cannot be negative
+    totalAnnualFee: Math.max(0, totalAnnualFee),
+    totalPaid,
+    paid: totalPaid,
   };
 }
