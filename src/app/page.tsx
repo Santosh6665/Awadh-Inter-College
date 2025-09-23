@@ -13,15 +13,14 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Autoplay from 'embla-carousel-autoplay';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 
-const carouselImages = [
-  { src: "/images/hero-1.jpg", alt: "College Campus", hint: "college campus" },
-  { src: "/images/hero-2.jpg", alt: "Students learning in a classroom", hint: "students classroom" },
-  { src: "/images/hero-3.jpg", alt: "University library with students", hint: "university library" },
-  { src: "/images/hero-4.jpg", alt: "Graduation ceremony", hint: "graduation ceremony" },
-  { src: "/images/hero-5.jpg", alt: "Students participating in a sports event", hint: "students sports" },
-];
+const carouselImages = PlaceHolderImages.filter(img => img.id.startsWith('hero-')).map(img => ({
+  src: img.imageUrl,
+  alt: img.description,
+  hint: img.imageHint,
+}));
 
 const features = [
     {
@@ -100,6 +99,12 @@ const features = [
         description: "Focusing on both academic excellence and co-curricular activities for all-round development.",
     },
 ];
+
+const aboutSchoolImage = PlaceHolderImages.find(img => img.id === 'school-campus') || { imageUrl: '', imageHint: 'school campus' };
+const principalImage = PlaceHolderImages.find(img => img.id === 'principal-photo') || { imageUrl: '', imageHint: 'principal portrait' };
+const founderImage = PlaceHolderImages.find(img => img.id === 'founder-photo') || { imageUrl: '', imageHint: 'founder portrait' };
+const directorImage = PlaceHolderImages.find(img => img.id === 'director-photo') || { imageUrl: '', imageHint: 'director portrait' };
+
 
 export default function HomePage() {
    const plugin = React.useRef(
@@ -196,12 +201,12 @@ export default function HomePage() {
              <Card className="overflow-hidden lg:grid lg:grid-cols-2 lg:gap-8 items-center">
                 <div className="relative h-64 lg:h-full">
                      <Image 
-                        src="/images/about-school.jpg"
+                        src={aboutSchoolImage.imageUrl}
                         alt="School Building"
                         layout="fill"
                         objectFit="cover"
                         className="w-full h-full"
-                        data-ai-hint="school building"
+                        data-ai-hint={aboutSchoolImage.imageHint}
                         />
                 </div>
                 <div className="p-6 lg:p-10">
@@ -332,7 +337,7 @@ export default function HomePage() {
                   <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                       <div className="flex-shrink-0">
                           <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-primary shadow-lg">
-                              <AvatarImage src="/images/principal.jpg" alt="Principal's Photo" data-ai-hint="principal portrait" />
+                              <AvatarImage src={principalImage.imageUrl} alt="Principal's Photo" data-ai-hint={principalImage.imageHint} />
                               <AvatarFallback>S</AvatarFallback>
                           </Avatar>
                       </div>
@@ -368,7 +373,7 @@ export default function HomePage() {
                   <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                       <div className="flex-shrink-0">
                           <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-primary shadow-lg">
-                              <AvatarImage src="/images/founder.jpg" alt="Founder's Photo" data-ai-hint="founder portrait" />
+                              <AvatarImage src={founderImage.imageUrl} alt="Founder's Photo" data-ai-hint={founderImage.imageHint} />
                               <AvatarFallback>M</AvatarFallback>
                           </Avatar>
                       </div>
@@ -397,7 +402,7 @@ export default function HomePage() {
                   <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                       <div className="flex-shrink-0">
                           <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-primary shadow-lg">
-                              <AvatarImage src="/images/director.jpg" alt="Director's Photo" data-ai-hint="director portrait" />
+                              <AvatarImage src={directorImage.imageUrl} alt="Director's Photo" data-ai-hint={directorImage.imageHint} />
                               <AvatarFallback>M</AvatarFallback>
                           </Avatar>
                       </div>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -16,6 +17,7 @@ import { useRouter } from 'next/navigation';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About Us' },
+  { href: '/academics', label: 'Academics' },
   { href: '/admissions', label: 'Admissions' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/notices', label: 'Notices' },
@@ -53,6 +55,7 @@ export function Header({ user }: HeaderProps) {
       case 'student': return '/student';
       case 'teacher': return '/teacher';
       case 'admin': return '/admin';
+      case 'parent': return '/parent';
       default: return '/login';
     }
   }

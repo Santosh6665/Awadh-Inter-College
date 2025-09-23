@@ -7,43 +7,49 @@
       "imageHint": "school campus"
     },
     {
-      "id": "students-library",
+      "id": "gallery-1",
+      "description": "A beautiful view of the main school campus building and grounds.",
+      "imageUrl": "https://images.unsplash.com/photo-1559323940-f4551075a7da?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzY2hvb2wlMjBjYW1wdXN8ZW58MHx8fHwxNzU4NTg1MTA5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "school campus"
+    },
+    {
+      "id": "gallery-2",
       "description": "Students studying and reading books in the well-lit school library.",
       "imageUrl": "https://images.unsplash.com/photo-1693921398753-c5d114e8ae6a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxzdHVkZW50cyUyMGxpYnJhcnl8ZW58MHx8fHwxNzU4NTg1MTA5fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "students library"
     },
     {
-      "id": "science-lab",
+      "id": "gallery-3",
       "description": "A modern science laboratory with equipment ready for experiments.",
       "imageUrl": "https://images.unsplash.com/photo-1581093577421-f561a654a353?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzY2llbmNlJTIwbGFifGVufDB8fHx8MTc1ODU4NDY0N3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "science lab"
     },
     {
-      "id": "sports-day",
+      "id": "gallery-4",
       "description": "Students participating in a race on the school's annual sports day.",
       "imageUrl": "https://images.unsplash.com/photo-1510766461678-4a8420db04d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxzcG9ydHMlMjBldmVudHxlbnwwfHx8fDE3NTg2NTAyODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "sports event"
     },
     {
-      "id": "classroom-session",
+      "id": "gallery-5",
       "description": "An engaging classroom session with a teacher and students.",
       "imageUrl": "https://images.unsplash.com/photo-1514355315815-2b64b0216b14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjbGFzc3Jvb20lMjBzdHVkZW50c3xlbnwwfHx8fDE3NTg1OTE1NTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "classroom students"
     },
     {
-      "id": "annual-function",
+      "id": "gallery-6",
       "description": "Students performing on stage during the school's annual function.",
       "imageUrl": "https://images.unsplash.com/photo-1643321445548-d9c645336d57?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzY2hvb2wlMjBldmVudHxlbnwwfHx8fDE3NTg2NTAyODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "school event"
     },
     {
-      "id": "art-competition",
+      "id": "gallery-7",
       "description": "Students showing their creative skills during an art competition.",
       "imageUrl": "https://images.unsplash.com/photo-1621863622358-c2851384f82d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhcnQlMjBjb21wZXRpdGlvbnxlbnwwfHx8fDE3NTg2NTAyODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "art competition"
     },
     {
-      "id": "computer-lab",
+      "id": "gallery-8",
       "description": "Students working on computers in the school's computer lab.",
       "imageUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjb21wdXRlciUyMGxhYnxlbnwwfHx8fDE3NTg2NTAyODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "computer lab"

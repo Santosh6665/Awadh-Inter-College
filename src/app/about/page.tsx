@@ -2,6 +2,11 @@
 import { Header } from '@/components/layout/header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+
+const aboutHistoryImage = PlaceHolderImages.find(img => img.id === 'school-campus') || { imageUrl: '', imageHint: 'school campus' };
+const principalImage = PlaceHolderImages.find(img => img.id === 'principal-photo') || { imageUrl: '', imageHint: 'principal portrait' };
 
 export default function AboutUsPage() {
   return (
@@ -16,17 +21,17 @@ export default function AboutUsPage() {
         </section>
         
         <section className="py-12 md:py-20">
-            <div className="container mx-auto">
+            <div className="container mx-auto space-y-12">
               <Card className="overflow-hidden">
                 <div className="grid grid-cols-1 md:grid-cols-2 items-center">
                     <div className="relative h-64 md:h-full">
                         <Image 
-                            src="https://picsum.photos/seed/abouthistory/1200/800"
+                            src={aboutHistoryImage.imageUrl}
                             alt="School Building"
                             layout="fill"
                             objectFit="cover"
                             className="w-full h-full"
-                            data-ai-hint="school building"
+                            data-ai-hint={aboutHistoryImage.imageHint}
                         />
                     </div>
                     <div className="p-8 md:p-12">
@@ -45,6 +50,38 @@ export default function AboutUsPage() {
                     </div>
                 </div>
               </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-3xl">A Message from the Principal</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-8">
+                    <div className="flex flex-col md:flex-row items-center gap-8">
+                        <div className="flex-shrink-0">
+                            <Avatar className="h-48 w-48 border-4 border-primary shadow-lg">
+                                <AvatarImage src={principalImage.imageUrl} alt="Principal's Photo" data-ai-hint={principalImage.imageHint} />
+                                <AvatarFallback>S</AvatarFallback>
+                            </Avatar>
+                        </div>
+                        <div className="text-center md:text-left">
+                            <h2 className="text-2xl font-bold">Shivam Srivastav</h2>
+                            <p className="text-muted-foreground">Principal, Awadh Inter College</p>
+                        </div>
+                    </div>
+                    <div className="prose max-w-none text-muted-foreground">
+                        <p>
+                            Welcome to Awadh Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.
+                        </p>
+                        <p>
+                            At Awadh, we strive to create an atmosphere of respect and inclusion, where each student is valued as an individual. We are dedicated to the academic, social, and emotional growth of our students, and we work in partnership with our parents and community to help our students achieve their full potential.
+                        </p>
+                         <p>
+                            I am honored to lead such a remarkable institution and look forward to working with you to make this academic year a success.
+                        </p>
+                    </div>
+                </CardContent>
+              </Card>
+
             </div>
         </section>
       </main>

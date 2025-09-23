@@ -1,3 +1,4 @@
+
 import { Logo } from '@/components/layout/logo';
 import Link from 'next/link';
 import { Mail, MapPin, Phone } from 'lucide-react';
@@ -6,7 +7,7 @@ import { cn } from '@/lib/utils';
 export function Footer() {
   return (
     <footer className={cn('border-t bg-card text-card-foreground', 'print-hidden')}>
-      <div className="container mx-auto px-6 py-2 md:px-8">
+      <div className="container mx-auto px-6 py-8 md:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div className="space-y-4 md:col-span-1">
             <Link href="/" className="flex items-center gap-2">
@@ -19,11 +20,12 @@ export function Footer() {
           </div>
 
           <div className="md:col-span-2">
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
               <div className="space-y-4">
                 <h4 className="font-semibold">Quick Links</h4>
                 <nav className="flex flex-col space-y-2 text-sm">
                   <Link href="/about" className="text-muted-foreground hover:text-foreground">About Us</Link>
+                  <Link href="/academics" className="text-muted-foreground hover:text-foreground">Academics</Link>
                   <Link href="/admissions" className="text-muted-foreground hover:text-foreground">Admissions</Link>
                   <Link href="/gallery" className="text-muted-foreground hover:text-foreground">Gallery</Link>
                   <Link href="/notices" className="text-muted-foreground hover:text-foreground">Notices</Link>
@@ -40,12 +42,9 @@ export function Footer() {
                   <Link href="/admin" className="text-muted-foreground hover:text-foreground">Admin Portal</Link>
                 </nav>
               </div>
-            </div>
-          </div>
-          
-          <div className="space-y-4 md:col-span-3">
-             <div className="border-t pt-4">
-                <h4 className="font-semibold mb-4">Contact Us</h4>
+
+               <div className="space-y-4">
+                <h4 className="font-semibold">Contact Us</h4>
                 <div className="space-y-2 text-sm text-muted-foreground">
                 <div className="flex items-start gap-2">
                     <MapPin className="mt-1 h-4 w-4 flex-shrink-0" />
@@ -53,18 +52,19 @@ export function Footer() {
                 </div>
                 <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4 flex-shrink-0" />
-                    <a href="tel:+916393071946" className="hover:underline">+916393071946</a>
+                    <a href="tel:+916393071946" className="hover:underline">+91 6393071946</a>
                 </div>
                 <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4 flex-shrink-0" />
                     <a href="mailto:info@awadhcollege.edu" className="hover:underline">info@awadhcollege.edu</a>
                 </div>
                 </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-4 border-t pt-4 text-center text-sm text-muted-foreground">
+        <div className="mt-8 border-t pt-6 text-center text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} Awadh Inter College. All rights reserved.</p>
           <p className="mt-2">
             For technical support, contact our IT Team at <a href="mailto:santoshx.dev@gmail.com" className="underline hover:text-foreground">santoshx.dev@gmail.com</a>
