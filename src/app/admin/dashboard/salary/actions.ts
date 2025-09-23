@@ -1,7 +1,9 @@
+
 'use server';
 
 import { firestore } from '@/lib/firebase-admin';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
+import { FieldPath } from 'firebase-admin/firestore';
 
 export async function getHolidaysInMonth(date: Date) {
     try {
@@ -29,8 +31,8 @@ export async function getTeacherAttendanceForMonth(date: Date) {
         const end = endOfMonth(date);
         
         const attendanceSnapshot = await firestore.collection('teacherAttendance')
-            .where(firestore.FieldPath.documentId(), '>=', format(start, 'yyyy-MM-dd'))
-            .where(firestore.FieldPath.documentId(), '<=', format(end, 'yyyy-MM-dd'))
+            .where(FieldPath.documentId(), '>=', format(start, 'yyyy-MM-dd'))
+            .where(FieldPath.documentId(), '<=', format(end, 'yyyy-MM-dd'))
             .get();
 
         const attendanceByTeacher: { [teacherId: string]: { [date: string]: 'present' | 'absent' } } = {};

@@ -10,10 +10,10 @@ function initializeFirebaseAdmin() {
 
   const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
 
-  // Strengthened check: ensure the variable is a non-empty string.
-  if (!serviceAccountString || serviceAccountString.trim() === '') {
+  // Strengthened check: ensure the variable is a non-empty string that looks like a JSON object.
+  if (!serviceAccountString || !serviceAccountString.startsWith('{')) {
     console.warn(
-      'FIREBASE_SERVICE_ACCOUNT_KEY is not set or is empty. Firebase Admin SDK will not be initialized. This is expected during build, but the app will not function correctly without it at runtime.'
+      'FIREBASE_SERVICE_ACCOUNT_KEY is not a valid JSON object. Firebase Admin SDK will not be initialized. This is expected during build, but the app will not function correctly without it at runtime.'
     );
     return null;
   }
@@ -26,10 +26,12 @@ function initializeFirebaseAdmin() {
     return admin.firestore();
   } catch (error) {
     console.error('Firebase admin initialization error:', error);
-    throw new Error('Firebase Admin SDK initialization failed. Please check your service account credentials.');
+    // Throwing an error here can be helpful for debugging but might crash server startup.
+    // Consider whether to throw or just return null based on your deployment strategy.
+    return null; 
   }
 }
 
 // Initialize and export firestore.
-// Any file importing 'firestore' from here will get the initialized instance.
+// Any file importing 'firestore' from here will get the initialized instance or null.
 export const firestore = initializeFirebaseAdmin();
