@@ -27,7 +27,11 @@ interface AttendanceHistoryDialogProps {
 }
 
 export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attendanceRecords, holidays }: AttendanceHistoryDialogProps) {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState<Date | undefined>(undefined);
+
+  useEffect(() => {
+    setCurrentMonth(new Date());
+  }, []);
 
   const filteredAttendanceRecords = useMemo(() => {
     const holidaySet = new Set(holidays);
@@ -45,6 +49,7 @@ export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attenda
   }, [filteredAttendanceRecords]);
 
   const presentDays = useMemo(() => {
+    if (!currentMonth) return [];
     return Object.entries(monthlyData)
         .filter(([date, status]) => 
             status === 'present' &&
@@ -55,6 +60,7 @@ export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attenda
   }, [monthlyData, currentMonth]);
   
   const absentDays = useMemo(() => {
+    if (!currentMonth) return [];
     return Object.entries(monthlyData)
         .filter(([date, status]) => 
             status === 'absent' &&
@@ -67,6 +73,7 @@ export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attenda
 
   const handlePrevMonth = () => {
     setCurrentMonth(prev => {
+      if (!prev) return new Date();
       const newMonth = new Date(prev);
       newMonth.setMonth(newMonth.getMonth() - 1);
       return newMonth;
@@ -75,6 +82,7 @@ export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attenda
 
   const handleNextMonth = () => {
     setCurrentMonth(prev => {
+      if (!prev) return new Date();
       const newMonth = new Date(prev);
       newMonth.setMonth(newMonth.getMonth() + 1);
       return newMonth;
@@ -82,6 +90,7 @@ export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attenda
   };
 
   const monthSummary = useMemo(() => {
+    if (!currentMonth) return { present: 0, absent: 0, total: 0, percentage: 0, holidays: 0 };
     const present = presentDays.length;
     const absent = absentDays.length;
     const monthlyHolidays = holidays.filter(h => {
@@ -102,7 +111,7 @@ export function AttendanceHistoryDialog({ isOpen, setIsOpen, personName, attenda
   }, [filteredAttendanceRecords]);
 
 
-  if (!personName) return null;
+  if (!personName || !currentMonth) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

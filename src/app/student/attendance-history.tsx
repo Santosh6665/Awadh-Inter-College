@@ -16,10 +16,11 @@ interface AttendanceHistoryProps {
 }
 
 export function AttendanceHistory({ attendanceRecords }: AttendanceHistoryProps) {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState<Date | undefined>(undefined);
   const [holidays, setHolidays] = useState<string[]>([]);
 
   useEffect(() => {
+    setCurrentMonth(new Date());
     getHolidays().then(setHolidays);
   }, []);
 
@@ -39,6 +40,7 @@ export function AttendanceHistory({ attendanceRecords }: AttendanceHistoryProps)
   }, [filteredAttendanceRecords]);
 
   const presentDays = useMemo(() => {
+    if (!currentMonth) return [];
     return Object.entries(monthlyData)
         .filter(([date, status]) => 
             status === 'present' &&
@@ -49,6 +51,7 @@ export function AttendanceHistory({ attendanceRecords }: AttendanceHistoryProps)
   }, [monthlyData, currentMonth]);
   
   const absentDays = useMemo(() => {
+    if (!currentMonth) return [];
     return Object.entries(monthlyData)
         .filter(([date, status]) => 
             status === 'absent' &&
@@ -60,6 +63,7 @@ export function AttendanceHistory({ attendanceRecords }: AttendanceHistoryProps)
 
   const handlePrevMonth = () => {
     setCurrentMonth(prev => {
+      if (!prev) return new Date();
       const newMonth = new Date(prev);
       newMonth.setMonth(newMonth.getMonth() - 1);
       return newMonth;
@@ -68,6 +72,7 @@ export function AttendanceHistory({ attendanceRecords }: AttendanceHistoryProps)
 
   const handleNextMonth = () => {
     setCurrentMonth(prev => {
+      if (!prev) return new Date();
       const newMonth = new Date(prev);
       newMonth.setMonth(newMonth.getMonth() + 1);
       return newMonth;
@@ -75,6 +80,7 @@ export function AttendanceHistory({ attendanceRecords }: AttendanceHistoryProps)
   };
 
   const monthSummary = useMemo(() => {
+    if (!currentMonth) return { present: 0, absent: 0, total: 0, percentage: 0, holidays: 0 };
     const present = presentDays.length;
     const absent = absentDays.length;
     const monthlyHolidays = holidays.filter(h => {
@@ -91,6 +97,20 @@ export function AttendanceHistory({ attendanceRecords }: AttendanceHistoryProps)
     const totalPresent = filteredAttendanceRecords.filter(r => r.status === 'present').length;
     return `${((totalPresent / filteredAttendanceRecords.length) * 100).toFixed(2)}%`;
   }, [filteredAttendanceRecords]);
+
+  if (!currentMonth) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Attendance Record</CardTitle>
+          <CardDescription>Your attendance history for the current session.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>Loading calendar...</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
