@@ -86,7 +86,7 @@ export function FeeSettings({ settings }: { settings: any }) {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <CardTitle>Global Fee Settings</CardTitle>
-              <CardDescription>Define default fee structures, session dates, and discounts for all students.</CardDescription>
+              <CardDescription>Define default fee structures and session dates for all students.</CardDescription>
             </div>
             <Button onClick={handleSave} disabled={isSaving} className="w-full md:w-auto">
               {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -109,54 +109,8 @@ export function FeeSettings({ settings }: { settings: any }) {
                     />
                 </CardContent>
               </Card>
-               <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">Sibling Discount</CardTitle>
-                    <CardDescription className="text-sm">A fixed monthly discount applied to tuition for each sibling after the first child.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="sibling-discount">Monthly Discount Amount (Rs)</Label>
-                    <Input
-                        id="sibling-discount"
-                        type="number"
-                        placeholder="e.g., 500"
-                        value={siblingDiscount}
-                        onChange={(e) => setSiblingDiscount(e.target.value)}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
           </div>
           
-          <Card>
-            <CardHeader>
-                <CardTitle className="text-lg">Fee Multipliers</CardTitle>
-                <CardDescription className="text-sm">
-                    Define how many times each fee head is charged annually to calculate the total yearly fee.
-                    <br />
-                    Example: A tuition fee of Rs 500 with a multiplier of 12 results in an annual fee of Rs 6000.
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                    {feeHeads.map(head => (
-                        <div key={head.key} className="space-y-2">
-                            <Label htmlFor={`multiplier-${head.key}`}>{head.label} Multiplier</Label>
-                            <Input
-                                id={`multiplier-${head.key}`}
-                                type="number"
-                                placeholder={`e.g., ${defaultMultipliers[head.key as keyof typeof defaultMultipliers]}`}
-                                value={feeMultipliers[head.key] === undefined ? '' : feeMultipliers[head.key]}
-                                onChange={(e) => handleMultiplierChange(head.key, e.target.value)}
-                            />
-                        </div>
-                    ))}
-                </div>
-            </CardContent>
-          </Card>
-
-
           <div>
             <h3 className="text-lg font-semibold mb-2">Class-wise Fee Structure Defaults</h3>
              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 p-3 rounded-md mb-4">
