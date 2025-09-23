@@ -6,7 +6,7 @@ const defaultMultipliers = {
     transport: 12,
     computer: 12,
     admission: 1,
-    exam: 1,
+    exam: 3,
     miscellaneous: 1,
 };
 

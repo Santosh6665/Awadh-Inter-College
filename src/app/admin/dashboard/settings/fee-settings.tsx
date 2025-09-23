@@ -26,14 +26,13 @@ const defaultMultipliers = {
     transport: 12,
     computer: 12,
     admission: 1,
-    exam: 1,
+    exam: 3,
     miscellaneous: 1,
 };
 
 
 export function FeeSettings({ settings }: { settings: any }) {
   const [feeStructure, setFeeStructure] = useState(settings?.feeStructure || {});
-  const [siblingDiscount, setSiblingDiscount] = useState(settings?.siblingDiscount || '');
   const [sessionStartDate, setSessionStartDate] = useState(settings?.sessionStartDate || '');
   const [feeMultipliers, setFeeMultipliers] = useState(settings?.feeMultipliers || defaultMultipliers);
   const [isSaving, setIsSaving] = useState(false);
@@ -61,7 +60,6 @@ export function FeeSettings({ settings }: { settings: any }) {
     const result = await saveSettings({ 
         feeStructure, 
         sessionStartDate,
-        siblingDiscount: Number(siblingDiscount) || 0,
         feeMultipliers
     });
     if (result.success) {
@@ -146,5 +144,3 @@ export function FeeSettings({ settings }: { settings: any }) {
     </div>
   );
 }
-
-    
