@@ -68,7 +68,6 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
 
   const formattedDob = teacher?.dob ? new Date(teacher.dob).toISOString().split('T')[0] : '';
   const formattedDoj = teacher?.dateOfJoining ? new Date(teacher.dateOfJoining).toISOString().split('T')[0] : '';
-  const today = new Date().toISOString().split('T')[0];
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -117,11 +116,11 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
                 <Label htmlFor="dob">Date of Birth</Label>
-                <Input id="dob" name="dob" type="date" defaultValue={formattedDob} max={today} />
+                <Input id="dob" name="dob" type="date" defaultValue={formattedDob} />
             </div>
             <div className="space-y-2">
                 <Label htmlFor="dateOfJoining">Date of Joining</Label>
-                <Input id="dateOfJoining" name="dateOfJoining" type="date" defaultValue={formattedDoj} max={today} />
+                <Input id="dateOfJoining" name="dateOfJoining" type="date" defaultValue={formattedDoj} />
             </div>
           </div>
           <div className="border-t pt-4 mt-2">
