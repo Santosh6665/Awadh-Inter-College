@@ -13,12 +13,12 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 
 const classes = ["Nursery", "LKG", "UKG", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 const feeHeads = [
-    { key: 'tuition', label: 'Tuition Fee' },
-    { key: 'admission', label: 'Admission Fee' },
-    { key: 'exam', label: 'Exam Fee' },
-    { key: 'transport', label: 'Transport Fee' },
-    { key: 'computer', label: 'Computer Fee' },
-    { key: 'miscellaneous', label: 'Miscellaneous' },
+    { key: 'tuition', label: 'Tuition Fee (Monthly)' },
+    { key: 'transport', label: 'Transport Fee (Monthly)' },
+    { key: 'computer', label: 'Computer Fee (Monthly)' },
+    { key: 'admission', label: 'Admission Fee (Annual)' },
+    { key: 'exam', label: 'Exam Fee (Per Term)' },
+    { key: 'miscellaneous', label: 'Miscellaneous (Annual)' },
 ];
 
 export function FeeSettings({ settings }: { settings: any }) {

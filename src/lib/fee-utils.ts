@@ -2,9 +2,37 @@
 import type { Student } from './types';
 
 // Defines which fee heads are considered monthly recurring costs
-const MONTHLY_FEE_HEADS = ['tuition', 'transport'];
+const MONTHLY_FEE_HEADS = ['tuition', 'transport', 'computer'];
 // Defines which fee heads are considered one-time or annual costs
-const ANNUAL_FEE_HEADS = ['admission', 'exam', 'miscellaneous'];
+const ANNUAL_FEE_HEADS = ['admission', 'miscellaneous'];
+
+/**
+ * Calculates the total annual fee based on the defined multipliers.
+ * @param finalFeeStructure The combined fee structure for the student.
+ * @returns The total annual fee.
+ */
+function calculateTotalAnnualFee(finalFeeStructure: any) {
+  let totalAnnualFee = 0;
+
+  // Monthly fees (x12)
+  for (const head of MONTHLY_FEE_HEADS) {
+    totalAnnualFee += (finalFeeStructure[head] || 0) * 12;
+  }
+
+  // Annual fees (x1)
+  for (const head of ANNUAL_FEE_HEADS) {
+    totalAnnualFee += finalFeeStructure[head] || 0;
+  }
+  
+  // Exam fee (x3)
+  totalAnnualFee += (finalFeeStructure.exam || 0) * 3;
+
+  // Student-specific discount is subtracted from the total annual fee
+  totalAnnualFee -= finalFeeStructure.discount || 0;
+  
+  return totalAnnualFee;
+}
+
 
 /**
  * Calculates the monthly due, total annual fee, and total paid for a student.
@@ -20,9 +48,9 @@ export function calculateMonthlyDue(
 ) {
   const { feeStructure, sessionStartDate, siblingDiscount = 0 } = feeSettings;
 
+  const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
+
   if (!feeStructure || !sessionStartDate) {
-    // Return zero values if settings are incomplete to avoid crashes
-    const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
     return { due: 0, totalAnnualFee: 0, totalPaid, paid: totalPaid };
   }
 
@@ -30,15 +58,12 @@ export function calculateMonthlyDue(
   const studentFeeOverrides = student.feeStructure || {};
   const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
 
-  // Calculate total monthly and annual fees from the fee structure
-  let totalMonthlyFee = 0;
-  let totalAnnualFee = 0;
+  const totalAnnualFee = calculateTotalAnnualFee(finalFeeStructure);
 
+  // Calculate total monthly recurring amount
+  let totalMonthlyFee = 0;
   for (const head of MONTHLY_FEE_HEADS) {
     totalMonthlyFee += finalFeeStructure[head] || 0;
-  }
-  for (const head of ANNUAL_FEE_HEADS) {
-    totalAnnualFee += finalFeeStructure[head] || 0;
   }
   
   // Apply sibling discount to the monthly fee if applicable
@@ -46,12 +71,8 @@ export function calculateMonthlyDue(
     totalMonthlyFee -= siblingDiscount;
   }
   
-  // A student-specific discount is applied annually
-  totalAnnualFee -= finalFeeStructure.discount || 0;
+  const annualOnlyFees = totalAnnualFee - (totalMonthlyFee * 12);
   
-  // The full annual fee is the sum of one-time fees plus 12 months of recurring fees
-  totalAnnualFee += totalMonthlyFee * 12;
-
   // Calculate how many months have passed since the session start date
   const start = new Date(sessionStartDate);
   const now = new Date();
@@ -59,9 +80,8 @@ export function calculateMonthlyDue(
   monthsPassed = Math.max(0, monthsPassed); // Ensure it's not negative
 
   // Total expected fee is the sum of one-time fees plus the recurring fees for the months passed
-  const totalExpectedFee = (totalAnnualFee - (totalMonthlyFee * 12)) + (totalMonthlyFee * monthsPassed);
+  const totalExpectedFee = annualOnlyFees + (totalMonthlyFee * monthsPassed);
   
-  const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
   const due = totalExpectedFee - totalPaid;
 
   return { 
