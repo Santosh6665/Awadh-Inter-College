@@ -73,6 +73,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
       { key: 'exam', label: 'Exam Fee' },
       { key: 'computer', label: 'Computer Fee' },
       { key: 'miscellaneous', label: 'Miscellaneous' },
+      { key: 'discount', label: 'Discount/Concession' },
     ];
     
     const structuredFees = feeHeads
@@ -80,12 +81,15 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
         head: head.label,
         amount: finalFeeStructure[head.key] || 0,
       }))
-      .filter(fee => fee.amount > 0);
+      .filter(fee => fee.amount !== 0);
 
-    const discount = finalFeeStructure.discount || 0;
-    if (discount > 0) {
-      structuredFees.push({ head: 'Discount/Concession', amount: -discount });
-    }
+    // Ensure discount is negative
+    structuredFees.forEach(fee => {
+        if(fee.head.toLowerCase().includes('discount') && fee.amount > 0) {
+            fee.amount = -fee.amount;
+        }
+    });
+
 
     const totalFees = structuredFees.reduce((acc, fee) => acc + fee.amount, 0);
     const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
