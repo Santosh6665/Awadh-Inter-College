@@ -17,6 +17,7 @@ import { FeeReceipt } from './fee-receipt';
 import { AttendanceHistory } from './attendance-history';
 import { ResultCard } from './result-card';
 import { calculateAnnualDue } from '@/lib/fee-utils';
+import { FeeHistoryDialog } from '../admin/dashboard/fees/fee-history-dialog';
 
 
 interface StudentDashboardProps {
@@ -29,6 +30,7 @@ interface StudentDashboardProps {
 
 export function StudentDashboard({ student, ranks, attendance, forcePasswordReset, settings }: StudentDashboardProps) {
   const [receiptToPrint, setReceiptToPrint] = useState<Payment | null>(null);
+  const [isFeeHistoryOpen, setIsFeeHistoryOpen] = useState(false);
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -91,6 +93,12 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
             </div>
           )}
        </div>
+        <FeeHistoryDialog
+            isOpen={isFeeHistoryOpen}
+            setIsOpen={setIsFeeHistoryOpen}
+            student={student}
+            feeSettings={settings}
+        />
       <div id="student-dashboard" className="bg-muted/50">
         <div className="container mx-auto py-8">
             <Card className="min-h-screen">
@@ -168,8 +176,16 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                 <TabsContent value="fees" className="mt-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Fee Payment Details</CardTitle>
-                            <CardDescription>A summary of your fee structure and payment history.</CardDescription>
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                                <div>
+                                    <CardTitle>Fee Payment Details</CardTitle>
+                                    <CardDescription>A summary of your fee structure and payment history.</CardDescription>
+                                </div>
+                                <Button onClick={() => setIsFeeHistoryOpen(true)}>
+                                    <Download className="mr-2 h-4 w-4" />
+                                    View & Download Full Receipt
+                                </Button>
+                            </div>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
@@ -191,24 +207,22 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                                 </Card>
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold mb-2">Payment History</h3>
+                                <h3 className="text-lg font-semibold mb-2">Recent Payments</h3>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead>Date</TableHead>
                                             <TableHead className="hidden sm:table-cell">Period</TableHead>
-                                            <TableHead className="hidden sm:table-cell">Method</TableHead>
                                             <TableHead className="text-right">Amount (Rs)</TableHead>
                                             <TableHead className="text-right print-hidden">Actions</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         {student.payments && student.payments.length > 0 ? (
-                                            student.payments.map(payment => (
+                                            student.payments.slice(0, 5).map(payment => (
                                                 <TableRow key={payment.id}>
                                                     <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
                                                     <TableCell className="hidden sm:table-cell">{getPaymentPeriod(payment)}</TableCell>
-                                                    <TableCell className="hidden sm:table-cell">{payment.method}</TableCell>
                                                     <TableCell className="text-right">Rs{payment.amount.toFixed(2)}</TableCell>
                                                     <TableCell className="text-right print-hidden">
                                                         <Button variant="outline" size="sm" onClick={() => handlePrintReceipt(payment)}>
@@ -220,7 +234,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
                                             ))
                                         ) : (
                                             <TableRow>
-                                                <TableCell colSpan={5} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
+                                                <TableCell colSpan={4} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
                                             </TableRow>
                                         )}
                                     </TableBody>
