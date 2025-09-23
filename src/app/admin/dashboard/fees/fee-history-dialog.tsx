@@ -272,3 +272,5 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
     </>
   );
 }
+
+    
