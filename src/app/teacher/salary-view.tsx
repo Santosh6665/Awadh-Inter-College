@@ -90,7 +90,7 @@ export function TeacherSalaryView({ teacher }: { teacher: Teacher }) {
   });
 
   const yearOptions = Array.from({ length: 5 }, (_, i) => {
-    const year = getYear(new Date()) + 2 - i; // Allow viewing 2 years in future
+    const year = getYear(new Date()) - i;
     return { value: year.toString(), label: year.toString() };
   });
 
