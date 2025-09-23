@@ -26,15 +26,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Logo } from '@/components/layout/logo';
-
-const defaultMultipliers = {
-    tuition: 12,
-    transport: 12,
-    computer: 12,
-    admission: 1,
-    exam: 3,
-    miscellaneous: 1,
-};
+import { calculateAnnualDue } from '@/lib/fee-utils';
 
 interface FeeHistoryDialogProps {
   isOpen: boolean;
@@ -47,29 +39,29 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
   const feeDetails = useMemo(() => {
     if (!student) return null;
     
-    const feeMultipliers = { ...defaultMultipliers, ...(feeSettings?.feeMultipliers || {}) };
+    // Use the centralized fee calculation logic to ensure consistency
+    const { totalAnnualFee, totalPaid, due } = calculateAnnualDue(student, feeSettings);
 
     const classFeeStructure = feeSettings.feeStructure?.[student.class] || {};
     const studentFeeOverrides = student.feeStructure || {};
     const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
 
     const feeHeads = [
-      { key: 'tuition', label: 'Tuition Fee' },
-      { key: 'transport', label: 'Transport Fee' },
-      { key: 'computer', label: 'Computer Fee' },
-      { key: 'admission', label: 'Admission Fee' },
-      { key: 'exam', label: 'Exam Fee' },
-      { key: 'miscellaneous', label: 'Miscellaneous/Enrolment' },
+      { key: 'tuition', label: 'Tuition Fee', multiplier: 12 },
+      { key: 'transport', label: 'Transport Fee', multiplier: 12 },
+      { key: 'computer', label: 'Computer Fee', multiplier: 12 },
+      { key: 'admission', label: 'Admission Fee', multiplier: 1 },
+      { key: 'exam', label: 'Exam Fee', multiplier: 3 }, // Hardcode to 3 for display
+      { key: 'miscellaneous', label: 'Miscellaneous/Enrolment', multiplier: 1 },
     ];
     
     let structuredFees = feeHeads
       .map(head => {
         const amount = finalFeeStructure[head.key] || 0;
-        const multiplier = feeMultipliers[head.key as keyof typeof feeMultipliers] || 1;
         return {
             head: head.label,
-            calculation: `Rs ${amount} × ${multiplier}`,
-            amount: amount * multiplier,
+            calculation: `Rs ${amount} × ${head.multiplier}`,
+            amount: amount * head.multiplier,
         }
       })
       .filter(fee => fee.amount > 0);
@@ -79,11 +71,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
       structuredFees.push({ head: 'Discount/Concession', calculation: `Rs ${discount} × 1`, amount: -discount });
     }
 
-    const totalFees = structuredFees.reduce((acc, fee) => acc + fee.amount, 0);
-    const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
-    const due = totalFees - totalPaid;
-
-    return { structuredFees, totalFees, totalPaid, due };
+    return { structuredFees, totalFees: totalAnnualFee, totalPaid, due };
   }, [student, feeSettings]);
 
   if (!student || !feeDetails) return null;
@@ -271,5 +259,3 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
     </>
   );
 }
-
-    
