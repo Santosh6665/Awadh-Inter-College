@@ -1,5 +1,6 @@
+
 import type { Teacher } from './types';
-import { getDaysInMonth, isSameDay, parseISO } from 'date-fns';
+import { getDaysInMonth, isSameDay, parseISO, format } from 'date-fns';
 
 export interface SalaryDetails {
   totalDaysInMonth: number;
@@ -26,17 +27,25 @@ export function calculateSalary(
   const allowedAbsents = 1;
 
   const teacherAttendance = allAttendance[teacher.id] || {};
+  const holidaySet = new Set(holidays);
   
   const actualDaysInMonth = getDaysInMonth(month);
   let absentDays = 0;
   let presentDays = 0;
+  let holidayDays = 0;
 
   for (let i = 1; i <= actualDaysInMonth; i++) {
     const date = new Date(month.getFullYear(), month.getMonth(), i);
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = format(date, 'yyyy-MM-dd');
 
     // Ignore Sundays (day 0)
     if (date.getDay() === 0) continue;
+
+    // Prioritize holidays: if it's a holiday, count it and skip other checks
+    if (holidaySet.has(dateStr)) {
+      holidayDays++;
+      continue;
+    }
 
     if (teacherAttendance[dateStr] === 'absent') {
       absentDays++;
@@ -44,11 +53,6 @@ export function calculateSalary(
       presentDays++;
     }
   }
-
-  const holidayDays = holidays.filter(h => {
-    const holidayDate = parseISO(h);
-    return holidayDate.getMonth() === month.getMonth() && holidayDate.getFullYear() === month.getFullYear() && holidayDate.getDay() !== 0;
-  }).length;
 
   const totalPresentDays = presentDays + holidayDays;
   const deductionDays = Math.max(0, absentDays - allowedAbsents);
