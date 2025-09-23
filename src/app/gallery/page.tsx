@@ -31,7 +31,7 @@ export default function GalleryPage() {
                         alt={image.alt}
                         width={600}
                         height={400}
-                        className="object-cover w-full h-full aspect-video group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
                         data-ai-hint={image.hint}
                         />
                     </div>
