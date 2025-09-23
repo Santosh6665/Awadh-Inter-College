@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -45,8 +46,16 @@ function SubmitButton() {
 export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings }: UpdateFeeStructureFormProps) {
   const { toast } = useToast();
   
-  const action = student ? updateFeeStructure.bind(null, student.id) : async () => initialState;
-  const [state, formAction] = useActionState(action, initialState);
+  const actionWithFormData = (prevState: FormState, formData: FormData) => {
+    // If paymentPlan is 'default', we remove it so it's not sent to the server action.
+    // The server action interprets a missing field as "use the default".
+    if (formData.get('paymentPlan') === 'default') {
+      formData.set('paymentPlan', '');
+    }
+    return student ? updateFeeStructure(student.id, prevState, formData) : initialState;
+  };
+
+  const [state, formAction] = useActionState(actionWithFormData, initialState);
 
   useEffect(() => {
     if (state.success) {
@@ -73,6 +82,11 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
     // Prioritize student-specific fee, then class default, then empty string
     return studentFeeStructure[feeHead] ?? classDefaults[feeHead] ?? '';
   };
+  
+  const getPaymentPlanDefaultValue = () => {
+    return studentFeeStructure.paymentPlan || 'default';
+  }
+
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -116,12 +130,12 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
           </div>
           <div className="space-y-2">
             <Label htmlFor="paymentPlan">Payment Plan</Label>
-            <Select name="paymentPlan" defaultValue={getFeeValue('paymentPlan')}>
+            <Select name="paymentPlan" defaultValue={getPaymentPlanDefaultValue()}>
               <SelectTrigger>
                 <SelectValue placeholder="Use class default plan" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Use Class Default</SelectItem>
+                <SelectItem value="default">Use Class Default ({classDefaults.paymentPlan || 'monthly'})</SelectItem>
                 <SelectItem value="monthly">Monthly</SelectItem>
                 <SelectItem value="quarterly">Quarterly</SelectItem>
                 <SelectItem value="yearly">Yearly</SelectItem>
@@ -139,3 +153,4 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
     </Dialog>
   );
 }
+
