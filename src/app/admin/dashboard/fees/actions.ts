@@ -236,44 +236,47 @@ function distributePayment(
     let childrenStillWithDues = [...childrenWithDues];
 
     while (remainingPayment > 0.01 && childrenStillWithDues.length > 0) {
-        const totalRemainingDue = childrenStillWithDues.reduce((acc, s) => acc + s.due, 0);
-        if (totalRemainingDue <= 0) break;
-
-        let surplus = 0;
+        const totalDueOfRemainingChildren = childrenStillWithDues.reduce((sum, child) => sum + child.due, 0);
         
-        // Distribute proportionally
-        for (const student of childrenStillWithDues) {
-            const proportionalShare = (student.due / totalRemainingDue) * remainingPayment;
-            
-            // Pay the smaller of the due amount or the proportional share
-            const amountToPay = Math.min(student.due, proportionalShare);
+        if (totalDueOfRemainingChildren <= 0) break;
+
+        let surplusFromThisPass = 0;
+        const childrenInThisPass = [...childrenStillWithDues];
+        const numberOfChildrenInPass = childrenInThisPass.length;
+        
+        // Distribute the remaining payment equally among children who still have dues.
+        const equalShare = remainingPayment / numberOfChildrenInPass;
+
+        for (const student of childrenInThisPass) {
+            const amountToPay = Math.min(student.due, equalShare);
             
             paymentDistribution[student.id] = (paymentDistribution[student.id] || 0) + amountToPay;
             student.due -= amountToPay;
+            remainingPayment -= amountToPay;
+            
+            if (equalShare > amountToPay) {
+                surplusFromThisPass += (equalShare - amountToPay);
+            }
         }
-
-        // After one pass, calculate the actual paid amount and any remaining payment
-        const paidInThisPass = Object.values(paymentDistribution).reduce((sum, current) => sum + current, 0);
-        const totalPaidSoFar = childrenWithDues.reduce((sum, s) => sum + (paymentDistribution[s.id] || 0), 0);
-        remainingPayment = totalPayment - totalPaidSoFar;
         
-        // Filter out children who are now fully paid
-        const previouslyStillWithDuesCount = childrenStillWithDues.length;
+        // Add any surplus back to the remaining payment pool for the next iteration
+        remainingPayment += surplusFromThisPass;
+        
+        // Filter out children whose dues are now paid
+        const previousNumberOfChildrenWithDues = childrenStillWithDues.length;
         childrenStillWithDues = childrenStillWithDues.filter(s => s.due > 0.01);
 
-        // Break if no progress is made to prevent infinite loops (e.g., due to rounding)
-        if (childrenStillWithDues.length === previouslyStillWithDuesCount && remainingPayment > 0.01) {
-             // If there's still money and children with dues, but no progress,
-             // give the remainder to the child with the highest remaining due.
-            if (childrenStillWithDues.length > 0) {
+        // Break if no progress is made (e.g., due to rounding or tiny remaining amounts)
+        if (childrenStillWithDues.length === previousNumberOfChildrenWithDues && remainingPayment > 0.01) {
+            // If there's still money but no one's due was fully paid, it means the equal share was less than everyone's due.
+            // In this case, we might have a very small remaining amount. We can give it to the child with the highest due.
+            if(childrenStillWithDues.length > 0) {
                 childrenStillWithDues.sort((a,b) => b.due - a.due);
-                const amountToPay = Math.min(childrenStillWithDues[0].due, remainingPayment);
-                paymentDistribution[childrenStillWithDues[0].id] += amountToPay;
-                childrenStillWithDues[0].due -= amountToPay;
-                remainingPayment -= amountToPay;
+                const finalAmount = Math.min(childrenStillWithDues[0].due, remainingPayment);
+                paymentDistribution[childrenStillWithDues[0].id] += finalAmount;
+                remainingPayment -= finalAmount;
             }
-            // If still remaining payment, it's an overpayment, break the loop
-            if(remainingPayment > 0.01) break; 
+            break;
         }
     }
     

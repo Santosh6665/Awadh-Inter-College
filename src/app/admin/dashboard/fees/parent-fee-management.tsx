@@ -65,11 +65,14 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
     });
 
     return Object.entries(parentsMap).map(([phone, data]) => {
+      // Sort children by DOB to correctly identify siblings for discount calculation
+      const sortedChildren = [...data.children].sort((a,b) => new Date(a.dob).getTime() - new Date(b.dob).getTime());
+
       let totalFees = 0;
       let totalPaid = 0;
       let totalDue = 0;
 
-      data.children.forEach((child, index) => {
+      sortedChildren.forEach((child, index) => {
         const isSibling = index > 0;
         const { due, totalAnnualFee, paid } = calculateAnnualDue(child, feeSettings, isSibling);
         totalDue += due;
@@ -80,7 +83,7 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
       return {
         id: phone,
         parentName: data.parentName,
-        children: data.children.sort((a,b) => a.name.localeCompare(b.name)),
+        children: sortedChildren, // Use the sorted list
         totalFees,
         totalPaid,
         totalDue,
@@ -121,9 +124,9 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                   className="space-y-2"
                 >
                   <Card>
-                    <CardHeader className="flex flex-row items-center justify-between p-4 cursor-pointer">
+                    <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 gap-4">
                         <CollapsibleTrigger asChild>
-                            <div className="flex items-center gap-4">
+                           <div className="flex items-center gap-4 cursor-pointer w-full">
                                 {openCollapsibles.includes(parent.id) ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                                 <div>
                                     <h4 className="text-lg font-semibold">{parent.parentName}</h4>
@@ -131,19 +134,21 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                                 </div>
                             </div>
                         </CollapsibleTrigger>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end">
                             <div className="text-right">
-                                <p className="text-sm text-muted-foreground">Total Balance Due</p>
+                                <p className="text-sm text-muted-foreground">Family Balance Due</p>
                                 <p className="text-xl font-bold text-destructive">Rs{parent.totalDue.toFixed(2)}</p>
                             </div>
-                             <Button size="sm" variant="outline" onClick={() => handleViewHistory(parent)}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                View Summary
-                            </Button>
-                            <Button size="sm" onClick={() => handleRecordPayment(parent)}>
-                                <PlusCircle className="mr-2 h-4 w-4" />
-                                Combined Payment
-                            </Button>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <Button size="sm" variant="outline" onClick={() => handleViewHistory(parent)}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    Summary
+                                </Button>
+                                <Button size="sm" onClick={() => handleRecordPayment(parent)}>
+                                    <PlusCircle className="mr-2 h-4 w-4" />
+                                    Pay
+                                </Button>
+                            </div>
                         </div>
                     </CardHeader>
                     <CollapsibleContent>
