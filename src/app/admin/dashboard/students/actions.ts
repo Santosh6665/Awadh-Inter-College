@@ -12,7 +12,7 @@ const StudentSchema = z.object({
   class: z.string().min(1, 'Class is required.'),
   section: z.string().min(1, 'Section is required.'),
   dob: z.string().min(1, 'Date of birth is required.'),
-  phone: z.string().min(10, 'Phone number must be at least 10 digits.'),
+  phone: z.string().optional(),
   fatherName: z.string().min(2, "Father's name is required."),
   address: z.string().min(5, 'Address is required.'),
   parentPhone: z.string().optional(),
