@@ -33,15 +33,6 @@ const initialState: FormState = {
   message: '',
 };
 
-const defaultMultipliers = {
-    tuition: 12,
-    transport: 12,
-    computer: 12,
-    admission: 1,
-    exam: 3,
-    miscellaneous: 1,
-};
-
 const feeHeads = [
     { key: 'tuition', label: 'Tuition Fee' },
     { key: 'transport', label: 'Transport Fee' },
@@ -96,7 +87,7 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
 
   const classDefaults = feeSettings?.feeStructure?.[student.class] || {};
   const studentFeeStructure = student.feeStructure || {};
-  const feeMultipliers = { ...defaultMultipliers, ...(feeSettings?.feeMultipliers || {}) };
+  const feeMultipliers = feeSettings?.feeMultipliers || {};
 
 
   const getFeeValue = (feeHead: string) => {
