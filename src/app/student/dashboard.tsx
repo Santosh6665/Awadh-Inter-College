@@ -87,7 +87,7 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
        <div className="hidden">
           {receiptToPrint && (
             <div id="fee-receipt-to-print-content">
-                <FeeReceipt student={student} payment={receiptToPrint} feeDetails={feeDetails} />
+                <FeeReceipt student={student} payment={receiptToPrint} settings={settings} />
             </div>
           )}
        </div>
