@@ -26,6 +26,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AttendanceHistoryDialog } from './attendance-history-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getHolidays } from '../notices/actions';
 
 type AttendanceStatus = 'present' | 'absent';
 type AttendanceData = {
@@ -50,6 +51,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
   const [holidayName, setHolidayName] = useState('');
   const [isSchoolClosed, setIsSchoolClosed] = useState(false);
   const [closedReason, setClosedReason] = useState('');
+  const [holidays, setHolidays] = useState<string[]>([]);
 
   const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
 
@@ -90,6 +92,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
         setLoading(true);
         await checkDateStatus();
         await fetchAttendance();
+        getHolidays().then(setHolidays);
         setLoading(false);
     }
     loadData();
@@ -341,6 +344,7 @@ export function AttendanceManagement({ students }: { students: Student[] }) {
         setIsOpen={setIsHistoryDialogOpen}
         personName={selectedStudent?.name ?? null}
         attendanceRecords={historyLoading ? [] : studentHistory}
+        holidays={holidays}
       />
     </>
   );

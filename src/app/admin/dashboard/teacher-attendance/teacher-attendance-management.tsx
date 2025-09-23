@@ -25,6 +25,7 @@ import { getTeacherAttendanceByDate, setTeacherAttendance as setTeacherAttendanc
 import { useToast } from '@/hooks/use-toast';
 import { AttendanceHistoryDialog } from '../attendance/attendance-history-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { getHolidays } from '@/app/admin/dashboard/notices/actions';
 
 
 type AttendanceStatus = 'present' | 'absent';
@@ -49,6 +50,7 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
   const [holidayName, setHolidayName] = useState('');
   const [isSchoolClosed, setIsSchoolClosed] = useState(false);
   const [closedReason, setClosedReason] = useState('');
+  const [holidays, setHolidays] = useState<string[]>([]);
 
   const formattedDate = useMemo(() => format(date, 'yyyy-MM-dd'), [date]);
 
@@ -89,6 +91,7 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
         setLoading(true);
         await checkDateStatus();
         await fetchAttendance();
+        getHolidays().then(setHolidays);
         setLoading(false);
     }
     loadData();
@@ -309,6 +312,7 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
         setIsOpen={setIsHistoryDialogOpen}
         personName={selectedTeacher?.name ?? null}
         attendanceRecords={historyLoading ? [] : teacherHistory}
+        holidays={holidays}
       />
     </>
   );
