@@ -9,55 +9,55 @@
     {
       "id": "gallery-1",
       "description": "Students participating in a school event.",
-      "imageUrl": "/images/gallery/gallery-1.jpg",
+      "imageUrl": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzY2hvb2wlMjBldmVudHxlbnwwfHx8fDE3NTg1OTUyMjV8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "school event"
     },
     {
       "id": "gallery-2",
       "description": "Students studying and reading books in the well-lit school library.",
-      "imageUrl": "/images/gallery/gallery-2.jpg",
+      "imageUrl": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx1bml2ZXJzaXR5JTIwbGlicmFyeXxlbnwwfHx8fDE3NTg1OTUyMjV8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "students library"
     },
     {
       "id": "gallery-3",
       "description": "A modern science laboratory with equipment ready for experiments.",
-      "imageUrl": "/images/gallery/gallery-3.jpg",
+      "imageUrl": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzY2llbmNlJTIwbGFifGVufDB8fHx8MTc1ODU5NTIyNXww&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "science lab"
     },
     {
       "id": "gallery-4",
       "description": "Students participating in a race on the school's annual sports day.",
-      "imageUrl": "/images/gallery/gallery-4.jpg",
+      "imageUrl": "https://images.unsplash.com/photo-1517649763962-0c623066013b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzcG9ydHMlMjBldmVudHxlbnwwfHx8fDE3NTg1OTUyMjV8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "sports event"
     },
     {
       "id": "gallery-5",
       "description": "An engaging classroom session with a teacher and students.",
-      "imageUrl": "/images/gallery/gallery-5.jpg",
+      "imageUrl": "https://images.unsplash.com/photo-1542744095-291d1f67b221?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjbGFzc3Jvb20lMjBzdHVkZW50c3xlbnwwfHx8fDE3NTg1OTUyMjV8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "classroom students"
     },
     {
       "id": "gallery-6",
       "description": "Students performing on stage during the school's annual function.",
-      "imageUrl": "/images/gallery/gallery-6.jpg",
+      "imageUrl": "https://images.unsplash.com/photo-1510531704581-5b2870972436?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzY2hvb2wlMjBmdW5jdGlvbnxlbnwwfHx8fDE3NTg1OTUyMjV8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "school function"
     },
     {
       "id": "gallery-7",
       "description": "Students showing their creative skills during an art competition.",
-      "imageUrl": "/images/gallery/gallery-7.jpg",
+      "imageUrl": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhcnQlMjBjb21wZXRpdGlvbnxlbnwwfHx8fDE3NTg1OTUyMjV8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "art competition"
     },
     {
       "id": "gallery-8",
       "description": "Students working on computers in the school's computer lab.",
-      "imageUrl": "/images/gallery/gallery-8.jpg",
+      "imageUrl": "https://images.unsplash.com/photo-1581093450021-4a7360e9a138?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMGxhYnxlbnwwfHx8fDE3NTg1OTUyMjV8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "computer lab"
     },
     {
       "id": "hero-1",
       "description": "Hero image of the college campus for the homepage.",
-      "imageUrl": "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb2xsZWdlJTIwY2FtcHVzfGVufDB8fHx8MTc1ODU5NTIyNXww&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb2xsZWdlJTIwY2FtcHVzfGVufDB8fHx8fDE3NTg1OTUyMjV8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "college campus"
     },
     {
