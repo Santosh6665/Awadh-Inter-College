@@ -17,8 +17,6 @@ const TeacherSchema = z.object({
   canEditResults: z.preprocess((val) => val === 'on', z.boolean()).optional(),
   employeeId: z.string().optional(),
   dateOfJoining: z.string().optional(),
-  bankAccountNumber: z.string().optional(),
-  ifscCode: z.string().optional(),
   panOrAadharNumber: z.string().optional(),
 });
 

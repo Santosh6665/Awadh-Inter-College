@@ -122,14 +122,6 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                             <TableCell className="font-medium">PAN/Aadhar No.</TableCell>
                                             <TableCell>{teacher.panOrAadharNumber || 'N/A'}</TableCell>
                                         </TableRow>
-                                         <TableRow>
-                                            <TableCell className="font-medium">Bank Account No.</TableCell>
-                                            <TableCell>{teacher.bankAccountNumber || 'N/A'}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="font-medium">IFSC Code</TableCell>
-                                            <TableCell>{teacher.ifscCode || 'N/A'}</TableCell>
-                                        </TableRow>
                                     </TableBody>
                                 </Table>
                                 </div>

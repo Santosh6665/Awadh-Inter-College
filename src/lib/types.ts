@@ -105,8 +105,6 @@ export type Teacher = {
     isTeacher?: boolean;
     employeeId?: string;
     dateOfJoining?: string;
-    bankAccountNumber?: string;
-    ifscCode?: string;
     panOrAadharNumber?: string;
 };
 
