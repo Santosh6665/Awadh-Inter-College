@@ -96,8 +96,12 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
       
       const printWindow = window.open('', '', 'height=800,width=800');
       if (printWindow) {
-        printWindow.document.write('<html><head><title>Fee History</title>');
-        printWindow.document.write('<link rel="stylesheet" href="/globals.css" type="text/css" />');
+        printWindow.document.write('<html><head><title>Fee Receipt</title>');
+        // This links to the global CSS file for consistent styling
+        const styles = Array.from(document.styleSheets)
+            .map(styleSheet => styleSheet.href ? `<link rel="stylesheet" href="${styleSheet.href}">` : '')
+            .join('');
+        printWindow.document.write(styles);
         printWindow.document.write('</head><body >');
         printWindow.document.write(printHtml);
         printWindow.document.write('</body></html>');
@@ -123,7 +127,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
 
   const FeeHistoryContent = () => (
     <div className="space-y-6">
-       <Card>
+       <Card className="print-area">
         <CardHeader className="p-4 bg-muted/30">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4">
