@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -5,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { saveSettings } from './actions';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Info } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -82,12 +83,12 @@ export function FeeSettings({ settings }: { settings: any }) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <CardTitle>Global Fee Settings</CardTitle>
               <CardDescription>Define default fee structures, session dates, and discounts for all students.</CardDescription>
             </div>
-            <Button onClick={handleSave} disabled={isSaving}>
+            <Button onClick={handleSave} disabled={isSaving} className="w-full md:w-auto">
               {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Save All Fee Settings
             </Button>
@@ -111,11 +112,11 @@ export function FeeSettings({ settings }: { settings: any }) {
                <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">Sibling Discount</CardTitle>
-                    <CardDescription className="text-sm">A fixed monthly discount for each sibling after the first child.</CardDescription>
+                    <CardDescription className="text-sm">A fixed monthly discount applied to tuition for each sibling after the first child.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="sibling-discount">Discount Amount (Rs)</Label>
+                    <Label htmlFor="sibling-discount">Monthly Discount Amount (Rs)</Label>
                     <Input
                         id="sibling-discount"
                         type="number"
@@ -131,13 +132,17 @@ export function FeeSettings({ settings }: { settings: any }) {
           <Card>
             <CardHeader>
                 <CardTitle className="text-lg">Fee Multipliers</CardTitle>
-                <CardDescription className="text-sm">Define how many times each fee is charged annually.</CardDescription>
+                <CardDescription className="text-sm">
+                    Define how many times each fee head is charged annually to calculate the total yearly fee.
+                    <br />
+                    Example: A tuition fee of Rs 500 with a multiplier of 12 results in an annual fee of Rs 6000.
+                </CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                     {feeHeads.map(head => (
                         <div key={head.key} className="space-y-2">
-                            <Label htmlFor={`multiplier-${head.key}`}>{head.label}</Label>
+                            <Label htmlFor={`multiplier-${head.key}`}>{head.label} Multiplier</Label>
                             <Input
                                 id={`multiplier-${head.key}`}
                                 type="number"
@@ -154,6 +159,10 @@ export function FeeSettings({ settings }: { settings: any }) {
 
           <div>
             <h3 className="text-lg font-semibold mb-2">Class-wise Fee Structure Defaults</h3>
+             <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 p-3 rounded-md mb-4">
+                <Info className="h-4 w-4" />
+                <span>Enter the base amount for each fee head here (e.g., monthly tuition fee). The multipliers above will be applied to these amounts.</span>
+            </div>
             <Accordion type="single" collapsible className="w-full">
               {classes.map((className) => (
                 <AccordionItem value={className} key={className}>
@@ -166,7 +175,7 @@ export function FeeSettings({ settings }: { settings: any }) {
                           <Input
                             id={`${className}-${head.key}`}
                             type="number"
-                            placeholder="Amount"
+                            placeholder="Amount (Rs)"
                             value={feeStructure[className]?.[head.key] || ''}
                             onChange={(e) => handleFeeChange(className, head.key, e.target.value)}
                           />
