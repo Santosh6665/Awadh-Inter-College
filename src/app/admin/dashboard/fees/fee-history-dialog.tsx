@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo } from 'react';
@@ -61,7 +62,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
       { key: 'miscellaneous', label: 'Miscellaneous/Enrolment' },
     ];
     
-    const structuredFees = feeHeads
+    let structuredFees = feeHeads
       .map(head => {
         const amount = finalFeeStructure[head.key] || 0;
         const multiplier = feeMultipliers[head.key as keyof typeof feeMultipliers] || 1;
@@ -72,10 +73,10 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
         }
       })
       .filter(fee => fee.amount > 0);
-
+    
     const discount = finalFeeStructure.discount || 0;
     if (discount > 0) {
-      structuredFees.push({ head: 'Discount/Concession', calculation: '', amount: -discount });
+      structuredFees.push({ head: 'Discount/Concession', calculation: `Rs ${discount} × 1`, amount: -discount });
     }
 
     const totalFees = structuredFees.reduce((acc, fee) => acc + fee.amount, 0);
@@ -93,11 +94,9 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
       const originalContents = document.body.innerHTML;
       const printHtml = printContent.innerHTML;
       
-      // Create a new window to print
       const printWindow = window.open('', '', 'height=800,width=800');
       if (printWindow) {
         printWindow.document.write('<html><head><title>Fee History</title>');
-        // You might need to link to your stylesheet for proper printing
         printWindow.document.write('<link rel="stylesheet" href="/globals.css" type="text/css" />');
         printWindow.document.write('</head><body >');
         printWindow.document.write(printHtml);
@@ -107,7 +106,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
         setTimeout(() => {
           printWindow.print();
           printWindow.close();
-        }, 250); // Timeout to allow styles to load
+        }, 250);
       }
     }
   };
@@ -140,7 +139,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
               </div>
             </div>
             <div className="text-center mt-2">
-              <Badge variant="secondary" className="text-base font-bold tracking-wider">💰 FEE SUMMARY</Badge>
+              <Badge variant="secondary" className="text-base font-bold tracking-wider">💰 STUDENT FEE RECEIPT</Badge>
             </div>
         </CardHeader>
         <CardContent className="p-4 space-y-6">
@@ -255,7 +254,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
             <Button variant="outline" onClick={() => setIsOpen(false)}>Close</Button>
             <Button onClick={handlePrint}>
                 <Download className="mr-2 h-4 w-4" />
-                Download Summary
+                Download Receipt
             </Button>
           </DialogFooter>
         </DialogContent>
