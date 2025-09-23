@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, PlusCircle, ChevronsUpDown, ChevronDown, ChevronUp, Eye } from 'lucide-react';
+import { Search, PlusCircle, ChevronDown, ChevronUp, Eye, Edit } from 'lucide-react';
 import { RecordCombinedPaymentForm } from './record-combined-payment-form';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -24,6 +24,9 @@ import {
 } from "@/components/ui/collapsible";
 import { CombinedFeeHistoryDialog } from './combined-fee-history-dialog';
 import { calculateAnnualDue } from '@/lib/fee-utils';
+import { UpdateFeeStructureForm } from './update-fee-structure-form';
+import { RecordPaymentForm } from './record-payment-form';
+import { FeeHistoryDialog } from './fee-history-dialog';
 
 interface ParentFeeManagementProps {
   students: Student[];
@@ -31,41 +34,59 @@ interface ParentFeeManagementProps {
 }
 
 export function ParentFeeManagement({ students, feeSettings }: ParentFeeManagementProps) {
-  const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false);
-  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
+  const [isCombinedPaymentFormOpen, setIsCombinedPaymentFormOpen] = useState(false);
+  const [isCombinedHistoryDialogOpen, setIsCombinedHistoryDialogOpen] = useState(false);
   const [selectedParent, setSelectedParent] = useState<Parent | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [openCollapsibles, setOpenCollapsibles] = useState<string[]>([]);
 
+  const [isFeeStructureFormOpen, setIsFeeStructureFormOpen] = useState(false);
+  const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false);
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  
   const toggleCollapsible = (id: string) => {
     setOpenCollapsibles(prev => 
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     );
   };
   
-  const handleRecordPayment = (parent: Parent) => {
+  const handleRecordCombinedPayment = (parent: Parent) => {
     setSelectedParent(parent);
+    setIsCombinedPaymentFormOpen(true);
+  };
+  
+  const handleViewCombinedHistory = (parent: Parent) => {
+    setSelectedParent(parent);
+    setIsCombinedHistoryDialogOpen(true);
+  };
+
+  const handleEditFeeStructure = (student: Student) => {
+    setSelectedStudent(student);
+    setIsFeeStructureFormOpen(true);
+  };
+
+  const handleRecordPayment = (student: Student) => {
+    setSelectedStudent(student);
     setIsPaymentFormOpen(true);
   };
   
-  const handleViewHistory = (parent: Parent) => {
-    setSelectedParent(parent);
+  const handleViewHistory = (student: Student) => {
+    setSelectedStudent(student);
     setIsHistoryDialogOpen(true);
   };
 
   const parentsData = useMemo<Parent[]>(() => {
     const parentsMap: Record<string, { parentName: string, children: Student[] }> = {};
     students.forEach(student => {
-        if (student.parentPhone) {
-            if (!parentsMap[student.parentPhone]) {
-                parentsMap[student.parentPhone] = { parentName: student.fatherName, children: [] };
-            }
-            parentsMap[student.parentPhone].children.push(student);
-        }
+      const parentId = student.parentPhone || `no-parent-${student.id}`;
+      if (!parentsMap[parentId]) {
+          parentsMap[parentId] = { parentName: student.fatherName, children: [] };
+      }
+      parentsMap[parentId].children.push(student);
     });
 
     return Object.entries(parentsMap).map(([phone, data]) => {
-      // Sort children by DOB to correctly identify siblings for discount calculation
       const sortedChildren = [...data.children].sort((a,b) => new Date(a.dob).getTime() - new Date(b.dob).getTime());
 
       let totalFees = 0;
@@ -83,17 +104,18 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
       return {
         id: phone,
         parentName: data.parentName,
-        children: sortedChildren, // Use the sorted list
+        children: sortedChildren,
         totalFees,
         totalPaid,
         totalDue,
       };
-    });
+    }).sort((a, b) => a.parentName.localeCompare(b.parentName));
   }, [students, feeSettings]);
 
   const filteredParents = parentsData.filter(parent =>
     parent.parentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    parent.id.includes(searchQuery)
+    parent.id.includes(searchQuery) ||
+    parent.children.some(child => child.name.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
 
@@ -101,12 +123,12 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Manage Fees by Parent</CardTitle>
-          <CardDescription>View family-wise fee summaries and record combined payments.</CardDescription>
+          <CardTitle>Fee Management</CardTitle>
+          <CardDescription>View family-wise fee summaries and record individual or combined payments.</CardDescription>
           <div className="mt-4 relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by parent name or phone..."
+              placeholder="Search by parent name, phone, or student name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8"
@@ -139,16 +161,12 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                                 <p className="text-sm text-muted-foreground">Family Balance Due</p>
                                 <p className="text-xl font-bold text-destructive">Rs{parent.totalDue.toFixed(2)}</p>
                             </div>
-                            <div className="flex flex-col sm:flex-row gap-2">
-                                <Button size="sm" variant="outline" onClick={() => handleViewHistory(parent)}>
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    Summary
-                                </Button>
-                                <Button size="sm" onClick={() => handleRecordPayment(parent)}>
+                             {parent.children.length > 1 && (
+                                <Button size="sm" onClick={() => handleRecordCombinedPayment(parent)}>
                                     <PlusCircle className="mr-2 h-4 w-4" />
-                                    Pay
+                                    Combined Pay
                                 </Button>
-                            </div>
+                            )}
                         </div>
                     </CardHeader>
                     <CollapsibleContent>
@@ -162,6 +180,7 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                               <TableHead>Annual Fee</TableHead>
                               <TableHead>Paid</TableHead>
                               <TableHead>Status</TableHead>
+                              <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -180,6 +199,17 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                                             {due > 0 ? 'Pending' : 'Paid'}
                                         </Badge>
                                     </TableCell>
+                                    <TableCell className="text-right space-x-0">
+                                        <Button variant="ghost" size="icon" title="View Details" onClick={() => handleViewHistory(child)}>
+                                            <Eye className="h-4 w-4" />
+                                        </Button>
+                                        <Button variant="ghost" size="icon" title="Edit Fee Structure" onClick={() => handleEditFeeStructure(child)}>
+                                            <Edit className="h-4 w-4" />
+                                        </Button>
+                                        <Button variant="ghost" size="icon" title="Record Payment" onClick={() => handleRecordPayment(child)}>
+                                            <PlusCircle className="h-4 w-4" />
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                                 )
                             })}
@@ -193,7 +223,6 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
             ) : (
                 <div className="text-center text-muted-foreground py-10">
                     <p>No parent records found.</p>
-                    <p className="text-sm">Ensure students have a 'Parent's Primary Phone' set in their profile to link them.</p>
                 </div>
             )}
           </div>
@@ -201,15 +230,37 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
       </Card>
       
       <RecordCombinedPaymentForm
-        isOpen={isPaymentFormOpen}
-        setIsOpen={setIsPaymentFormOpen}
+        isOpen={isCombinedPaymentFormOpen}
+        setIsOpen={setIsCombinedPaymentFormOpen}
         parent={selectedParent}
       />
 
       <CombinedFeeHistoryDialog
+        isOpen={isCombinedHistoryDialogOpen}
+        setIsOpen={setIsCombinedHistoryDialogOpen}
+        parent={selectedParent}
+        feeSettings={feeSettings}
+      />
+
+      {/* Individual Student Modals */}
+      <UpdateFeeStructureForm
+        isOpen={isFeeStructureFormOpen}
+        setIsOpen={setIsFeeStructureFormOpen}
+        student={selectedStudent}
+        feeSettings={feeSettings}
+      />
+      
+      <RecordPaymentForm
+        isOpen={isPaymentFormOpen}
+        setIsOpen={setIsPaymentFormOpen}
+        student={selectedStudent}
+        feeSettings={feeSettings}
+      />
+      
+      <FeeHistoryDialog
         isOpen={isHistoryDialogOpen}
         setIsOpen={setIsHistoryDialogOpen}
-        parent={selectedParent}
+        student={selectedStudent}
         feeSettings={feeSettings}
       />
     </>

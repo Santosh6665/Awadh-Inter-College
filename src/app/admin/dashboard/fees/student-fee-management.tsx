@@ -66,11 +66,8 @@ export function StudentFeeManagement({ students, feeSettings }: StudentFeeManage
 
     Object.values(parentToChildren).forEach(siblingIds => {
       if (siblingIds.length > 1) {
-        // Sort by date of birth to determine the oldest
         siblingIds.sort((a, b) => new Date(studentDobMap.get(a)!).getTime() - new Date(studentDobMap.get(b)!).getTime());
-        // The first child (oldest) is not considered a sibling for discount purposes
         map.set(siblingIds[0], false);
-        // All other children get the discount
         for (let i = 1; i < siblingIds.length; i++) {
           map.set(siblingIds[i], true);
         }
