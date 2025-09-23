@@ -15,7 +15,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Search, PlusCircle, ChevronDown, ChevronUp, Eye, Edit } from 'lucide-react';
-import { RecordCombinedPaymentForm } from './record-combined-payment-form';
 import { Badge } from '@/components/ui/badge';
 import {
   Collapsible,
@@ -34,7 +33,6 @@ interface ParentFeeManagementProps {
 }
 
 export function ParentFeeManagement({ students, feeSettings }: ParentFeeManagementProps) {
-  const [isCombinedPaymentFormOpen, setIsCombinedPaymentFormOpen] = useState(false);
   const [isCombinedHistoryDialogOpen, setIsCombinedHistoryDialogOpen] = useState(false);
   const [selectedParent, setSelectedParent] = useState<Parent | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,11 +47,6 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
     setOpenCollapsibles(prev => 
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     );
-  };
-  
-  const handleRecordCombinedPayment = (parent: Parent) => {
-    setSelectedParent(parent);
-    setIsCombinedPaymentFormOpen(true);
   };
   
   const handleViewCombinedHistory = (parent: Parent) => {
@@ -87,7 +80,7 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
     });
 
     return Object.entries(parentsMap).map(([phone, data]) => {
-      const sortedChildren = [...data.children].sort((a,b) => new Date(a.dob).getTime() - new Date(b.dob).getTime());
+      const sortedChildren = [...data.children].sort((a,b) => new Date(a.dob!).getTime() - new Date(b.dob!).getTime());
 
       let totalFees = 0;
       let totalPaid = 0;
@@ -223,12 +216,6 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
         </CardContent>
       </Card>
       
-      <RecordCombinedPaymentForm
-        isOpen={isCombinedPaymentFormOpen}
-        setIsOpen={setIsCombinedPaymentFormOpen}
-        parent={selectedParent}
-      />
-
       <CombinedFeeHistoryDialog
         isOpen={isCombinedHistoryDialogOpen}
         setIsOpen={setIsCombinedHistoryDialogOpen}

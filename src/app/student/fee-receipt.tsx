@@ -28,12 +28,13 @@ export function FeeReceipt({ student, payment, feeDetails }: FeeReceiptProps) {
             if (num < 10) return ones[num];
             if (num < 20) return teens[num - 10];
             if (num < 100) return tens[Math.floor(num / 10)] + (num % 10 !== 0 ? ' ' + ones[num % 10] : '');
-            if (num < 1000) return ones[Math.floor(num / 100)] + ' hundred' + (num % 100 !== 0 ? ' ' + numToWords(num % 100) : '');
+            if (num < 1000) return ones[Math.floor(num / 100)] + ' hundred' + (num % 100 !== 0 ? ' and ' + numToWords(num % 100) : '');
             if (num < 100000) return numToWords(Math.floor(num / 1000)) + ' thousand' + (num % 1000 !== 0 ? ' ' + numToWords(num % 1000) : '');
             return num.toString();
         };
         
-        const words = numToWords(amount);
+        const num = Math.floor(amount);
+        const words = numToWords(num);
         return words.charAt(0).toUpperCase() + words.slice(1) + ' only';
     };
     
@@ -41,17 +42,17 @@ export function FeeReceipt({ student, payment, feeDetails }: FeeReceiptProps) {
     <Card className="w-full max-w-2xl mx-auto border-2 shadow-none rounded-none print-area">
        <CardHeader className="p-4 bg-muted/30">
             <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-                <Logo className="h-16 w-16" />
-                <div className="text-left">
-                    <h2 className="text-2xl font-bold text-primary">Awadh Inter College</h2>
-                    <p className="text-xs text-muted-foreground">Ghosiyari bazar, bansi, Siddharth Nagar, 272148</p>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                        <Phone className="h-3 w-3" /> <span>+91 6393071946</span>
-                        <Mail className="h-3 w-3" /> <span>info@awadhcollege.edu</span>
+                <div className="flex items-center gap-4">
+                    <Logo className="h-16 w-16" />
+                    <div className="text-left">
+                        <h2 className="text-2xl font-bold text-primary">Awadh Inter College</h2>
+                        <p className="text-xs text-muted-foreground">Ghosiyari bazar, bansi, Siddharth Nagar, 272148</p>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                            <Phone className="h-3 w-3" /> <span>+91 6393071946</span>
+                            <Mail className="h-3 w-3" /> <span>info@awadhcollege.edu</span>
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>
             <div className="text-center mt-2">
                 <Badge variant="secondary" className="text-base font-bold tracking-wider">💰 FEE RECEIPT</Badge>
@@ -109,7 +110,7 @@ export function FeeReceipt({ student, payment, feeDetails }: FeeReceiptProps) {
             <div className="grid grid-cols-2 gap-4 text-center mt-6 text-sm border-t pt-4">
                  <Card className="p-2 bg-muted/50">
                     <CardHeader className="p-1">
-                        <CardTitle className="text-xs text-muted-foreground">Total Fees</CardTitle>
+                        <CardTitle className="text-xs text-muted-foreground">Total Annual Fees</CardTitle>
                     </CardHeader>
                     <CardContent className="p-1">
                         <p className="text-lg font-bold">Rs{feeDetails.totalFees.toFixed(2)}</p>
@@ -125,7 +126,7 @@ export function FeeReceipt({ student, payment, feeDetails }: FeeReceiptProps) {
                 </Card>
             </div>
             
-             <div className="pt-8">
+             <div className="pt-8 mt-4">
                 <div className="flex justify-end text-center">
                     <div>
                         <p className="border-t-2 border-dashed pt-2">Authorized Signature</p>
