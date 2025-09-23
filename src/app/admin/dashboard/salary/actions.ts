@@ -10,7 +10,8 @@ import { revalidatePath } from 'next/cache';
 
 async function checkAuth() {
     const user = await getLoggedInUser();
-    if (!user || user.type !== 'admin') {
+    // Allow both admin and teacher to access salary-related data
+    if (!user || (user.type !== 'admin' && user.type !== 'teacher')) {
         throw new Error('Unauthorized');
     }
 }
@@ -85,7 +86,11 @@ export async function recordSalaryPayment(
   prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
-  await checkAuth();
+  const user = await getLoggedInUser();
+  if (!user || user.type !== 'admin') {
+    return { success: false, message: 'Unauthorized: Only admins can record payments.' };
+  }
+
   if (!teacherId) {
     return { success: false, message: 'Teacher ID is missing.' };
   }
