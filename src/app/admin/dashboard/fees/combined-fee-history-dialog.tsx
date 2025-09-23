@@ -80,9 +80,6 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
   }
 
   const CombinedFeeHistoryContent = () => {
-      // Re-calculate sibling status within the dialog context to ensure correctness
-    const sortedChildren = [...parent.children].sort((a, b) => new Date(a.dob!).getTime() - new Date(b.dob!).getTime());
-    
     return (
         <div className="space-y-6">
         <Card className="print-area">
@@ -112,9 +109,8 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
                 <div>
                 <h3 className="text-lg font-semibold mb-2">Children Summary</h3>
                 <div className="space-y-4">
-                    {sortedChildren.map((child, index) => {
-                    const isSibling = index > 0;
-                    const { totalAnnualFee, totalPaid, due } = calculateAnnualDue(child, feeSettings, isSibling);
+                    {parent.children.map((child) => {
+                    const { totalAnnualFee, totalPaid, due } = calculateAnnualDue(child, feeSettings);
                     return (
                         <Card key={child.id} className="bg-muted/30">
                         <CardHeader className="p-3">

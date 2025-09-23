@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { Header } from '@/components/layout/header';
 import { StudentDashboard } from '@/app/student/dashboard';
 import type { Student, AttendanceRecord, ExamTypes } from '@/lib/types';
-import { getStudentById, getStudentsByClass, getStudentAttendance, checkSiblingStatus } from './actions';
+import { getStudentById, getStudentsByClass, getStudentAttendance } from './actions';
 import { calculateCumulativePercentage, combineMarks } from '@/lib/result-utils';
 import { firestore } from '@/lib/firebase-admin';
 import { getLoggedInUser } from '../auth/actions';
@@ -56,7 +56,6 @@ export default async function StudentPage() {
   }
   
   attendance = await getStudentAttendance(studentId);
-  const isSibling = await checkSiblingStatus(student);
 
   if (firestore) {
       const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
@@ -69,7 +68,7 @@ export default async function StudentPage() {
     <div className="flex min-h-screen flex-col">
       <Header user={user} />
       <main className="flex-1">
-        <StudentDashboard student={student} ranks={ranks} attendance={attendance} forcePasswordReset={forcePasswordReset} settings={settings} isSibling={isSibling} />
+        <StudentDashboard student={student} ranks={ranks} attendance={attendance} forcePasswordReset={forcePasswordReset} settings={settings} />
       </main>
     </div>
   );

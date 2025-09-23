@@ -79,15 +79,12 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
     });
 
     return Object.entries(parentsMap).map(([phone, data]) => {
-      const sortedChildren = [...data.children].sort((a,b) => new Date(a.dob!).getTime() - new Date(b.dob!).getTime());
-
       let totalFees = 0;
       let totalPaid = 0;
       let totalDue = 0;
 
-      sortedChildren.forEach((child, index) => {
-        const isSibling = index > 0;
-        const { due, totalAnnualFee, paid } = calculateAnnualDue(child, feeSettings, isSibling);
+      data.children.forEach((child) => {
+        const { due, totalAnnualFee, paid } = calculateAnnualDue(child, feeSettings);
         totalDue += due;
         totalFees += totalAnnualFee;
         totalPaid += paid;
@@ -96,7 +93,7 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
       return {
         id: phone,
         parentName: data.parentName,
-        children: sortedChildren,
+        children: data.children.sort((a, b) => a.name.localeCompare(b.name)),
         totalFees,
         totalPaid,
         totalDue,
@@ -179,9 +176,8 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {parent.children.map((child, index) => {
-                                const isSibling = index > 0;
-                                const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(child, feeSettings, isSibling);
+                            {parent.children.map((child) => {
+                                const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(child, feeSettings);
                                 return (
                                 <TableRow key={child.id}>
                                     <TableCell>{child.name}</TableCell>

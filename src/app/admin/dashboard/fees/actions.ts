@@ -140,11 +140,10 @@ async function getFeeSettings() {
         const settings = settingsDoc.data();
         return {
             feeStructure: settings?.feeStructure || {},
-            siblingDiscount: settings?.siblingDiscount || 0,
             sessionStartDate: settings?.sessionStartDate,
         };
     }
-    return { feeStructure: {}, siblingDiscount: 0, sessionStartDate: null };
+    return { feeStructure: {}, sessionStartDate: null };
 }
 
 export async function recordCombinedPayment(
@@ -180,16 +179,12 @@ export async function recordCombinedPayment(
         studentIds.map(id => firestore.collection('students').doc(id).get())
     );
 
-    const dobMap = new Map(studentDocs.map(d => [d.id, d.data()?.dob]));
-    const sortedSiblings = [...studentIds].sort((a, b) => new Date(dobMap.get(a)!).getTime() - new Date(dobMap.get(b)!).getTime());
-
     const studentDueDetails = studentDocs.map((doc) => {
         if (!doc.exists) return null;
         const studentData = doc.data();
         if (!studentData) return null;
         
-        const isSibling = sortedSiblings.indexOf(doc.id) > 0;
-        const { due } = calculateAnnualDue(studentData as any, feeSettings, isSibling);
+        const { due } = calculateAnnualDue(studentData as any, feeSettings);
         
         return { id: doc.id, due };
     }).filter(s => s && s.due > 0) as { id: string; due: number }[];

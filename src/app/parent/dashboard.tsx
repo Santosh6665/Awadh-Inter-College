@@ -14,7 +14,7 @@ import { calculateAnnualDue } from '@/lib/fee-utils';
 
 interface ParentDashboardProps {
   parent: { id: string; type: string; name: string };
-  childrenWithDetails: (Student & { ranks: { [key in ExamTypes]?: number | null }, attendance: AttendanceRecord[], isSibling: boolean })[];
+  childrenWithDetails: (Student & { ranks: { [key in ExamTypes]?: number | null }, attendance: AttendanceRecord[] })[];
   settings: any;
 }
 
@@ -30,7 +30,7 @@ export function ParentDashboard({ parent, childrenWithDetails, settings }: Paren
 
   const totalDue = useMemo(() => {
     return childrenWithDetails.reduce((parentTotal, student) => {
-        const { due } = calculateAnnualDue(student, settings, student.isSibling);
+        const { due } = calculateAnnualDue(student, settings);
         return parentTotal + due;
     }, 0);
   }, [childrenWithDetails, settings]);
@@ -86,7 +86,6 @@ export function ParentDashboard({ parent, childrenWithDetails, settings }: Paren
                                 attendance={child.attendance}
                                 forcePasswordReset={false} // Parents don't reset passwords this way
                                 settings={settings}
-                                isSibling={child.isSibling}
                             />
                         </TabsContent>
                     ))}

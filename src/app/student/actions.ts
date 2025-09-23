@@ -201,27 +201,3 @@ export async function getLoggedInStudent(): Promise<Student | null> {
     }
     return null;
 }
-
-export async function checkSiblingStatus(student: Student): Promise<boolean> {
-  if (!student.parentPhone) {
-    return false;
-  }
-  try {
-    const siblingsSnapshot = await firestore.collection('students')
-      .where('parentPhone', '==', student.parentPhone)
-      .get();
-      
-    if (siblingsSnapshot.size <= 1) {
-      return false;
-    }
-    
-    const siblings = siblingsSnapshot.docs.map(doc => doc.data() as Student);
-    // A student is eligible for a sibling discount if there is at least one other sibling with an earlier date of birth.
-    const studentDob = new Date(student.dob).getTime();
-    return siblings.some(sibling => new Date(sibling.dob).getTime() < studentDob);
-
-  } catch (error) {
-    console.error('Error checking sibling status:', error);
-    return false;
-  }
-}

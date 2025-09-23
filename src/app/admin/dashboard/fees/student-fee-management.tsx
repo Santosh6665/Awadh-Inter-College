@@ -50,34 +50,6 @@ export function StudentFeeManagement({ students, feeSettings }: StudentFeeManage
     setIsHistoryDialogOpen(true);
   };
   
-  const siblingMap = useMemo(() => {
-    const parentToChildren: Record<string, string[]> = {};
-    students.forEach(student => {
-      if (student.parentPhone) {
-        if (!parentToChildren[student.parentPhone]) {
-          parentToChildren[student.parentPhone] = [];
-        }
-        parentToChildren[student.parentPhone].push(student.id);
-      }
-    });
-
-    const map = new Map<string, boolean>();
-    const studentDobMap = new Map(students.map(s => [s.id, s.dob]));
-
-    Object.values(parentToChildren).forEach(siblingIds => {
-      if (siblingIds.length > 1) {
-        siblingIds.sort((a, b) => new Date(studentDobMap.get(a)!).getTime() - new Date(studentDobMap.get(b)!).getTime());
-        map.set(siblingIds[0], false);
-        for (let i = 1; i < siblingIds.length; i++) {
-          map.set(siblingIds[i], true);
-        }
-      } else if (siblingIds.length === 1) {
-        map.set(siblingIds[0], false);
-      }
-    });
-    return map;
-  }, [students]);
-
 
   const filteredStudents = students
     .filter(student => {
@@ -161,8 +133,7 @@ export function StudentFeeManagement({ students, feeSettings }: StudentFeeManage
               <TableBody>
                 {filteredStudents.length > 0 ? (
                   filteredStudents.map((student) => {
-                    const isSibling = siblingMap.get(student.id) || false;
-                    const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(student, feeSettings, isSibling);
+                    const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(student, feeSettings);
                     return (
                         <TableRow key={student.id}>
                             <TableCell className="hidden md:table-cell">{student.rollNumber}</TableCell>

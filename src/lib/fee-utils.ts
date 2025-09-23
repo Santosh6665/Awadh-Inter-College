@@ -12,8 +12,7 @@ const defaultMultipliers = {
 
 /**
  * Calculates the total annual fee based on the defined multipliers.
- * Student-specific discounts are included, but sibling discounts are not,
- * as they apply to the monthly due amount, not the gross annual fee.
+ * Student-specific discounts are included.
  * @param finalFeeStructure The combined fee structure for the student.
  * @param multipliers The fee multipliers from settings.
  * @returns The total annual fee.
@@ -37,15 +36,13 @@ function calculateTotalAnnualFee(finalFeeStructure: any, multipliers: any) {
  * Calculates the total annual due, total annual fee, and total paid for a student.
  * @param student The student object.
  * @param feeSettings The school's fee settings, including feeStructure.
- * @param isSibling A boolean indicating if the student is a sibling (eligible for discount).
  * @returns An object with due, totalAnnualFee, and totalPaid amounts.
  */
 export function calculateAnnualDue(
   student: Student,
-  feeSettings: any,
-  isSibling: boolean
+  feeSettings: any
 ) {
-  const { feeStructure = {}, siblingDiscount = 0, feeMultipliers = defaultMultipliers } = feeSettings;
+  const { feeStructure = {}, feeMultipliers = defaultMultipliers } = feeSettings;
 
   const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
 
@@ -54,11 +51,6 @@ export function calculateAnnualDue(
   const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
 
   let totalAnnualFee = calculateTotalAnnualFee(finalFeeStructure, feeMultipliers);
-
-  // If student is a sibling, apply the sibling discount for 12 months
-  if (isSibling && siblingDiscount > 0) {
-    totalAnnualFee -= siblingDiscount * (feeMultipliers.tuition || 12); // Assume discount applies per tuition cycle
-  }
   
   const due = totalAnnualFee - totalPaid;
 

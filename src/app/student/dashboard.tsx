@@ -25,10 +25,9 @@ interface StudentDashboardProps {
   attendance: AttendanceRecord[];
   forcePasswordReset: boolean;
   settings: any;
-  isSibling: boolean;
 }
 
-export function StudentDashboard({ student, ranks, attendance, forcePasswordReset, settings, isSibling }: StudentDashboardProps) {
+export function StudentDashboard({ student, ranks, attendance, forcePasswordReset, settings }: StudentDashboardProps) {
   const [receiptToPrint, setReceiptToPrint] = useState<Payment | null>(null);
 
   const getInitials = (name: string) => {
@@ -62,14 +61,14 @@ export function StudentDashboard({ student, ranks, attendance, forcePasswordRese
   };
   
   const feeDetails = useMemo(() => {
-    const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(student, settings, isSibling);
+    const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(student, settings);
     const classFeeStructure = settings.feeStructure?.[student.class] || {};
     const studentFeeOverrides = student.feeStructure || {};
     const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
     const paymentPlan = finalFeeStructure.paymentPlan || 'Not set';
 
     return { totalFees: totalAnnualFee, totalPaid, due, paymentPlan };
-  }, [student, settings, isSibling]);
+  }, [student, settings]);
 
 
   const getPaymentPeriod = (payment: Payment) => {
