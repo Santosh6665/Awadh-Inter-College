@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -23,7 +22,6 @@ const feeHeads = [
 
 export function FeeSettings({ settings }: { settings: any }) {
   const [feeStructure, setFeeStructure] = useState(settings?.feeStructure || {});
-  const [lateFee, setLateFee] = useState(settings?.lateFee || { amount: '', per: 'day' });
   const [siblingDiscount, setSiblingDiscount] = useState(settings?.siblingDiscount || '');
   const [sessionStartDate, setSessionStartDate] = useState(settings?.sessionStartDate || '');
   const [isSaving, setIsSaving] = useState(false);
@@ -39,18 +37,10 @@ export function FeeSettings({ settings }: { settings: any }) {
     }));
   };
   
-  const handleLateFeeChange = (field: 'amount' | 'per', value: string) => {
-    setLateFee((prev: any) => ({
-      ...prev,
-      [field]: field === 'amount' ? (value === '' ? undefined : Number(value)) : value,
-    }));
-  };
-
   const handleSave = async () => {
     setIsSaving(true);
     const result = await saveSettings({ 
         feeStructure, 
-        lateFee, 
         sessionStartDate,
         siblingDiscount: Number(siblingDiscount) || 0 
     });
@@ -76,7 +66,7 @@ export function FeeSettings({ settings }: { settings: any }) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Global Fee Settings</CardTitle>
-              <CardDescription>Define default fee structures, late fees, and discounts.</CardDescription>
+              <CardDescription>Define default fee structures, session dates, and discounts for all students.</CardDescription>
             </div>
             <Button onClick={handleSave} disabled={isSaving}>
               {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -85,7 +75,7 @@ export function FeeSettings({ settings }: { settings: any }) {
           </div>
         </CardHeader>
         <CardContent className='space-y-6'>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">Session Start Date</CardTitle>
@@ -117,37 +107,10 @@ export function FeeSettings({ settings }: { settings: any }) {
                   </div>
                 </CardContent>
               </Card>
-              <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">Late Fee Settings</CardTitle>
-                    <CardDescription className="text-sm">Set the penalty for late fee payments.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="late-fee-amount">Late Fee Amount (Rs)</Label>
-                    <Input
-                        id="late-fee-amount"
-                        type="number"
-                        placeholder="e.g., 50"
-                        value={lateFee.amount || ''}
-                        onChange={(e) => handleLateFeeChange('amount', e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="late-fee-per">Per</Label>
-                    <Input
-                        id="late-fee-per"
-                        placeholder="e.g., day or week"
-                        value={lateFee.per || ''}
-                        onChange={(e) => handleLateFeeChange('per', e.target.value)}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-2">Class-wise Fee Structure</h3>
+            <h3 className="text-lg font-semibold mb-2">Class-wise Fee Structure Defaults</h3>
             <Accordion type="single" collapsible className="w-full">
               {classes.map((className) => (
                 <AccordionItem value={className} key={className}>

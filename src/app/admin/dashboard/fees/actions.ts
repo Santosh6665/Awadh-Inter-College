@@ -1,4 +1,3 @@
-
 'use server';
 
 import { firestore } from '@/lib/firebase-admin';
@@ -19,7 +18,7 @@ const FeeStructureSchema = z.object({
 
 const PaymentSchema = z.object({
     amount: z.coerce.number().min(1, 'Amount must be greater than 0.'),
-    method: z.enum(['Cash', 'Card', 'Online']),
+    method: z.enum(['Cash', 'Card', 'Online', 'Bank Transfer', 'Cheque']),
     date: z.string().min(1, 'Date is required.'),
     months: z.preprocess((val) => {
         if (Array.isArray(val)) {
@@ -33,7 +32,7 @@ const PaymentSchema = z.object({
 
 const CombinedPaymentSchema = z.object({
     amount: z.coerce.number().min(1, 'Amount must be greater than 0.'),
-    method: z.enum(['Cash', 'Card', 'Online']),
+    method: z.enum(['Cash', 'Card', 'Online', 'Bank Transfer', 'Cheque']),
     date: z.string().min(1, 'Date is required.'),
     months: z.preprocess((val) => {
         if (Array.isArray(val)) return val;
@@ -140,23 +139,28 @@ async function getFeeSettings() {
         return {
             feeStructure: settings?.feeStructure || {},
             siblingDiscount: settings?.siblingDiscount || 0,
+            sessionStartDate: settings?.sessionStartDate,
         };
     }
-    return { feeStructure: {}, siblingDiscount: 0 };
+    return { feeStructure: {}, siblingDiscount: 0, sessionStartDate: null };
 }
 
-function calculateTotalFees(studentData: any, feeSettings: any, isSibling: boolean) {
-    const classFeeStructure = feeSettings.feeStructure[studentData.class] || {};
-    const studentFeeOverrides = studentData.feeStructure || {};
-    const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
+// Defines which fee heads are considered monthly recurring costs
+const MONTHLY_FEE_HEADS = ['tuition', 'transport', 'computer'];
+// Defines which fee heads are considered one-time or annual costs
+const ANNUAL_FEE_HEADS = ['admission', 'miscellaneous'];
 
-    const { tuition = 0, admission = 0, transport = 0, exam = 0, computer = 0, miscellaneous = 0, discount = 0 } = finalFeeStructure;
-    let totalFees = (tuition + admission + transport + exam + computer + miscellaneous) - discount;
-
-    if (isSibling && feeSettings.siblingDiscount > 0) {
-        totalFees -= feeSettings.siblingDiscount;
-    }
-    return totalFees;
+function calculateTotalAnnualFee(finalFeeStructure: any) {
+  let totalAnnualFee = 0;
+  for (const head of MONTHLY_FEE_HEADS) {
+    totalAnnualFee += (finalFeeStructure[head] || 0) * 12;
+  }
+  for (const head of ANNUAL_FEE_HEADS) {
+    totalAnnualFee += finalFeeStructure[head] || 0;
+  }
+  totalAnnualFee += (finalFeeStructure.exam || 0) * 3;
+  totalAnnualFee -= finalFeeStructure.discount || 0;
+  return totalAnnualFee;
 }
 
 
@@ -184,10 +188,12 @@ export async function recordCombinedPayment(
   }
 
   const { amount: totalPayment, method, date, months } = validatedFields.data;
-  let remainingPayment = totalPayment;
 
   try {
     const feeSettings = await getFeeSettings();
+    if (!feeSettings.sessionStartDate) {
+        return { success: false, message: 'Session Start Date is not set in Fee Settings.' };
+    }
     const batch = firestore.batch();
 
     const studentDueDetails = await Promise.all(
@@ -198,50 +204,18 @@ export async function recordCombinedPayment(
         const studentData = studentDoc.data();
         if (!studentData) return null;
 
-        const isSibling = studentIds.length > 1 && index > 0; // The first child doesn't get the discount
-        const totalFees = calculateTotalFees(studentData, feeSettings, isSibling);
-        const totalPaid = (studentData.payments || []).reduce((acc: number, p: any) => acc + p.amount, 0);
-        const due = Math.max(0, totalFees - totalPaid);
+        const isSibling = studentIds.length > 1 && index > 0;
+        const { due } = calculateDues(studentData, feeSettings, isSibling);
         
         return { id: studentId, due, ref: studentDoc.ref };
       })
     );
 
     let childrenWithDues = studentDueDetails.filter(s => s && s.due > 0) as { id: string; due: number; ref: FirebaseFirestore.DocumentReference }[];
-    let paymentDistribution: { [studentId: string]: number } = {};
-    let totalDue = childrenWithDues.reduce((acc, s) => acc + s.due, 0);
-
-    if (totalDue > 0) {
-        for (const student of childrenWithDues) {
-            const proportionalShare = (student.due / totalDue) * remainingPayment;
-            paymentDistribution[student.id] = proportionalShare;
-        }
-    }
-
-    let surplus = 0;
-    for (const student of childrenWithDues) {
-        const amountToPay = paymentDistribution[student.id] || 0;
-        if (amountToPay > student.due) {
-            surplus += amountToPay - student.due;
-            paymentDistribution[student.id] = student.due;
-        }
-    }
-
-    if (surplus > 0) {
-        let remainingChildrenWithDues = childrenWithDues.filter(s => (paymentDistribution[s.id] || 0) < s.due);
-        let remainingTotalDue = remainingChildrenWithDues.reduce((acc, s) => acc + (s.due - (paymentDistribution[s.id] || 0)), 0);
-        
-        if(remainingTotalDue > 0) {
-            for (const student of remainingChildrenWithDues) {
-                const dueAfterInitialPayment = student.due - (paymentDistribution[s.id] || 0);
-                const proportionalShareOfSurplus = (dueAfterInitialPayment / remainingTotalDue) * surplus;
-                paymentDistribution[student.id] += proportionalShareOfSurplus;
-            }
-        }
-    }
+    let paymentDistribution = distributePayment(totalPayment, childrenWithDues);
     
     for (const studentId in paymentDistribution) {
-        const paidAmount = Math.round(paymentDistribution[studentId] * 100) / 100; // Round to 2 decimal places
+        const paidAmount = Math.round(paymentDistribution[studentId] * 100) / 100;
         if (paidAmount > 0) {
             const newPayment = {
                 id: `${new Date().getTime().toString()}-${studentId}`,
@@ -261,9 +235,79 @@ export async function recordCombinedPayment(
     await batch.commit();
     
     revalidatePath('/admin/dashboard');
-    return { success: true, message: `Combined payment of Rs${totalPayment} recorded successfully.` };
+    return { success: true, message: `Combined payment of Rs ${totalPayment} recorded successfully.` };
   } catch (error) {
     console.error('Error in combined payment:', error);
     return { success: false, message: 'An unexpected error occurred during combined payment.' };
   }
+}
+
+function calculateDues(studentData: any, feeSettings: any, isSibling: boolean) {
+    const { feeStructure, sessionStartDate, siblingDiscount = 0 } = feeSettings;
+    const classFeeStructure = feeStructure[studentData.class] || {};
+    const studentFeeOverrides = studentData.feeStructure || {};
+    const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
+
+    const totalPaid = (studentData.payments || []).reduce((acc: number, p: any) => acc + p.amount, 0);
+    const totalAnnualFee = calculateTotalAnnualFee(finalFeeStructure);
+
+    let totalMonthlyFee = 0;
+    for (const head of MONTHLY_FEE_HEADS) {
+        totalMonthlyFee += finalFeeStructure[head] || 0;
+    }
+    
+    const annualOnlyFees = totalAnnualFee - (totalMonthlyFee * 12) + (finalFeeStructure.discount || 0);
+    
+    let monthlyFeeForDueCalc = totalMonthlyFee;
+    if (isSibling && siblingDiscount > 0) {
+        monthlyFeeForDueCalc -= siblingDiscount;
+    }
+
+    const start = new Date(sessionStartDate);
+    const now = new Date();
+    let monthsPassed = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1;
+    monthsPassed = Math.max(0, monthsPassed);
+
+    const totalExpectedFee = annualOnlyFees + (monthlyFeeForDueCalc * monthsPassed);
+    const due = totalExpectedFee - totalPaid;
+    return { due: Math.max(0, due) };
+}
+
+function distributePayment(totalPayment: number, childrenWithDues: { id: string; due: number }[]) {
+    let paymentDistribution: { [studentId: string]: number } = {};
+    let remainingPayment = totalPayment;
+
+    // First pass: Pay off dues proportionally
+    let totalDue = childrenWithDues.reduce((acc, s) => acc + s.due, 0);
+    if (totalDue > 0) {
+        for (const student of childrenWithDues) {
+            const proportionalShare = (student.due / totalDue) * remainingPayment;
+            const amountToPay = Math.min(student.due, proportionalShare);
+            paymentDistribution[student.id] = amountToPay;
+        }
+    }
+    
+    let paidSoFar = Object.values(paymentDistribution).reduce((acc, val) => acc + val, 0);
+    remainingPayment -= paidSoFar;
+
+    // Second pass: if there's remaining payment, distribute it among those still with dues
+    if (remainingPayment > 0) {
+        let remainingChildren = childrenWithDues.filter(s => (paymentDistribution[s.id] || 0) < s.due);
+        while(remainingPayment > 0.01 && remainingChildren.length > 0) {
+            const amountPerChild = remainingPayment / remainingChildren.length;
+            for (let i = remainingChildren.length - 1; i >= 0; i--) {
+                const student = remainingChildren[i];
+                const dueAfterInitialPayment = student.due - (paymentDistribution[student.id] || 0);
+                const paymentToAdd = Math.min(amountPerChild, dueAfterInitialPayment);
+                
+                paymentDistribution[student.id] = (paymentDistribution[student.id] || 0) + paymentToAdd;
+                remainingPayment -= paymentToAdd;
+                
+                if (paymentDistribution[student.id] >= student.due) {
+                    remainingChildren.splice(i, 1);
+                }
+            }
+        }
+    }
+    return paymentDistribution;
 }

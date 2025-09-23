@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -83,7 +82,7 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
               : 'Fill in the details for the new student.'}
           </DialogDescription>
         </DialogHeader>
-        <form action={formAction} className="grid gap-4 py-4">
+        <form action={formAction} className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>

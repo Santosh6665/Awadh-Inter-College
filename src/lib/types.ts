@@ -1,4 +1,3 @@
-
 import { z } from 'zod';
 
 export type NewsArticle = {
@@ -43,7 +42,6 @@ export type FeeStructure = {
   miscellaneous?: number;
   admission?: number;
   discount?: number;
-  discountType?: 'percentage' | 'fixed';
   paymentPlan?: 'monthly' | 'quarterly' | 'yearly';
 };
 
@@ -51,7 +49,7 @@ export type Payment = {
   id: string;
   date: string;
   amount: number;
-  method: 'Cash' | 'Card' | 'Online';
+  method: 'Cash' | 'Card' | 'Online' | 'Bank Transfer' | 'Cheque';
   month?: string;
   months?: string[];
 };
@@ -68,7 +66,7 @@ export type Student = {
     phone: string;
     fatherName: string;
     address: string;
-    parentPhone?: string; // New field for linking siblings
+    parentPhone?: string;
     photoUrl?: string;
     marks?: {
       quarterly?: Marks;

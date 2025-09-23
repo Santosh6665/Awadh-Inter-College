@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useMemo } from 'react';
@@ -115,6 +114,8 @@ export function RecordPaymentForm({ isOpen, setIsOpen, student, feeSettings }: R
                     <SelectItem value="Cash">Cash</SelectItem>
                     <SelectItem value="Card">Card</SelectItem>
                     <SelectItem value="Online">Online</SelectItem>
+                    <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
+                    <SelectItem value="Cheque">Cheque</SelectItem>
                 </SelectContent>
             </Select>
           </div>

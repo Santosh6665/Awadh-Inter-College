@@ -1,4 +1,3 @@
-
 import type { Student } from './types';
 
 // Defines which fee heads are considered monthly recurring costs

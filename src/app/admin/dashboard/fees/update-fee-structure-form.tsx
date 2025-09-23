@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -56,8 +55,6 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
         description: state.message,
       });
       setIsOpen(false);
-      // Force a page reload to reflect the updated fee calculations in the main table
-      window.location.reload();
     } else if (state.message && !state.success) {
       toast({
         title: 'Error',
@@ -124,6 +121,7 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
                 <SelectValue placeholder="Use class default plan" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="">Use Class Default</SelectItem>
                 <SelectItem value="monthly">Monthly</SelectItem>
                 <SelectItem value="quarterly">Quarterly</SelectItem>
                 <SelectItem value="yearly">Yearly</SelectItem>
