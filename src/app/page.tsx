@@ -199,13 +199,13 @@ export default function HomePage() {
         <section id="about-us" className="bg-muted/50 py-12 md:py-20 px-4 sm:px-6 md:px-8">
           <div className="container mx-auto">
              <Card className="overflow-hidden lg:grid lg:grid-cols-2 lg:gap-8 items-center">
-                <div className="relative h-64 lg:h-full">
+                <div className="flex items-center justify-center p-4">
                      <Image 
                         src={aboutSchoolImage.imageUrl}
                         alt="School Building"
-                        layout="fill"
-                        objectFit="cover"
-                        className="w-full h-full"
+                        width={600}
+                        height={400}
+                        className="w-full h-auto rounded-lg object-cover"
                         data-ai-hint={aboutSchoolImage.imageHint}
                         />
                 </div>

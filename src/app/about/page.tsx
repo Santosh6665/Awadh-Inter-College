@@ -24,13 +24,13 @@ export default function AboutUsPage() {
             <div className="container mx-auto space-y-12">
               <Card className="overflow-hidden">
                 <div className="grid grid-cols-1 md:grid-cols-2 items-center">
-                    <div className="relative h-64 md:h-full">
+                    <div className="flex items-center justify-center p-4">
                         <Image 
                             src={aboutHistoryImage.imageUrl}
                             alt="School Building"
-                            layout="fill"
-                            objectFit="cover"
-                            className="w-full h-full"
+                            width={600}
+                            height={400}
+                            className="w-full h-auto rounded-lg object-cover"
                             data-ai-hint={aboutHistoryImage.imageHint}
                         />
                     </div>
