@@ -147,7 +147,7 @@ export function FeeSettings({ settings }: { settings: any }) {
                                 id={`multiplier-${head.key}`}
                                 type="number"
                                 placeholder={`e.g., ${defaultMultipliers[head.key as keyof typeof defaultMultipliers]}`}
-                                value={feeMultipliers[head.key] || ''}
+                                value={feeMultipliers[head.key] === undefined ? '' : feeMultipliers[head.key]}
                                 onChange={(e) => handleMultiplierChange(head.key, e.target.value)}
                             />
                         </div>
