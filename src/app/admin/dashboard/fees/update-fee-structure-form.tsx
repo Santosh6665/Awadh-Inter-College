@@ -56,6 +56,8 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
         description: state.message,
       });
       setIsOpen(false);
+      // Force a page reload to reflect the updated fee calculations in the main table
+      window.location.reload();
     } else if (state.message && !state.success) {
       toast({
         title: 'Error',
