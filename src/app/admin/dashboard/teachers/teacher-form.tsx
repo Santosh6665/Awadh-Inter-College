@@ -67,10 +67,11 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
   }, [state, toast, setIsOpen]);
 
   const formattedDob = teacher?.dob ? new Date(teacher.dob).toISOString().split('T')[0] : '';
+  const formattedDoj = teacher?.dateOfJoining ? new Date(teacher.dateOfJoining).toISOString().split('T')[0] : '';
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>{isEditing ? 'Edit Teacher' : 'Add New Teacher'}</DialogTitle>
           <DialogDescription>
@@ -79,25 +80,33 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
               : 'Fill in the details for the new teacher.'}
           </DialogDescription>
         </DialogHeader>
-        <form action={formAction} className="grid gap-4 py-4">
+        <form action={formAction} className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <Input id="name" name="name" defaultValue={teacher?.name} />
             </div>
-            <div className="space-y-2">
+             <div className="space-y-2">
+              <Label htmlFor="employeeId">Employee ID</Label>
+              <Input id="employeeId" name="employeeId" defaultValue={teacher?.employeeId} />
+            </div>
+             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" name="email" type="email" defaultValue={teacher?.email} />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <div className="space-y-2">
-              <Label htmlFor="subject">Subject</Label>
-              <Input id="subject" name="subject" defaultValue={teacher?.subject} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Phone</Label>
               <Input id="phone" name="phone" type="tel" defaultValue={teacher?.phone} />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div className="space-y-2">
+              <Label htmlFor="subject">Department/Subject</Label>
+              <Input id="subject" name="subject" defaultValue={teacher?.subject} />
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="qualification">Qualification</Label>
+              <Input id="qualification" name="qualification" defaultValue={teacher?.qualification} />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -106,20 +115,40 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
                 <Input id="dob" name="dob" type="date" defaultValue={formattedDob} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="qualification">Qualification</Label>
-              <Input id="qualification" name="qualification" defaultValue={teacher?.qualification} />
+                <Label htmlFor="dateOfJoining">Date of Joining</Label>
+                <Input id="dateOfJoining" name="dateOfJoining" type="date" defaultValue={formattedDoj} />
             </div>
           </div>
-           <div className="flex items-center space-x-2">
-              <Switch id="canEditAttendance" name="canEditAttendance" defaultChecked={teacher?.canEditAttendance} />
-              <Label htmlFor="canEditAttendance">Allow Attendance Editing</Label>
-            </div>
-             <div className="flex items-center space-x-2">
-              <Switch id="canEditResults" name="canEditResults" defaultChecked={teacher?.canEditResults} />
-              <Label htmlFor="canEditResults">Allow Result Editing</Label>
-            </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsOpen(false)}>
+          <div className="border-t pt-4 mt-2">
+            <h3 className="text-base font-semibold mb-2">Financial Details</h3>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="bankAccountNumber">Bank Account No.</Label>
+                  <Input id="bankAccountNumber" name="bankAccountNumber" defaultValue={teacher?.bankAccountNumber} />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="ifscCode">IFSC Code</Label>
+                  <Input id="ifscCode" name="ifscCode" defaultValue={teacher?.ifscCode} />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="panOrAadharNumber">PAN/Aadhar No.</Label>
+                  <Input id="panOrAadharNumber" name="panOrAadharNumber" defaultValue={teacher?.panOrAadharNumber} />
+                </div>
+             </div>
+          </div>
+           <div className="border-t pt-4 mt-2">
+            <h3 className="text-base font-semibold mb-2">Portal Permissions</h3>
+            <div className="flex items-center space-x-2">
+                <Switch id="canEditAttendance" name="canEditAttendance" defaultChecked={teacher?.canEditAttendance} />
+                <Label htmlFor="canEditAttendance">Allow Attendance Editing</Label>
+              </div>
+              <div className="flex items-center space-x-2 mt-2">
+                <Switch id="canEditResults" name="canEditResults" defaultChecked={teacher?.canEditResults} />
+                <Label htmlFor="canEditResults">Allow Result Editing</Label>
+              </div>
+           </div>
+          <DialogFooter className="sticky bottom-0 bg-background pt-4 mt-4 border-t">
+            <Button variant="outline" type="button" onClick={() => setIsOpen(false)}>
               Cancel
             </Button>
             <SubmitButton isEditing={isEditing} />

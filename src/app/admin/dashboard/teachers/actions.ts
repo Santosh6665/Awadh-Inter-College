@@ -15,6 +15,11 @@ const TeacherSchema = z.object({
   qualification: z.string().optional(),
   canEditAttendance: z.preprocess((val) => val === 'on', z.boolean()).optional(),
   canEditResults: z.preprocess((val) => val === 'on', z.boolean()).optional(),
+  employeeId: z.string().optional(),
+  dateOfJoining: z.string().optional(),
+  bankAccountNumber: z.string().optional(),
+  ifscCode: z.string().optional(),
+  panOrAadharNumber: z.string().optional(),
 });
 
 export type TeacherFormState = {

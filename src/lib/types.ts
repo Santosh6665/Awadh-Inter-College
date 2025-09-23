@@ -103,6 +103,11 @@ export type Teacher = {
     canEditAttendance?: boolean;
     canEditResults?: boolean;
     isTeacher?: boolean;
+    employeeId?: string;
+    dateOfJoining?: string;
+    bankAccountNumber?: string;
+    ifscCode?: string;
+    panOrAadharNumber?: string;
 };
 
 export type Book = {

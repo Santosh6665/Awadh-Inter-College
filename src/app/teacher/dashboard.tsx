@@ -91,11 +91,15 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                             <TableCell>{teacher.name}</TableCell>
                                         </TableRow>
                                         <TableRow>
+                                            <TableCell className="font-medium">Employee ID</TableCell>
+                                            <TableCell>{teacher.employeeId || 'N/A'}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
                                             <TableCell className="font-medium">Email</TableCell>
                                             <TableCell>{teacher.email}</TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell className="font-medium">Subject</TableCell>
+                                            <TableCell className="font-medium">Department/Subject</TableCell>
                                             <TableCell>{teacher.subject}</TableCell>
                                         </TableRow>
                                         <TableRow>
@@ -106,9 +110,25 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                             <TableCell className="font-medium">Date of Birth</TableCell>
                                             <TableCell>{teacher.dob ? new Date(teacher.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' }) : 'N/A'}</TableCell>
                                         </TableRow>
+                                         <TableRow>
+                                            <TableCell className="font-medium">Date of Joining</TableCell>
+                                            <TableCell>{teacher.dateOfJoining ? new Date(teacher.dateOfJoining).toLocaleDateString('en-GB', { timeZone: 'UTC' }) : 'N/A'}</TableCell>
+                                        </TableRow>
                                         <TableRow>
                                             <TableCell className="font-medium">Qualification</TableCell>
                                             <TableCell>{teacher.qualification || 'N/A'}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell className="font-medium">PAN/Aadhar No.</TableCell>
+                                            <TableCell>{teacher.panOrAadharNumber || 'N/A'}</TableCell>
+                                        </TableRow>
+                                         <TableRow>
+                                            <TableCell className="font-medium">Bank Account No.</TableCell>
+                                            <TableCell>{teacher.bankAccountNumber || 'N/A'}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell className="font-medium">IFSC Code</TableCell>
+                                            <TableCell>{teacher.ifscCode || 'N/A'}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </Table>
