@@ -73,7 +73,7 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
     setIsPaymentFormOpen(true);
   };
 
-  const handleViewSlip = (teacher: Teacher, payment: SalaryPayment) => {
+  const handleViewSlip = (teacher: Teacher) => {
     const salaryDetails = calculateSalary(teacher, currentMonth, attendance, holidays);
     setSelectedTeacher(teacher);
     setSelectedSalaryDetails(salaryDetails);
@@ -236,12 +236,18 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
                         </TableCell>
                         <TableCell className="text-right space-x-2">
                             {teacher.status === 'pending' ? (
-                                <Button size="sm" onClick={() => handleRecordPayment(teacher)}>
-                                    <Banknote className="mr-2 h-4 w-4" />
-                                    Pay
-                                </Button>
+                                <>
+                                    <Button variant="outline" size="sm" onClick={() => handleViewSlip(teacher)}>
+                                        <Eye className="mr-2 h-4 w-4" />
+                                        View Slip
+                                    </Button>
+                                    <Button size="sm" onClick={() => handleRecordPayment(teacher)}>
+                                        <Banknote className="mr-2 h-4 w-4" />
+                                        Pay
+                                    </Button>
+                                </>
                             ) : (
-                                <Button variant="outline" size="sm" onClick={() => handleViewSlip(teacher, teacher.paymentForMonth!)}>
+                                <Button variant="outline" size="sm" onClick={() => handleViewSlip(teacher)}>
                                     <Eye className="mr-2 h-4 w-4" />
                                     View Slip
                                 </Button>
