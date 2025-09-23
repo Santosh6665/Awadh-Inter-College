@@ -78,6 +78,16 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
       }
     }
   };
+  
+  const getPaymentPeriod = (payment: Payment) => {
+    if (payment.months?.length === 12) {
+      return 'Full Session';
+    }
+    if (payment.months && payment.months.length > 0) {
+      return payment.months.join(', ');
+    }
+    return payment.month || 'N/A';
+  }
 
   const CombinedFeeHistoryContent = () => (
     <div className="space-y-6">
@@ -145,6 +155,7 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
                     <TableRow>
                     <TableHead>Date</TableHead>
                     <TableHead>Child</TableHead>
+                    <TableHead>Period</TableHead>
                     <TableHead>Method</TableHead>
                     <TableHead className="text-right">Amount (Rs)</TableHead>
                     </TableRow>
@@ -155,13 +166,14 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
                         <TableRow key={payment.id}>
                           <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
                           <TableCell>{payment.childName}</TableCell>
+                          <TableCell>{getPaymentPeriod(payment)}</TableCell>
                           <TableCell>{payment.method}</TableCell>
                           <TableCell className="text-right">Rs{payment.amount.toFixed(2)}</TableCell>
                         </TableRow>
                     ))
                     ) : (
                     <TableRow>
-                        <TableCell colSpan={4} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
+                        <TableCell colSpan={5} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
                     </TableRow>
                     )}
                 </TableBody>
