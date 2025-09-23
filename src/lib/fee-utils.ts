@@ -8,6 +8,8 @@ const ANNUAL_FEE_HEADS = ['admission', 'miscellaneous'];
 
 /**
  * Calculates the total annual fee based on the defined multipliers.
+ * Student-specific discounts are included, but sibling discounts are not,
+ * as they apply to the monthly due amount, not the gross annual fee.
  * @param finalFeeStructure The combined fee structure for the student.
  * @returns The total annual fee.
  */
@@ -57,7 +59,8 @@ export function calculateMonthlyDue(
   const classFeeStructure = feeStructure[student.class] || {};
   const studentFeeOverrides = student.feeStructure || {};
   const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
-
+  
+  // Calculate the gross total annual fee without the sibling discount
   const totalAnnualFee = calculateTotalAnnualFee(finalFeeStructure);
 
   // Calculate total monthly recurring amount
@@ -66,12 +69,13 @@ export function calculateMonthlyDue(
     totalMonthlyFee += finalFeeStructure[head] || 0;
   }
   
-  // Apply sibling discount to the monthly fee if applicable
-  if (isSibling && siblingDiscount > 0) {
-    totalMonthlyFee -= siblingDiscount;
-  }
+  const annualOnlyFees = totalAnnualFee - (totalMonthlyFee * 12) + (finalFeeStructure.discount || 0);
   
-  const annualOnlyFees = totalAnnualFee - (totalMonthlyFee * 12);
+  // Apply sibling discount to the monthly fee if applicable for due calculation
+  let monthlyFeeForDueCalc = totalMonthlyFee;
+  if (isSibling && siblingDiscount > 0) {
+    monthlyFeeForDueCalc -= siblingDiscount;
+  }
   
   // Calculate how many months have passed since the session start date
   const start = new Date(sessionStartDate);
@@ -79,8 +83,8 @@ export function calculateMonthlyDue(
   let monthsPassed = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1;
   monthsPassed = Math.max(0, monthsPassed); // Ensure it's not negative
 
-  // Total expected fee is the sum of one-time fees plus the recurring fees for the months passed
-  const totalExpectedFee = annualOnlyFees + (totalMonthlyFee * monthsPassed);
+  // Total expected fee is the sum of one-time fees plus the recurring fees (with sibling discount) for the months passed
+  const totalExpectedFee = annualOnlyFees + (monthlyFeeForDueCalc * monthsPassed);
   
   const due = totalExpectedFee - totalPaid;
 
