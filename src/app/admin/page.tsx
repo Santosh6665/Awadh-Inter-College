@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Users, UserCheck } from "lucide-react";
 import { StudentList } from "./dashboard/students/student-list";
@@ -19,6 +18,8 @@ import { SalaryManagement } from "./dashboard/salary/salary-management";
 import { Settings } from "./dashboard/settings/settings";
 import { Header } from "@/components/layout/header";
 import { getLoggedInUser } from "../auth/actions";
+import { getTeacherAttendanceForMonth, getHolidaysInMonth } from "./dashboard/salary/actions";
+
 
 export default async function AdminDashboardPage() {
   const user = await getLoggedInUser();
@@ -28,20 +29,25 @@ export default async function AdminDashboardPage() {
   let notices: Notice[] = [];
   let todayAttendanceData: any = {};
   let yesterdayAttendanceData: any = {};
+  let monthlyTeacherAttendance: any = {};
+  let monthlyHolidays: any = [];
 
   // Only attempt to fetch data if firestore was successfully initialized
   if (firestore) {
     try {
+      const today = new Date();
       students = await getStudents();
       teachers = await getTeachers();
       notices = await getNotices();
+      monthlyTeacherAttendance = await getTeacherAttendanceForMonth(today);
+      monthlyHolidays = await getHolidaysInMonth(today);
+      
       const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
       if (settingsDoc.exists) {
         settings = settingsDoc.data() || {};
       }
 
       // Fetch attendance data
-      const today = new Date();
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - 1);
       
@@ -221,7 +227,7 @@ export default async function AdminDashboardPage() {
               <FeeManagement students={students} feeSettings={settings?.feeStructure || {}} />
             </TabsContent>
             <TabsContent value="teacher-salary" className="mt-4">
-              <SalaryManagement teachers={teachers} />
+              <SalaryManagement teachers={teachers} attendance={monthlyTeacherAttendance} holidays={monthlyHolidays} />
             </TabsContent>
             <TabsContent value="notices" className="mt-4">
               <NoticeManagement notices={notices} />

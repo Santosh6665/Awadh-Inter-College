@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { Teacher } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -14,60 +13,119 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Edit, PlusCircle, Eye } from 'lucide-react';
-import { SetSalaryForm } from './set-salary-form';
-import { RecordPaymentForm } from './record-payment-form';
-import { SalaryHistoryDialog } from './salary-history-dialog';
+import { Search, Eye } from 'lucide-react';
+import { SalarySlipDialog } from './salary-slip-dialog';
+import { calculateSalary, SalaryDetails } from '@/lib/salary-utils';
+import { getHolidaysInMonth } from './actions';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { format, getYear, getMonth } from 'date-fns';
 
-export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
-  const [isSalaryFormOpen, setIsSalaryFormOpen] = useState(false);
-  const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false);
-  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
+export function SalaryManagement({ teachers, attendance, holidays }: { teachers: Teacher[], attendance: any, holidays: any }) {
+  const [isSlipDialogOpen, setIsSlipDialogOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
+  const [selectedSalaryDetails, setSelectedSalaryDetails] = useState<SalaryDetails | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const handleSetSalary = (teacher: Teacher) => {
+  const handleViewSlip = (teacher: Teacher) => {
+    const salaryDetails = calculateSalary(teacher, currentMonth, attendance, holidays);
     setSelectedTeacher(teacher);
-    setIsSalaryFormOpen(true);
-  };
-
-  const handleRecordPayment = (teacher: Teacher) => {
-    setSelectedTeacher(teacher);
-    setIsPaymentFormOpen(true);
+    setSelectedSalaryDetails(salaryDetails);
+    setIsSlipDialogOpen(true);
   };
   
-  const handleViewHistory = (teacher: Teacher) => {
-    setSelectedTeacher(teacher);
-    setIsHistoryDialogOpen(true);
-  };
-
   const filteredTeachers = teachers.filter(teacher =>
     teacher.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  
+  const monthOptions = Array.from({ length: 12 }, (_, i) => {
+    const date = new Date();
+    date.setMonth(i);
+    return {
+      value: format(date, 'yyyy-MM'),
+      label: format(date, 'MMMM'),
+    };
+  });
 
-  const calculateSalaryStatus = (teacher: Teacher) => {
-    const totalPaid = (teacher.salaryPayments || []).reduce((acc, p) => acc + p.amount, 0);
-    // This is a simple calculation. A real system would track this monthly.
-    // For now, we'll assume baseSalary is monthly and just show total paid against it.
-    const baseSalary = teacher.baseSalary || 0;
-    return { baseSalary, totalPaid };
-  };
+  const yearOptions = Array.from({ length: 5 }, (_, i) => {
+    const year = getYear(new Date()) - i;
+    return { value: year.toString(), label: year.toString() };
+  });
+  
+  const totalMonthlySalaryExpense = useMemo(() => {
+    return filteredTeachers.reduce((total, teacher) => {
+      const { netSalary } = calculateSalary(teacher, currentMonth, attendance, holidays);
+      return total + netSalary;
+    }, 0);
+  }, [filteredTeachers, currentMonth, attendance, holidays]);
+
 
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Manage Teacher Salaries</CardTitle>
-          <CardDescription>Set base salaries and record payments for teachers.</CardDescription>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className='w-full'>
+                <CardTitle>Teacher Salary Management</CardTitle>
+                <CardDescription>Calculate monthly salaries and generate slips for teachers.</CardDescription>
+            </div>
+             <div className="flex gap-2 w-full md:w-auto">
+                <Select
+                    value={format(currentMonth, 'MMMM')}
+                    onValueChange={(month) => {
+                        const newDate = new Date(currentMonth);
+                        newDate.setMonth(monthOptions.findIndex(m => m.label === month));
+                        setCurrentMonth(newDate);
+                    }}
+                >
+                    <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Month" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {monthOptions.map(option => (
+                            <SelectItem key={option.value} value={option.label}>{option.label}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                 <Select
+                    value={getYear(currentMonth).toString()}
+                    onValueChange={(year) => {
+                        const newDate = new Date(currentMonth);
+                        newDate.setFullYear(parseInt(year, 10));
+                        setCurrentMonth(newDate);
+                    }}
+                >
+                    <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {yearOptions.map(option => (
+                            <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+          </div>
           <div className="mt-4 relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name..."
+              placeholder="Search by teacher name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8"
             />
           </div>
+           <div className="mt-4 text-sm text-muted-foreground">
+              <strong>Total Salary Expense for {format(currentMonth, 'MMMM yyyy')}:</strong> 
+              <span className="font-bold text-lg text-primary"> Rs{totalMonthlySalaryExpense.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -75,31 +133,29 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead className="hidden md:table-cell">Subject</TableHead>
-                  <TableHead>Base Salary</TableHead>
-                  <TableHead>Total Paid</TableHead>
+                  <TableHead className="hidden md:table-cell">Base Salary</TableHead>
+                  <TableHead className="hidden md:table-cell">Deduction</TableHead>
+                  <TableHead>Net Salary</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredTeachers.length > 0 ? (
                   filteredTeachers.map((teacher) => {
-                    const { baseSalary, totalPaid } = calculateSalaryStatus(teacher);
+                    const { netSalary, deductionAmount } = calculateSalary(teacher, currentMonth, attendance, holidays);
                     return (
                       <TableRow key={teacher.id}>
-                        <TableCell>{teacher.name}</TableCell>
-                        <TableCell className="hidden md:table-cell">{teacher.subject}</TableCell>
-                        <TableCell>Rs{baseSalary.toFixed(2)}</TableCell>
-                        <TableCell>Rs{totalPaid.toFixed(2)}</TableCell>
+                        <TableCell>
+                            <div className="font-medium">{teacher.name}</div>
+                            <div className="text-xs text-muted-foreground">{teacher.employeeId}</div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">Rs{(teacher.baseSalary || 0).toFixed(2)}</TableCell>
+                        <TableCell className="hidden md:table-cell text-destructive">Rs{deductionAmount.toFixed(2)}</TableCell>
+                        <TableCell className="font-semibold">Rs{netSalary.toFixed(2)}</TableCell>
                         <TableCell className="text-right space-x-2">
-                          <Button variant="ghost" size="icon" title="View History" onClick={() => handleViewHistory(teacher)}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" title="Set Base Salary" onClick={() => handleSetSalary(teacher)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" title="Record Payment" onClick={() => handleRecordPayment(teacher)}>
-                            <PlusCircle className="h-4 w-4" />
+                          <Button variant="outline" size="sm" onClick={() => handleViewSlip(teacher)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Slip
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -118,22 +174,12 @@ export function SalaryManagement({ teachers }: { teachers: Teacher[] }) {
         </CardContent>
       </Card>
 
-      <SetSalaryForm
-        isOpen={isSalaryFormOpen}
-        setIsOpen={setIsSalaryFormOpen}
+      <SalarySlipDialog
+        isOpen={isSlipDialogOpen}
+        setIsOpen={setIsSlipDialogOpen}
         teacher={selectedTeacher}
-      />
-      
-      <RecordPaymentForm
-        isOpen={isPaymentFormOpen}
-        setIsOpen={setIsPaymentFormOpen}
-        teacher={selectedTeacher}
-      />
-
-      <SalaryHistoryDialog
-        isOpen={isHistoryDialogOpen}
-        setIsOpen={setIsHistoryDialogOpen}
-        teacher={selectedTeacher}
+        salaryDetails={selectedSalaryDetails}
+        month={currentMonth}
       />
     </>
   );

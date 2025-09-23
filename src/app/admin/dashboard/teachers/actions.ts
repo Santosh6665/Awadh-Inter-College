@@ -1,4 +1,3 @@
-
 'use server';
 
 import { firestore } from '@/lib/firebase-admin';
@@ -18,6 +17,10 @@ const TeacherSchema = z.object({
   employeeId: z.string().optional(),
   dateOfJoining: z.string().optional(),
   panOrAadharNumber: z.string().optional(),
+  designation: z.string().optional(),
+  baseSalary: z.coerce.number().min(0).optional(),
+  bankAccountNumber: z.string().optional(),
+  ifscCode: z.string().optional(),
 });
 
 export type TeacherFormState = {

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -108,6 +107,10 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
               <Label htmlFor="qualification">Qualification</Label>
               <Input id="qualification" name="qualification" defaultValue={teacher?.qualification} />
             </div>
+             <div className="space-y-2">
+              <Label htmlFor="designation">Designation</Label>
+              <Input id="designation" name="designation" defaultValue={teacher?.designation} />
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -122,9 +125,21 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
           <div className="border-t pt-4 mt-2">
             <h3 className="text-base font-semibold mb-2">Financial Details</h3>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-2">
+                  <Label htmlFor="baseSalary">Base Monthly Salary</Label>
+                  <Input id="baseSalary" name="baseSalary" type="number" defaultValue={teacher?.baseSalary} />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="panOrAadharNumber">PAN/Aadhar No.</Label>
                   <Input id="panOrAadharNumber" name="panOrAadharNumber" defaultValue={teacher?.panOrAadharNumber} />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="bankAccountNumber">Bank Account No.</Label>
+                  <Input id="bankAccountNumber" name="bankAccountNumber" defaultValue={teacher?.bankAccountNumber} />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="ifscCode">IFSC Code</Label>
+                  <Input id="ifscCode" name="ifscCode" defaultValue={teacher?.ifscCode} />
                 </div>
              </div>
           </div>
