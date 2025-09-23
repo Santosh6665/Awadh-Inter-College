@@ -45,17 +45,23 @@ export async function addStudent(
   }
   
   try {
+    const studentData = validatedFields.data;
     const studentsCollection = firestore.collection('students');
-    const studentDoc = studentsCollection.doc(validatedFields.data.rollNumber);
+    const studentDoc = studentsCollection.doc(studentData.rollNumber);
 
     const docSnapshot = await studentDoc.get();
     if (docSnapshot.exists) {
         return { success: false, message: 'A student with this Roll Number already exists.' };
     }
 
-    // Password is no longer set by admin
+    // Fetch school settings to get default fee structure
+    const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
+    const settings = settingsDoc.data();
+    const classFeeStructure = settings?.feeStructure?.[studentData.class] || {};
+
     await studentDoc.set({
-      ...validatedFields.data,
+      ...studentData,
+      feeStructure: classFeeStructure, // Assign default fees for the class
       createdAt: new Date(),
     });
 
