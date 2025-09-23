@@ -43,15 +43,6 @@ const feeHeads = [
     { key: 'discount', label: 'Discount/Concession' },
 ];
 
-const defaultMultipliers = {
-    tuition: 12,
-    transport: 12,
-    computer: 12,
-    admission: 1,
-    exam: 3,
-    miscellaneous: 1,
-};
-
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
@@ -65,14 +56,8 @@ function SubmitButton() {
 export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings }: UpdateFeeStructureFormProps) {
   const { toast } = useToast();
   
-  const actionWithFormData = (prevState: FormState, formData: FormData) => {
-    if (formData.get('paymentPlan') === 'default') {
-      formData.set('paymentPlan', '');
-    }
-    return student ? updateFeeStructure(student.id, prevState, formData) : initialState;
-  };
-
-  const [state, formAction] = useActionState(actionWithFormData, initialState);
+  const action = student ? updateFeeStructure.bind(null, student.id) : async () => initialState;
+  const [state, formAction] = useActionState(action, initialState);
 
   useEffect(() => {
     if (state.success) {
@@ -94,18 +79,13 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
 
   const classDefaults = feeSettings?.feeStructure?.[student.class] || {};
   const studentFeeStructure = student.feeStructure || {};
-  const feeMultipliers = { ...defaultMultipliers, ...(feeSettings?.feeMultipliers || {}) };
+  const feeMultipliers = feeSettings?.feeMultipliers || {};
 
 
   const getFeeValue = (feeHead: string) => {
     return studentFeeStructure[feeHead] ?? '';
   };
   
-  const getPaymentPlanDefaultValue = () => {
-    return studentFeeStructure.paymentPlan || 'default';
-  }
-
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-lg">
@@ -136,20 +116,6 @@ export function UpdateFeeStructureForm({ isOpen, setIsOpen, student, feeSettings
                     />
                 </div>
             ))}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="paymentPlan">Payment Plan</Label>
-            <Select name="paymentPlan" defaultValue={getPaymentPlanDefaultValue()}>
-              <SelectTrigger>
-                <SelectValue placeholder="Use class default plan" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="default">Use Class Default ({classDefaults.paymentPlan || 'monthly'})</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="quarterly">Quarterly</SelectItem>
-                <SelectItem value="yearly">Yearly</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           <DialogFooter>
             <Button variant="outline" type="button" onClick={() => setIsOpen(false)}>
