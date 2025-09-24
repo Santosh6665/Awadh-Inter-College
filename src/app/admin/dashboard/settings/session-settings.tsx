@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -12,16 +12,24 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export function SessionSettings({ settings }: { settings: any }) {
-  const [sessions, setSessions] = useState<string[]>(settings?.sessions || []);
-  const [activeSession, setActiveSession] = useState(settings?.activeSession || '');
-  const [nextSession, setNextSession] = useState(settings?.nextSession || '');
+  const [sessions, setSessions] = useState<string[]>([]);
+  const [activeSession, setActiveSession] = useState('');
+  const [nextSession, setNextSession] = useState('');
   const [newSession, setNewSession] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (settings) {
+      setSessions(settings.sessions || []);
+      setActiveSession(settings.activeSession || '');
+      setNextSession(settings.nextSession || '');
+    }
+  }, [settings]);
+
   const handleAddSession = () => {
     if (newSession && !sessions.includes(newSession) && /^\d{4}-\d{4}$/.test(newSession)) {
-      setSessions([...sessions, newSession].sort());
+      setSessions([...sessions, newSession].sort().reverse());
       setNewSession('');
     } else {
       toast({
@@ -74,7 +82,7 @@ export function SessionSettings({ settings }: { settings: any }) {
             <div className="space-y-2">
               <Label htmlFor="activeSession">Active Session</Label>
               <Select value={activeSession} onValueChange={setActiveSession}>
-                <SelectTrigger>
+                <SelectTrigger id="activeSession">
                   <SelectValue placeholder="Select active session" />
                 </SelectTrigger>
                 <SelectContent>
@@ -85,7 +93,7 @@ export function SessionSettings({ settings }: { settings: any }) {
             <div className="space-y-2">
               <Label htmlFor="nextSession">Next Session (for Promotions)</Label>
                <Select value={nextSession} onValueChange={setNextSession}>
-                <SelectTrigger>
+                <SelectTrigger id="nextSession">
                   <SelectValue placeholder="Select next session" />
                 </SelectTrigger>
                 <SelectContent>
@@ -96,26 +104,28 @@ export function SessionSettings({ settings }: { settings: any }) {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold mb-2">Manage Session List</h3>
-            <div className="flex items-center gap-2 mb-4">
+            <Label htmlFor="new-session-input">Manage Session List</Label>
+            <div className="flex items-center gap-2 mt-2">
               <Input
+                id="new-session-input"
                 placeholder="Enter new session (e.g., 2025-2026)"
                 value={newSession}
                 onChange={(e) => setNewSession(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddSession()}
               />
-              <Button onClick={handleAddSession} size="sm">
+              <Button onClick={handleAddSession} variant="outline">
                 <PlusCircle className="mr-2 h-4 w-4" /> Add
               </Button>
             </div>
-            <div className="space-y-2 rounded-md border p-4 max-h-60 overflow-y-auto">
+            <div className="space-y-2 rounded-md border p-4 mt-4 max-h-60 overflow-y-auto">
               {sessions.length > 0 ? sessions.map(session => (
-                <div key={session} className="flex items-center justify-between">
+                <div key={session} className="flex items-center justify-between hover:bg-muted/50 p-1 rounded-md">
                   <span>{session}</span>
-                  <Button variant="ghost" size="icon" onClick={() => handleRemoveSession(session)}>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleRemoveSession(session)}>
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
                 </div>
-              )) : <p className="text-sm text-muted-foreground text-center">No sessions defined.</p>}
+              )) : <p className="text-sm text-muted-foreground text-center py-4">No sessions defined.</p>}
             </div>
           </div>
         </CardContent>
