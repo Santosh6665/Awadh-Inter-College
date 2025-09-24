@@ -15,8 +15,8 @@ async function checkAdmin() {
 }
 
 export async function getAttendanceByDate(date: string) {
-  await checkAdmin();
   try {
+    await checkAdmin();
     const attendanceSnapshot = await firestore.collection('attendance').doc(date).get();
     if (!attendanceSnapshot.exists) {
       return {};
@@ -30,8 +30,8 @@ export async function getAttendanceByDate(date: string) {
 }
 
 export async function setAttendance(studentId: string, date: string, status: 'present' | 'absent') {
-  await checkAdmin();
   try {
+    await checkAdmin();
     const attendanceDocRef = firestore.collection('attendance').doc(date);
     await attendanceDocRef.set({
       [studentId]: { status }
@@ -41,15 +41,15 @@ export async function setAttendance(studentId: string, date: string, status: 'pr
     revalidatePath('/student');
 
     return { success: true, message: `Attendance for ${studentId} marked as ${status}.` };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error setting attendance:', error);
-    return { success: false, message: 'An unexpected error occurred.' };
+    return { success: false, message: error.message || 'An unexpected error occurred.' };
   }
 }
 
 export async function clearAttendance(studentId: string, date: string) {
-    await checkAdmin();
     try {
+        await checkAdmin();
         const attendanceDocRef = firestore.collection('attendance').doc(date);
         await attendanceDocRef.update({
             [studentId]: FieldValue.delete()
@@ -59,15 +59,15 @@ export async function clearAttendance(studentId: string, date: string) {
         revalidatePath('/student');
 
         return { success: true, message: `Attendance for ${studentId} cleared.` };
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error clearing attendance:', error);
-        return { success: false, message: 'An unexpected error occurred while clearing attendance.' };
+        return { success: false, message: error.message || 'An unexpected error occurred while clearing attendance.' };
     }
 }
 
 export async function getStudentAttendanceHistory(studentId: string): Promise<AttendanceRecord[]> {
-  await checkAdmin();
   try {
+    await checkAdmin();
     const attendanceSnapshot = await firestore.collection('attendance').get();
     const attendanceRecords: AttendanceRecord[] = [];
     
@@ -91,8 +91,8 @@ export async function getStudentAttendanceHistory(studentId: string): Promise<At
 }
 
 export async function isHoliday(date: string): Promise<{ isHoliday: boolean; name?: string }> {
-  await checkAdmin();
   try {
+    await checkAdmin();
     const holidayDoc = await firestore.collection('holidays').doc(date).get();
     if (holidayDoc.exists) {
       return { isHoliday: true, name: holidayDoc.data()?.name || 'Holiday' };
@@ -105,8 +105,8 @@ export async function isHoliday(date: string): Promise<{ isHoliday: boolean; nam
 }
 
 export async function getSchoolStatus(date: string): Promise<{ isClosed: boolean; reason?: string }> {
-  await checkAdmin();
   try {
+    await checkAdmin();
     const statusDoc = await firestore.collection('schoolStatus').doc(date).get();
     if (statusDoc.exists) {
       const data = statusDoc.data();
