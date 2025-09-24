@@ -65,7 +65,7 @@ export type Student = {
     class: string;
     section: string;
     dob: string;
-    phone: string;
+    phone?: string;
     fatherName: string;
     address: string;
     parentPhone?: string;

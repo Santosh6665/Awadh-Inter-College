@@ -128,7 +128,7 @@ export function ResultCard({ student, ranks, settings }: ResultCardProps) {
                 <div><strong>Class/Section:</strong> {`${student.class}-${student.section}`}</div>
                 <div><strong>Date of Birth:</strong> {new Date(student.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</div>
                 <div><strong>Father's Name:</strong> {student.fatherName}</div>
-                <div><strong>Contact No.:</strong> {student.phone}</div>
+                <div><strong>Parent's Phone:</strong> {student.parentPhone || 'N/A'}</div>
               </div>
             </div>
             <div className="border rounded-lg p-4">

@@ -208,10 +208,6 @@ export function StudentDashboard({ student: initialStudent, ranks: initialRanks,
                                             <TableCell>{student.address}</TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell className="font-medium">Student's Phone</TableCell>
-                                            <TableCell>{student.phone}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
                                             <TableCell className="font-medium">Email</TableCell>
                                             <TableCell>{student.email}</TableCell>
                                         </TableRow>

@@ -171,7 +171,7 @@ export function StudentList({ students, settings, selectedSession, setSelectedSe
                   <TableHead>Roll No.</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead className="hidden md:table-cell">Class</TableHead>
-                  <TableHead className="hidden md:table-cell">Phone</TableHead>
+                  <TableHead className="hidden md:table-cell">Parent's Phone</TableHead>
                   <TableHead className="hidden lg:table-cell">Father's Name</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -183,7 +183,7 @@ export function StudentList({ students, settings, selectedSession, setSelectedSe
                       <TableCell>{student.rollNumber}</TableCell>
                       <TableCell className="font-medium">{student.name}</TableCell>
                       <TableCell className="hidden md:table-cell">{`${student.class}-${student.section}`}</TableCell>
-                      <TableCell className="hidden md:table-cell">{student.phone}</TableCell>
+                      <TableCell className="hidden md:table-cell">{student.parentPhone}</TableCell>
                       <TableCell className="hidden lg:table-cell">{student.fatherName}</TableCell>
                       <TableCell className="text-right">
                          <DropdownMenu>
