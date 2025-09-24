@@ -47,7 +47,7 @@ export function calculateAnnualDue(
   const { feeStructure = {}, feeMultipliers = {} } = feeSettings || {};
 
   // Separate payments from carried-over dues
-  const actualPayments = (student.payments || []).filter(p => p.amount > 0);
+  const actualPayments = (student.payments || []).filter(p => p.amount >= 0);
   const carriedOverDues = (student.payments || []).filter(p => p.amount < 0);
 
   const totalPaid = actualPayments.reduce((acc, p) => acc + p.amount, 0);

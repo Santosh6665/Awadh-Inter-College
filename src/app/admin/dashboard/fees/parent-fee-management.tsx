@@ -82,38 +82,46 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
   const parentsData = useMemo<Parent[]>(() => {
     const parentsMap: Record<string, { parentName: string, children: Student[] }> = {};
     
-    const studentsInSession = students.filter(student => student.session === activeSession);
-
-    studentsInSession.forEach(student => {
-      const parentId = student.parentPhone || `no-parent-${student.id}`;
-      if (!parentsMap[parentId]) {
-          parentsMap[parentId] = { parentName: student.fatherName, children: [] };
-      }
-      parentsMap[parentId].children.push(student);
+    students.forEach(student => {
+        const parentId = student.parentPhone || `no-parent-${student.id}`;
+        if (!parentsMap[parentId]) {
+            parentsMap[parentId] = { parentName: student.fatherName, children: [] };
+        }
+        parentsMap[parentId].children.push(student);
     });
-
+    
     return Object.entries(parentsMap).map(([phone, data]) => {
-      let totalFees = 0;
-      let totalPaid = 0;
-      let totalDue = 0;
+        // Find the most recent session for each student within this family
+        const latestChildren = Object.values(data.children.reduce((acc, child) => {
+            const existing = acc[child.rollNumber];
+            if (!existing || child.session > existing.session) {
+                acc[child.rollNumber] = child;
+            }
+            return acc;
+        }, {} as Record<string, Student>));
 
-      data.children.forEach((child) => {
-        const { due, totalAnnualFee, paid } = calculateAnnualDue(child, feeSettings);
-        totalDue += due;
-        totalFees += totalAnnualFee;
-        totalPaid += paid;
-      });
+        let totalFees = 0;
+        let totalPaid = 0;
+        let totalDue = 0;
 
-      return {
-        id: phone,
-        parentName: data.parentName,
-        children: data.children.sort((a, b) => a.name.localeCompare(b.name)),
-        totalFees,
-        totalPaid,
-        totalDue,
-      };
+        latestChildren.forEach((child) => {
+            const { due, totalAnnualFee, paid } = calculateAnnualDue(child, feeSettings);
+            totalDue += due;
+            totalFees += totalAnnualFee;
+            totalPaid += paid;
+        });
+
+        return {
+            id: phone,
+            parentName: data.parentName,
+            children: latestChildren.sort((a, b) => a.name.localeCompare(b.name)),
+            totalFees,
+            totalPaid,
+            totalDue,
+        };
     }).sort((a, b) => a.parentName.localeCompare(b.parentName));
-  }, [students, feeSettings, activeSession]);
+  }, [students, feeSettings]);
+
 
   const filteredParents = parentsData.filter(parent =>
     parent.parentName.toLowerCase().includes(searchQuery.toLowerCase()) ||

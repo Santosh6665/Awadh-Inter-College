@@ -201,20 +201,22 @@ export async function promoteStudents(
         }
         
         // Prepare new student data for the next session
-        const newStudentData = {
+        const newStudentData: Omit<Student, 'id'> = {
           ...studentData,
           class: toClass,
           session: toSession,
           marks: {},
           payments: newPayments,
-          promotedFrom: fromSession,
-          promotedOn: new Date(),
         };
         
         // Create a new document for the student in the new session
         const newStudentId = `${studentData.rollNumber}-${toSession}`;
         const newStudentRef = studentsCollection.doc(newStudentId);
-        batch.set(newStudentRef, newStudentData);
+        
+        // To avoid TypeScript errors about 'id', we create a version without it for batch.set
+        const { id, ...dataToSet } = newStudentData;
+        
+        batch.set(newStudentRef, { ...dataToSet, id: newStudentId });
       }
     }
     
