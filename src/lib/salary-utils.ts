@@ -45,14 +45,11 @@ export function calculateSalary(
     }
     
     // Count present and absent days based on recorded attendance on working days.
-    if (teacherAttendance[dateStr] === 'absent') {
-      absentDays++;
-    } else if (teacherAttendance[dateStr] === 'present') {
+    if (teacherAttendance[dateStr] === 'present') {
       presentDays++;
-    }
-    // If there's no record for a working day, it's considered an absence.
-    else if (!teacherAttendance[dateStr]) {
-        absentDays++;
+    } else {
+      // If there's no record for a working day, or it's 'absent', it's considered an absence.
+      absentDays++;
     }
   }
 
