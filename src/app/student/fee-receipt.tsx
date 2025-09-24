@@ -3,7 +3,7 @@
 
 import { useMemo } from 'react';
 import type { Student, Payment } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFooter } from '@/components/ui/table';
 import { Logo } from '@/components/layout/logo';
 import { Mail, Phone } from 'lucide-react';
@@ -123,38 +123,22 @@ export function FeeReceipt({ student, payment, settings }: FeeReceiptProps) {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center mt-6 text-sm border-t pt-4">
-           <Card className="p-2 bg-muted/50">
-            <CardHeader className="p-1">
-              <CardTitle className="text-xs text-muted-foreground">Annual Fees</CardTitle>
-            </CardHeader>
-            <CardContent className="p-1">
-              <p className="text-lg font-bold">Rs{feeDetails.totalAnnualFee.toFixed(2)}</p>
-            </CardContent>
-          </Card>
-           <Card className="p-2 bg-muted/50">
-            <CardHeader className="p-1">
-              <CardTitle className="text-xs text-muted-foreground">Previous Dues</CardTitle>
-            </CardHeader>
-            <CardContent className="p-1">
-              <p className="text-lg font-bold">Rs{feeDetails.previousSessionDue.toFixed(2)}</p>
-            </CardContent>
-          </Card>
-           <Card className="p-2 bg-muted/50">
-            <CardHeader className="p-1">
-              <CardTitle className="text-xs text-muted-foreground">Total Paid</CardTitle>
-            </CardHeader>
-            <CardContent className="p-1">
-              <p className="text-lg font-bold text-green-600">Rs{feeDetails.totalPaid.toFixed(2)}</p>
-            </CardContent>
-          </Card>
-          <Card className="p-2 bg-muted/50">
-            <CardHeader className="p-1">
-              <CardTitle className="text-xs text-muted-foreground">Balance Due</CardTitle>
-            </CardHeader>
-            <CardContent className="p-1">
-              <p className={cn("text-lg font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>Rs{feeDetails.due.toFixed(2)}</p>
-            </CardContent>
-          </Card>
+           <div className="p-2 rounded-md bg-muted">
+            <p className="text-xs text-muted-foreground">Annual Fees</p>
+            <p className="text-lg font-bold">Rs{feeDetails.totalAnnualFee.toFixed(2)}</p>
+           </div>
+           <div className="p-2 rounded-md bg-muted">
+            <p className="text-xs text-muted-foreground">Previous Dues</p>
+            <p className="text-lg font-bold">Rs{feeDetails.previousSessionDue.toFixed(2)}</p>
+           </div>
+           <div className="p-2 rounded-md bg-muted">
+            <p className="text-xs text-muted-foreground">Total Paid (This Session)</p>
+            <p className="text-lg font-bold text-green-600">Rs{feeDetails.totalPaid.toFixed(2)}</p>
+           </div>
+          <div className="p-2 rounded-md bg-muted">
+            <p className="text-xs text-muted-foreground">Balance Due</p>
+            <p className={cn("text-lg font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>Rs{feeDetails.due.toFixed(2)}</p>
+          </div>
         </div>
 
         <div className="pt-8 mt-4">
