@@ -1,4 +1,5 @@
 
+
 import { z } from 'zod';
 
 export type NewsArticle = {
@@ -50,7 +51,7 @@ export type Payment = {
   id: string;
   date: string;
   amount: number;
-  method: 'Cash' | 'Card' | 'Online' | 'Bank Transfer' | 'Cheque';
+  method: 'Cash' | 'Card' | 'Online' | 'Bank Transfer' | 'Cheque' | 'System';
   month?: string;
   months?: string[];
 };

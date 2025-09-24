@@ -46,21 +46,29 @@ export function calculateAnnualDue(
 ) {
   const { feeStructure = {}, feeMultipliers = {} } = feeSettings || {};
 
-  const totalPaid = (student.payments || []).reduce((acc, p) => acc + p.amount, 0);
+  // Separate payments from carried-over dues
+  const actualPayments = (student.payments || []).filter(p => p.amount > 0);
+  const carriedOverDues = (student.payments || []).filter(p => p.amount < 0);
+
+  const totalPaid = actualPayments.reduce((acc, p) => acc + p.amount, 0);
+  const totalCarriedOverDue = carriedOverDues.reduce((acc, p) => acc + Math.abs(p.amount), 0);
+
 
   const classFeeStructure = feeStructure[student.class] || {};
   const studentFeeOverrides = student.feeStructure || {};
   const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
 
-  // Pass the combined multipliers, but the function will enforce exam: 3
   const combinedMultipliers = { ...defaultMultipliers, ...feeMultipliers };
   let totalAnnualFee = calculateTotalAnnualFee(finalFeeStructure, combinedMultipliers);
   
-  const due = totalAnnualFee - totalPaid;
+  // The total amount to be paid for this session is the session's fee plus any old dues
+  const totalObligation = totalAnnualFee + totalCarriedOverDue;
+  
+  const due = totalObligation - totalPaid;
 
   return {
     due: Math.max(0, due), // Due amount cannot be negative
-    totalAnnualFee: Math.max(0, totalAnnualFee),
+    totalAnnualFee: Math.max(0, totalObligation), // This now represents the total amount to be paid this year
     totalPaid,
     paid: totalPaid,
   };

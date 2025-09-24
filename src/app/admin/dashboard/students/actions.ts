@@ -4,6 +4,8 @@
 import { firestore } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import { calculateAnnualDue } from '@/lib/fee-utils';
+import type { Student } from '@/lib/types';
 
 const StudentSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -48,11 +50,14 @@ export async function addStudent(
   try {
     const studentData = validatedFields.data;
     const studentsCollection = firestore.collection('students');
-    const studentDoc = studentsCollection.doc(studentData.rollNumber);
+    
+    // Construct a unique ID combining roll number and session to avoid collisions
+    const studentId = `${studentData.rollNumber}-${studentData.session}`;
+    const studentDoc = studentsCollection.doc(studentId);
 
     const docSnapshot = await studentDoc.get();
     if (docSnapshot.exists) {
-        return { success: false, message: 'A student with this Roll Number already exists.' };
+        return { success: false, message: `A student with Roll Number ${studentData.rollNumber} already exists in session ${studentData.session}.` };
     }
 
     // Fetch school settings to get default fee structure
@@ -62,6 +67,7 @@ export async function addStudent(
 
     await studentDoc.set({
       ...studentData,
+      id: studentId, // Also store the ID in the document
       feeStructure: classFeeStructure, // Assign default fees for the class
       createdAt: new Date(),
     });
@@ -169,31 +175,44 @@ export async function promoteStudents(
   }
   
   try {
+    const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
+    const feeSettings = settingsDoc.data() || {};
+
     const batch = firestore.batch();
     const studentsCollection = firestore.collection('students');
     
     for (const studentId of studentIds) {
       const studentDoc = await studentsCollection.doc(studentId).get();
       if (studentDoc.exists) {
-        const studentData = { ...studentDoc.data() };
+        const studentData = studentDoc.data() as Student;
+        
+        const { due: pendingDue } = calculateAnnualDue(studentData, feeSettings);
+        
+        const newPayments = [];
+        if (pendingDue > 0) {
+          // Carry forward the pending due as a negative payment (a debit)
+          newPayments.push({
+            id: `due-${fromSession}`,
+            amount: -pendingDue,
+            date: new Date().toISOString(),
+            method: 'System', // Special method for system-generated entries
+            months: [`Due from ${fromSession}`],
+          });
+        }
         
         // Prepare new student data for the next session
         const newStudentData = {
           ...studentData,
           class: toClass,
           session: toSession,
-          // Reset session-specific data
           marks: {},
-          payments: [],
-          // Keep fee structure, or reset it based on school policy
-          // feeStructure: {}, // Optional: Uncomment to reset fee structure
+          payments: newPayments,
           promotedFrom: fromSession,
           promotedOn: new Date(),
         };
         
         // Create a new document for the student in the new session
-        // Using a new ID to avoid conflicts, e.g., rollNumber-session
-        const newStudentId = `${studentId}-${toSession}`;
+        const newStudentId = `${studentData.rollNumber}-${toSession}`;
         const newStudentRef = studentsCollection.doc(newStudentId);
         batch.set(newStudentRef, newStudentData);
       }
