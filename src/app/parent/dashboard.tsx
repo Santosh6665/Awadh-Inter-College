@@ -8,20 +8,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StudentDashboard } from '@/app/student/dashboard';
 import { useMemo, useState } from 'react';
-import { Banknote, Users } from 'lucide-react';
+import { Banknote, Users, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { calculateAnnualDue } from '@/lib/fee-utils';
 import { Button } from '@/components/ui/button';
 import { CombinedFeeHistoryDialog } from '../admin/dashboard/fees/combined-fee-history-dialog';
+import { getChildDataForSession } from './actions';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface ParentDashboardProps {
   parent: { id: string; type: string; name: string };
   childrenWithDetails: (Student & { ranks: { [key in ExamTypes]?: number | null }, attendance: AttendanceRecord[] })[];
   settings: any;
+  allSessions: string[];
 }
 
-export function ParentDashboard({ parent, childrenWithDetails, settings }: ParentDashboardProps) {
+export function ParentDashboard({ parent, childrenWithDetails: initialChildren, settings, allSessions }: ParentDashboardProps) {
   const [isCombinedHistoryOpen, setIsCombinedHistoryOpen] = useState(false);
+  const [childrenWithDetails, setChildrenWithDetails] = useState(initialChildren);
+  const [loadingStates, setLoadingStates] = useState<{[key: string]: boolean}>({});
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -31,13 +36,26 @@ export function ParentDashboard({ parent, childrenWithDetails, settings }: Paren
     return name.substring(0, 2);
   };
 
+  const handleSessionChange = async (rollNumber: string, session: string) => {
+    setLoadingStates(prev => ({...prev, [rollNumber]: true}));
+    const newStudentData = await getChildDataForSession(rollNumber, session);
+    if(newStudentData) {
+        // We don't have ranks and attendance for old sessions, so we pass empty arrays.
+        // A more advanced implementation could fetch this data.
+         setChildrenWithDetails(prev => prev.map(child => 
+            child.rollNumber === rollNumber ? { ...newStudentData, ranks: {}, attendance: [] } : child
+        ));
+    }
+    setLoadingStates(prev => ({...prev, [rollNumber]: false}));
+  };
+
   const parentData: Parent = useMemo(() => {
     let totalFees = 0;
     let totalPaid = 0;
     let totalDue = 0;
 
     childrenWithDetails.forEach((child) => {
-      const { due, totalAnnualFee, paid } = calculateAnnualDue(child, settings);
+      const { due, totalAnnualFee, totalPaid: paid } = calculateAnnualDue(child, settings);
       totalDue += due;
       totalFees += totalAnnualFee;
       totalPaid += paid;
@@ -53,7 +71,7 @@ export function ParentDashboard({ parent, childrenWithDetails, settings }: Paren
     };
   }, [childrenWithDetails, parent, settings]);
 
-  const childrenNames = childrenWithDetails.map(c => c.name).join(', ');
+  const childrenNames = initialChildren.map(c => c.name).join(', ');
 
   return (
     <>
@@ -96,7 +114,7 @@ export function ParentDashboard({ parent, childrenWithDetails, settings }: Paren
                    <Tabs defaultValue={childrenWithDetails[0].id} className="w-full">
                       <div className="flex flex-col md:flex-row gap-4 mb-6 print-hidden">
                           <TabsList className="w-full justify-start overflow-x-auto whitespace-nowrap md:w-auto">
-                              {childrenWithDetails.map(child => (
+                              {initialChildren.map(child => (
                                   <TabsTrigger key={child.id} value={child.id}>{child.name}</TabsTrigger>
                               ))}
                           </TabsList>
@@ -111,13 +129,34 @@ export function ParentDashboard({ parent, childrenWithDetails, settings }: Paren
                       </div>
                       {childrenWithDetails.map(child => (
                           <TabsContent key={child.id} value={child.id} className="mt-6">
-                              <StudentDashboard
-                                  student={child}
-                                  ranks={child.ranks}
-                                  attendance={child.attendance}
-                                  forcePasswordReset={false} // Parents don't reset passwords this way
-                                  settings={settings}
-                              />
+                            <div className="flex justify-end items-center gap-2 mb-4">
+                               <span className="text-sm font-medium">Viewing Session:</span>
+                               <Select
+                                defaultValue={child.session}
+                                onValueChange={(session) => handleSessionChange(child.rollNumber, session)}
+                               >
+                                 <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select Session" />
+                                 </SelectTrigger>
+                                 <SelectContent>
+                                    {allSessions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                                 </SelectContent>
+                               </Select>
+                            </div>
+                             {loadingStates[child.rollNumber] ? (
+                                <div className="flex justify-center items-center h-96">
+                                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                                </div>
+                             ) : (
+                                <StudentDashboard
+                                    student={child}
+                                    ranks={child.ranks}
+                                    attendance={child.attendance}
+                                    settings={settings}
+                                    allSessions={allSessions}
+                                    isParentView={true}
+                                />
+                             )}
                           </TabsContent>
                       ))}
                   </Tabs>

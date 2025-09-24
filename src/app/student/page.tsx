@@ -27,10 +27,11 @@ export default async function StudentPage() {
   let ranks: { [key in ExamTypes]?: number | null } = {};
   let attendance: AttendanceRecord[] = [];
   let settings: any = {};
+  let allSessions: string[] = [];
   
   const examTypes: ExamTypes[] = ['quarterly', 'halfYearly', 'annual'];
   for (const examType of examTypes) {
-      const classmates = await getStudentsByClass(student.class, examType);
+      const classmates = await getStudentsByClass(student.class, student.session);
       const studentsWithPercentage = classmates
           .map(s => {
               const { marks: combinedStudentMarks, examCyclesWithMarks } = combineMarks(s.marks, examType);
@@ -61,6 +62,7 @@ export default async function StudentPage() {
       const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
       if (settingsDoc.exists) {
           settings = settingsDoc.data() || {};
+          allSessions = settings.sessions || [];
       }
   }
 
@@ -68,7 +70,13 @@ export default async function StudentPage() {
     <div className="flex min-h-screen flex-col">
       <Header user={user} />
       <main className="flex-1">
-        <StudentDashboard student={student} ranks={ranks} attendance={attendance} settings={settings} />
+        <StudentDashboard 
+            student={student} 
+            ranks={ranks} 
+            attendance={attendance} 
+            settings={settings}
+            allSessions={allSessions}
+        />
       </main>
     </div>
   );

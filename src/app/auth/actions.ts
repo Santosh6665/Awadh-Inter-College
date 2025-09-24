@@ -117,21 +117,24 @@ export async function login(credentials: z.infer<typeof loginSchema>) {
 
   // Try logging in as Student (roll number based)
   const rollNumber = emailOrRollNumber;
-  const studentDoc = await firestore.collection('students').doc(rollNumber).get();
+  const studentQuery = await firestore.collection('students').where('rollNumber', '==', rollNumber).get();
 
-  if (studentDoc.exists) {
-    const studentData = studentDoc.data() as Student;
-    
+  if (!studentQuery.empty) {
+    // Find the most recent session for the student
+    const studentRecords = studentQuery.docs.map(doc => doc.data() as Student);
+    studentRecords.sort((a, b) => b.session.localeCompare(a.session));
+    const latestStudentRecord = studentRecords[0];
+
     // If password field exists, check against it.
-    if (studentData.password) {
-        if (studentData.password !== password) {
+    if (latestStudentRecord.password) {
+        if (latestStudentRecord.password !== password) {
             return { success: false, message: 'Incorrect password.' };
         }
     } else {
         // Otherwise, check against the default password.
-        const firstNameRaw = studentData.name.split(' ')[0];
+        const firstNameRaw = latestStudentRecord.name.split(' ')[0];
         const firstName = firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1);
-        const yearOfBirth = new Date(studentData.dob).getFullYear();
+        const yearOfBirth = new Date(latestStudentRecord.dob).getFullYear();
         const defaultPassword = `${firstName}@${yearOfBirth}`;
 
         if (password !== defaultPassword) {
@@ -139,8 +142,11 @@ export async function login(credentials: z.infer<typeof loginSchema>) {
         }
     }
 
+    // Use the document ID of the latest record for the session
+    const latestStudentDocId = studentQuery.docs.find(doc => (doc.data() as Student).session === latestStudentRecord.session)!.id;
+
     // Remove the logic that forces a password reset
-    setAuthCookies(studentDoc.id, 'student', studentData.name);
+    setAuthCookies(latestStudentDocId, 'student', latestStudentRecord.name);
     return { success: true, message: 'Student login successful', redirect: '/student' };
   }
 

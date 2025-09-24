@@ -120,10 +120,14 @@ export async function getStudentById(id: string): Promise<Student | null> {
   }
 }
 
-export async function getStudentsByClass(className: string, examType: 'quarterly' | 'halfYearly' | 'annual'): Promise<Student[]> {
+export async function getStudentsByClass(className: string, session: string): Promise<Student[]> {
   if (!className) return [];
   try {
-    const studentsSnapshot = await firestore.collection('students').where('class', '==', className).get();
+    const studentsSnapshot = await firestore.collection('students')
+        .where('class', '==', className)
+        .where('session', '==', session)
+        .get();
+
     if (studentsSnapshot.empty) {
       return [];
     }

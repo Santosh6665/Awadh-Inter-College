@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFooter } from '@/components/ui/table';
-import { Download, CheckCircle, XCircle, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, Edit } from 'lucide-react';
+import { Download, CheckCircle, XCircle, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, Edit, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -17,6 +17,8 @@ import { AttendanceHistory } from './attendance-history';
 import { ResultCard } from './result-card';
 import { calculateAnnualDue } from '@/lib/fee-utils';
 import { FeeHistoryDialog } from '../admin/dashboard/fees/fee-history-dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getStudentById } from './actions';
 
 
 interface StudentDashboardProps {
@@ -24,11 +26,19 @@ interface StudentDashboardProps {
   ranks: { [key in ExamTypes]?: number | null };
   attendance: AttendanceRecord[];
   settings: any;
+  allSessions: string[];
+  isParentView?: boolean;
 }
 
-export function StudentDashboard({ student, ranks, attendance, settings }: StudentDashboardProps) {
+export function StudentDashboard({ student: initialStudent, ranks: initialRanks, attendance: initialAttendance, settings, allSessions, isParentView = false }: StudentDashboardProps) {
   const [receiptToPrint, setReceiptToPrint] = useState<Payment | null>(null);
   const [isFeeHistoryOpen, setIsFeeHistoryOpen] = useState(false);
+
+  const [student, setStudent] = useState(initialStudent);
+  const [ranks, setRanks] = useState(initialRanks);
+  const [attendance, setAttendance] = useState(initialAttendance);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -80,6 +90,21 @@ export function StudentDashboard({ student, ranks, attendance, settings }: Stude
     }
     return payment.month || 'N/A';
   }
+  
+  const handleSessionChange = async (session: string) => {
+    if (isParentView) return; // Parent dashboard handles this separately
+    setIsLoading(true);
+    const newStudentData = await getStudentById(`${student.rollNumber}-${session}`);
+    if (newStudentData) {
+        // Ranks and attendance would need to be re-fetched for the selected session.
+        // For simplicity, we'll clear them for historical views.
+        setStudent(newStudentData);
+        setRanks({});
+        setAttendance([]);
+    }
+    setIsLoading(false);
+  };
+
 
   return (
     <>
@@ -97,8 +122,8 @@ export function StudentDashboard({ student, ranks, attendance, settings }: Stude
             feeSettings={settings}
         />
       <div id="student-dashboard" className="bg-muted/50">
-        <div className="container mx-auto py-8">
-            <Card className="min-h-screen">
+        <div className={cn(!isParentView && "container mx-auto py-8")}>
+            <Card className={cn(!isParentView && "min-h-screen")}>
             <CardHeader className="relative flex flex-col md:flex-row items-start md:items-center p-4 md:p-6 print-hidden gap-4">
                 <Avatar className="h-20 w-20 md:h-24 md:w-24 border">
                     <AvatarImage src={student.photoUrl} alt={student.name} />
@@ -108,8 +133,29 @@ export function StudentDashboard({ student, ranks, attendance, settings }: Stude
                 <CardTitle className="text-2xl md:text-3xl">{student.name}</CardTitle>
                 <CardDescription className="text-base">Welcome to your student portal.</CardDescription>
                 </div>
+                 {!isParentView && allSessions.length > 0 && (
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">Viewing Session:</span>
+                        <Select
+                        defaultValue={student.session}
+                        onValueChange={handleSessionChange}
+                        >
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select Session" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {allSessions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                        </SelectContent>
+                        </Select>
+                    </div>
+                )}
             </CardHeader>
             <CardContent className="pt-0 p-4 md:p-6">
+                {isLoading ? (
+                    <div className="flex justify-center items-center h-96">
+                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                ) : (
                 <Tabs defaultValue="profile" className="w-full">
                 <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-rap">
                     <TabsTrigger value="profile">Profile</TabsTrigger>
@@ -133,6 +179,10 @@ export function StudentDashboard({ student, ranks, attendance, settings }: Stude
                                         <TableRow>
                                             <TableCell className="font-medium">Roll Number</TableCell>
                                             <TableCell>{student.rollNumber}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell className="font-medium">Session</TableCell>
+                                            <TableCell>{student.session}</TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell className="font-medium">Class</TableCell>
@@ -176,7 +226,7 @@ export function StudentDashboard({ student, ranks, attendance, settings }: Stude
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
                                 <div>
                                     <CardTitle>Fee Payment Details</CardTitle>
-                                    <CardDescription>A summary of your fee structure and payment history.</CardDescription>
+                                    <CardDescription>A summary of your fee structure and payment history for session {student.session}.</CardDescription>
                                 </div>
                                 <Button onClick={() => setIsFeeHistoryOpen(true)}>
                                     <Download className="mr-2 h-4 w-4" />
@@ -216,7 +266,7 @@ export function StudentDashboard({ student, ranks, attendance, settings }: Stude
                                     </TableHeader>
                                     <TableBody>
                                         {student.payments && student.payments.length > 0 ? (
-                                            student.payments.slice(0, 5).map(payment => (
+                                            student.payments.filter(p => p.amount > 0).slice(0, 5).map(payment => (
                                                 <TableRow key={payment.id}>
                                                     <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
                                                     <TableCell className="hidden sm:table-cell">{getPaymentPeriod(payment)}</TableCell>
@@ -241,6 +291,7 @@ export function StudentDashboard({ student, ranks, attendance, settings }: Stude
                     </Card>
                 </TabsContent>
                 </Tabs>
+                )}
             </CardContent>
             </Card>
         </div>
