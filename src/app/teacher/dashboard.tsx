@@ -12,7 +12,7 @@ import { AttendanceHistory } from '../student/attendance-history';
 import { AttendanceManagement } from './attendance/attendance-management';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import { SalaryView } from './salary-view';
+import { SalaryView } from './salary/salary-view';
 
 interface TeacherDashboardProps {
   teacher: Teacher;
