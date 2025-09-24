@@ -177,6 +177,7 @@ export async function promoteStudents(
   try {
     const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
     const feeSettings = settingsDoc.data() || {};
+    const defaultFeeStructures = feeSettings.feeStructure || {};
 
     const batch = firestore.batch();
     const studentsCollection = firestore.collection('students');
@@ -200,6 +201,9 @@ export async function promoteStudents(
           });
         }
         
+        // Get the default fee structure for the new class
+        const newClassFeeStructure = defaultFeeStructures[toClass] || {};
+
         // Prepare new student data for the next session
         const newStudentData: Omit<Student, 'id'> = {
           ...studentData,
@@ -207,6 +211,7 @@ export async function promoteStudents(
           session: toSession,
           marks: {},
           payments: newPayments,
+          feeStructure: newClassFeeStructure, // Set the new fee structure
         };
         
         // Create a new document for the student in the new session
