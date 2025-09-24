@@ -34,44 +34,44 @@ export function calculateSalary(
   let absentDays = 0;
   let presentDays = 0;
   
-  // Calculate attendance for the actual days in the month, excluding Sundays.
+  // Correctly calculate attendance only on working days.
   for (let i = 1; i <= actualDaysInMonth; i++) {
     const date = new Date(month.getFullYear(), month.getMonth(), i);
     const dateStr = format(date, 'yyyy-MM-dd');
 
-    // Ignore Sundays (day 0) from attendance calculation.
-    if (date.getDay() === 0) {
-      continue;
-    }
-
-    // Ignore holidays from attendance calculation.
-    if (holidaySet.has(dateStr)) {
+    // Rule: Ignore Sundays (day 0) and holidays from attendance calculation.
+    if (date.getDay() === 0 || holidaySet.has(dateStr)) {
       continue;
     }
     
-    // Count present and absent days based on recorded attendance.
+    // Count present and absent days based on recorded attendance on working days.
     if (teacherAttendance[dateStr] === 'absent') {
       absentDays++;
     } else if (teacherAttendance[dateStr] === 'present') {
       presentDays++;
+    }
+    // If there's no record for a working day, it's considered an absence.
+    else if (!teacherAttendance[dateStr]) {
+        absentDays++;
     }
   }
 
   // Rule: Deduction applies for absent days exceeding the allowed limit.
   const deductionDays = Math.max(0, absentDays - allowedAbsents);
   const deductionAmount = deductionDays * perDaySalary;
+  
   // Rule: Final salary calculation.
   const netSalary = baseSalary - deductionAmount;
   
   // This value is for display purposes and not used in the calculation.
-  const totalPresentDays = presentDays + holidaySet.size;
+  const totalPayableDays = presentDays + holidaySet.size;
 
   return {
     totalDaysInMonth: actualDaysInMonth,
     absentDays,
     holidayDays: holidaySet.size,
     presentDays,
-    totalPresentDays,
+    totalPresentDays: totalPayableDays,
     allowedAbsents,
     deductionDays,
     perDaySalary: Math.round(perDaySalary * 100) / 100,
