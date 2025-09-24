@@ -75,7 +75,7 @@
     {
       "id": "principal-photo",
       "description": "Portrait of the school principal.",
-      "imageUrl": "https://images.unsplash.com/photo-1488282396544-0212eea56a21?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwcmluY2lwYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTg2NTAyODF8MA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/principal-photo.jpg",
       "imageHint": "principal portrait"
     },
     {
