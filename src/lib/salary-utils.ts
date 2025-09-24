@@ -33,23 +33,23 @@ export function calculateSalary(
   const actualDaysInMonth = getDaysInMonth(month);
   let absentDays = 0;
   let presentDays = 0;
+  let workingDays = 0;
   
-  // Correctly calculate attendance only on working days.
+  // Count attendance across all days of the month.
   for (let i = 1; i <= actualDaysInMonth; i++) {
     const date = new Date(month.getFullYear(), month.getMonth(), i);
     const dateStr = format(date, 'yyyy-MM-dd');
-
-    // Rule: Ignore Sundays (day 0) and holidays from attendance calculation.
-    if (date.getDay() === 0 || holidaySet.has(dateStr)) {
-      continue;
-    }
     
-    // Count present and absent days based on recorded attendance on working days.
-    if (teacherAttendance[dateStr] === 'present') {
-      presentDays++;
-    } else {
-      // If there's no record for a working day, or it's 'absent', it's considered an absence.
+    // Check if the teacher was marked absent on any day, including Sundays/holidays.
+    if (teacherAttendance[dateStr] === 'absent') {
       absentDays++;
+    } else if (teacherAttendance[dateStr] === 'present') {
+      presentDays++;
+    }
+
+    // Separately, count the number of potential working days.
+    if (date.getDay() !== 0 && !holidaySet.has(dateStr)) {
+        workingDays++;
     }
   }
 
