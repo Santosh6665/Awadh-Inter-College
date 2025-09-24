@@ -28,13 +28,13 @@ export function SessionSettings({ settings, onSettingsSave }: { settings: any, o
   }, [settings]);
 
   const handleAddSession = () => {
-    if (newSession && !sessions.includes(newSession) && /^\d{4}-\d{4}$/.test(newSession)) {
+    if (newSession && !sessions.includes(newSession) && /^\d{4}-\d{2,4}$/.test(newSession)) {
       setSessions([...sessions, newSession].sort().reverse());
       setNewSession('');
     } else {
       toast({
         title: 'Invalid Session Format',
-        description: 'Please use the YYYY-YYYY format (e.g., 2024-2025).',
+        description: 'Please use the YYYY-YYYY or YYYY-YY format (e.g., 2024-2025 or 2024-25).',
         variant: 'destructive',
       });
     }
@@ -110,7 +110,7 @@ export function SessionSettings({ settings, onSettingsSave }: { settings: any, o
             <div className="flex items-center gap-2 mt-2">
               <Input
                 id="new-session-input"
-                placeholder="Enter new session (e.g., 2025-2026)"
+                placeholder="Enter new session (e.g., 2025-26)"
                 value={newSession}
                 onChange={(e) => setNewSession(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddSession()}
