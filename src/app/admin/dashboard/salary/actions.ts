@@ -53,8 +53,8 @@ export async function getHolidaysInMonth(date: Date) {
 }
 
 export async function getTeacherAttendanceForMonth(date: Date) {
-    await checkAuth();
     try {
+        await checkAuth();
         const start = startOfMonth(date);
         const end = endOfMonth(date);
         
@@ -79,6 +79,7 @@ export async function getTeacherAttendanceForMonth(date: Date) {
         return attendanceByTeacher;
     } catch (error) {
         console.error('Error fetching teacher attendance for month:', error);
+        // Return an empty object on failure to prevent client-side crashes
         return {};
     }
 }
