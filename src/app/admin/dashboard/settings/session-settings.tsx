@@ -28,7 +28,9 @@ export function SessionSettings({ settings, onSettingsSave }: { settings: any, o
   }, [settings]);
 
   const handleAddSession = () => {
-    if (newSession && !sessions.includes(newSession) && /^\d{4}-\d{2,4}$/.test(newSession)) {
+    // Regex to validate YYYY-YYYY or YYYY-YY format
+    const sessionRegex = /^\d{4}-(\d{4}|\d{2})$/;
+    if (newSession && !sessions.includes(newSession) && sessionRegex.test(newSession)) {
       setSessions([...sessions, newSession].sort().reverse());
       setNewSession('');
     } else {
