@@ -53,10 +53,6 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
     return initialState;
   });
 
-  const activeChildSession = selectedSessionPerChild[activeChildRollNumber];
-  const activeChildId = `${activeChildRollNumber}-${activeChildSession}`;
-  const activeChildData = allChildrenData[activeChildId];
-  
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -67,17 +63,29 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
 
   const handleSessionChange = async (rollNumber: string, session: string) => {
     const newStudentId = `${rollNumber}-${session}`;
-    setSelectedSessionPerChild(prev => ({...prev, [rollNumber]: session}));
+    // Immediately update the session selector
+    setSelectedSessionPerChild(prev => ({ ...prev, [rollNumber]: session }));
 
+    // If data for this session isn't loaded yet, fetch it.
     if (!allChildrenData[newStudentId]) {
-        setLoadingStates(prev => ({...prev, [newStudentId]: true}));
+      setLoadingStates(prev => ({ ...prev, [newStudentId]: true }));
+      try {
         const newChildData = await getChildDataForSession(rollNumber, session);
-        if(newChildData) {
-            setAllChildrenData(prev => ({...prev, [newStudentId]: newChildData as ChildData}));
+        if (newChildData) {
+          // Correctly update the state with the new data
+          setAllChildrenData(prev => ({ ...prev, [newStudentId]: newChildData as ChildData }));
+        } else {
+          // Handle case where no data is found for the session
+          console.warn(`No data found for student ${rollNumber} in session ${session}`);
         }
-        setLoadingStates(prev => ({...prev, [newStudentId]: false}));
+      } catch (error) {
+        console.error("Error fetching session data:", error);
+      } finally {
+        setLoadingStates(prev => ({ ...prev, [newStudentId]: false }));
+      }
     }
   };
+
 
   const parentDataForDialog: Parent | null = useMemo(() => {
     const sessionForDialog = selectedSessionPerChild[activeChildRollNumber];
@@ -125,7 +133,7 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
         setIsOpen={setIsCombinedHistoryOpen}
         parent={parentDataForDialog}
         feeSettings={settings}
-        selectedSession={activeChildData ? selectedSessionPerChild[activeChildData.student.rollNumber] : ''}
+        selectedSession={selectedSessionPerChild[activeChildRollNumber] || ''}
       />
       <div id="parent-dashboard" className="bg-muted/50">
         <div className="container mx-auto py-8">
@@ -174,17 +182,18 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                           </Card>
                       </div>
                       {initialChildren.map(child => {
-                        const childSession = selectedSessionPerChild[child.student.rollNumber];
-                        const childIdForSession = `${child.student.rollNumber}-${childSession}`;
+                        const childRollNumber = child.student.rollNumber;
+                        const childSession = selectedSessionPerChild[childRollNumber];
+                        const childIdForSession = `${childRollNumber}-${childSession}`;
                         const childDataForSelectedSession = allChildrenData[childIdForSession];
                         
                         return (
-                          <TabsContent key={child.student.rollNumber} value={child.student.rollNumber} className="mt-6">
+                          <TabsContent key={childRollNumber} value={childRollNumber} className="mt-6">
                             <div className="flex justify-end items-center gap-2 mb-4">
                                <span className="text-sm font-medium">Viewing Session:</span>
                                <Select
-                                value={selectedSessionPerChild[child.student.rollNumber]}
-                                onValueChange={(session) => handleSessionChange(child.student.rollNumber, session)}
+                                value={childSession}
+                                onValueChange={(session) => handleSessionChange(childRollNumber, session)}
                                >
                                  <SelectTrigger className="w-[180px]">
                                     <SelectValue placeholder="Select Session" />
