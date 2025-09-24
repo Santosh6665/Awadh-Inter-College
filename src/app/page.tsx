@@ -342,7 +342,7 @@ export default function HomePage() {
                       </div>
                       <div className="text-center md:text-left">
                           <h3 className="text-2xl font-bold">A Message from the Principal</h3>
-                          <p className="text-lg font-medium text-muted-foreground">Shivam Srivastav</p>
+                          <p className="text-lg font-medium text-muted-foreground">Mr. Shivam Srivastav</p>
                            <div className={cn("prose max-w-none text-muted-foreground mt-4 space-y-4 relative overflow-hidden", !isPrincipalMessageExpanded && "max-h-24")}>
                               <p>
                                   Welcome to Awadh Inter College, a place where we believe in nurturing the future. Our commitment is to provide a safe, positive, and intellectually stimulating environment that will empower students to become creative problem solvers, critical thinkers, and inspired learners prepared for the challenges of the twenty-first century.

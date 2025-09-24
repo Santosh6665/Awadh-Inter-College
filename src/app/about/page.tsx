@@ -63,7 +63,7 @@ export default function AboutUsPage() {
                             </Avatar>
                         </div>
                         <div className="text-center md:text-left">
-                            <h2 className="text-2xl font-bold">Shivam Srivastav</h2>
+                            <h2 className="text-2xl font-bold">Mr. Shivam Srivastav</h2>
                             <p className="text-muted-foreground">Principal, Awadh Inter College</p>
                         </div>
                     </div>
