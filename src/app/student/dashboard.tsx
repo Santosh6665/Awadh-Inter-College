@@ -18,7 +18,7 @@ import { ResultCard } from './result-card';
 import { calculateAnnualDue } from '@/lib/fee-utils';
 import { FeeHistoryDialog } from '../admin/dashboard/fees/fee-history-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getStudentById } from './actions';
+import { getStudentDataForSession } from './actions';
 
 
 interface StudentDashboardProps {
@@ -97,13 +97,16 @@ export function StudentDashboard({ student: initialStudent, ranks: initialRanks,
     if (isParentView) return; // Parent dashboard handles this separately
     setIsLoading(true);
     setSelectedSession(session);
-    const newStudentData = await getStudentById(`${student.rollNumber}-${session}`);
-    if (newStudentData) {
-        // Ranks and attendance would need to be re-fetched for the selected session.
-        // For simplicity, we'll clear them for historical views.
-        setStudent(newStudentData);
-        setRanks({});
-        setAttendance([]);
+    const studentIdForSession = `${student.rollNumber}-${session}`;
+    const data = await getStudentDataForSession(studentIdForSession);
+    
+    if (data) {
+        setStudent(data.student);
+        setRanks(data.ranks);
+        setAttendance(data.attendance);
+    } else {
+        // Handle case where data for a session is not found
+        console.error(`Data for session ${session} not found for student ${student.rollNumber}`);
     }
     setIsLoading(false);
   };

@@ -4,8 +4,7 @@ import { Header } from '@/components/layout/header';
 import type { Student, AttendanceRecord, ExamTypes } from '@/lib/types';
 import { getLoggedInUser } from '../auth/actions';
 import { getChildrenForParent } from './actions';
-import { getStudentAttendance, getStudentsByClass } from '@/app/student/actions';
-import { calculateCumulativePercentage, combineMarks } from '@/lib/result-utils';
+import { getStudentDataForSession } from '@/app/student/actions';
 import { firestore } from '@/lib/firebase-admin';
 import { ParentDashboard } from './dashboard';
 
@@ -39,38 +38,12 @@ export default async function ParentPage() {
 
   // Fetch detailed data for each child
   const childrenWithDetails = await Promise.all(activeSessionChildren.map(async (child) => {
-    let ranks: { [key in ExamTypes]?: number | null } = {};
-    const examTypes: ExamTypes[] = ['quarterly', 'halfYearly', 'annual'];
-    
-    for (const examType of examTypes) {
-      const classmates = await getStudentsByClass(child.class, child.session);
-      const studentsWithPercentage = classmates
-          .map(s => {
-              const { marks: combinedStudentMarks, examCyclesWithMarks } = combineMarks(s.marks, examType);
-              return {
-                  id: s.id,
-                  percentage: calculateCumulativePercentage(combinedStudentMarks, examCyclesWithMarks, s.class),
-              }
-          })
-          .filter(s => s.percentage !== null);
-      
-      studentsWithPercentage.sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0));
-
-      let currentRank = 0;
-      for (let i = 0; i < studentsWithPercentage.length; i++) {
-          if (i === 0 || studentsWithPercentage[i].percentage! < studentsWithPercentage[i-1].percentage!) {
-              currentRank = i + 1;
-          }
-          if (studentsWithPercentage[i].id === child.id) {
-              ranks[examType] = currentRank;
-              break;
-          }
-      }
-    }
-    
-    const attendance = await getStudentAttendance(child.id);
-
-    return { ...child, ranks, attendance };
+    const data = await getStudentDataForSession(child.id);
+    return {
+        student: { ...child, ...data?.student },
+        ranks: data?.ranks || {},
+        attendance: data?.attendance || [],
+    };
   }));
 
   return (

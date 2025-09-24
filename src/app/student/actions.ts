@@ -5,7 +5,8 @@ import { z } from 'zod';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { firestore } from '@/lib/firebase-admin';
-import type { Student, AttendanceRecord } from '@/lib/types';
+import type { Student, AttendanceRecord, ExamTypes } from '@/lib/types';
+import { calculateCumulativePercentage, combineMarks } from '@/lib/result-utils';
 
 const loginSchema = z.object({
   rollNumber: z.string(),
@@ -204,4 +205,44 @@ export async function getLoggedInStudent(): Promise<Student | null> {
         return await getStudentById(studentId);
     }
     return null;
+}
+
+export async function getStudentDataForSession(studentId: string) {
+  const student = await getStudentById(studentId);
+  if (!student) {
+    return null;
+  }
+
+  let ranks: { [key in ExamTypes]?: number | null } = {};
+  const examTypes: ExamTypes[] = ['quarterly', 'halfYearly', 'annual'];
+  
+  for (const examType of examTypes) {
+    const classmates = await getStudentsByClass(student.class, student.session);
+    const studentsWithPercentage = classmates
+      .map(s => {
+        const { marks: combinedStudentMarks, examCyclesWithMarks } = combineMarks(s.marks, examType);
+        return {
+          id: s.id,
+          percentage: calculateCumulativePercentage(combinedStudentMarks, examCyclesWithMarks, s.class),
+        };
+      })
+      .filter(s => s.percentage !== null);
+      
+    studentsWithPercentage.sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0));
+
+    let currentRank = 0;
+    for (let i = 0; i < studentsWithPercentage.length; i++) {
+      if (i === 0 || studentsWithPercentage[i].percentage! < studentsWithPercentage[i - 1].percentage!) {
+        currentRank = i + 1;
+      }
+      if (studentsWithPercentage[i].id === student.id) {
+        ranks[examType] = currentRank;
+        break;
+      }
+    }
+  }
+  
+  const attendance = await getStudentAttendance(studentId);
+
+  return { student, ranks, attendance };
 }

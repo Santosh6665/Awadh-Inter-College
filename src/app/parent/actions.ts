@@ -3,7 +3,7 @@
 
 import { firestore } from '@/lib/firebase-admin';
 import type { Student } from '@/lib/types';
-import { getStudentAttendance, getStudentsByClass, getStudentById } from '@/app/student/actions';
+import { getStudentAttendance, getStudentsByClass, getStudentById, getStudentDataForSession } from '@/app/student/actions';
 
 export async function getChildrenForParent(parentPhone: string): Promise<Student[]> {
   try {
@@ -41,6 +41,5 @@ export async function getChildrenForParent(parentPhone: string): Promise<Student
 
 export async function getChildDataForSession(rollNumber: string, session: string) {
     const studentId = `${rollNumber}-${session}`;
-    const student = await getStudentById(studentId);
-    return student;
+    return getStudentDataForSession(studentId);
 }

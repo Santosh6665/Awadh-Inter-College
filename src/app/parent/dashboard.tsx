@@ -16,9 +16,15 @@ import { CombinedFeeHistoryDialog } from '@/app/parent/combined-fee-history-dial
 import { getChildDataForSession } from './actions';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
+type ChildData = {
+  student: Student;
+  ranks: { [key in ExamTypes]?: number | null };
+  attendance: AttendanceRecord[];
+};
+
 interface ParentDashboardProps {
   parent: { id: string; type: string; name: string };
-  childrenWithDetails: (Student & { ranks: { [key in ExamTypes]?: number | null }, attendance: AttendanceRecord[] })[];
+  childrenWithDetails: ChildData[];
   settings: any;
   allSessions: string[];
 }
@@ -26,23 +32,30 @@ interface ParentDashboardProps {
 export function ParentDashboard({ parent, childrenWithDetails: initialChildren, settings, allSessions }: ParentDashboardProps) {
   const [isCombinedHistoryOpen, setIsCombinedHistoryOpen] = useState(false);
   
-  // This state will hold the data for all children across all fetched sessions
-  const [allChildrenData, setAllChildrenData] = useState<Student[]>(initialChildren);
+  const [allChildrenData, setAllChildrenData] = useState<Record<string, ChildData>>(() => {
+    const initialData: Record<string, ChildData> = {};
+    initialChildren.forEach(child => {
+      initialData[child.student.id] = child;
+    });
+    return initialData;
+  });
+  
   const [loadingStates, setLoadingStates] = useState<{[key: string]: boolean}>({});
 
-  const [activeChildRollNumber, setActiveChildRollNumber] = useState(initialChildren[0]?.rollNumber || '');
+  const firstChildRollNumber = initialChildren[0]?.student.rollNumber || '';
+  const [activeChildRollNumber, setActiveChildRollNumber] = useState(firstChildRollNumber);
+  
   const [selectedSessionPerChild, setSelectedSessionPerChild] = useState<Record<string, string>>(() => {
     const initialState: Record<string, string> = {};
     initialChildren.forEach(child => {
-        initialState[child.rollNumber] = child.session;
+        initialState[child.student.rollNumber] = child.student.session;
     });
     return initialState;
   });
 
-  const activeChild = useMemo(() => {
-    const session = selectedSessionPerChild[activeChildRollNumber];
-    return allChildrenData.find(c => c.rollNumber === activeChildRollNumber && c.session === session);
-  }, [allChildrenData, activeChildRollNumber, selectedSessionPerChild]);
+  const activeChildSession = selectedSessionPerChild[activeChildRollNumber];
+  const activeChildId = `${activeChildRollNumber}-${activeChildSession}`;
+  const activeChildData = allChildrenData[activeChildId];
   
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -53,33 +66,28 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
   };
 
   const handleSessionChange = async (rollNumber: string, session: string) => {
-    setLoadingStates(prev => ({...prev, [rollNumber]: true}));
+    const newStudentId = `${rollNumber}-${session}`;
     setSelectedSessionPerChild(prev => ({...prev, [rollNumber]: session}));
 
-    // Check if we already have the data for this session
-    const existingData = allChildrenData.find(c => c.rollNumber === rollNumber && c.session === session);
-    if (!existingData) {
-        const newStudentData = await getChildDataForSession(rollNumber, session);
-        if(newStudentData) {
-            setAllChildrenData(prev => [...prev, newStudentData]);
+    if (!allChildrenData[newStudentId]) {
+        setLoadingStates(prev => ({...prev, [newStudentId]: true}));
+        const newChildData = await getChildDataForSession(rollNumber, session);
+        if(newChildData) {
+            setAllChildrenData(prev => ({...prev, [newStudentId]: newChildData as ChildData}));
         }
+        setLoadingStates(prev => ({...prev, [newStudentId]: false}));
     }
-    setLoadingStates(prev => ({...prev, [rollNumber]: false}));
   };
 
   const parentDataForDialog: Parent | null = useMemo(() => {
-    if (!activeChild) return null;
+    if (!activeChildData) return null;
     
-    const selectedSession = selectedSessionPerChild[activeChild.rollNumber];
+    const selectedSession = selectedSessionPerChild[activeChildData.student.rollNumber];
     
-    // We need all original records to calculate dues correctly across sessions
-    const childrenForCalculation = initialChildren.map(child => {
-        // Use the session-specific data if it's the one we're viewing, but keep full payment history.
-        const sessionData = allChildrenData.find(c => c.rollNumber === child.rollNumber && c.session === selectedSession);
-        return {
-            ...(sessionData || child),
-            payments: child.payments,
-        };
+    const allStudentRecords = Object.values(allChildrenData).map(d => d.student);
+
+    const childrenForCalculation = initialChildren.map(childInfo => {
+        return allStudentRecords.find(s => s.rollNumber === childInfo.student.rollNumber) || childInfo.student;
     });
 
     let totalFees = 0;
@@ -101,9 +109,9 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
       totalPaid,
       totalDue,
     };
-  }, [activeChild, allChildrenData, initialChildren, parent, settings, selectedSessionPerChild]);
+  }, [activeChildData, allChildrenData, initialChildren, parent, settings, selectedSessionPerChild]);
 
-  const childrenNames = initialChildren.map(c => c.name).join(', ');
+  const childrenNames = initialChildren.map(c => c.student.name).join(', ');
 
   return (
     <>
@@ -112,7 +120,7 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
         setIsOpen={setIsCombinedHistoryOpen}
         parent={parentDataForDialog}
         feeSettings={settings}
-        selectedSession={activeChild ? selectedSessionPerChild[activeChild.rollNumber] : ''}
+        selectedSession={activeChildData ? selectedSessionPerChild[activeChildData.student.rollNumber] : ''}
       />
       <div id="parent-dashboard" className="bg-muted/50">
         <div className="container mx-auto py-8">
@@ -144,11 +152,11 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                   )}
               </CardHeader>
               <CardContent>
-                   <Tabs defaultValue={initialChildren[0]?.rollNumber} className="w-full" onValueChange={setActiveChildRollNumber}>
+                   <Tabs defaultValue={firstChildRollNumber} className="w-full" onValueChange={setActiveChildRollNumber}>
                       <div className="flex flex-col md:flex-row gap-4 mb-6 print-hidden">
                           <TabsList className="w-full justify-start overflow-x-auto whitespace-nowrap md:w-auto">
                               {initialChildren.map(child => (
-                                  <TabsTrigger key={child.rollNumber} value={child.rollNumber}>{child.name}</TabsTrigger>
+                                  <TabsTrigger key={child.student.rollNumber} value={child.student.rollNumber}>{child.student.name}</TabsTrigger>
                               ))}
                           </TabsList>
                            <Card className="flex-1">
@@ -161,16 +169,17 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                           </Card>
                       </div>
                       {initialChildren.map(child => {
-                        const childDataForSelectedSession = allChildrenData.find(c => c.rollNumber === child.rollNumber && c.session === selectedSessionPerChild[child.rollNumber]);
-                        const initialData = initialChildren.find(c => c.rollNumber === child.rollNumber);
+                        const childSession = selectedSessionPerChild[child.student.rollNumber];
+                        const childIdForSession = `${child.student.rollNumber}-${childSession}`;
+                        const childDataForSelectedSession = allChildrenData[childIdForSession];
                         
                         return (
-                          <TabsContent key={child.rollNumber} value={child.rollNumber} className="mt-6">
+                          <TabsContent key={child.student.rollNumber} value={child.student.rollNumber} className="mt-6">
                             <div className="flex justify-end items-center gap-2 mb-4">
                                <span className="text-sm font-medium">Viewing Session:</span>
                                <Select
-                                value={selectedSessionPerChild[child.rollNumber]}
-                                onValueChange={(session) => handleSessionChange(child.rollNumber, session)}
+                                value={selectedSessionPerChild[child.student.rollNumber]}
+                                onValueChange={(session) => handleSessionChange(child.student.rollNumber, session)}
                                >
                                  <SelectTrigger className="w-[180px]">
                                     <SelectValue placeholder="Select Session" />
@@ -180,15 +189,15 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                                  </SelectContent>
                                </Select>
                             </div>
-                             {loadingStates[child.rollNumber] ? (
+                             {loadingStates[childIdForSession] ? (
                                 <div className="flex justify-center items-center h-96">
                                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                                 </div>
-                             ) : childDataForSelectedSession && initialData ? (
+                             ) : childDataForSelectedSession ? (
                                 <StudentDashboard
-                                    student={{...childDataForSelectedSession, payments: initialData.payments }}
-                                    ranks={initialData.ranks}
-                                    attendance={initialData.attendance}
+                                    student={{...childDataForSelectedSession.student, payments: child.student.payments }}
+                                    ranks={childDataForSelectedSession.ranks}
+                                    attendance={childDataForSelectedSession.attendance}
                                     settings={settings}
                                     allSessions={allSessions}
                                     isParentView={true}
