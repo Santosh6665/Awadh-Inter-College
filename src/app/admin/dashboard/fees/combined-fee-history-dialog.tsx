@@ -130,18 +130,22 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
                 <h3 className="text-lg font-semibold mb-2">Children Summary</h3>
                 <div className="space-y-4">
                     {parent.children.map((child) => {
-                    const { totalAnnualFee, totalPaid, due } = calculateAnnualDue(child, feeSettings);
+                    const { totalAnnualFee, totalPaid, due, previousSessionDue } = calculateAnnualDue(child, feeSettings);
                     return (
                         <Card key={child.id} className="bg-muted/30">
                         <CardHeader className="p-3">
                             <CardTitle className="text-base">{child.name}</CardTitle>
-                            <CardDescription>{`Class ${child.class}-${child.section}`}</CardDescription>
+                            <CardDescription>{`Class ${child.class}-${child.section} (Session: ${child.session})`}</CardDescription>
                         </CardHeader>
                         <CardContent className="p-3 pt-0">
-                            <div className="grid grid-cols-3 gap-2 text-center text-sm">
+                            <div className="grid grid-cols-4 gap-2 text-center text-sm">
                                 <div className="p-1 rounded bg-background">
-                                <p className="text-xs text-muted-foreground">Total Fees</p>
+                                <p className="text-xs text-muted-foreground">Annual Fees</p>
                                 <p className="font-bold">Rs{totalAnnualFee.toFixed(2)}</p>
+                                </div>
+                                <div className="p-1 rounded bg-background">
+                                <p className="text-xs text-muted-foreground">Previous Dues</p>
+                                <p className="font-bold">Rs{previousSessionDue.toFixed(2)}</p>
                                 </div>
                                 <div className="p-1 rounded bg-background">
                                 <p className="text-xs text-muted-foreground">Total Paid</p>
@@ -166,7 +170,7 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
                         <TableRow>
                         <TableHead>Date</TableHead>
                         <TableHead>Child</TableHead>
-                        <TableHead>Period</TableHead>
+                        <TableHead>Period/Notes</TableHead>
                         <TableHead>Method</TableHead>
                         <TableHead className="text-right">Amount (Rs)</TableHead>
                         </TableRow>
@@ -179,7 +183,9 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
                             <TableCell>{payment.childName}</TableCell>
                             <TableCell>{getPaymentPeriod(payment)}</TableCell>
                             <TableCell>{payment.method}</TableCell>
-                            <TableCell className="text-right">Rs{payment.amount.toFixed(2)}</TableCell>
+                            <TableCell className={cn("text-right", payment.amount < 0 && "text-destructive")}>
+                                {payment.amount < 0 ? `(Rs${Math.abs(payment.amount).toFixed(2)})` : `Rs${payment.amount.toFixed(2)}`}
+                            </TableCell>
                             </TableRow>
                         ))
                         ) : (

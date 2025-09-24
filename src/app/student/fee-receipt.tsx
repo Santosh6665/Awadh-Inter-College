@@ -41,6 +41,16 @@ export function FeeReceipt({ student, payment, settings }: FeeReceiptProps) {
     return words.charAt(0).toUpperCase() + words.slice(1) + ' only';
   };
 
+  const getPaymentPeriod = (payment: Payment) => {
+    if (payment.months?.length === 12) {
+      return 'Full Session';
+    }
+    if (payment.months && payment.months.length > 0) {
+      return payment.months.join(', ');
+    }
+    return payment.month || 'N/A';
+  }
+
   return (
     <Card className="w-full max-w-2xl mx-auto border-2 shadow-none rounded-none print-area">
       <CardHeader className="p-4 bg-muted/30">
@@ -76,7 +86,8 @@ export function FeeReceipt({ student, payment, settings }: FeeReceiptProps) {
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
             <div><strong>Name:</strong> {student.name}</div>
             <div><strong>Roll No.:</strong> {student.rollNumber}</div>
-            <div><strong>Class:</strong> {`${student.class}-${student.section}`}</div>
+             <div><strong>Class:</strong> {`${student.class}-${student.section}`}</div>
+             <div><strong>Session:</strong> {student.session}</div>
             <div><strong>Father's Name:</strong> {student.fatherName}</div>
           </div>
         </div>
@@ -92,7 +103,7 @@ export function FeeReceipt({ student, payment, settings }: FeeReceiptProps) {
           <TableBody>
             <TableRow>
               <TableCell>
-                <p className="font-medium">Fee Payment</p>
+                <p className="font-medium">Fee for {getPaymentPeriod(payment)}</p>
                 <p className="text-xs text-muted-foreground">Payment Method: {payment.method}</p>
               </TableCell>
               <TableCell className="text-right font-mono">{payment.amount.toFixed(2)}</TableCell>
@@ -110,18 +121,34 @@ export function FeeReceipt({ student, payment, settings }: FeeReceiptProps) {
           <strong>Amount in Words:</strong> {amountInWords(payment.amount)}
         </p>
 
-        <div className="grid grid-cols-2 gap-4 text-center mt-6 text-sm border-t pt-4">
-          <Card className="p-2 bg-muted/50">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center mt-6 text-sm border-t pt-4">
+           <Card className="p-2 bg-muted/50">
             <CardHeader className="p-1">
-              <CardTitle className="text-xs text-muted-foreground">Total Annual Fees</CardTitle>
+              <CardTitle className="text-xs text-muted-foreground">Annual Fees</CardTitle>
             </CardHeader>
             <CardContent className="p-1">
               <p className="text-lg font-bold">Rs{feeDetails.totalAnnualFee.toFixed(2)}</p>
             </CardContent>
           </Card>
+           <Card className="p-2 bg-muted/50">
+            <CardHeader className="p-1">
+              <CardTitle className="text-xs text-muted-foreground">Previous Dues</CardTitle>
+            </CardHeader>
+            <CardContent className="p-1">
+              <p className="text-lg font-bold">Rs{feeDetails.previousSessionDue.toFixed(2)}</p>
+            </CardContent>
+          </Card>
+           <Card className="p-2 bg-muted/50">
+            <CardHeader className="p-1">
+              <CardTitle className="text-xs text-muted-foreground">Total Paid</CardTitle>
+            </CardHeader>
+            <CardContent className="p-1">
+              <p className="text-lg font-bold text-green-600">Rs{feeDetails.totalPaid.toFixed(2)}</p>
+            </CardContent>
+          </Card>
           <Card className="p-2 bg-muted/50">
             <CardHeader className="p-1">
-              <CardTitle className="text-xs text-muted-foreground">Balance Due After Payment</CardTitle>
+              <CardTitle className="text-xs text-muted-foreground">Balance Due</CardTitle>
             </CardHeader>
             <CardContent className="p-1">
               <p className={cn("text-lg font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>Rs{feeDetails.due.toFixed(2)}</p>

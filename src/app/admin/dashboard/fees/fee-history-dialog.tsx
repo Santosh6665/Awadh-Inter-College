@@ -40,7 +40,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
     if (!student) return null;
     
     // Use the centralized fee calculation logic to ensure consistency
-    const { totalAnnualFee, totalPaid, due } = calculateAnnualDue(student, feeSettings);
+    const { totalAnnualFee, totalPaid, due, previousSessionDue } = calculateAnnualDue(student, feeSettings);
 
     const classFeeStructure = feeSettings.feeStructure?.[student.class] || {};
     const studentFeeOverrides = student.feeStructure || {};
@@ -71,7 +71,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
       structuredFees.push({ head: 'Discount/Concession', calculation: `Rs ${discount} × 1`, amount: -discount });
     }
 
-    return { structuredFees, totalFees: totalAnnualFee, totalPaid, due };
+    return { structuredFees, totalFees: totalAnnualFee, totalPaid, due, previousDues: previousSessionDue };
   }, [student, feeSettings]);
 
   if (!student || !feeDetails) return null;
@@ -143,7 +143,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
               </div>
             </div>
             <div className="text-center mt-2">
-              <Badge variant="secondary" className="text-base font-bold tracking-wider">💰 STUDENT FEE RECEIPT</Badge>
+              <Badge variant="secondary" className="text-base font-bold tracking-wider">💰 STUDENT FEE SUMMARY</Badge>
             </div>
         </CardHeader>
         <CardContent className="p-4 space-y-6">
@@ -153,12 +153,13 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
                     <div><strong>Name:</strong> {student.name}</div>
                     <div><strong>Roll No.:</strong> {student.rollNumber}</div>
                     <div><strong>Class/Section:</strong> {`${student.class}-${student.section}`}</div>
+                    <div><strong>Session:</strong> {student.session}</div>
                     <div><strong>Father's Name:</strong> {student.fatherName}</div>
                 </div>
             </div>
             
             <div>
-                <h3 className="text-lg font-semibold mb-2">Fee Structure (Annual)</h3>
+                <h3 className="text-lg font-semibold mb-2">Fee Structure (Session: {student.session})</h3>
                 <Table>
                 <TableHeader>
                     <TableRow>
@@ -191,7 +192,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
                 <TableHeader>
                     <TableRow>
                     <TableHead>Date</TableHead>
-                    <TableHead>Period</TableHead>
+                    <TableHead>Period/Notes</TableHead>
                     <TableHead>Method</TableHead>
                     <TableHead className="text-right">Amount (Rs)</TableHead>
                     </TableRow>
@@ -203,7 +204,9 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
                           <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
                           <TableCell>{getPaymentPeriod(payment)}</TableCell>
                           <TableCell>{payment.method}</TableCell>
-                          <TableCell className="text-right">Rs{payment.amount.toFixed(2)}</TableCell>
+                          <TableCell className={cn("text-right", payment.amount < 0 && "text-destructive")}>
+                            {payment.amount < 0 ? `(Rs${Math.abs(payment.amount).toFixed(2)})` : `Rs${payment.amount.toFixed(2)}`}
+                          </TableCell>
                         </TableRow>
                     ))
                     ) : (
@@ -215,10 +218,14 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
                 </Table>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center border-t pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center border-t pt-4">
                 <div className="p-2 rounded-md bg-muted">
-                <p className="text-sm text-muted-foreground">Total Fees</p>
+                <p className="text-sm text-muted-foreground">Annual Fees</p>
                 <p className="text-xl font-bold">Rs{feeDetails.totalFees.toFixed(2)}</p>
+                </div>
+                 <div className="p-2 rounded-md bg-muted">
+                <p className="text-sm text-muted-foreground">Previous Dues</p>
+                <p className="text-xl font-bold">Rs{feeDetails.previousDues.toFixed(2)}</p>
                 </div>
                 <div className="p-2 rounded-md bg-muted">
                 <p className="text-sm text-muted-foreground">Total Paid</p>
