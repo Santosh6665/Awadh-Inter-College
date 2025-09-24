@@ -32,8 +32,9 @@ export default function AdminDashboardPage({ students, teachers, settings: initi
   const [settings, setSettings] = useState(initialSettings);
   
   const activeSession = settings.activeSession || new Date().getFullYear() + '-' + (new Date().getFullYear() + 1);
-  const studentsInSession = students.filter(s => s.session === activeSession);
-  const teachersInSession = teachers.filter(t => t.session === activeSession);
+  
+  const studentsInSession = useMemo(() => students.filter(s => s.session === activeSession), [students, activeSession]);
+  const teachersInSession = useMemo(() => teachers.filter(t => t.session === activeSession), [teachers, activeSession]);
 
 
   const totalFeesCollected = studentsInSession.reduce((acc, student) => {
@@ -180,19 +181,19 @@ export default function AdminDashboardPage({ students, teachers, settings: initi
             <TeacherList teachers={teachers} settings={settings}/>
           </TabsContent>
            <TabsContent value="results" className="mt-4">
-            <ResultsManagement students={students} settings={settings} />
+            <ResultsManagement students={studentsInSession} settings={settings} />
           </TabsContent>
           <TabsContent value="attendance" className="mt-4">
-            <AttendanceManagement students={students} />
+            <AttendanceManagement students={studentsInSession} />
           </TabsContent>
            <TabsContent value="teacher-attendance" className="mt-4">
-            <TeacherAttendanceManagement teachers={teachers} />
+            <TeacherAttendanceManagement teachers={teachersInSession} />
           </TabsContent>
            <TabsContent value="fees" className="mt-4">
             <FeeManagement students={students} feeSettings={settings} />
           </TabsContent>
            <TabsContent value="teacher-salary" className="mt-4">
-            <SalaryManagement teachers={teachers} />
+            <SalaryManagement teachers={teachersInSession} />
           </TabsContent>
           <TabsContent value="notices" className="mt-4">
             <NoticeManagement notices={notices} />

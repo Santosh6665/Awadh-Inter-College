@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { Teacher } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -30,14 +30,18 @@ import { TeacherForm } from './teacher-form';
 import { deleteTeacher, toggleAttendancePermission, toggleResultsPermission } from './actions';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export function TeacherList({ teachers }: { teachers: Teacher[] }) {
+export function TeacherList({ teachers, settings }: { teachers: Teacher[], settings: any }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [teacherToDelete, setTeacherToDelete] = useState<string | null>(null);
   const { toast } = useToast();
+  
+  const sessions = settings?.sessions || [];
+  const [selectedSession, setSelectedSession] = useState(settings?.activeSession || '');
   
   const handleEdit = (teacher: Teacher) => {
     setSelectedTeacher(teacher);
@@ -91,11 +95,12 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
   };
 
 
-  const filteredTeachers = teachers.filter(teacher => {
+  const filteredTeachers = useMemo(() => teachers.filter(teacher => {
+    const sessionMatch = teacher.session === selectedSession;
     const nameMatch = teacher.name.toLowerCase().includes(searchQuery.toLowerCase());
     const subjectMatch = teacher.subject.toLowerCase().includes(searchQuery.toLowerCase());
-    return nameMatch || subjectMatch;
-  });
+    return sessionMatch && (nameMatch || subjectMatch);
+  }), [teachers, searchQuery, selectedSession]);
 
   return (
     <>
@@ -106,9 +111,19 @@ export function TeacherList({ teachers }: { teachers: Teacher[] }) {
                 <CardTitle>Manage Teachers</CardTitle>
                 <CardDescription>Add, edit, or remove teacher records and set permissions.</CardDescription>
             </div>
-            <Button onClick={handleAddNew} size="sm" className="w-full md:w-auto">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Teacher
-            </Button>
+            <div className="flex items-center gap-2 w-full md:w-auto">
+               <Select value={selectedSession} onValueChange={setSelectedSession}>
+                  <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Session" />
+                  </SelectTrigger>
+                  <SelectContent>
+                      {sessions.map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  </SelectContent>
+              </Select>
+              <Button onClick={handleAddNew} size="sm" className="flex-shrink-0">
+                <PlusCircle className="mr-2 h-4 w-4" /> Add Teacher
+              </Button>
+            </div>
           </div>
           <div className="mt-4 flex items-center gap-4">
             <div className="relative w-full">
