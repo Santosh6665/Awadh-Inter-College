@@ -12,6 +12,7 @@ import { AttendanceHistory } from '../student/attendance-history';
 import { AttendanceManagement } from './attendance/attendance-management';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SalaryView } from './salary-view';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 
 interface TeacherDashboardProps {
   teacher: Teacher;
