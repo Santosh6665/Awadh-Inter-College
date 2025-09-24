@@ -11,6 +11,7 @@ import { useMemo, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { AttendanceManagement } from './attendance/attendance-management';
+import { SalaryView } from './salary/salary-view';
 
 interface TeacherDashboardProps {
   teacher: Teacher;
@@ -68,6 +69,7 @@ export function TeacherDashboard({ teacher, students, forcePasswordReset, settin
                         <TabsTrigger value="profile">Profile</TabsTrigger>
                         <TabsTrigger value="attendance">Student Attendance</TabsTrigger>
                         <TabsTrigger value="results">Manage Results</TabsTrigger>
+                        <TabsTrigger value="salary">Salary Slip</TabsTrigger>
                     </TabsList>
                     <TabsContent value="profile" className="mt-6 space-y-6">
                         <Card>
@@ -125,6 +127,9 @@ export function TeacherDashboard({ teacher, students, forcePasswordReset, settin
                     </TabsContent>
                     <TabsContent value="results" className="mt-6">
                         <ResultsManagement students={studentsInSession} teacher={teacher} settings={settings} />
+                    </TabsContent>
+                    <TabsContent value="salary" className="mt-6">
+                      <SalaryView teacher={teacher} />
                     </TabsContent>
                 </Tabs>
                 </CardContent>
