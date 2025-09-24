@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -208,6 +207,7 @@ export function TeacherList({ teachers, settings }: { teachers: Teacher[], setti
         isOpen={isFormOpen}
         setIsOpen={setIsFormOpen}
         teacher={selectedTeacher}
+        activeSession={selectedSession}
       />
       
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

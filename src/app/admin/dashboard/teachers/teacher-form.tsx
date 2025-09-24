@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -25,6 +24,7 @@ interface TeacherFormProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   teacher?: Teacher | null;
+  activeSession: string;
 }
 
 const initialState: TeacherFormState = {
@@ -43,7 +43,7 @@ function SubmitButton({ isEditing }: { isEditing: boolean }) {
   );
 }
 
-export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
+export function TeacherForm({ isOpen, setIsOpen, teacher, activeSession }: TeacherFormProps) {
   const { toast } = useToast();
   const isEditing = !!teacher;
 
@@ -77,10 +77,11 @@ export function TeacherForm({ isOpen, setIsOpen, teacher }: TeacherFormProps) {
           <DialogDescription>
             {isEditing
               ? "Update the teacher's details below."
-              : 'Fill in the details for the new teacher.'}
+              : `Fill in the details for the new teacher for session ${activeSession}.`}
           </DialogDescription>
         </DialogHeader>
         <form action={formAction} className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-2">
+          <input type="hidden" name="session" value={teacher?.session || activeSession} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
