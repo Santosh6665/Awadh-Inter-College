@@ -3,7 +3,7 @@ import {googleAI} from '@genkit-ai/googleai';
 
 if (!process.env.GEMINI_API_KEY) {
   console.error(
-    'FATAL: The GEMINI_API_KEY environment variable is not set. The AI service will not be available.'
+    'FATAL: The GEMINI_API_KEY environment variable is not set. The AI service will not be available. Please obtain a key from Google AI Studio (https://aistudio.google.com/app/apikey) and add it to your .env file or Vercel environment variables.'
   );
 }
 
