@@ -7,6 +7,7 @@ import { firestore } from '@/lib/firebase-admin';
 import type { Teacher, AttendanceRecord } from '@/lib/types';
 import { FieldValue } from 'firebase-admin/firestore';
 import { getLoggedInUser } from '../auth/actions';
+import { startOfMonth, endOfMonth, format } from 'date-fns';
 
 
 const setPasswordSchema = z.object({
@@ -15,6 +16,7 @@ const setPasswordSchema = z.object({
 
 export async function getTeacherById(id: string): Promise<Teacher | null> {
   try {
+    if (!firestore) return null;
     const teacherDoc = await firestore.collection('teachers').doc(id).get();
     if (!teacherDoc.exists) {
       return null;
@@ -54,6 +56,7 @@ export async function setTeacherPassword(teacherId: string, formData: FormData) 
     }
     
     try {
+        if (!firestore) throw new Error('Firestore not initialized');
         const teacherDocRef = firestore.collection('teachers').doc(teacherId);
         await teacherDocRef.update({ password: validatedFields.data.password });
 
@@ -131,6 +134,7 @@ export async function updateStudentMarksByTeacher(
   }
 
   try {
+    if (!firestore) throw new Error('Firestore not initialized');
     const marksData = validatedFields.data;
     
     const marksForUpdate = Object.fromEntries(
@@ -156,6 +160,7 @@ export async function updateStudentMarksByTeacher(
 
 export async function getTeacherAttendance(teacherId: string): Promise<AttendanceRecord[]> {
   try {
+    if (!firestore) return [];
     const attendanceSnapshot = await firestore.collection('teacherAttendance').get();
     const attendanceRecords: AttendanceRecord[] = [];
     
@@ -176,4 +181,51 @@ export async function getTeacherAttendance(teacherId: string): Promise<Attendanc
     console.error(`Error fetching attendance for teacher ${teacherId}:`, error);
     return [];
   }
+}
+
+export async function getTeacherSalaryDataForMonth(date: Date) {
+    try {
+        if (!firestore) {
+            console.error("Firestore is not initialized.");
+            return { attendance: {}, holidays: [] };
+        }
+
+        const start = startOfMonth(date);
+        const end = endOfMonth(date);
+        
+        // Fetch Attendance
+        const attendanceSnapshot = await firestore.collection('teacherAttendance')
+            .where(FieldPath.documentId(), '>=', format(start, 'yyyy-MM-dd'))
+            .where(FieldPath.documentId(), '<=', format(end, 'yyyy-MM-dd'))
+            .get();
+
+        const attendanceByTeacher: { [teacherId: string]: { [date: string]: 'present' | 'absent' } } = {};
+        
+        attendanceSnapshot.forEach(doc => {
+            const dateStr = doc.id;
+            const dailyRecords = doc.data();
+            for (const teacherId in dailyRecords) {
+                if (!attendanceByTeacher[teacherId]) {
+                    attendanceByTeacher[teacherId] = {};
+                }
+                attendanceByTeacher[teacherId][dateStr] = dailyRecords[teacherId].status;
+            }
+        });
+
+        // Fetch Holidays
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const holidaysSnapshot = await firestore.collection('holidays').get();
+        
+        const holidaysForMonth = holidaysSnapshot.docs.filter(doc => {
+            const docDate = new Date(doc.id + 'T00:00:00'); // Assume UTC date
+            return docDate.getUTCFullYear() === year && docDate.getUTCMonth() === month;
+        }).map(doc => doc.id);
+        
+        return { attendance: attendanceByTeacher, holidays: holidaysForMonth };
+    } catch (error) {
+        console.error('Error fetching teacher salary data:', error);
+        // Return safe defaults in case of any error
+        return { attendance: {}, holidays: [] };
+    }
 }
