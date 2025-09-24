@@ -89,6 +89,7 @@ export function FeeReceipt({ student, payment, settings }: FeeReceiptProps) {
              <div><strong>Class:</strong> {`${student.class}-${student.section}`}</div>
              <div><strong>Session:</strong> {student.session}</div>
             <div><strong>Father's Name:</strong> {student.fatherName}</div>
+            <div><strong>Parent's Phone:</strong> {student.parentPhone || 'N/A'}</div>
           </div>
         </div>
 

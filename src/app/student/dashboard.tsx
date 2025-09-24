@@ -199,12 +199,16 @@ export function StudentDashboard({ student: initialStudent, ranks: initialRanks,
                                             <TableCell className="font-medium">Father's Name</TableCell>
                                             <TableCell>{student.fatherName}</TableCell>
                                         </TableRow>
+                                         <TableRow>
+                                            <TableCell className="font-medium">Parent's Phone</TableCell>
+                                            <TableCell>{student.parentPhone || 'N/A'}</TableCell>
+                                        </TableRow>
                                         <TableRow>
                                             <TableCell className="font-medium">Address</TableCell>
                                             <TableCell>{student.address}</TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell className="font-medium">Phone</TableCell>
+                                            <TableCell className="font-medium">Student's Phone</TableCell>
                                             <TableCell>{student.phone}</TableCell>
                                         </TableRow>
                                         <TableRow>
