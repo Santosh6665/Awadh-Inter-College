@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { Student } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -29,8 +29,14 @@ export function StudentPromotion({ students, settings }: { students: Student[], 
   const [isPromoting, setIsPromoting] = useState(false);
   const { toast } = useToast();
 
-  const activeSession = settings?.activeSession;
-  const nextSession = settings?.nextSession;
+  const [activeSession, setActiveSession] = useState(settings?.activeSession);
+  const [nextSession, setNextSession] = useState(settings?.nextSession);
+
+  // Effect to update sessions if settings change from the parent component
+  useEffect(() => {
+    setActiveSession(settings?.activeSession);
+    setNextSession(settings?.nextSession);
+  }, [settings]);
 
   const studentsToPromote = useMemo(() => {
     if (!fromClass || !activeSession || !nextSession) return [];
@@ -54,6 +60,11 @@ export function StudentPromotion({ students, settings }: { students: Student[], 
       
   }, [students, fromClass, activeSession, nextSession]);
   
+  // When the class filter changes, reset the selection.
+  useEffect(() => {
+    setSelectedStudents([]);
+  }, [fromClass]);
+
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       setSelectedStudents(studentsToPromote.map(s => s.id));
