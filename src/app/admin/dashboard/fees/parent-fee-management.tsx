@@ -105,11 +105,16 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
         let totalDue = 0;
 
         latestChildren.forEach((child) => {
-            const { due, totalAnnualFee, paid } = calculateAnnualDue(child, feeSettings);
+            const { due, totalAnnualFee } = calculateAnnualDue(child, feeSettings);
             totalDue += due;
-            totalFees += totalAnnualFee;
-            totalPaid += paid;
+            totalFees += totalAnnualFee; // This is now the session fee
         });
+
+        // Total paid needs to be calculated across all children of the parent.
+        totalPaid = data.children.reduce((acc, child) => {
+            return acc + (child.payments || []).filter(p => p.amount > 0).reduce((sum, p) => sum + p.amount, 0);
+        }, 0);
+
 
         return {
             id: phone,
@@ -190,24 +195,26 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                           <TableHeader>
                             <TableRow>
                               <TableHead>Child Name</TableHead>
-                              <TableHead className="hidden sm:table-cell">Class</TableHead>
+                              <TableHead>Class</TableHead>
+                              <TableHead>Annual Fee</TableHead>
+                              <TableHead>Previous Dues</TableHead>
+                              <TableHead>Paid</TableHead>
                               <TableHead>Total Dues</TableHead>
-                              <TableHead className="hidden md:table-cell">Annual Fee</TableHead>
-                              <TableHead className="hidden md:table-cell">Paid</TableHead>
                               <TableHead>Status</TableHead>
                               <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
                             {parent.children.map((child) => {
-                                const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(child, feeSettings);
+                                const { due, totalAnnualFee, totalPaid, previousSessionDue } = calculateAnnualDue(child, feeSettings);
                                 return (
                                 <TableRow key={child.id}>
                                     <TableCell>{child.name}</TableCell>
-                                    <TableCell className="hidden sm:table-cell">{`${child.class}-${child.section}`}</TableCell>
+                                    <TableCell>{`${child.class}-${child.section}`}</TableCell>
+                                    <TableCell>Rs{totalAnnualFee.toFixed(2)}</TableCell>
+                                    <TableCell className={previousSessionDue > 0 ? 'text-destructive' : ''}>Rs{previousSessionDue.toFixed(2)}</TableCell>
+                                    <TableCell>Rs{totalPaid.toFixed(2)}</TableCell>
                                     <TableCell className={due > 0 ? 'text-destructive font-semibold' : ''}>Rs{due.toFixed(2)}</TableCell>
-                                    <TableCell className="hidden md:table-cell">Rs{totalAnnualFee.toFixed(2)}</TableCell>
-                                    <TableCell className="hidden md:table-cell">Rs{totalPaid.toFixed(2)}</TableCell>
                                     <TableCell>
                                         <Badge variant={due > 0 ? 'destructive' : 'secondary'}>
                                             {due > 0 ? 'Pending' : 'Paid'}

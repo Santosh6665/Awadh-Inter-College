@@ -18,7 +18,7 @@ const defaultMultipliers = {
  * @param multipliers The fee multipliers from settings.
  * @returns The total annual fee.
  */
-function calculateTotalAnnualFee(finalFeeStructure: any, multipliers: any) {
+function calculateCurrentSessionFee(finalFeeStructure: any, multipliers: any) {
   let totalAnnualFee = 0;
   // Ensure exam multiplier is always 3, overriding any saved setting.
   const currentMultipliers = { ...defaultMultipliers, ...multipliers, exam: 3 };
@@ -38,7 +38,7 @@ function calculateTotalAnnualFee(finalFeeStructure: any, multipliers: any) {
  * Calculates the total annual due, total annual fee, and total paid for a student.
  * @param student The student object.
  * @param feeSettings The school's fee settings, including feeStructure.
- * @returns An object with due, totalAnnualFee, and totalPaid amounts.
+ * @returns An object with due, totalAnnualFee, totalPaid, and previousSessionDue amounts.
  */
 export function calculateAnnualDue(
   student: Student,
@@ -51,7 +51,7 @@ export function calculateAnnualDue(
   const carriedOverDues = (student.payments || []).filter(p => p.amount < 0);
 
   const totalPaid = actualPayments.reduce((acc, p) => acc + p.amount, 0);
-  const totalCarriedOverDue = carriedOverDues.reduce((acc, p) => acc + Math.abs(p.amount), 0);
+  const previousSessionDue = carriedOverDues.reduce((acc, p) => acc + Math.abs(p.amount), 0);
 
 
   const classFeeStructure = feeStructure[student.class] || {};
@@ -59,17 +59,17 @@ export function calculateAnnualDue(
   const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
 
   const combinedMultipliers = { ...defaultMultipliers, ...feeMultipliers };
-  let totalAnnualFee = calculateTotalAnnualFee(finalFeeStructure, combinedMultipliers);
+  let totalAnnualFee = calculateCurrentSessionFee(finalFeeStructure, combinedMultipliers);
   
   // The total amount to be paid for this session is the session's fee plus any old dues
-  const totalObligation = totalAnnualFee + totalCarriedOverDue;
+  const totalObligation = totalAnnualFee + previousSessionDue;
   
   const due = totalObligation - totalPaid;
 
   return {
     due: Math.max(0, due), // Due amount cannot be negative
-    totalAnnualFee: Math.max(0, totalObligation), // This now represents the total amount to be paid this year
+    totalAnnualFee: Math.max(0, totalAnnualFee), // This is now only the current session's fee
     totalPaid,
-    paid: totalPaid,
+    previousSessionDue,
   };
 }
