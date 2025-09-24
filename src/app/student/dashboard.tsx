@@ -73,13 +73,13 @@ export function StudentDashboard({ student: initialStudent, ranks: initialRanks,
   
   const feeDetails = useMemo(() => {
     // Pass the selectedSession to ensure calculations are scoped correctly for historical views.
-    const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(student, settings, selectedSession);
+    const { due, totalAnnualFee, totalPaid, previousSessionDue } = calculateAnnualDue(student, settings, selectedSession);
     const classFeeStructure = settings.feeStructure?.[student.class] || {};
     const studentFeeOverrides = student.feeStructure || {};
     const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
     const paymentPlan = finalFeeStructure.paymentPlan || 'Not set';
 
-    return { totalFees: totalAnnualFee, totalPaid, due, paymentPlan };
+    return { totalFees: totalAnnualFee, totalPaid, due, paymentPlan, previousDues: previousSessionDue };
   }, [student, settings, selectedSession]);
 
 
@@ -238,10 +238,14 @@ export function StudentDashboard({ student: initialStudent, ranks: initialRanks,
                             </div>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-center">
                                 <Card className="p-4">
-                                    <CardTitle className="text-sm text-muted-foreground">Total Fees</CardTitle>
+                                    <CardTitle className="text-sm text-muted-foreground">Annual Fees</CardTitle>
                                     <p className="text-xl md:text-2xl font-bold">Rs{feeDetails.totalFees.toFixed(2)}</p>
+                                </Card>
+                                 <Card className="p-4">
+                                    <CardTitle className="text-sm text-muted-foreground">Previous Dues</CardTitle>
+                                    <p className="text-xl md:text-2xl font-bold">Rs{feeDetails.previousDues.toFixed(2)}</p>
                                 </Card>
                                 <Card className="p-4">
                                     <CardTitle className="text-sm text-muted-foreground">Total Paid</CardTitle>
