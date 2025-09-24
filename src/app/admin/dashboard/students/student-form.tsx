@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useFormStatus, useActionState } from 'react-dom';
+import { useFormStatus, useFormState } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -48,7 +48,7 @@ export function StudentForm({ isOpen, setIsOpen, student, activeSession }: Stude
   const isEditing = !!student;
 
   const action = isEditing ? updateStudent.bind(null, student.id) : addStudent;
-  const [state, formAction] = useActionState(action, initialState);
+  const [state, formAction] = useFormState(action, initialState);
 
   useEffect(() => {
     // Only process the action state if a message is present

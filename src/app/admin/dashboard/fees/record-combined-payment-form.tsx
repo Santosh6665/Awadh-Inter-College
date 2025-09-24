@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { useFormStatus, useActionState } from 'react-dom';
+import { useFormStatus, useFormState } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -59,7 +59,7 @@ export function RecordCombinedPaymentForm({ isOpen, setIsOpen, parent }: RecordC
   
   const studentIds = parent?.children.map(c => c.id) || [];
   const action = parent ? recordCombinedPayment.bind(null, parent.id, studentIds) : async () => initialState;
-  const [state, formAction] = useActionState(action, initialState);
+  const [state, formAction] = useFormState(action, initialState);
 
   useEffect(() => {
     if (state.success) {
