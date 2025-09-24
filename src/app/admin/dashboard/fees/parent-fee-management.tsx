@@ -46,6 +46,8 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
   const [isCombinedPaymentFormOpen, setIsCombinedPaymentFormOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   
+  const activeSession = feeSettings?.activeSession;
+
   const toggleCollapsible = (id: string) => {
     setOpenCollapsibles(prev => 
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
@@ -79,7 +81,10 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
 
   const parentsData = useMemo<Parent[]>(() => {
     const parentsMap: Record<string, { parentName: string, children: Student[] }> = {};
-    students.forEach(student => {
+    
+    const studentsInSession = students.filter(student => student.session === activeSession);
+
+    studentsInSession.forEach(student => {
       const parentId = student.parentPhone || `no-parent-${student.id}`;
       if (!parentsMap[parentId]) {
           parentsMap[parentId] = { parentName: student.fatherName, children: [] };
@@ -108,7 +113,7 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
         totalDue,
       };
     }).sort((a, b) => a.parentName.localeCompare(b.parentName));
-  }, [students, feeSettings]);
+  }, [students, feeSettings, activeSession]);
 
   const filteredParents = parentsData.filter(parent =>
     parent.parentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -122,7 +127,7 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
       <Card>
         <CardHeader>
           <CardTitle>Fee Management by Family</CardTitle>
-          <CardDescription>View family-wise fee summaries and record individual or combined payments.</CardDescription>
+          <CardDescription>View family-wise fee summaries and record individual or combined payments for session {activeSession}.</CardDescription>
           <div className="mt-4 relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
