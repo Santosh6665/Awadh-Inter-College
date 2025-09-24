@@ -1,6 +1,6 @@
 
 import type { Teacher } from './types';
-import { getDaysInMonth, isSameDay, parseISO, format } from 'date-fns';
+import { getDaysInMonth, format } from 'date-fns';
 
 export interface SalaryDetails {
   totalDaysInMonth: number;
@@ -22,8 +22,9 @@ export function calculateSalary(
   holidays: string[]
 ): SalaryDetails {
   const baseSalary = teacher.baseSalary || 0;
-  const totalDaysInMonth = 30; // Fixed as per requirement
-  const perDaySalary = baseSalary / totalDaysInMonth;
+  // Rule: Per-day salary is always base salary divided by 30.
+  const perDaySalary = baseSalary / 30;
+  // Rule: 1 absent day is allowed without deduction.
   const allowedAbsents = 1;
 
   const teacherAttendance = allAttendance[teacher.id] || {};
@@ -32,18 +33,23 @@ export function calculateSalary(
   const actualDaysInMonth = getDaysInMonth(month);
   let absentDays = 0;
   let presentDays = 0;
-  let holidayDays = holidaySet.size;
-
+  
+  // Calculate attendance for the actual days in the month, excluding Sundays.
   for (let i = 1; i <= actualDaysInMonth; i++) {
     const date = new Date(month.getFullYear(), month.getMonth(), i);
     const dateStr = format(date, 'yyyy-MM-dd');
 
+    // Ignore Sundays (day 0) from attendance calculation.
+    if (date.getDay() === 0) {
+      continue;
+    }
 
-    // Ignore Sundays (day 0)
-    if (date.getDay() === 0) continue;
-
-    // Prioritize holidays: if it's a holiday, count it and skip other checks
+    // Ignore holidays from attendance calculation.
+    if (holidaySet.has(dateStr)) {
+      continue;
+    }
     
+    // Count present and absent days based on recorded attendance.
     if (teacherAttendance[dateStr] === 'absent') {
       absentDays++;
     } else if (teacherAttendance[dateStr] === 'present') {
@@ -51,21 +57,25 @@ export function calculateSalary(
     }
   }
 
-  const totalPresentDays = presentDays + holidayDays;
+  // Rule: Deduction applies for absent days exceeding the allowed limit.
   const deductionDays = Math.max(0, absentDays - allowedAbsents);
   const deductionAmount = deductionDays * perDaySalary;
+  // Rule: Final salary calculation.
   const netSalary = baseSalary - deductionAmount;
+  
+  // This value is for display purposes and not used in the calculation.
+  const totalPresentDays = presentDays + holidaySet.size;
 
   return {
-    totalDaysInMonth,
+    totalDaysInMonth: actualDaysInMonth,
     absentDays,
-    holidayDays,
+    holidayDays: holidaySet.size,
     presentDays,
     totalPresentDays,
     allowedAbsents,
     deductionDays,
-    perDaySalary,
-    deductionAmount: Math.round(deductionAmount * 100) / 100, // Round to 2 decimal places
-    netSalary: Math.round(netSalary * 100) / 100, // Round to 2 decimal places
+    perDaySalary: Math.round(perDaySalary * 100) / 100,
+    deductionAmount: Math.round(deductionAmount * 100) / 100,
+    netSalary: Math.round(netSalary * 100) / 100,
   };
 }
