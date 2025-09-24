@@ -33,23 +33,26 @@ export function calculateSalary(
   const actualDaysInMonth = getDaysInMonth(month);
   let absentDays = 0;
   let presentDays = 0;
-  let workingDays = 0;
+  let totalPayableDays = 0;
   
-  // Count attendance across all days of the month.
+  // Rule: Absences are counted on any day of the month if marked.
+  // Iterate through the month to calculate all metrics in one go.
   for (let i = 1; i <= actualDaysInMonth; i++) {
     const date = new Date(month.getFullYear(), month.getMonth(), i);
     const dateStr = format(date, 'yyyy-MM-dd');
-    
-    // Check if the teacher was marked absent on any day, including Sundays/holidays.
-    if (teacherAttendance[dateStr] === 'absent') {
-      absentDays++;
-    } else if (teacherAttendance[dateStr] === 'present') {
-      presentDays++;
-    }
+    const dayOfWeek = date.getDay(); // 0 for Sunday
+    const attendanceStatus = teacherAttendance[dateStr];
 
-    // Separately, count the number of potential working days.
-    if (date.getDay() !== 0 && !holidaySet.has(dateStr)) {
-        workingDays++;
+    if (attendanceStatus === 'absent') {
+      absentDays++;
+    } else if (attendanceStatus === 'present') {
+      presentDays++;
+      totalPayableDays++;
+    } else {
+      // If not marked present or absent, check if it's a default payable day.
+      if (dayOfWeek === 0 || holidaySet.has(dateStr)) {
+        totalPayableDays++;
+      }
     }
   }
 
@@ -60,15 +63,12 @@ export function calculateSalary(
   // Rule: Final salary calculation.
   const netSalary = baseSalary - deductionAmount;
   
-  // This value is for display purposes and not used in the calculation.
-  const totalPayableDays = presentDays + holidaySet.size;
-
   return {
     totalDaysInMonth: actualDaysInMonth,
     absentDays,
     holidayDays: holidaySet.size,
     presentDays,
-    totalPresentDays: totalPayableDays,
+    totalPresentDays: totalPayableDays, // Updated payable days calculation
     allowedAbsents,
     deductionDays,
     perDaySalary: Math.round(perDaySalary * 100) / 100,
