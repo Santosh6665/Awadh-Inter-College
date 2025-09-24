@@ -92,8 +92,16 @@ export async function updateTeacher(
   try {
     const teacherData = validatedFields.data;
     const updateData: { [key: string]: any } = { ...teacherData, updatedAt: new Date() };
+    
+    const teachersCollection = firestore.collection('teachers');
+    // Check if another teacher with the new email already exists
+    const existingTeacherQuery = await teachersCollection.where('email', '==', teacherData.email).get();
+    if (!existingTeacherQuery.empty && existingTeacherQuery.docs[0].id !== id) {
+        return { success: false, message: 'Another teacher with this email already exists.' };
+    }
 
-    const teacherDoc = firestore.collection('teachers').doc(id);
+
+    const teacherDoc = teachersCollection.doc(id);
     await teacherDoc.update(updateData);
 
     revalidatePath('/admin/dashboard');
