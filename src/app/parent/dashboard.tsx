@@ -27,6 +27,11 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
   const [isCombinedHistoryOpen, setIsCombinedHistoryOpen] = useState(false);
   const [childrenWithDetails, setChildrenWithDetails] = useState(initialChildren);
   const [loadingStates, setLoadingStates] = useState<{[key: string]: boolean}>({});
+  const [activeChildId, setActiveChildId] = useState(initialChildren[0]?.id || '');
+  
+  const activeChild = useMemo(() => childrenWithDetails.find(c => c.id === activeChildId), [childrenWithDetails, activeChildId]);
+  const [selectedSession, setSelectedSession] = useState(activeChild?.session || '');
+
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -38,6 +43,7 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
 
   const handleSessionChange = async (rollNumber: string, session: string) => {
     setLoadingStates(prev => ({...prev, [rollNumber]: true}));
+    setSelectedSession(session);
     const newStudentData = await getChildDataForSession(rollNumber, session);
     if(newStudentData) {
         // We don't have ranks and attendance for old sessions, so we pass empty arrays.
@@ -54,7 +60,9 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
     let totalPaid = 0;
     let totalDue = 0;
 
-    childrenWithDetails.forEach((child) => {
+    // Use initialChildren to calculate overall family dues based on latest session data
+    initialChildren.forEach((child) => {
+      // Always calculate dues based on their actual latest session data
       const { due, totalAnnualFee, totalPaid: paid } = calculateAnnualDue(child, settings);
       totalDue += due;
       totalFees += totalAnnualFee;
@@ -64,12 +72,12 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
     return {
       id: parent.id,
       parentName: parent.name,
-      children: childrenWithDetails,
+      children: initialChildren, // Use initial children for the summary
       totalFees,
       totalPaid,
       totalDue,
     };
-  }, [childrenWithDetails, parent, settings]);
+  }, [initialChildren, parent, settings]);
 
   const childrenNames = initialChildren.map(c => c.name).join(', ');
 
@@ -111,7 +119,11 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                   )}
               </CardHeader>
               <CardContent>
-                   <Tabs defaultValue={childrenWithDetails[0].id} className="w-full">
+                   <Tabs defaultValue={childrenWithDetails[0].id} className="w-full" onValueChange={(value) => {
+                        const newActiveChild = childrenWithDetails.find(c => c.id === value);
+                        setActiveChildId(value);
+                        setSelectedSession(newActiveChild?.session || '');
+                   }}>
                       <div className="flex flex-col md:flex-row gap-4 mb-6 print-hidden">
                           <TabsList className="w-full justify-start overflow-x-auto whitespace-nowrap md:w-auto">
                               {initialChildren.map(child => (

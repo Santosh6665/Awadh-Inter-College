@@ -38,6 +38,7 @@ export function StudentDashboard({ student: initialStudent, ranks: initialRanks,
   const [ranks, setRanks] = useState(initialRanks);
   const [attendance, setAttendance] = useState(initialAttendance);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedSession, setSelectedSession] = useState(initialStudent.session);
 
 
   const getInitials = (name: string) => {
@@ -71,14 +72,15 @@ export function StudentDashboard({ student: initialStudent, ranks: initialRanks,
   };
   
   const feeDetails = useMemo(() => {
-    const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(student, settings);
+    // Pass the selectedSession to ensure calculations are scoped correctly for historical views.
+    const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(student, settings, selectedSession);
     const classFeeStructure = settings.feeStructure?.[student.class] || {};
     const studentFeeOverrides = student.feeStructure || {};
     const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
     const paymentPlan = finalFeeStructure.paymentPlan || 'Not set';
 
     return { totalFees: totalAnnualFee, totalPaid, due, paymentPlan };
-  }, [student, settings]);
+  }, [student, settings, selectedSession]);
 
 
   const getPaymentPeriod = (payment: Payment) => {
@@ -94,6 +96,7 @@ export function StudentDashboard({ student: initialStudent, ranks: initialRanks,
   const handleSessionChange = async (session: string) => {
     if (isParentView) return; // Parent dashboard handles this separately
     setIsLoading(true);
+    setSelectedSession(session);
     const newStudentData = await getStudentById(`${student.rollNumber}-${session}`);
     if (newStudentData) {
         // Ranks and attendance would need to be re-fetched for the selected session.
