@@ -12,7 +12,7 @@ import { Banknote, Users, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { calculateAnnualDue } from '@/lib/fee-utils';
 import { Button } from '@/components/ui/button';
-import { CombinedFeeHistoryDialog } from '../admin/dashboard/fees/combined-fee-history-dialog';
+import { CombinedFeeHistoryDialog } from '@/app/parent/combined-fee-history-dialog';
 import { getChildDataForSession } from './actions';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -46,24 +46,30 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
     setSelectedSession(session);
     const newStudentData = await getChildDataForSession(rollNumber, session);
     if(newStudentData) {
-        // We don't have ranks and attendance for old sessions, so we pass empty arrays.
-        // A more advanced implementation could fetch this data.
+        // Ranks and attendance would need to be re-fetched for the selected session.
+        // For simplicity, we'll clear them for historical views.
+        const updatedStudent = { ...newStudentData, ranks: {}, attendance: [] };
          setChildrenWithDetails(prev => prev.map(child => 
-            child.rollNumber === rollNumber ? { ...newStudentData, ranks: {}, attendance: [] } : child
+            child.rollNumber === rollNumber ? updatedStudent : child
         ));
     }
     setLoadingStates(prev => ({...prev, [rollNumber]: false}));
   };
 
-  const parentData: Parent = useMemo(() => {
+  const parentDataForSession: Parent = useMemo(() => {
     let totalFees = 0;
     let totalPaid = 0;
     let totalDue = 0;
 
-    // Use initialChildren to calculate overall family dues based on latest session data
-    initialChildren.forEach((child) => {
-      // Always calculate dues based on their actual latest session data
-      const { due, totalAnnualFee, totalPaid: paid } = calculateAnnualDue(child, settings);
+    // Use currently displayed children data to calculate summary for the selected session
+    const childrenForSummary = childrenWithDetails.map(child => {
+      // Find the corresponding original child record to get full payment history for calculation
+      const originalChild = initialChildren.find(c => c.rollNumber === child.rollNumber);
+      return originalChild ? { ...child, payments: originalChild.payments } : child;
+    });
+
+    childrenForSummary.forEach((child) => {
+      const { due, totalAnnualFee, totalPaid: paid } = calculateAnnualDue(child, settings, selectedSession);
       totalDue += due;
       totalFees += totalAnnualFee;
       totalPaid += paid;
@@ -72,12 +78,12 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
     return {
       id: parent.id,
       parentName: parent.name,
-      children: initialChildren, // Use initial children for the summary
+      children: childrenForSummary, // Use children with data relevant to the selected session
       totalFees,
       totalPaid,
       totalDue,
     };
-  }, [initialChildren, parent, settings]);
+  }, [childrenWithDetails, initialChildren, parent, settings, selectedSession]);
 
   const childrenNames = initialChildren.map(c => c.name).join(', ');
 
@@ -86,8 +92,9 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
       <CombinedFeeHistoryDialog
         isOpen={isCombinedHistoryOpen}
         setIsOpen={setIsCombinedHistoryOpen}
-        parent={parentData}
+        parent={parentDataForSession}
         feeSettings={settings}
+        selectedSession={selectedSession}
       />
       <div id="parent-dashboard" className="bg-muted/50">
         <div className="container mx-auto py-8">
@@ -101,12 +108,12 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                       <CardDescription className="text-base mt-1">
                           Viewing dashboard for: <span className="font-semibold">{childrenNames}</span>.
                       </CardDescription>
-                      {parentData.totalDue > 0 && (
+                      {parentDataForSession.totalDue > 0 && (
                            <Alert variant="destructive" className="mt-2">
                               <Banknote className="h-4 w-4" />
                               <AlertTitle>Outstanding Balance</AlertTitle>
                               <AlertDescription>
-                                  The total pending fee for your children is <strong>Rs{parentData.totalDue.toFixed(2)}</strong>. Please see payment instructions below.
+                                  The total pending fee for your children is <strong>Rs{parentDataForSession.totalDue.toFixed(2)}</strong>. Please see payment instructions below.
                               </AlertDescription>
                           </Alert>
                       )}
@@ -144,7 +151,7 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                             <div className="flex justify-end items-center gap-2 mb-4">
                                <span className="text-sm font-medium">Viewing Session:</span>
                                <Select
-                                defaultValue={child.session}
+                                value={child.session}
                                 onValueChange={(session) => handleSessionChange(child.rollNumber, session)}
                                >
                                  <SelectTrigger className="w-[180px]">
