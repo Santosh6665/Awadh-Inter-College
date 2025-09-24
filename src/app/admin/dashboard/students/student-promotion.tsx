@@ -41,24 +41,15 @@ export function StudentPromotion({ students, settings }: { students: Student[], 
   const studentsToPromote = useMemo(() => {
     if (!fromClass || !activeSession || !nextSession) return [];
     
-    // Create a set of roll numbers for students who already exist in the next session.
-    const studentsInNextSession = new Set(
-      students
-        .filter(s => s.session === nextSession)
-        .map(s => s.rollNumber)
-    );
-
     // Filter students from the active session who are in the selected class
-    // and do NOT already have a record in the next session.
     return students
       .filter(s => 
         s.class === fromClass && 
-        s.session === activeSession && 
-        !studentsInNextSession.has(s.rollNumber)
+        s.session === activeSession
       )
       .sort((a, b) => a.name.localeCompare(b.name));
       
-  }, [students, fromClass, activeSession, nextSession]);
+  }, [students, fromClass, activeSession]);
   
   // When the class filter changes, reset the selection.
   useEffect(() => {
