@@ -17,8 +17,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { promoteStudents } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, ArrowRight } from 'lucide-react';
+import { Loader2, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 
 const classes = ["Nursery", "LKG", "UKG", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
 
@@ -37,9 +38,22 @@ export function StudentPromotion({ students, settings }: { students: Student[], 
     setActiveSession(settings?.activeSession);
     setNextSession(settings?.nextSession);
   }, [settings]);
+  
+  const promotedStudentIds = useMemo(() => {
+    if (!nextSession) return new Set();
+    const ids = new Set<string>();
+    students.forEach(student => {
+        if(student.session === nextSession) {
+            // Store the ID of the record from the *previous* session
+            ids.add(`${student.rollNumber}-${activeSession}`);
+        }
+    });
+    return ids;
+  }, [students, nextSession, activeSession]);
+
 
   const studentsToPromote = useMemo(() => {
-    if (!fromClass || !activeSession || !nextSession) return [];
+    if (!fromClass || !activeSession) return [];
     
     // Filter students from the active session who are in the selected class
     return students
@@ -47,9 +61,13 @@ export function StudentPromotion({ students, settings }: { students: Student[], 
         s.class === fromClass && 
         s.session === activeSession
       )
+      .map(student => ({
+        ...student,
+        isPromoted: promotedStudentIds.has(student.id)
+      }))
       .sort((a, b) => a.name.localeCompare(b.name));
       
-  }, [students, fromClass, activeSession]);
+  }, [students, fromClass, activeSession, promotedStudentIds]);
   
   // When the class filter changes, reset the selection.
   useEffect(() => {
@@ -58,7 +76,8 @@ export function StudentPromotion({ students, settings }: { students: Student[], 
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedStudents(studentsToPromote.map(s => s.id));
+      // Select only students who are not yet promoted
+      setSelectedStudents(studentsToPromote.filter(s => !s.isPromoted).map(s => s.id));
     } else {
       setSelectedStudents([]);
     }
@@ -120,6 +139,8 @@ export function StudentPromotion({ students, settings }: { students: Student[], 
       )
   }
 
+  const allPromotableSelected = selectedStudents.length > 0 && selectedStudents.length === studentsToPromote.filter(s => !s.isPromoted).length;
+
   return (
     <Card>
       <CardHeader>
@@ -154,33 +175,45 @@ export function StudentPromotion({ students, settings }: { students: Student[], 
               <TableRow>
                 <TableHead className="w-12">
                   <Checkbox
-                    checked={selectedStudents.length === studentsToPromote.length && studentsToPromote.length > 0}
+                    checked={allPromotableSelected}
                     onCheckedChange={handleSelectAll}
                   />
                 </TableHead>
                 <TableHead>Roll No.</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Section</TableHead>
+                <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {studentsToPromote.length > 0 ? (
                 studentsToPromote.map(student => (
-                  <TableRow key={student.id}>
+                  <TableRow key={student.id} className={student.isPromoted ? 'bg-muted/50' : ''}>
                     <TableCell>
                       <Checkbox
                         checked={selectedStudents.includes(student.id)}
                         onCheckedChange={(checked) => handleSelectSingle(student.id, !!checked)}
+                        disabled={student.isPromoted}
                       />
                     </TableCell>
                     <TableCell>{student.rollNumber}</TableCell>
                     <TableCell>{student.name}</TableCell>
                     <TableCell>{student.section}</TableCell>
+                    <TableCell>
+                      {student.isPromoted ? (
+                         <Badge variant="secondary" className="text-green-600">
+                            <CheckCircle2 className="mr-1 h-3.5 w-3.5" />
+                            Promoted
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline">Pending</Badge>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center h-24">
+                  <TableCell colSpan={5} className="text-center h-24">
                     {fromClass ? 'No students available for promotion in this class.' : 'Please select a class to see students.'}
                   </TableCell>
                 </TableRow>
