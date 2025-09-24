@@ -91,38 +91,42 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
     const sessionForDialog = selectedSessionPerChild[activeChildRollNumber];
     if (!sessionForDialog) return null;
     
-    // Get all unique children records across all fetched sessions
-    const allUniqueChildrenRecords = Object.values(
-      initialChildren.reduce((acc, child) => {
-        acc[child.student.rollNumber] = child.student;
-        return acc;
-      }, {} as Record<string, Student>)
+    // Get all unique children based on roll number from initial props
+    const allUniqueChildren = Object.values(
+        initialChildren.reduce((acc, child) => {
+            acc[child.student.rollNumber] = child.student;
+            return acc;
+        }, {} as Record<string, Student>)
     );
 
     let totalFees = 0;
     let totalPaid = 0;
     let totalDue = 0;
 
-    allUniqueChildrenRecords.forEach((child) => {
-      // Find the specific session record for the child if it exists
+    allUniqueChildren.forEach((child) => {
+      // For each unique child, find their specific data for the currently selected session for the dialog
       const sessionSpecificId = `${child.rollNumber}-${sessionForDialog}`;
-      const studentForCalc = allChildrenData[sessionSpecificId]?.student || child;
-
-      const { due, totalAnnualFee, totalPaid: paid } = calculateAnnualDue(studentForCalc, settings, sessionForDialog);
-      totalDue += due;
-      totalFees += totalAnnualFee;
-      totalPaid += paid;
+      const studentForCalc = allChildrenData[sessionSpecificId]?.student;
+      
+      // Only perform calculation if we have the student's data for that specific session
+      if (studentForCalc) {
+        const { due, totalAnnualFee, totalPaid: paid } = calculateAnnualDue(studentForCalc, settings, sessionForDialog);
+        totalDue += due;
+        totalFees += totalAnnualFee;
+        totalPaid += paid;
+      }
     });
     
     return {
       id: parent.id,
       parentName: parent.name,
-      children: allUniqueChildrenRecords,
+      children: allUniqueChildren, // Pass all unique children for listing
       totalFees,
       totalPaid,
       totalDue,
     };
   }, [activeChildRollNumber, selectedSessionPerChild, allChildrenData, initialChildren, parent, settings]);
+
 
   const childrenNames = initialChildren.map(c => c.student.name).join(', ');
 
