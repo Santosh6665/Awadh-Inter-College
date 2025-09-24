@@ -80,36 +80,41 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
   };
 
   const parentDataForDialog: Parent | null = useMemo(() => {
-    if (!activeChildData) return null;
+    const sessionForDialog = selectedSessionPerChild[activeChildRollNumber];
+    if (!sessionForDialog) return null;
     
-    const selectedSession = selectedSessionPerChild[activeChildData.student.rollNumber];
-    
-    const allStudentRecords = Object.values(allChildrenData).map(d => d.student);
-
-    const childrenForCalculation = initialChildren.map(childInfo => {
-        return allStudentRecords.find(s => s.rollNumber === childInfo.student.rollNumber) || childInfo.student;
-    });
+    // Get all unique children records across all fetched sessions
+    const allUniqueChildrenRecords = Object.values(
+      initialChildren.reduce((acc, child) => {
+        acc[child.student.rollNumber] = child.student;
+        return acc;
+      }, {} as Record<string, Student>)
+    );
 
     let totalFees = 0;
     let totalPaid = 0;
     let totalDue = 0;
 
-    childrenForCalculation.forEach((child) => {
-      const { due, totalAnnualFee, totalPaid: paid } = calculateAnnualDue(child, settings, selectedSession);
+    allUniqueChildrenRecords.forEach((child) => {
+      // Find the specific session record for the child if it exists
+      const sessionSpecificId = `${child.rollNumber}-${sessionForDialog}`;
+      const studentForCalc = allChildrenData[sessionSpecificId]?.student || child;
+
+      const { due, totalAnnualFee, totalPaid: paid } = calculateAnnualDue(studentForCalc, settings, sessionForDialog);
       totalDue += due;
       totalFees += totalAnnualFee;
       totalPaid += paid;
     });
-
+    
     return {
       id: parent.id,
       parentName: parent.name,
-      children: childrenForCalculation,
+      children: allUniqueChildrenRecords,
       totalFees,
       totalPaid,
       totalDue,
     };
-  }, [activeChildData, allChildrenData, initialChildren, parent, settings, selectedSessionPerChild]);
+  }, [activeChildRollNumber, selectedSessionPerChild, allChildrenData, initialChildren, parent, settings]);
 
   const childrenNames = initialChildren.map(c => c.student.name).join(', ');
 
@@ -195,7 +200,7 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                                 </div>
                              ) : childDataForSelectedSession ? (
                                 <StudentDashboard
-                                    student={{...childDataForSelectedSession.student, payments: child.student.payments }}
+                                    student={childDataForSelectedSession.student}
                                     ranks={childDataForSelectedSession.ranks}
                                     attendance={childDataForSelectedSession.attendance}
                                     settings={settings}
