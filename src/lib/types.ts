@@ -1,5 +1,3 @@
-
-
 import { z } from 'zod';
 
 export type NewsArticle = {
@@ -110,7 +108,6 @@ export type Teacher = {
     designation?: string;
     bankAccountNumber?: string;
     ifscCode?: string;
-    session?: string;
 };
 
 export type Book = {

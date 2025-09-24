@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -32,11 +31,7 @@ export default function AdminDashboardPage({ students, teachers, settings: initi
   const [settings, setSettings] = useState(initialSettings);
   const [selectedSession, setSelectedSession] = useState(settings.activeSession || '');
   
-  const activeSession = settings.activeSession || new Date().getFullYear() + '-' + (new Date().getFullYear() + 1);
-  
   const studentsInSession = useMemo(() => students.filter(s => s.session === selectedSession), [students, selectedSession]);
-  const teachersInSession = useMemo(() => teachers.filter(t => t.session === selectedSession), [teachers, selectedSession]);
-
 
   const totalFeesCollected = studentsInSession.reduce((acc, student) => {
     const studentTotal = (student.payments || []).reduce((paymentAcc, payment) => paymentAcc + payment.amount, 0);
@@ -121,9 +116,9 @@ export default function AdminDashboardPage({ students, teachers, settings: initi
             <UserCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{teachersInSession.length}</div>
+            <div className="text-2xl font-bold">{teachers.length}</div>
              <p className="text-xs text-muted-foreground">
-               in session {selectedSession}
+               Total staff
             </p>
           </CardContent>
         </Card>
@@ -179,7 +174,7 @@ export default function AdminDashboardPage({ students, teachers, settings: initi
             <StudentPromotion students={students} settings={settings} />
           </TabsContent>
           <TabsContent value="teachers" className="mt-4">
-            <TeacherList teachers={teachers} settings={settings} selectedSession={selectedSession} setSelectedSession={setSelectedSession} />
+            <TeacherList teachers={teachers} />
           </TabsContent>
            <TabsContent value="results" className="mt-4">
             <ResultsManagement students={studentsInSession} settings={settings} />
@@ -188,13 +183,13 @@ export default function AdminDashboardPage({ students, teachers, settings: initi
             <AttendanceManagement students={studentsInSession} />
           </TabsContent>
            <TabsContent value="teacher-attendance" className="mt-4">
-            <TeacherAttendanceManagement teachers={teachersInSession} />
+            <TeacherAttendanceManagement teachers={teachers} />
           </TabsContent>
            <TabsContent value="fees" className="mt-4">
             <FeeManagement students={students} feeSettings={settings} selectedSession={selectedSession} />
           </TabsContent>
            <TabsContent value="teacher-salary" className="mt-4">
-            <SalaryManagement teachers={teachersInSession} />
+            <SalaryManagement teachers={teachers} />
           </TabsContent>
           <TabsContent value="notices" className="mt-4">
             <NoticeManagement notices={notices} />

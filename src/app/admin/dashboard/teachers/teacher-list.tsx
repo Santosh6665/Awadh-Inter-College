@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -30,24 +29,18 @@ import { TeacherForm } from './teacher-form';
 import { deleteTeacher, toggleAttendancePermission, toggleResultsPermission } from './actions';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface TeacherListProps {
   teachers: Teacher[];
-  settings: any;
-  selectedSession: string;
-  setSelectedSession: (session: string) => void;
 }
 
-export function TeacherList({ teachers, settings, selectedSession, setSelectedSession }: TeacherListProps) {
+export function TeacherList({ teachers }: TeacherListProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [teacherToDelete, setTeacherToDelete] = useState<string | null>(null);
   const { toast } = useToast();
-  
-  const sessions = settings?.sessions || [];
   
   const handleEdit = (teacher: Teacher) => {
     setSelectedTeacher(teacher);
@@ -102,11 +95,10 @@ export function TeacherList({ teachers, settings, selectedSession, setSelectedSe
 
 
   const filteredTeachers = useMemo(() => teachers.filter(teacher => {
-    const sessionMatch = teacher.session === selectedSession;
     const nameMatch = teacher.name.toLowerCase().includes(searchQuery.toLowerCase());
     const subjectMatch = teacher.subject.toLowerCase().includes(searchQuery.toLowerCase());
-    return sessionMatch && (nameMatch || subjectMatch);
-  }), [teachers, searchQuery, selectedSession]);
+    return nameMatch || subjectMatch;
+  }), [teachers, searchQuery]);
 
   return (
     <>
@@ -118,15 +110,7 @@ export function TeacherList({ teachers, settings, selectedSession, setSelectedSe
                 <CardDescription>Add, edit, or remove teacher records and set permissions.</CardDescription>
             </div>
             <div className="flex items-center gap-2 w-full md:w-auto">
-               <Select value={selectedSession} onValueChange={setSelectedSession}>
-                  <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select Session" />
-                  </SelectTrigger>
-                  <SelectContent>
-                      {sessions.map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                  </SelectContent>
-              </Select>
-              <Button onClick={handleAddNew} size="sm" className="flex-shrink-0">
+              <Button onClick={handleAddNew} size="sm" className="flex-shrink-0 w-full md:w-auto">
                 <PlusCircle className="mr-2 h-4 w-4" /> Add Teacher
               </Button>
             </div>
@@ -214,7 +198,6 @@ export function TeacherList({ teachers, settings, selectedSession, setSelectedSe
         isOpen={isFormOpen}
         setIsOpen={setIsFormOpen}
         teacher={selectedTeacher}
-        activeSession={selectedSession}
       />
       
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

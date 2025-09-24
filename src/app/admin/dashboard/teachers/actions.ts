@@ -21,7 +21,6 @@ const TeacherSchema = z.object({
   baseSalary: z.coerce.number().min(0).optional(),
   bankAccountNumber: z.string().optional(),
   ifscCode: z.string().optional(),
-  session: z.string().min(1, 'Session is required.'),
 });
 
 export type TeacherFormState = {

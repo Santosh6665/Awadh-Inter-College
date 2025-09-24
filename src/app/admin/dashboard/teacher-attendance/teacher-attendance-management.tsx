@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
@@ -151,7 +150,7 @@ export function TeacherAttendanceManagement({ teachers }: { teachers: Teacher[] 
 
   const filteredTeachers = useMemo(() => teachers.filter(teacher => {
     const nameMatch = teacher.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const subjectMatch = subjectFilter ? teacher.subject.toLowerCase().includes(subjectFilter.toLowerCase()) : true;
+    const subjectMatch = teacher.subject.toLowerCase().includes(subjectFilter.toLowerCase());
     return nameMatch && subjectMatch;
   }), [teachers, searchQuery, subjectFilter]);
   
