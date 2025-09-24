@@ -30,8 +30,8 @@ export type FormState = {
 
 
 export async function getHolidaysInMonth(date: Date) {
-    await checkAuth();
     try {
+        await checkAuth();
         const year = date.getFullYear();
         const month = date.getMonth(); // 0-indexed (0 for January)
 
@@ -79,7 +79,6 @@ export async function getTeacherAttendanceForMonth(date: Date) {
         return attendanceByTeacher;
     } catch (error) {
         console.error('Error fetching teacher attendance for month:', error);
-        // Return an empty object on failure to prevent client-side crashes
         return {};
     }
 }
