@@ -24,6 +24,7 @@ interface StudentFormProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   student?: Student | null;
+  activeSession: string;
 }
 
 const initialState: StudentFormState = {
@@ -42,7 +43,7 @@ function SubmitButton({ isEditing }: { isEditing: boolean }) {
   );
 }
 
-export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
+export function StudentForm({ isOpen, setIsOpen, student, activeSession }: StudentFormProps) {
   const { toast } = useToast();
   const isEditing = !!student;
 
@@ -79,10 +80,11 @@ export function StudentForm({ isOpen, setIsOpen, student }: StudentFormProps) {
           <DialogDescription>
             {isEditing
               ? "Update the student's details below."
-              : 'Fill in the details for the new student.'}
+              : `Fill in the details for the new student for session ${activeSession}.`}
           </DialogDescription>
         </DialogHeader>
         <form action={formAction} className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-2">
+          <input type="hidden" name="session" value={activeSession} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>

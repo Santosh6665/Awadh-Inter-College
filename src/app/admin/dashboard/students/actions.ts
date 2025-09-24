@@ -16,6 +16,7 @@ const StudentSchema = z.object({
   fatherName: z.string().min(2, "Father's name is required."),
   address: z.string().min(5, 'Address is required.'),
   parentPhone: z.string().optional(),
+  session: z.string().min(1, 'Session is required.'),
 });
 
 // Update schema doesn't require password, as it's handled by the student now
@@ -153,5 +154,56 @@ export async function getStudents() {
   } catch (error) {
     console.error('Error fetching students:', error);
     return [];
+  }
+}
+
+export async function promoteStudents(
+  studentIds: string[],
+  fromClass: string,
+  toClass: string,
+  fromSession: string,
+  toSession: string,
+) {
+  if (!studentIds || studentIds.length === 0 || !toClass || !fromSession || !toSession) {
+    return { success: false, message: 'Missing required information for promotion.' };
+  }
+  
+  try {
+    const batch = firestore.batch();
+    const studentsCollection = firestore.collection('students');
+    
+    for (const studentId of studentIds) {
+      const studentDoc = await studentsCollection.doc(studentId).get();
+      if (studentDoc.exists) {
+        const studentData = { ...studentDoc.data() };
+        
+        // Prepare new student data for the next session
+        const newStudentData = {
+          ...studentData,
+          class: toClass,
+          session: toSession,
+          // Reset session-specific data
+          marks: {},
+          payments: [],
+          // Keep fee structure, or reset it based on school policy
+          // feeStructure: {}, // Optional: Uncomment to reset fee structure
+          promotedFrom: fromSession,
+          promotedOn: new Date(),
+        };
+        
+        // Create a new document for the student in the new session
+        // Using a new ID to avoid conflicts, e.g., rollNumber-session
+        const newStudentId = `${studentId}-${toSession}`;
+        const newStudentRef = studentsCollection.doc(newStudentId);
+        batch.set(newStudentRef, newStudentData);
+      }
+    }
+    
+    await batch.commit();
+    revalidatePath('/admin/dashboard');
+    return { success: true, message: `${studentIds.length} students promoted successfully to session ${toSession}.` };
+  } catch (error) {
+    console.error('Error promoting students:', error);
+    return { success: false, message: 'An unexpected error occurred during promotion.' };
   }
 }

@@ -16,6 +16,7 @@ import { format } from 'date-fns';
 import { TeacherAttendanceManagement } from "./teacher-attendance/teacher-attendance-management";
 import { SalaryManagement } from "./salary/salary-management";
 import { Settings } from "./settings/settings";
+import { StudentPromotion } from "./students/student-promotion";
 
 export default async function AdminDashboardPage() {
   let students: Student[] = [];
@@ -63,8 +64,13 @@ export default async function AdminDashboardPage() {
   } else {
      console.warn("Firestore is not available. Skipping data fetch for Admin Dashboard. This is expected during the build process.");
   }
+  
+  const activeSession = settings.activeSession || new Date().getFullYear() + '-' + (new Date().getFullYear() + 1);
+  const studentsInSession = students.filter(s => s.session === activeSession);
+  const teachersInSession = teachers.filter(t => t.session === activeSession);
 
-  const totalFeesCollected = students.reduce((acc, student) => {
+
+  const totalFeesCollected = studentsInSession.reduce((acc, student) => {
     const studentTotal = (student.payments || []).reduce((paymentAcc, payment) => paymentAcc + payment.amount, 0);
     return acc + studentTotal;
   }, 0);
@@ -75,7 +81,7 @@ export default async function AdminDashboardPage() {
   
   let feesLastMonth = 0;
 
-  students.forEach(student => {
+  studentsInSession.forEach(student => {
     (student.payments || []).forEach(payment => {
       const paymentDate = new Date(payment.date);
       if (paymentDate >= startOfLastMonth && paymentDate < startOfCurrentMonth) {
@@ -84,7 +90,7 @@ export default async function AdminDashboardPage() {
     });
   });
   
-  const totalFeesCollectedSoFarThisMonth = students.reduce((acc, student) => {
+  const totalFeesCollectedSoFarThisMonth = studentsInSession.reduce((acc, student) => {
     return acc + (student.payments || [])
       .filter(p => new Date(p.date) >= startOfCurrentMonth)
       .reduce((sum, p) => sum + p.amount, 0);
@@ -100,7 +106,7 @@ export default async function AdminDashboardPage() {
   }
 
   // Calculate attendance percentages
-  const totalStudents = students.length;
+  const totalStudents = studentsInSession.length;
   const presentToday = Object.values(todayAttendanceData).filter((att: any) => att.status === 'present').length;
   const recordedTodayCount = Object.keys(todayAttendanceData).length;
   const presentYesterday = Object.values(yesterdayAttendanceData).filter((att: any) => att.status === 'present').length;
@@ -133,9 +139,9 @@ export default async function AdminDashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{students.length}</div>
+            <div className="text-2xl font-bold">{studentsInSession.length}</div>
             <p className="text-xs text-muted-foreground">
-              Currently enrolled
+              in session {activeSession}
             </p>
           </CardContent>
         </Card>
@@ -147,9 +153,9 @@ export default async function AdminDashboardPage() {
             <UserCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{teachers.length}</div>
+            <div className="text-2xl font-bold">{teachersInSession.length}</div>
              <p className="text-xs text-muted-foreground">
-              Currently employed
+               in session {activeSession}
             </p>
           </CardContent>
         </Card>
@@ -187,6 +193,7 @@ export default async function AdminDashboardPage() {
             <div className="overflow-x-auto">
                 <TabsList className="whitespace-nowrap">
                 <TabsTrigger value="students">Manage Students</TabsTrigger>
+                <TabsTrigger value="promote_students">Promote Students</TabsTrigger>
                 <TabsTrigger value="teachers">Manage Teachers</TabsTrigger>
                 <TabsTrigger value="results">Result Management</TabsTrigger>
                 <TabsTrigger value="attendance">Student Attendance</TabsTrigger>
@@ -198,10 +205,13 @@ export default async function AdminDashboardPage() {
                 </TabsList>
             </div>
           <TabsContent value="students" className="mt-4">
-            <StudentList students={students} />
+            <StudentList students={students} settings={settings} />
+          </TabsContent>
+          <TabsContent value="promote_students" className="mt-4">
+            <StudentPromotion students={students} settings={settings} />
           </TabsContent>
           <TabsContent value="teachers" className="mt-4">
-            <TeacherList teachers={teachers} />
+            <TeacherList teachers={teachers} settings={settings}/>
           </TabsContent>
            <TabsContent value="results" className="mt-4">
             <ResultsManagement students={students} settings={settings} />

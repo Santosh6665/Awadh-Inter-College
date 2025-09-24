@@ -69,6 +69,7 @@ export type Student = {
     address: string;
     parentPhone?: string;
     photoUrl?: string;
+    session: string; // Active session, e.g., "2024-2025"
     marks?: {
       quarterly?: Marks;
       halfYearly?: Marks;
@@ -108,6 +109,7 @@ export type Teacher = {
     designation?: string;
     bankAccountNumber?: string;
     ifscCode?: string;
+    session?: string;
 };
 
 export type Book = {

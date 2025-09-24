@@ -5,14 +5,16 @@ import { GeneralSettings } from "./general-settings";
 import { ResultSettings } from "../results/result-settings";
 import { FeeSettings } from "./fee-settings";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SessionSettings } from "./session-settings";
 
 export function Settings({ settings }: { settings: any }) {
   return (
     <Tabs defaultValue="general" className="w-full">
-      <TabsList className="grid w-full grid-cols-3">
+      <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="general">General</TabsTrigger>
         <TabsTrigger value="results">Results</TabsTrigger>
         <TabsTrigger value="fees">Fees</TabsTrigger>
+        <TabsTrigger value="sessions">Sessions</TabsTrigger>
       </TabsList>
       <TabsContent value="general" className="mt-4">
         <GeneralSettings settings={settings} />
@@ -22,6 +24,9 @@ export function Settings({ settings }: { settings: any }) {
       </TabsContent>
       <TabsContent value="fees" className="mt-4">
         <FeeSettings settings={settings} />
+      </TabsContent>
+       <TabsContent value="sessions" className="mt-4">
+        <SessionSettings settings={settings} />
       </TabsContent>
     </Tabs>
   );

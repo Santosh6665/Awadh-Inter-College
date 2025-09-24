@@ -31,7 +31,7 @@ import { deleteStudent } from './actions';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export function StudentList({ students }: { students: Student[] }) {
+export function StudentList({ students, settings }: { students: Student[], settings: any }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -40,6 +40,9 @@ export function StudentList({ students }: { students: Student[] }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
   const { toast } = useToast();
+
+  const sessions = settings?.sessions || [];
+  const [selectedSession, setSelectedSession] = useState(settings?.activeSession || '');
   
   const handleEdit = (student: Student) => {
     setSelectedStudent(student);
@@ -77,10 +80,11 @@ export function StudentList({ students }: { students: Student[] }) {
 
   const filteredStudents = students
     .filter(student => {
+      const sessionMatch = student.session === selectedSession;
       const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
       const classMatch = classFilter ? student.class === classFilter : true;
       const sectionMatch = sectionFilter ? student.section === sectionFilter : true;
-      return nameMatch && classMatch && sectionMatch;
+      return sessionMatch && nameMatch && classMatch && sectionMatch;
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -91,11 +95,21 @@ export function StudentList({ students }: { students: Student[] }) {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="w-full">
                 <CardTitle>Manage Students</CardTitle>
-                <CardDescription>Add, edit, or remove student records.</CardDescription>
+                <CardDescription>Add, edit, or remove student records for the selected session.</CardDescription>
             </div>
-            <Button onClick={handleAddNew} size="sm" className="w-full md:w-auto flex-shrink-0">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Student
-            </Button>
+            <div className="flex items-center gap-2 w-full md:w-auto">
+               <Select value={selectedSession} onValueChange={setSelectedSession}>
+                  <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Session" />
+                  </SelectTrigger>
+                  <SelectContent>
+                      {sessions.map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  </SelectContent>
+              </Select>
+              <Button onClick={handleAddNew} size="sm" className="flex-shrink-0">
+                <PlusCircle className="mr-2 h-4 w-4" /> Add Student
+              </Button>
+            </div>
           </div>
           <div className="mt-4 flex flex-col md:flex-row items-center gap-4">
             <div className="relative w-full">
@@ -190,7 +204,7 @@ export function StudentList({ students }: { students: Student[] }) {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center h-24">
-                      No students found.
+                      No students found for the selected session.
                     </TableCell>
                   </TableRow>
                 )}
@@ -204,6 +218,7 @@ export function StudentList({ students }: { students: Student[] }) {
         isOpen={isFormOpen}
         setIsOpen={setIsFormOpen}
         student={selectedStudent}
+        activeSession={selectedSession}
       />
       
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
