@@ -84,8 +84,11 @@ export async function getStudentAttendanceHistory(studentId: string): Promise<At
 }
 
 export async function isHoliday(date: string): Promise<{ isHoliday: boolean; name?: string }> {
-  await checkAuthAndPermissions();
   try {
+    await checkAuthAndPermissions();
+    if (!firestore) {
+      return { isHoliday: false };
+    }
     const holidayDoc = await firestore.collection('holidays').doc(date).get();
     if (holidayDoc.exists) {
       return { isHoliday: true, name: holidayDoc.data()?.name || 'Holiday' };
@@ -98,8 +101,11 @@ export async function isHoliday(date: string): Promise<{ isHoliday: boolean; nam
 }
 
 export async function getSchoolStatus(date: string): Promise<{ isClosed: boolean; reason?: string }> {
-  await checkAuthAndPermissions();
   try {
+    await checkAuthAndPermissions();
+    if (!firestore) {
+      return { isClosed: false };
+    }
     const statusDoc = await firestore.collection('schoolStatus').doc(date).get();
     if (statusDoc.exists) {
       const data = statusDoc.data();
