@@ -29,28 +29,30 @@ export function SessionSettings({ settings, onSettingsSave }: { settings: any, o
 
   const handleAddSession = () => {
     const trimmedSession = newSession.trim();
-    // More robust regex to handle both YYYY-YYYY and YYYY-YY
+    // Regex to validate YYYY-YYYY or YYYY-YY format.
     const sessionRegex = /^\d{4}-(\d{4}|\d{2})$/;
-    
-    if (trimmedSession && sessionRegex.test(trimmedSession)) {
-      if (!sessions.includes(trimmedSession)) {
-        const updatedSessions = [...sessions, trimmedSession].sort((a, b) => b.localeCompare(a));
-        setSessions(updatedSessions);
-        setNewSession('');
-      } else {
-        toast({
-          title: 'Session Exists',
-          description: `The session "${trimmedSession}" has already been added.`,
-          variant: 'destructive',
-        });
-      }
-    } else {
+
+    if (!sessionRegex.test(trimmedSession)) {
       toast({
         title: 'Invalid Session Format',
         description: 'Please use the YYYY-YYYY or YYYY-YY format (e.g., 2024-2025 or 2024-25).',
         variant: 'destructive',
       });
+      return;
     }
+    
+    if (sessions.includes(trimmedSession)) {
+      toast({
+        title: 'Session Exists',
+        description: `The session "${trimmedSession}" has already been added.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const updatedSessions = [...sessions, trimmedSession].sort((a, b) => b.localeCompare(a));
+    setSessions(updatedSessions);
+    setNewSession('');
   };
 
   const handleRemoveSession = (sessionToRemove: string) => {
