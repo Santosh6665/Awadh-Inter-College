@@ -7,7 +7,7 @@ import { FeeSettings } from "./fee-settings";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SessionSettings } from "./session-settings";
 
-export function Settings({ settings }: { settings: any }) {
+export function Settings({ settings, onSettingsSave }: { settings: any, onSettingsSave: (newSettings: any) => void }) {
   return (
     <Tabs defaultValue="general" className="w-full">
       <TabsList className="grid w-full grid-cols-4">
@@ -26,7 +26,7 @@ export function Settings({ settings }: { settings: any }) {
         <FeeSettings settings={settings} />
       </TabsContent>
        <TabsContent value="sessions" className="mt-4">
-        <SessionSettings settings={settings} />
+        <SessionSettings settings={settings} onSettingsSave={onSettingsSave} />
       </TabsContent>
     </Tabs>
   );

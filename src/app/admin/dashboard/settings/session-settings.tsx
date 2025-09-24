@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export function SessionSettings({ settings }: { settings: any }) {
+export function SessionSettings({ settings, onSettingsSave }: { settings: any, onSettingsSave: (newSettings: any) => void }) {
   const [sessions, setSessions] = useState<string[]>([]);
   const [activeSession, setActiveSession] = useState('');
   const [nextSession, setNextSession] = useState('');
@@ -46,8 +46,10 @@ export function SessionSettings({ settings }: { settings: any }) {
   
   const handleSave = async () => {
     setIsSaving(true);
-    const result = await saveSettings({ sessions, activeSession, nextSession });
+    const newSettings = { ...settings, sessions, activeSession, nextSession };
+    const result = await saveSettings(newSettings);
     if (result.success) {
+      onSettingsSave(newSettings);
       toast({
         title: 'Success',
         description: 'Session settings saved successfully.',
