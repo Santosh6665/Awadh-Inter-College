@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Download, Users } from 'lucide-react';
+import { Download, Users, Phone, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -101,13 +101,17 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
         <Card className="print-area">
             <CardHeader className="p-4 bg-muted/30">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                    <Logo className="h-16 w-16" />
-                    <div className="text-center sm:text-left">
-                        <h2 className="text-2xl font-bold text-primary">Awadh Inter College</h2>
-                        <p className="text-xs text-muted-foreground">Ghosiyari bazar, bansi, Siddharth Nagar, 272148</p>
-                    </div>
-                </div>
+                  <div className="flex items-center gap-4">
+                      <Logo className="h-16 w-16" />
+                      <div className="text-center sm:text-left">
+                          <h2 className="text-2xl font-bold text-primary">Awadh Inter College</h2>
+                          <p className="text-xs text-muted-foreground">Ghosiyari bazar, bansi, Siddharth Nagar, 272148</p>
+                           <div className="flex items-center justify-center sm:justify-start gap-2 text-xs text-muted-foreground mt-1">
+                              <Phone className="h-3 w-3" /> <span>+91 6393071946</span>
+                              <Mail className="h-3 w-3" /> <span>info@awadhcollege.edu</span>
+                          </div>
+                      </div>
+                  </div>
                 </div>
                 <div className="text-center mt-2">
                 <Badge variant="secondary" className="text-base font-bold tracking-wider">💰 COMBINED FEE SUMMARY ({selectedSession})</Badge>
@@ -196,10 +200,14 @@ export function CombinedFeeHistoryDialog({ isOpen, setIsOpen, parent, feeSetting
                     </Table>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center border-t pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center border-t pt-4">
                     <div className="p-2 rounded-md bg-muted">
                     <p className="text-sm text-muted-foreground">Family Total Fees ({selectedSession})</p>
                     <p className="text-xl font-bold">Rs{parent.totalFees.toFixed(2)}</p>
+                    </div>
+                     <div className="p-2 rounded-md bg-muted">
+                    <p className="text-sm text-muted-foreground">Family Previous Dues</p>
+                     <p className="text-xl font-bold">Rs{parent.children.reduce((acc, c) => acc + calculateAnnualDue(c, feeSettings, selectedSession).previousSessionDue, 0).toFixed(2)}</p>
                     </div>
                     <div className="p-2 rounded-md bg-muted">
                     <p className="text-sm text-muted-foreground">Family Total Paid ({selectedSession})</p>

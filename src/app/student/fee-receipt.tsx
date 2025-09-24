@@ -132,7 +132,7 @@ export function FeeReceipt({ student, payment, settings }: FeeReceiptProps) {
             <p className="text-lg font-bold">Rs{feeDetails.previousSessionDue.toFixed(2)}</p>
            </div>
            <div className="p-2 rounded-md bg-muted">
-            <p className="text-xs text-muted-foreground">Total Paid (This Session)</p>
+            <p className="text-xs text-muted-foreground">Total Paid</p>
             <p className="text-lg font-bold text-green-600">Rs{feeDetails.totalPaid.toFixed(2)}</p>
            </div>
           <div className="p-2 rounded-md bg-muted">
