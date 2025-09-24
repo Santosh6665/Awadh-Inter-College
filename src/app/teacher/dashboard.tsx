@@ -15,6 +15,7 @@ import { SalarySlip } from '../admin/dashboard/salary/salary-slip';
 import { AttendanceHistory } from '../student/attendance-history';
 import { AttendanceManagement } from './attendance/attendance-management';
 import { TeacherSalaryView } from './salary-view';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface TeacherDashboardProps {
   teacher: Teacher;
@@ -25,6 +26,9 @@ interface TeacherDashboardProps {
 }
 
 export function TeacherDashboard({ teacher, students, attendance, forcePasswordReset, settings }: TeacherDashboardProps) {
+  const [selectedSession, setSelectedSession] = useState(settings.activeSession || '');
+  const sessions = settings?.sessions || [];
+  
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -32,6 +36,10 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
     }
     return name.substring(0, 2);
   };
+
+  const studentsInSession = useMemo(() => {
+    return students.filter(student => student.session === selectedSession);
+  }, [students, selectedSession]);
 
   return (
     <>
@@ -47,6 +55,17 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                     <div className="flex-1">
                         <CardTitle className="text-2xl md:text-3xl">{teacher.name}</CardTitle>
                         <CardDescription className="text-base">Welcome to your teacher portal.</CardDescription>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">Viewing Session:</span>
+                        <Select value={selectedSession} onValueChange={setSelectedSession}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select Session" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {sessions.map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                            </SelectContent>
+                        </Select>
                     </div>
                 </CardHeader>
                 <CardContent className="pt-0 p-4 md:p-6">
@@ -110,10 +129,10 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                         <AttendanceHistory attendanceRecords={attendance} />
                     </TabsContent>
                     <TabsContent value="attendance" className="mt-6">
-                       <AttendanceManagement students={students} teacher={teacher} />
+                       <AttendanceManagement students={studentsInSession} teacher={teacher} />
                     </TabsContent>
                     <TabsContent value="results" className="mt-6">
-                        <ResultsManagement students={students} teacher={teacher} settings={settings} />
+                        <ResultsManagement students={studentsInSession} teacher={teacher} settings={settings} />
                     </TabsContent>
                     <TabsContent value="salary" className="mt-6">
                         <TeacherSalaryView teacher={teacher} />

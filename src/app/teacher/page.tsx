@@ -1,3 +1,4 @@
+
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Header } from '@/components/layout/header';
@@ -23,6 +24,7 @@ export default async function TeacherPage() {
     redirect('/logout');
   }
 
+  // Fetch all students across all sessions
   const students = await getStudents();
   const attendance = await getTeacherAttendance(teacherId);
 
@@ -38,7 +40,12 @@ export default async function TeacherPage() {
     <div className="flex min-h-screen flex-col">
       <Header user={user} />
       <main className="flex-1">
-          <TeacherDashboard teacher={teacher} students={students} attendance={attendance} forcePasswordReset={forcePasswordReset} settings={settings} />
+          <TeacherDashboard 
+            teacher={teacher} 
+            students={students} 
+            attendance={attendance} 
+            forcePasswordReset={forcePasswordReset} 
+            settings={settings} />
       </main>
     </div>
   );
