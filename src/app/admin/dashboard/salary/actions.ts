@@ -32,6 +32,10 @@ export type FormState = {
 export async function getHolidaysInMonth(date: Date) {
     try {
         await checkAuth();
+        if (!firestore) {
+            console.error("Firestore is not initialized. Check environment variables.");
+            return [];
+        }
         const year = date.getFullYear();
         const month = date.getMonth(); // 0-indexed (0 for January)
 
@@ -55,6 +59,10 @@ export async function getHolidaysInMonth(date: Date) {
 export async function getTeacherAttendanceForMonth(date: Date) {
     try {
         await checkAuth();
+        if (!firestore) {
+            console.error("Firestore is not initialized. Check environment variables.");
+            return {};
+        }
         const start = startOfMonth(date);
         const end = endOfMonth(date);
         
@@ -107,6 +115,9 @@ export async function recordSalaryPayment(
   }
 
   try {
+    if (!firestore) {
+        throw new Error("Firestore is not initialized.");
+    }
     const paymentData = validatedFields.data;
     const newPayment = {
         id: new Date().getTime().toString(), // simple unique id

@@ -12,10 +12,11 @@ function initializeFirebaseAdmin() {
 
   // Strengthened check: ensure the variable is a non-empty string that looks like a JSON object.
   if (!serviceAccountString || !serviceAccountString.startsWith('{')) {
-    console.warn(
-      'FIREBASE_SERVICE_ACCOUNT_KEY is not a valid JSON object. Firebase Admin SDK will not be initialized. This is expected during build, but the app will not function correctly without it at runtime.'
-    );
-    return null;
+    const errorMessage = 'FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set or is not a valid JSON object. Firebase Admin SDK could not be initialized.';
+    console.error(errorMessage);
+    // In a server environment, it's better to throw an error to make the configuration issue obvious.
+    // This prevents silent failures and hard-to-debug runtime errors.
+    throw new Error(errorMessage);
   }
 
   try {
@@ -26,9 +27,8 @@ function initializeFirebaseAdmin() {
     return admin.firestore();
   } catch (error) {
     console.error('Firebase admin initialization error:', error);
-    // Throwing an error here can be helpful for debugging but might crash server startup.
-    // Consider whether to throw or just return null based on your deployment strategy.
-    return null; 
+    // Re-throw the error to ensure the server fails fast if initialization is incorrect.
+    throw new Error('Failed to initialize Firebase Admin SDK.'); 
   }
 }
 
