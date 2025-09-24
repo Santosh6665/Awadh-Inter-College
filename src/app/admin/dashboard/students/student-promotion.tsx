@@ -33,10 +33,26 @@ export function StudentPromotion({ students, settings }: { students: Student[], 
   const nextSession = settings?.nextSession;
 
   const studentsToPromote = useMemo(() => {
-    if (!fromClass || !activeSession) return [];
-    return students.filter(s => s.class === fromClass && s.session === activeSession)
+    if (!fromClass || !activeSession || !nextSession) return [];
+    
+    // Create a set of roll numbers for students who already exist in the next session.
+    const studentsInNextSession = new Set(
+      students
+        .filter(s => s.session === nextSession)
+        .map(s => s.rollNumber)
+    );
+
+    // Filter students from the active session who are in the selected class
+    // and do NOT already have a record in the next session.
+    return students
+      .filter(s => 
+        s.class === fromClass && 
+        s.session === activeSession && 
+        !studentsInNextSession.has(s.rollNumber)
+      )
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [students, fromClass, activeSession]);
+      
+  }, [students, fromClass, activeSession, nextSession]);
   
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -163,7 +179,7 @@ export function StudentPromotion({ students, settings }: { students: Student[], 
               ) : (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center h-24">
-                    {fromClass ? 'No students found in this class for the active session.' : 'Please select a class to see students.'}
+                    {fromClass ? 'No students available for promotion in this class.' : 'Please select a class to see students.'}
                   </TableCell>
                 </TableRow>
               )}
