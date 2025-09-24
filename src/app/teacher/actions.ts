@@ -4,11 +4,9 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { firestore } from '@/lib/firebase-admin';
-import type { Teacher, AttendanceRecord } from '@/lib/types';
+import type { Teacher } from '@/lib/types';
 import { FieldValue } from 'firebase-admin/firestore';
 import { getLoggedInUser } from '../auth/actions';
-import { startOfMonth, endOfMonth, format } from 'date-fns';
-
 
 const setPasswordSchema = z.object({
     password: z.string().min(6, 'Password must be at least 6 characters.'),
@@ -155,30 +153,5 @@ export async function updateStudentMarksByTeacher(
   } catch (error) {
     console.error('Error updating student marks:', error);
     return { success: false, message: 'An unexpected error occurred while updating marks.' };
-  }
-}
-
-export async function getTeacherAttendance(teacherId: string): Promise<AttendanceRecord[]> {
-  try {
-    if (!firestore) return [];
-    const attendanceSnapshot = await firestore.collection('teacherAttendance').get();
-    const attendanceRecords: AttendanceRecord[] = [];
-    
-    attendanceSnapshot.forEach(doc => {
-      const date = doc.id;
-      const data = doc.data();
-      if (data && data[teacherId]) {
-        attendanceRecords.push({
-          date,
-          status: data[teacherId].status,
-        });
-      }
-    });
-
-    // Sort by date descending
-    return attendanceRecords.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  } catch (error) {
-    console.error(`Error fetching attendance for teacher ${teacherId}:`, error);
-    return [];
   }
 }

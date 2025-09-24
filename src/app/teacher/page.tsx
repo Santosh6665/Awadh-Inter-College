@@ -3,8 +3,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Header } from '@/components/layout/header';
 import { TeacherDashboard } from '@/app/teacher/dashboard';
-import type { Student, Teacher, AttendanceRecord } from '@/lib/types';
-import { getTeacherById, getTeacherAttendance } from './actions';
+import type { Student, Teacher } from '@/lib/types';
+import { getTeacherById } from './actions';
 import { getStudents } from '../admin/dashboard/students/actions';
 import { getLoggedInUser } from '../auth/actions';
 import { firestore } from '@/lib/firebase-admin';
@@ -26,7 +26,6 @@ export default async function TeacherPage() {
 
   // Fetch all students across all sessions
   const students = await getStudents();
-  const attendance = await getTeacherAttendance(teacherId);
 
   let settings: any = {};
   if (firestore) {
@@ -43,7 +42,6 @@ export default async function TeacherPage() {
           <TeacherDashboard 
             teacher={teacher} 
             students={students} 
-            attendance={attendance} 
             forcePasswordReset={forcePasswordReset} 
             settings={settings} />
       </main>

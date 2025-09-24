@@ -1,26 +1,24 @@
 
 'use client';
 
-import type { Student, Teacher, AttendanceRecord, SalaryPayment } from '@/lib/types';
+import type { Student, Teacher } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SetPasswordDialog } from './set-password-dialog';
 import { ResultsManagement } from './results-management';
 import { useMemo, useState } from 'react';
-import { AttendanceHistory } from '../student/attendance-history';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 
 interface TeacherDashboardProps {
   teacher: Teacher;
   students: Student[];
-  attendance: AttendanceRecord[];
   forcePasswordReset: boolean;
   settings: any;
 }
 
-export function TeacherDashboard({ teacher, students, attendance, forcePasswordReset, settings }: TeacherDashboardProps) {
+export function TeacherDashboard({ teacher, students, forcePasswordReset, settings }: TeacherDashboardProps) {
   const [selectedSession, setSelectedSession] = useState(settings.activeSession || '');
   const sessions = settings?.sessions || [];
   
@@ -119,7 +117,6 @@ export function TeacherDashboard({ teacher, students, attendance, forcePasswordR
                                 </div>
                             </CardContent>
                         </Card>
-                        <AttendanceHistory attendanceRecords={attendance} />
                     </TabsContent>
                     <TabsContent value="results" className="mt-6">
                         <ResultsManagement students={studentsInSession} teacher={teacher} settings={settings} />
