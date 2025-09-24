@@ -81,7 +81,7 @@
     {
       "id": "founder-photo",
       "description": "Portrait of the school founder.",
-      "imageUrl": "https://images.unsplash.com/photo-1750926013613-13c1796133e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxmb3VuZGVyJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzU4NTg3MTYyfDA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/founder-photo.jpg",
       "imageHint": "founder portrait"
     },
     {
