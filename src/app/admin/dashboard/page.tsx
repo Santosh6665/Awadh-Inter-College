@@ -30,11 +30,12 @@ interface AdminDashboardPageProps {
 
 export default function AdminDashboardPage({ students, teachers, settings: initialSettings, notices, todayAttendanceData, yesterdayAttendanceData }: AdminDashboardPageProps) {
   const [settings, setSettings] = useState(initialSettings);
+  const [selectedSession, setSelectedSession] = useState(settings.activeSession || '');
   
   const activeSession = settings.activeSession || new Date().getFullYear() + '-' + (new Date().getFullYear() + 1);
   
-  const studentsInSession = useMemo(() => students.filter(s => s.session === activeSession), [students, activeSession]);
-  const teachersInSession = useMemo(() => teachers.filter(t => t.session === activeSession), [teachers, activeSession]);
+  const studentsInSession = useMemo(() => students.filter(s => s.session === selectedSession), [students, selectedSession]);
+  const teachersInSession = useMemo(() => teachers.filter(t => t.session === selectedSession), [teachers, selectedSession]);
 
 
   const totalFeesCollected = studentsInSession.reduce((acc, student) => {
@@ -108,7 +109,7 @@ export default function AdminDashboardPage({ students, teachers, settings: initi
           <CardContent>
             <div className="text-2xl font-bold">{studentsInSession.length}</div>
             <p className="text-xs text-muted-foreground">
-              in session {activeSession}
+              in session {selectedSession}
             </p>
           </CardContent>
         </Card>
@@ -122,7 +123,7 @@ export default function AdminDashboardPage({ students, teachers, settings: initi
           <CardContent>
             <div className="text-2xl font-bold">{teachersInSession.length}</div>
              <p className="text-xs text-muted-foreground">
-               in session {activeSession}
+               in session {selectedSession}
             </p>
           </CardContent>
         </Card>
@@ -172,13 +173,13 @@ export default function AdminDashboardPage({ students, teachers, settings: initi
                 </TabsList>
             </div>
           <TabsContent value="students" className="mt-4">
-            <StudentList students={students} settings={settings} />
+            <StudentList students={students} settings={settings} selectedSession={selectedSession} setSelectedSession={setSelectedSession} />
           </TabsContent>
           <TabsContent value="promote_students" className="mt-4">
             <StudentPromotion students={students} settings={settings} />
           </TabsContent>
           <TabsContent value="teachers" className="mt-4">
-            <TeacherList teachers={teachers} settings={settings}/>
+            <TeacherList teachers={teachers} settings={settings} selectedSession={selectedSession} setSelectedSession={setSelectedSession} />
           </TabsContent>
            <TabsContent value="results" className="mt-4">
             <ResultsManagement students={studentsInSession} settings={settings} />
@@ -190,7 +191,7 @@ export default function AdminDashboardPage({ students, teachers, settings: initi
             <TeacherAttendanceManagement teachers={teachersInSession} />
           </TabsContent>
            <TabsContent value="fees" className="mt-4">
-            <FeeManagement students={students} feeSettings={settings} />
+            <FeeManagement students={students} feeSettings={settings} selectedSession={selectedSession} />
           </TabsContent>
            <TabsContent value="teacher-salary" className="mt-4">
             <SalaryManagement teachers={teachersInSession} />
@@ -199,7 +200,13 @@ export default function AdminDashboardPage({ students, teachers, settings: initi
             <NoticeManagement notices={notices} />
           </TabsContent>
            <TabsContent value="settings" className="mt-4">
-            <Settings settings={settings} onSettingsSave={setSettings} />
+            <Settings settings={settings} onSettingsSave={(newSettings) => {
+              setSettings(newSettings);
+              // Also update the selected session if the active one changes
+              if (newSettings.activeSession !== selectedSession) {
+                setSelectedSession(newSettings.activeSession);
+              }
+            }} />
           </TabsContent>
         </Tabs>
       </div>

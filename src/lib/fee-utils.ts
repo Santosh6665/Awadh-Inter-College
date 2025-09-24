@@ -36,23 +36,51 @@ function calculateCurrentSessionFee(finalFeeStructure: any, multipliers: any) {
 
 /**
  * Calculates the total annual due, total annual fee, and total paid for a student.
- * @param student The student object.
- * @param feeSettings The school's fee settings, including feeStructure.
+ * Can be scoped to a specific session for historical views.
+ * @param student The student object for a specific session.
+ * @param feeSettings The school's fee settings.
+ * @param asOfSession The session to calculate fees for. If not provided, uses the student's session.
  * @returns An object with due, totalAnnualFee, totalPaid, and previousSessionDue amounts.
  */
 export function calculateAnnualDue(
   student: Student,
-  feeSettings: any
+  feeSettings: any,
+  asOfSession?: string
 ) {
   const { feeStructure = {}, feeMultipliers = {} } = feeSettings || {};
+  const targetSession = asOfSession || student.session;
 
-  // Separate payments from carried-over dues
-  const actualPayments = (student.payments || []).filter(p => p.amount >= 0);
-  const carriedOverDues = (student.payments || []).filter(p => p.amount < 0);
+  // Payments and dues only relevant to the target session and prior.
+  const relevantPayments = (student.payments || []).filter(p => {
+    // A simple way to check if payment belongs to the session or is a carry-over.
+    // This assumes carry-over entries are made correctly.
+    // A payment date could also be used but session is more explicit.
+    if (p.months?.some(m => m.includes('Due from'))) {
+      const dueFromSession = p.months[0].replace('Due from ', '');
+      return dueFromSession < targetSession;
+    }
+    // For regular payments, we'd need to associate them with a session,
+    // which we're not doing explicitly. We'll rely on the student record's session.
+    // This means we should only pass the student object for the session we're interested in.
+    return true; 
+  });
+
+
+  const actualPayments = relevantPayments.filter(p => p.amount >= 0);
+  const carriedOverDues = relevantPayments.filter(p => p.amount < 0);
 
   const totalPaid = actualPayments.reduce((acc, p) => acc + p.amount, 0);
   const previousSessionDue = carriedOverDues.reduce((acc, p) => acc + Math.abs(p.amount), 0);
 
+  // If we are viewing a session that the student is not in, they have no new fees for that session.
+  if (student.session !== targetSession) {
+    return {
+      due: Math.max(0, previousSessionDue - totalPaid),
+      totalAnnualFee: 0,
+      totalPaid,
+      previousSessionDue,
+    };
+  }
 
   const classFeeStructure = feeStructure[student.class] || {};
   const studentFeeOverrides = student.feeStructure || {};
@@ -61,14 +89,13 @@ export function calculateAnnualDue(
   const combinedMultipliers = { ...defaultMultipliers, ...feeMultipliers };
   let totalAnnualFee = calculateCurrentSessionFee(finalFeeStructure, combinedMultipliers);
   
-  // The total amount to be paid for this session is the session's fee plus any old dues
   const totalObligation = totalAnnualFee + previousSessionDue;
   
   const due = totalObligation - totalPaid;
 
   return {
-    due: Math.max(0, due), // Due amount cannot be negative
-    totalAnnualFee: Math.max(0, totalAnnualFee), // This is now only the current session's fee
+    due: Math.max(0, due),
+    totalAnnualFee: Math.max(0, totalAnnualFee),
     totalPaid,
     previousSessionDue,
   };

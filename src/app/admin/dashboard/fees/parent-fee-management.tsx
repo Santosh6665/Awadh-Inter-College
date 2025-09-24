@@ -27,14 +27,16 @@ import { UpdateFeeStructureForm } from './update-fee-structure-form';
 import { RecordPaymentForm } from './record-payment-form';
 import { FeeHistoryDialog } from './fee-history-dialog';
 import { RecordCombinedPaymentForm } from './record-combined-payment-form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 interface ParentFeeManagementProps {
   students: Student[];
   feeSettings: any;
+  selectedSession: string;
 }
 
-export function ParentFeeManagement({ students, feeSettings }: ParentFeeManagementProps) {
+export function ParentFeeManagement({ students, feeSettings, selectedSession }: ParentFeeManagementProps) {
   const [isCombinedHistoryDialogOpen, setIsCombinedHistoryDialogOpen] = useState(false);
   const [selectedParent, setSelectedParent] = useState<Parent | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,7 +48,6 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
   const [isCombinedPaymentFormOpen, setIsCombinedPaymentFormOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   
-  const activeSession = feeSettings?.activeSession;
 
   const toggleCollapsible = (id: string) => {
     setOpenCollapsibles(prev => 
@@ -82,20 +83,26 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
   const parentsData = useMemo<Parent[]>(() => {
     const parentsMap: Record<string, { parentName: string, children: Student[] }> = {};
     
-    students.forEach(student => {
+    // First, filter all students to only include records up to and including the selected session
+    const sessionRelevantStudents = students.filter(student => student.session <= selectedSession);
+    
+    sessionRelevantStudents.forEach(student => {
         const parentId = student.parentPhone || `no-parent-${student.id}`;
         if (!parentsMap[parentId]) {
             parentsMap[parentId] = { parentName: student.fatherName, children: [] };
         }
         parentsMap[parentId].children.push(student);
     });
-    
+
     return Object.entries(parentsMap).map(([phone, data]) => {
-        // Find the most recent session for each student within this family
-        const latestChildren = Object.values(data.children.reduce((acc, child) => {
-            const existing = acc[child.rollNumber];
-            if (!existing || child.session > existing.session) {
+        // For each family, find the latest record for each child *within the selected session context*
+        const childrenForSession = Object.values(data.children.reduce((acc, child) => {
+            if (child.session === selectedSession) {
                 acc[child.rollNumber] = child;
+            } else if (!acc[child.rollNumber] && child.session < selectedSession) {
+                // If a student doesn't have a record for the selected session (e.g., they left),
+                // we still want to show their last known record to see if they had dues.
+                 acc[child.rollNumber] = child;
             }
             return acc;
         }, {} as Record<string, Student>));
@@ -104,28 +111,28 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
         let totalPaid = 0;
         let totalDue = 0;
 
-        latestChildren.forEach((child) => {
-            const { due, totalAnnualFee } = calculateAnnualDue(child, feeSettings);
+        childrenForSession.forEach((child) => {
+            const { due, totalAnnualFee, totalPaid: childTotalPaid } = calculateAnnualDue(child, feeSettings, selectedSession);
             totalDue += due;
-            totalFees += totalAnnualFee; // This is now the session fee
+            totalFees += totalAnnualFee;
+            totalPaid += childTotalPaid;
         });
 
-        // Total paid needs to be calculated across all children of the parent.
-        totalPaid = data.children.reduce((acc, child) => {
-            return acc + (child.payments || []).filter(p => p.amount > 0).reduce((sum, p) => sum + p.amount, 0);
-        }, 0);
-
+        // If no children are found for the selected session for this parent, don't include them.
+        if (childrenForSession.length === 0) {
+            return null;
+        }
 
         return {
             id: phone,
             parentName: data.parentName,
-            children: latestChildren.sort((a, b) => a.name.localeCompare(b.name)),
+            children: childrenForSession.sort((a, b) => a.name.localeCompare(b.name)),
             totalFees,
             totalPaid,
             totalDue,
         };
-    }).sort((a, b) => a.parentName.localeCompare(b.parentName));
-  }, [students, feeSettings]);
+    }).filter(p => p !== null).sort((a, b) => a!.parentName.localeCompare(b!.parentName)) as Parent[];
+  }, [students, feeSettings, selectedSession]);
 
 
   const filteredParents = parentsData.filter(parent =>
@@ -140,7 +147,7 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
       <Card>
         <CardHeader>
           <CardTitle>Fee Management by Family</CardTitle>
-          <CardDescription>View family-wise fee summaries and record individual or combined payments for session {activeSession}.</CardDescription>
+          <CardDescription>View family-wise fee summaries and record individual or combined payments for session {selectedSession}.</CardDescription>
           <div className="mt-4 relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -206,7 +213,9 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                           </TableHeader>
                           <TableBody>
                             {parent.children.map((child) => {
-                                const { due, totalAnnualFee, totalPaid, previousSessionDue } = calculateAnnualDue(child, feeSettings);
+                                const { due, totalAnnualFee, totalPaid, previousSessionDue } = calculateAnnualDue(child, feeSettings, selectedSession);
+                                const isLatestSession = child.session === selectedSession;
+
                                 return (
                                 <TableRow key={child.id}>
                                     <TableCell>{child.name}</TableCell>
@@ -224,10 +233,10 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
                                         <Button variant="ghost" size="icon" title="View Details" onClick={() => handleViewHistory(child)}>
                                             <Eye className="h-4 w-4" />
                                         </Button>
-                                        <Button variant="ghost" size="icon" title="Edit Fee Structure" onClick={() => handleEditFeeStructure(child)}>
+                                        <Button variant="ghost" size="icon" title="Edit Fee Structure" onClick={() => handleEditFeeStructure(child)} disabled={!isLatestSession}>
                                             <Edit className="h-4 w-4" />
                                         </Button>
-                                        <Button variant="ghost" size="icon" title="Record Payment" onClick={() => handleRecordPayment(child)}>
+                                        <Button variant="ghost" size="icon" title="Record Payment" onClick={() => handleRecordPayment(child)} disabled={!isLatestSession}>
                                             <PlusCircle className="h-4 w-4" />
                                         </Button>
                                     </TableCell>
@@ -252,7 +261,7 @@ export function ParentFeeManagement({ students, feeSettings }: ParentFeeManageme
               ))
             ) : (
                 <div className="text-center text-muted-foreground py-10">
-                    <p>No parent records found.</p>
+                    <p>No parent records found for the selected session.</p>
                 </div>
             )}
           </div>

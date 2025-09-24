@@ -7,10 +7,11 @@ import type { Student } from '@/lib/types';
 interface FeeManagementProps {
   students: Student[];
   feeSettings: any;
+  selectedSession: string;
 }
 
-export function FeeManagement({ students, feeSettings }: FeeManagementProps) {
+export function FeeManagement({ students, feeSettings, selectedSession }: FeeManagementProps) {
   return (
-    <ParentFeeManagement students={students} feeSettings={feeSettings} />
+    <ParentFeeManagement students={students} feeSettings={feeSettings} selectedSession={selectedSession} />
   );
 }

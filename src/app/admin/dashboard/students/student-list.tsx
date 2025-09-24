@@ -31,7 +31,14 @@ import { deleteStudent } from './actions';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export function StudentList({ students, settings }: { students: Student[], settings: any }) {
+interface StudentListProps {
+  students: Student[];
+  settings: any;
+  selectedSession: string;
+  setSelectedSession: (session: string) => void;
+}
+
+export function StudentList({ students, settings, selectedSession, setSelectedSession }: StudentListProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +49,6 @@ export function StudentList({ students, settings }: { students: Student[], setti
   const { toast } = useToast();
 
   const sessions = settings?.sessions || [];
-  const [selectedSession, setSelectedSession] = useState(settings?.activeSession || '');
   
   const handleEdit = (student: Student) => {
     setSelectedStudent(student);

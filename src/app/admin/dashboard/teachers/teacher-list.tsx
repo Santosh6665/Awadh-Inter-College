@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -31,7 +32,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export function TeacherList({ teachers, settings }: { teachers: Teacher[], settings: any }) {
+interface TeacherListProps {
+  teachers: Teacher[];
+  settings: any;
+  selectedSession: string;
+  setSelectedSession: (session: string) => void;
+}
+
+export function TeacherList({ teachers, settings, selectedSession, setSelectedSession }: TeacherListProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -40,7 +48,6 @@ export function TeacherList({ teachers, settings }: { teachers: Teacher[], setti
   const { toast } = useToast();
   
   const sessions = settings?.sessions || [];
-  const [selectedSession, setSelectedSession] = useState(settings?.activeSession || '');
   
   const handleEdit = (teacher: Teacher) => {
     setSelectedTeacher(teacher);
