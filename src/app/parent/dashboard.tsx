@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StudentDashboard } from '@/app/student/dashboard';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Banknote, Users, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { calculateAnnualDue } from '@/lib/fee-utils';
@@ -25,14 +25,25 @@ interface ParentDashboardProps {
 
 export function ParentDashboard({ parent, childrenWithDetails: initialChildren, settings, allSessions }: ParentDashboardProps) {
   const [isCombinedHistoryOpen, setIsCombinedHistoryOpen] = useState(false);
-  const [childrenWithDetails, setChildrenWithDetails] = useState(initialChildren);
-  const [loadingStates, setLoadingStates] = useState<{[key: string]: boolean}>({});
-  const [activeChildId, setActiveChildId] = useState(initialChildren[0]?.id || '');
   
-  const activeChild = useMemo(() => childrenWithDetails.find(c => c.id === activeChildId), [childrenWithDetails, activeChildId]);
-  const [selectedSession, setSelectedSession] = useState(activeChild?.session || '');
+  // This state will hold the data for all children across all fetched sessions
+  const [allChildrenData, setAllChildrenData] = useState<Student[]>(initialChildren);
+  const [loadingStates, setLoadingStates] = useState<{[key: string]: boolean}>({});
 
+  const [activeChildRollNumber, setActiveChildRollNumber] = useState(initialChildren[0]?.rollNumber || '');
+  const [selectedSessionPerChild, setSelectedSessionPerChild] = useState<Record<string, string>>(() => {
+    const initialState: Record<string, string> = {};
+    initialChildren.forEach(child => {
+        initialState[child.rollNumber] = child.session;
+    });
+    return initialState;
+  });
 
+  const activeChild = useMemo(() => {
+    const session = selectedSessionPerChild[activeChildRollNumber];
+    return allChildrenData.find(c => c.rollNumber === activeChildRollNumber && c.session === session);
+  }, [allChildrenData, activeChildRollNumber, selectedSessionPerChild]);
+  
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -43,32 +54,39 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
 
   const handleSessionChange = async (rollNumber: string, session: string) => {
     setLoadingStates(prev => ({...prev, [rollNumber]: true}));
-    setSelectedSession(session);
-    const newStudentData = await getChildDataForSession(rollNumber, session);
-    if(newStudentData) {
-        // Ranks and attendance would need to be re-fetched for the selected session.
-        // For simplicity, we'll clear them for historical views.
-        const updatedStudent = { ...newStudentData, ranks: {}, attendance: [] };
-         setChildrenWithDetails(prev => prev.map(child => 
-            child.rollNumber === rollNumber ? updatedStudent : child
-        ));
+    setSelectedSessionPerChild(prev => ({...prev, [rollNumber]: session}));
+
+    // Check if we already have the data for this session
+    const existingData = allChildrenData.find(c => c.rollNumber === rollNumber && c.session === session);
+    if (!existingData) {
+        const newStudentData = await getChildDataForSession(rollNumber, session);
+        if(newStudentData) {
+            setAllChildrenData(prev => [...prev, newStudentData]);
+        }
     }
     setLoadingStates(prev => ({...prev, [rollNumber]: false}));
   };
 
-  const parentDataForSession: Parent = useMemo(() => {
+  const parentDataForDialog: Parent | null = useMemo(() => {
+    if (!activeChild) return null;
+    
+    const selectedSession = selectedSessionPerChild[activeChild.rollNumber];
+    
+    // We need all original records to calculate dues correctly across sessions
+    const childrenForCalculation = initialChildren.map(child => {
+        // Use the session-specific data if it's the one we're viewing, but keep full payment history.
+        const sessionData = allChildrenData.find(c => c.rollNumber === child.rollNumber && c.session === selectedSession);
+        return {
+            ...(sessionData || child),
+            payments: child.payments,
+        };
+    });
+
     let totalFees = 0;
     let totalPaid = 0;
     let totalDue = 0;
 
-    // Use currently displayed children data to calculate summary for the selected session
-    const childrenForSummary = childrenWithDetails.map(child => {
-      // Find the corresponding original child record to get full payment history for calculation
-      const originalChild = initialChildren.find(c => c.rollNumber === child.rollNumber);
-      return originalChild ? { ...child, payments: originalChild.payments } : child;
-    });
-
-    childrenForSummary.forEach((child) => {
+    childrenForCalculation.forEach((child) => {
       const { due, totalAnnualFee, totalPaid: paid } = calculateAnnualDue(child, settings, selectedSession);
       totalDue += due;
       totalFees += totalAnnualFee;
@@ -78,12 +96,12 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
     return {
       id: parent.id,
       parentName: parent.name,
-      children: childrenForSummary, // Use children with data relevant to the selected session
+      children: childrenForCalculation,
       totalFees,
       totalPaid,
       totalDue,
     };
-  }, [childrenWithDetails, initialChildren, parent, settings, selectedSession]);
+  }, [activeChild, allChildrenData, initialChildren, parent, settings, selectedSessionPerChild]);
 
   const childrenNames = initialChildren.map(c => c.name).join(', ');
 
@@ -92,9 +110,9 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
       <CombinedFeeHistoryDialog
         isOpen={isCombinedHistoryOpen}
         setIsOpen={setIsCombinedHistoryOpen}
-        parent={parentDataForSession}
+        parent={parentDataForDialog}
         feeSettings={settings}
-        selectedSession={selectedSession}
+        selectedSession={activeChild ? selectedSessionPerChild[activeChild.rollNumber] : ''}
       />
       <div id="parent-dashboard" className="bg-muted/50">
         <div className="container mx-auto py-8">
@@ -108,17 +126,17 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                       <CardDescription className="text-base mt-1">
                           Viewing dashboard for: <span className="font-semibold">{childrenNames}</span>.
                       </CardDescription>
-                      {parentDataForSession.totalDue > 0 && (
+                      {parentDataForDialog && parentDataForDialog.totalDue > 0 && (
                            <Alert variant="destructive" className="mt-2">
                               <Banknote className="h-4 w-4" />
                               <AlertTitle>Outstanding Balance</AlertTitle>
                               <AlertDescription>
-                                  The total pending fee for your children is <strong>Rs{parentDataForSession.totalDue.toFixed(2)}</strong>. Please see payment instructions below.
+                                  The total pending fee for your children is <strong>Rs{parentDataForDialog.totalDue.toFixed(2)}</strong>. Please see payment instructions below.
                               </AlertDescription>
                           </Alert>
                       )}
                   </div>
-                  {childrenWithDetails.length > 1 && (
+                  {initialChildren.length > 1 && (
                     <Button onClick={() => setIsCombinedHistoryOpen(true)}>
                         <Users className="mr-2 h-4 w-4" />
                         View Family Summary
@@ -126,15 +144,11 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                   )}
               </CardHeader>
               <CardContent>
-                   <Tabs defaultValue={childrenWithDetails[0].id} className="w-full" onValueChange={(value) => {
-                        const newActiveChild = childrenWithDetails.find(c => c.id === value);
-                        setActiveChildId(value);
-                        setSelectedSession(newActiveChild?.session || '');
-                   }}>
+                   <Tabs defaultValue={initialChildren[0]?.rollNumber} className="w-full" onValueChange={setActiveChildRollNumber}>
                       <div className="flex flex-col md:flex-row gap-4 mb-6 print-hidden">
                           <TabsList className="w-full justify-start overflow-x-auto whitespace-nowrap md:w-auto">
                               {initialChildren.map(child => (
-                                  <TabsTrigger key={child.id} value={child.id}>{child.name}</TabsTrigger>
+                                  <TabsTrigger key={child.rollNumber} value={child.rollNumber}>{child.name}</TabsTrigger>
                               ))}
                           </TabsList>
                            <Card className="flex-1">
@@ -146,12 +160,16 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                               </CardContent>
                           </Card>
                       </div>
-                      {childrenWithDetails.map(child => (
-                          <TabsContent key={child.id} value={child.id} className="mt-6">
+                      {initialChildren.map(child => {
+                        const childDataForSelectedSession = allChildrenData.find(c => c.rollNumber === child.rollNumber && c.session === selectedSessionPerChild[child.rollNumber]);
+                        const initialData = initialChildren.find(c => c.rollNumber === child.rollNumber);
+                        
+                        return (
+                          <TabsContent key={child.rollNumber} value={child.rollNumber} className="mt-6">
                             <div className="flex justify-end items-center gap-2 mb-4">
                                <span className="text-sm font-medium">Viewing Session:</span>
                                <Select
-                                value={child.session}
+                                value={selectedSessionPerChild[child.rollNumber]}
                                 onValueChange={(session) => handleSessionChange(child.rollNumber, session)}
                                >
                                  <SelectTrigger className="w-[180px]">
@@ -166,18 +184,23 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                                 <div className="flex justify-center items-center h-96">
                                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                                 </div>
-                             ) : (
+                             ) : childDataForSelectedSession && initialData ? (
                                 <StudentDashboard
-                                    student={child}
-                                    ranks={child.ranks}
-                                    attendance={child.attendance}
+                                    student={{...childDataForSelectedSession, payments: initialData.payments }}
+                                    ranks={initialData.ranks}
+                                    attendance={initialData.attendance}
                                     settings={settings}
                                     allSessions={allSessions}
                                     isParentView={true}
                                 />
+                             ): (
+                               <div className="flex justify-center items-center h-96">
+                                    <p>Could not load data for this session.</p>
+                                </div>
                              )}
                           </TabsContent>
-                      ))}
+                        )
+                      })}
                   </Tabs>
               </CardContent>
           </Card>
