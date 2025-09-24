@@ -2,8 +2,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useFormStatus, useActionState } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
