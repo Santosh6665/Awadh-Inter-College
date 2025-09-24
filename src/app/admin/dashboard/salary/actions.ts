@@ -77,7 +77,6 @@ export async function getTeacherAttendanceForMonth(date: Date) {
             const dateStr = doc.id;
             const dailyRecords = doc.data();
             for (const teacherId in dailyRecords) {
-                console.log("Attendance By Teacher", attendanceByTeacher)
                 if (!attendanceByTeacher[teacherId]) {
                     attendanceByTeacher[teacherId] = {};
                 }
