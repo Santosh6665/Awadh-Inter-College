@@ -12,9 +12,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export function SessionSettings({ settings, onSettingsSave }: { settings: any, onSettingsSave: (newSettings: any) => void }) {
-  const [sessions, setSessions] = useState<string[]>([]);
-  const [activeSession, setActiveSession] = useState('');
-  const [nextSession, setNextSession] = useState('');
+  const [sessions, setSessions] = useState<string[]>(settings?.sessions || []);
+  const [activeSession, setActiveSession] = useState(settings?.activeSession || '');
+  const [nextSession, setNextSession] = useState(settings?.nextSession || '');
   const [newSession, setNewSession] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
@@ -30,9 +30,17 @@ export function SessionSettings({ settings, onSettingsSave }: { settings: any, o
   const handleAddSession = () => {
     // Regex to validate YYYY-YYYY or YYYY-YY format
     const sessionRegex = /^\d{4}-(\d{4}|\d{2})$/;
-    if (newSession && !sessions.includes(newSession) && sessionRegex.test(newSession)) {
-      setSessions([...sessions, newSession].sort().reverse());
-      setNewSession('');
+    if (newSession && sessionRegex.test(newSession)) {
+        if (!sessions.includes(newSession)) {
+            setSessions([...sessions, newSession].sort().reverse());
+            setNewSession('');
+        } else {
+             toast({
+                title: 'Session Exists',
+                description: `The session "${newSession}" has already been added.`,
+                variant: 'destructive',
+            });
+        }
     } else {
       toast({
         title: 'Invalid Session Format',
