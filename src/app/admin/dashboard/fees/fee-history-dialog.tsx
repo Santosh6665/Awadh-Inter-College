@@ -33,14 +33,15 @@ interface FeeHistoryDialogProps {
   setIsOpen: (open: boolean) => void;
   student: Student | null;
   feeSettings: any;
+  selectedSession: string;
 }
 
-export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: FeeHistoryDialogProps) {
+export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings, selectedSession }: FeeHistoryDialogProps) {
   const feeDetails = useMemo(() => {
     if (!student) return null;
     
     // Use the centralized fee calculation logic to ensure consistency
-    const { totalAnnualFee, totalPaid, due, previousSessionDue } = calculateAnnualDue(student, feeSettings);
+    const { totalAnnualFee, totalPaid, due, previousSessionDue } = calculateAnnualDue(student, feeSettings, selectedSession);
 
     const classFeeStructure = feeSettings.feeStructure?.[student.class] || {};
     const studentFeeOverrides = student.feeStructure || {};
@@ -72,7 +73,7 @@ export function FeeHistoryDialog({ isOpen, setIsOpen, student, feeSettings }: Fe
     }
 
     return { structuredFees, totalFees: totalAnnualFee, totalPaid, due, previousDues: previousSessionDue };
-  }, [student, feeSettings]);
+  }, [student, feeSettings, selectedSession]);
 
   if (!student || !feeDetails) return null;
 

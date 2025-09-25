@@ -56,6 +56,7 @@ export type Payment = {
 
 
 export type Student = {
+    className: any;
     id: string;
     name: string;
     email: string;

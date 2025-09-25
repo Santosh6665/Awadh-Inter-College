@@ -2,17 +2,13 @@
 'use client';
 
 import * as React from 'react';
-import type { Student, AttendanceRecord, ExamTypes, Parent } from '@/lib/types';
+import type { Student, AttendanceRecord, ExamTypes } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StudentDashboard } from '@/app/student/dashboard';
-import { useMemo, useState, useEffect } from 'react';
-import { Banknote, Users, Loader2 } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { calculateAnnualDue } from '@/lib/fee-utils';
-import { Button } from '@/components/ui/button';
-import { CombinedFeeHistoryDialog } from '@/app/parent/combined-fee-history-dialog';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { getChildDataForSession } from './actions';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -30,8 +26,6 @@ interface ParentDashboardProps {
 }
 
 export function ParentDashboard({ parent, childrenWithDetails: initialChildren, settings, allSessions }: ParentDashboardProps) {
-  const [isCombinedHistoryOpen, setIsCombinedHistoryOpen] = useState(false);
-  
   const [allChildrenData, setAllChildrenData] = useState<Record<string, ChildData>>(() => {
     const initialData: Record<string, ChildData> = {};
     initialChildren.forEach(child => {
@@ -63,19 +57,15 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
 
   const handleSessionChange = async (rollNumber: string, session: string) => {
     const newStudentId = `${rollNumber}-${session}`;
-    // Immediately update the session selector
     setSelectedSessionPerChild(prev => ({ ...prev, [rollNumber]: session }));
 
-    // If data for this session isn't loaded yet, fetch it.
     if (!allChildrenData[newStudentId]) {
       setLoadingStates(prev => ({ ...prev, [newStudentId]: true }));
       try {
         const newChildData = await getChildDataForSession(rollNumber, session);
         if (newChildData) {
-          // Correctly update the state with the new data
           setAllChildrenData(prev => ({ ...prev, [newStudentId]: newChildData as ChildData }));
         } else {
-          // Handle case where no data is found for the session
           console.warn(`No data found for student ${rollNumber} in session ${session}`);
         }
       } catch (error) {
@@ -86,59 +76,10 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
     }
   };
 
-
-  const parentDataForDialog: Parent | null = useMemo(() => {
-    const sessionForDialog = selectedSessionPerChild[activeChildRollNumber];
-    if (!sessionForDialog) return null;
-    
-    // Get all unique children based on roll number from initial props
-    const allUniqueChildren = Object.values(
-        initialChildren.reduce((acc, child) => {
-            acc[child.student.rollNumber] = child.student;
-            return acc;
-        }, {} as Record<string, Student>)
-    );
-
-    let totalFees = 0;
-    let totalPaid = 0;
-    let totalDue = 0;
-
-    allUniqueChildren.forEach((child) => {
-      // For each unique child, find their specific data for the currently selected session for the dialog
-      const sessionSpecificId = `${child.rollNumber}-${sessionForDialog}`;
-      const studentForCalc = allChildrenData[sessionSpecificId]?.student;
-      
-      // Only perform calculation if we have the student's data for that specific session
-      if (studentForCalc) {
-        const { due, totalAnnualFee, totalPaid: paid } = calculateAnnualDue(studentForCalc, settings, sessionForDialog);
-        totalDue += due;
-        totalFees += totalAnnualFee;
-        totalPaid += paid;
-      }
-    });
-    
-    return {
-      id: parent.id,
-      parentName: parent.name,
-      children: allUniqueChildren, // Pass all unique children for listing
-      totalFees,
-      totalPaid,
-      totalDue,
-    };
-  }, [activeChildRollNumber, selectedSessionPerChild, allChildrenData, initialChildren, parent, settings]);
-
-
   const childrenNames = initialChildren.map(c => c.student.name).join(', ');
 
   return (
     <>
-      <CombinedFeeHistoryDialog
-        isOpen={isCombinedHistoryOpen}
-        setIsOpen={setIsCombinedHistoryOpen}
-        parent={parentDataForDialog}
-        feeSettings={settings}
-        selectedSession={selectedSessionPerChild[activeChildRollNumber] || ''}
-      />
       <div id="parent-dashboard" className="bg-muted/50">
         <div className="container mx-auto py-8">
           <Card className="min-h-screen">
@@ -151,24 +92,27 @@ export function ParentDashboard({ parent, childrenWithDetails: initialChildren, 
                       <CardDescription className="text-base mt-1">
                           Viewing dashboard for: <span className="font-semibold">{childrenNames}</span>.
                       </CardDescription>
-                      {parentDataForDialog && parentDataForDialog.totalDue > 0 && (
-                           <Alert variant="destructive" className="mt-2">
-                              <Banknote className="h-4 w-4" />
-                              <AlertTitle>Outstanding Balance</AlertTitle>
-                              <AlertDescription>
-                                  The total pending fee for your children is <strong>Rs{parentDataForDialog.totalDue.toFixed(2)}</strong>. Please see payment instructions below.
-                              </AlertDescription>
-                          </Alert>
-                      )}
                   </div>
-                  {initialChildren.length > 1 && (
-                    <Button onClick={() => setIsCombinedHistoryOpen(true)}>
-                        <Users className="mr-2 h-4 w-4" />
-                        View Family Summary
-                    </Button>
-                  )}
               </CardHeader>
               <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        {initialChildren.map(child => (
+                            <Card key={child.student.id}>
+                                <CardHeader className="flex flex-row items-center gap-4">
+                                    <Avatar className="h-16 w-16 border">
+                                        <AvatarImage src={child.student.photoURL} alt={child.student.name} />
+                                        <AvatarFallback>{getInitials(child.student.name)}</AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <CardTitle className="text-xl">{child.student.name}</CardTitle>
+                                        <CardDescription>
+                                            Class: {child.student.className}-{child.student.section} | Roll No: {child.student.rollNumber}
+                                        </CardDescription>
+                                    </div>
+                                </CardHeader>
+                            </Card>
+                        ))}
+                    </div>
                    <Tabs defaultValue={firstChildRollNumber} className="w-full" onValueChange={setActiveChildRollNumber}>
                       <div className="flex flex-col md:flex-row gap-4 mb-6 print-hidden">
                           <TabsList className="w-full justify-start overflow-x-auto whitespace-nowrap md:w-auto">

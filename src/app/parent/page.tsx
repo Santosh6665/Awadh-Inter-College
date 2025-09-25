@@ -1,7 +1,7 @@
 
 import { redirect } from 'next/navigation';
 import { Header } from '@/components/layout/header';
-import type { Student, AttendanceRecord, ExamTypes } from '@/lib/types';
+import type { Student } from '@/lib/types';
 import { getLoggedInUser } from '../auth/actions';
 import { getChildrenForParent } from './actions';
 import { getStudentDataForSession } from '@/app/student/actions';
@@ -33,11 +33,25 @@ export default async function ParentPage() {
     }
   }
   
-  // Only fetch details for the active session by default
-  const activeSessionChildren = children.filter(c => c.session === settings.activeSession);
+  // Create a list of unique children, preferring the active session
+  const uniqueChildrenMap = new Map<string, Student>();
+  children.forEach(child => {
+      // Prioritize the student record from the active session
+      if (child.session === settings.activeSession) {
+          uniqueChildrenMap.set(child.rollNumber, child);
+      }
+  });
+  children.forEach(child => {
+      // Add student records from other sessions if not already in the map
+      if (!uniqueChildrenMap.has(child.rollNumber)) {
+          uniqueChildrenMap.set(child.rollNumber, child);
+      }
+  });
 
-  // Fetch detailed data for each child
-  const childrenWithDetails = await Promise.all(activeSessionChildren.map(async (child) => {
+  const uniqueChildrenForInitialLoad = Array.from(uniqueChildrenMap.values());
+  
+  // Fetch detailed data for each unique child
+  const childrenWithDetails = await Promise.all(uniqueChildrenForInitialLoad.map(async (child) => {
     const data = await getStudentDataForSession(child.id);
     return {
         student: { ...child, ...data?.student },

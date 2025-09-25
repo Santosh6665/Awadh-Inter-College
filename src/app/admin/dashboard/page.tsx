@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultsManagement } from "./results/results-management";
 import { AttendanceManagement } from "./attendance/attendance-management";
 import type { Student, Teacher, Notice } from "@/lib/types";
-import { FeeManagement } from "./fees/fee-management";
+import { StudentFeeManagement } from "./fees/student-fee-management";
 import { NoticeManagement } from "./notices/notice-management";
 import { format } from 'date-fns';
 import { TeacherAttendanceManagement } from "./teacher-attendance/teacher-attendance-management";
@@ -186,7 +186,7 @@ export default function AdminDashboardPage({ students, teachers, settings: initi
             <TeacherAttendanceManagement teachers={teachers} />
           </TabsContent>
            <TabsContent value="fees" className="mt-4">
-            <FeeManagement students={students} feeSettings={settings} selectedSession={selectedSession} />
+            <StudentFeeManagement students={students} feeSettings={settings} selectedSession={selectedSession} />
           </TabsContent>
            <TabsContent value="teacher-salary" className="mt-4">
             <SalaryManagement teachers={teachers} />
