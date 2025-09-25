@@ -25,7 +25,6 @@ import { Badge } from '@/components/ui/badge';
 interface StudentFeeManagementProps {
   students: Student[];
   feeSettings: any;
-  selectedSession: string;
 }
 
 // New component for the family group
@@ -33,7 +32,6 @@ function FamilyFeeGroup({
     family, 
     students, 
     feeSettings, 
-    selectedSession, 
     onEditFeeStructure, 
     onRecordPayment, 
     onViewHistory 
@@ -41,25 +39,31 @@ function FamilyFeeGroup({
     family: string;
     students: Student[];
     feeSettings: any;
-    selectedSession: string;
     onEditFeeStructure: (student: Student) => void;
     onRecordPayment: (student: Student) => void;
     onViewHistory: (student: Student) => void;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(() => students.some(student => calculateAnnualDue(student, feeSettings).due > 0));
 
   const familyDetails = useMemo(() => {
     const fatherName = students[0]?.fatherName || 'N/A';
-    const childrenCount = students.length;
-    const childrenNames = students.map(s => s.name).join(', ');
+    
+    const allChildren = students
+        .filter((s, index, self) => self.findIndex(c => c.rollNumber === s.rollNumber) === index)
+        .map(s => s.name)
+        .join(', ');
 
     const familyTotalDue = students.reduce((total, student) => {
-        const { due } = calculateAnnualDue(student, feeSettings, selectedSession);
+        const { due } = calculateAnnualDue(student, feeSettings);
         return total + due;
     }, 0);
 
-    return { fatherName, childrenCount, childrenNames, familyTotalDue };
-  }, [students, feeSettings, selectedSession]);
+    return { fatherName, childrenCount: students.length, childrenNames: allChildren, familyTotalDue };
+  }, [students, feeSettings]);
+
+  const sortedStudents = useMemo(() => {
+    return [...students].sort((a, b) => b.session.localeCompare(a.session));
+  }, [students]);
 
   return (
     <Card className="mb-4">
@@ -92,8 +96,8 @@ function FamilyFeeGroup({
                             <TableRow>
                                 <TableHead>Child Name</TableHead>
                                 <TableHead>Class</TableHead>
+                                <TableHead>Session</TableHead>
                                 <TableHead>Annual Fee</TableHead>
-                                <TableHead>Previous Dues</TableHead>
                                 <TableHead>Paid</TableHead>
                                 <TableHead>Total Dues</TableHead>
                                 <TableHead>Status</TableHead>
@@ -101,14 +105,14 @@ function FamilyFeeGroup({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {students.map(student => {
-                                const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(student, feeSettings, selectedSession);
+                            {sortedStudents.map(student => {
+                                const { due, totalAnnualFee, totalPaid } = calculateAnnualDue(student, feeSettings);
                                 return (
                                     <TableRow key={student.id}>
                                         <TableCell>{student.name}</TableCell>
-                                        <TableCell>{`${student.className}-${student.section}`}</TableCell>
+                                        <TableCell>{`${student.class}-${student.section}`}</TableCell>
+                                        <TableCell><Badge variant="secondary">{student.session}</Badge></TableCell>
                                         <TableCell>Rs{totalAnnualFee.toFixed(2)}</TableCell>
-                                        <TableCell>Rs0.00</TableCell>
                                         <TableCell>Rs{totalPaid.toFixed(2)}</TableCell>
                                         <TableCell className={due > 0 ? 'text-destructive font-semibold' : ''}>Rs{due.toFixed(2)}</TableCell>
                                         <TableCell>
@@ -137,11 +141,12 @@ function FamilyFeeGroup({
   );
 }
 
-export function StudentFeeManagement({ students, feeSettings, selectedSession }: StudentFeeManagementProps) {
+export function StudentFeeManagement({ students, feeSettings }: StudentFeeManagementProps) {
   const [isFeeStructureFormOpen, setIsFeeStructureFormOpen] = useState(false);
   const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false);
   const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [historyDialogSession, setHistoryDialogSession] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
   const [sectionFilter, setSectionFilter] = useState('');
@@ -158,17 +163,16 @@ export function StudentFeeManagement({ students, feeSettings, selectedSession }:
   
   const handleViewHistory = useCallback((student: Student) => {
     setSelectedStudent(student);
+    setHistoryDialogSession(student.session);
     setIsHistoryDialogOpen(true);
   }, []);
 
-  const studentsInSession = useMemo(() => students.filter(s => s.session === selectedSession), [students, selectedSession]);
-
   const groupedStudents = useMemo(() => {
-    const filtered = studentsInSession.filter(student => {
+    const filtered = students.filter(student => {
         const nameMatch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
         const fatherNameMatch = student.fatherName.toLowerCase().includes(searchQuery.toLowerCase());
         const mobileMatch = student.parentPhone?.includes(searchQuery);
-        const classMatch = classFilter ? student.className === classFilter : true;
+        const classMatch = classFilter ? student.class === classFilter : true;
         const sectionMatch = sectionFilter ? student.section === sectionFilter : true;
         return (nameMatch || fatherNameMatch || mobileMatch) && classMatch && sectionMatch;
     });
@@ -181,7 +185,7 @@ export function StudentFeeManagement({ students, feeSettings, selectedSession }:
       acc[key].push(student);
       return acc;
     }, {} as Record<string, Student[]>);
-  }, [studentsInSession, searchQuery, classFilter, sectionFilter]);
+  }, [students, searchQuery, classFilter, sectionFilter]);
 
   return (
     <>
@@ -235,7 +239,6 @@ export function StudentFeeManagement({ students, feeSettings, selectedSession }:
                         family={familyId.startsWith('orphan_') ? groupedStudents[familyId][0].name : groupedStudents[familyId][0].parentPhone!}
                         students={groupedStudents[familyId]}
                         feeSettings={feeSettings}
-                        selectedSession={selectedSession}
                         onEditFeeStructure={handleEditFeeStructure}
                         onRecordPayment={handleRecordPayment}
                         onViewHistory={handleViewHistory}
@@ -270,7 +273,7 @@ export function StudentFeeManagement({ students, feeSettings, selectedSession }:
         setIsOpen={setIsHistoryDialogOpen}
         student={selectedStudent}
         feeSettings={feeSettings}
-        selectedSession={selectedSession}
+        selectedSession={historyDialogSession}
       />
     </>
   );

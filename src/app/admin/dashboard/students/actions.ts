@@ -4,7 +4,6 @@
 import { firestore } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { calculateAnnualDue } from '@/lib/fee-utils';
 import type { Student } from '@/lib/types';
 
 const StudentSchema = z.object({
@@ -51,7 +50,6 @@ export async function addStudent(
     const studentData = validatedFields.data;
     const studentsCollection = firestore.collection('students');
     
-    // Construct a unique ID combining roll number and session to avoid collisions
     const studentId = `${studentData.rollNumber}-${studentData.session}`;
     const studentDoc = studentsCollection.doc(studentId);
 
@@ -60,15 +58,14 @@ export async function addStudent(
         return { success: false, message: `A student with Roll Number ${studentData.rollNumber} already exists in session ${studentData.session}.` };
     }
 
-    // Fetch school settings to get default fee structure
     const settingsDoc = await firestore.collection('settings').doc('schoolSettings').get();
     const settings = settingsDoc.data();
     const classFeeStructure = settings?.feeStructure?.[studentData.class] || {};
 
     await studentDoc.set({
       ...studentData,
-      id: studentId, // Also store the ID in the document
-      feeStructure: classFeeStructure, // Assign default fees for the class
+      id: studentId, 
+      feeStructure: classFeeStructure, 
       createdAt: new Date(),
     });
 
@@ -90,7 +87,6 @@ export async function updateStudent(
   }
   
   const rawData = Object.fromEntries(formData.entries());
-  // The roll number is read-only and should not be part of the update.
   delete rawData.rollNumber;
 
   const validatedFields = UpdateStudentSchema.safeParse(rawData);
@@ -140,7 +136,6 @@ export async function getStudents() {
     }
     return studentsSnapshot.docs.map(doc => {
       const data = doc.data();
-      // Convert Firestore Timestamps to strings to make them serializable
       const serializedData = Object.fromEntries(
         Object.entries(data).map(([key, value]) => {
           if (value && typeof value.toDate === 'function') {
@@ -149,14 +144,13 @@ export async function getStudents() {
           return [key, value];
         })
       );
-      // Ensure password is not sent to the client
       delete serializedData.password;
 
       return {
         id: doc.id,
         ...serializedData,
       };
-    }) as any[]; // Using any to avoid TS errors with Firestore data types
+    }) as any[];
   } catch (error) {
     console.error('Error fetching students:', error);
     return [];
@@ -187,38 +181,20 @@ export async function promoteStudents(
       if (studentDoc.exists) {
         const studentData = studentDoc.data() as Student;
         
-        const { due: pendingDue } = calculateAnnualDue(studentData, feeSettings);
-        
-        const newPayments = [];
-        if (pendingDue > 0) {
-          // Carry forward the pending due as a negative payment (a debit)
-          newPayments.push({
-            id: `due-${fromSession}`,
-            amount: -pendingDue,
-            date: new Date().toISOString(),
-            method: 'System', // Special method for system-generated entries
-            months: [`Due from ${fromSession}`],
-          });
-        }
-        
-        // Get the default fee structure for the new class
         const newClassFeeStructure = defaultFeeStructures[toClass] || {};
 
-        // Prepare new student data for the next session
         const newStudentData: Omit<Student, 'id'> = {
           ...studentData,
           class: toClass,
           session: toSession,
           marks: {},
-          payments: newPayments,
-          feeStructure: newClassFeeStructure, // Set the new fee structure
+          payments: [],
+          feeStructure: newClassFeeStructure, 
         };
         
-        // Create a new document for the student in the new session
         const newStudentId = `${studentData.rollNumber}-${toSession}`;
         const newStudentRef = studentsCollection.doc(newStudentId);
         
-        // To avoid TypeScript errors about 'id', we create a version without it for batch.set
         const { id, ...dataToSet } = newStudentData;
         
         batch.set(newStudentRef, { ...dataToSet, id: newStudentId });

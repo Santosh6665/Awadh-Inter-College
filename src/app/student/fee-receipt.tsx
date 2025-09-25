@@ -122,14 +122,10 @@ export function FeeReceipt({ student, payment, settings }: FeeReceiptProps) {
           <strong>Amount in Words:</strong> {amountInWords(payment.amount)}
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center mt-6 text-sm border-t pt-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mt-6 text-sm border-t pt-4">
            <div className="p-2 rounded-md bg-muted">
             <p className="text-xs text-muted-foreground">Annual Fees</p>
             <p className="text-lg font-bold">Rs{feeDetails.totalAnnualFee.toFixed(2)}</p>
-           </div>
-           <div className="p-2 rounded-md bg-muted">
-            <p className="text-xs text-muted-foreground">Previous Dues</p>
-            <p className="text-lg font-bold">Rs{feeDetails.previousSessionDue.toFixed(2)}</p>
            </div>
            <div className="p-2 rounded-md bg-muted">
             <p className="text-xs text-muted-foreground">Total Paid</p>
@@ -137,7 +133,9 @@ export function FeeReceipt({ student, payment, settings }: FeeReceiptProps) {
            </div>
           <div className="p-2 rounded-md bg-muted">
             <p className="text-xs text-muted-foreground">Balance Due</p>
-            <p className={cn("text-lg font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>Rs{feeDetails.due.toFixed(2)}</p>
+            <p className={cn("text-lg font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>
+              Rs{feeDetails.due.toFixed(2)}
+            </p>
           </div>
         </div>
 
