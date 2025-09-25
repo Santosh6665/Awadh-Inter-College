@@ -2,44 +2,44 @@
 'use client';
 
 import * as React from 'react';
-import type { Student, AttendanceRecord, Payment, ExamTypes, Marks } from '@/lib/types';
-import { Button } from '@/components/ui/button';
+import type { Student, AttendanceRecord, Payment } from '@/lib/types';
+import { ExamTypes } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader, TableFooter } from '@/components/ui/table';
-import { Download, CheckCircle, XCircle, GraduationCap, User, BookOpen, BarChart3, Mail, Phone, Edit, Loader2 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { useMemo, useState } from 'react';
-import { cn } from '@/lib/utils';
-import { FeeReceipt } from './fee-receipt';
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader } from '@/components/ui/table';
 import { AttendanceHistory } from './attendance-history';
 import { ResultCard } from './result-card';
+import { useMemo, useState, useRef } from 'react';
 import { calculateAnnualDue } from '@/lib/fee-utils';
-import { FeeHistoryDialog } from '../admin/dashboard/fees/fee-history-dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getStudentDataForSession } from './actions';
-
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { useReactToPrint } from 'react-to-print';
+import { FeeReceipt } from './fee-receipt';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface StudentDashboardProps {
   student: Student;
-  ranks: { [key in ExamTypes]?: number | null };
-  attendance: AttendanceRecord[];
+  ranks?: { [key in ExamTypes]?: number | null };
+  attendance?: AttendanceRecord[];
   settings: any;
-  allSessions: string[];
   isParentView?: boolean;
 }
 
-export function StudentDashboard({ student: initialStudent, ranks: initialRanks, attendance: initialAttendance, settings, allSessions, isParentView = false }: StudentDashboardProps) {
-  const [receiptToPrint, setReceiptToPrint] = useState<Payment | null>(null);
-  const [isFeeHistoryOpen, setIsFeeHistoryOpen] = useState(false);
+export function StudentDashboard({
+  student,
+  ranks = {},
+  attendance = [],
+  settings,
+  isParentView = false,
+}: StudentDashboardProps) {
 
-  const [student, setStudent] = useState(initialStudent);
-  const [ranks, setRanks] = useState(initialRanks);
-  const [attendance, setAttendance] = useState(initialAttendance);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedSession, setSelectedSession] = useState(initialStudent.session);
-
+  const feeDetails = useMemo(() => {
+    if (!student) return null;
+    return calculateAnnualDue(student, settings);
+  }, [student, settings]);
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -48,264 +48,267 @@ export function StudentDashboard({ student: initialStudent, ranks: initialRanks,
     }
     return name.substring(0, 2);
   };
-  
-  const handlePrintReceipt = (payment: Payment) => {
-    setReceiptToPrint(payment);
-    setTimeout(() => {
-        const printContainer = document.createElement('div');
-        printContainer.id = 'print-container';
-        const receiptNode = document.getElementById('fee-receipt-to-print-content')?.cloneNode(true);
-        if (receiptNode) {
-          printContainer.appendChild(receiptNode);
-          document.body.appendChild(printContainer);
-        }
 
-        document.body.classList.add('printing');
-        window.print();
-        document.body.classList.remove('printing');
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
+  const receiptRef = useRef<HTMLDivElement>(null);
 
-        if (receiptNode) {
-          document.body.removeChild(printContainer);
-        }
-        setReceiptToPrint(null);
-    }, 100);
+  const handlePrint = useReactToPrint({
+    content: () => receiptRef.current,
+  });
+
+  const openReceipt = (payment: Payment) => {
+    setSelectedPayment(payment);
+    setIsReceiptOpen(true);
   };
-  
-  const feeDetails = useMemo(() => {
-    // Pass the selectedSession to ensure calculations are scoped correctly for historical views.
-    const { due, totalAnnualFee, totalPaid, previousSessionDue } = calculateAnnualDue(student, settings, selectedSession);
-    const classFeeStructure = settings.feeStructure?.[student.class] || {};
-    const studentFeeOverrides = student.feeStructure || {};
-    const finalFeeStructure = { ...classFeeStructure, ...studentFeeOverrides };
-    const paymentPlan = finalFeeStructure.paymentPlan || 'Not set';
 
-    return { totalFees: totalAnnualFee, totalPaid, due, paymentPlan, previousDues: previousSessionDue };
-  }, [student, settings, selectedSession]);
-
-
-  const getPaymentPeriod = (payment: Payment) => {
-    if (payment.months?.length === 12) {
-      return 'Full Session';
-    }
-    if (payment.months && payment.months.length > 0) {
-      return payment.months.join(', ');
-    }
-    return payment.month || 'N/A';
+  if (!student) {
+    return <p>No student data available.</p>;
   }
   
-  const handleSessionChange = async (session: string) => {
-    if (isParentView) return; // Parent dashboard handles this separately
-    setIsLoading(true);
-    setSelectedSession(session);
-    const studentIdForSession = `${student.rollNumber}-${session}`;
-    const data = await getStudentDataForSession(studentIdForSession);
-    
-    if (data) {
-        setStudent(data.student);
-        setRanks(data.ranks);
-        setAttendance(data.attendance);
-    } else {
-        // Handle case where data for a session is not found
-        console.error(`Data for session ${session} not found for student ${student.rollNumber}`);
+  if (!feeDetails) {
+      return <p>Fee details could not be calculated.</p>;
+  }
+
+  const examTypesWithResults = Object.keys(student.marks || {}).filter(examType => 
+    (student.marks?.[examType as ExamTypes] || []).length > 0
+  ) as ExamTypes[];
+
+  const paymentsInSession = student.payments?.filter(p => {
+    try {
+      const paymentDate = new Date(p.date);
+      const [startYear, endYear] = student.session.split('-').map(Number);
+      return paymentDate.getFullYear() >= startYear && paymentDate.getFullYear() <= endYear;
+    } catch (e) {
+      return false;
     }
-    setIsLoading(false);
-  };
-
-
+  }) || [];
+  
   return (
-    <>
-       <div className="hidden">
-          {receiptToPrint && (
-            <div id="fee-receipt-to-print-content">
-                <FeeReceipt student={student} payment={receiptToPrint} settings={settings} />
-            </div>
-          )}
-       </div>
-        <FeeHistoryDialog
-            isOpen={isFeeHistoryOpen}
-            setIsOpen={setIsFeeHistoryOpen}
-            student={student}
-            feeSettings={settings}
-        />
-      <div id="student-dashboard" className="bg-muted/50">
-        <div className={cn(!isParentView && "container mx-auto py-8")}>
-            <Card className={cn(!isParentView && "min-h-screen")}>
-            <CardHeader className="relative flex flex-col md:flex-row items-start md:items-center p-4 md:p-6 print-hidden gap-4">
+    <div className="min-h-screen bg-gray-100/30 dark:bg-gray-900/50">
+      <div className="container mx-auto p-4">
+        {!isParentView && (
+          <header className="mb-8">
+            <Card>
+              <CardHeader className="relative flex flex-row items-center space-x-4 p-4 md:p-6">
                 <Avatar className="h-20 w-20 md:h-24 md:w-24 border">
-                    <AvatarImage src={student.photoUrl} alt={student.name} />
-                    <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
+                  <AvatarImage src={student.photoUrl} alt={student.name} />
+                  <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                <CardTitle className="text-2xl md:text-3xl">{student.name}</CardTitle>
-                <CardDescription className="text-base">Welcome to your student portal.</CardDescription>
+                  <CardTitle className="text-2xl md:text-3xl">{student.name}</CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    Class {student.class}-{student.section} | Roll Number: {student.rollNumber} | Session: {student.session}
+                  </CardDescription>
                 </div>
-                 {!isParentView && allSessions.length > 0 && (
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">Viewing Session:</span>
-                        <Select
-                        defaultValue={student.session}
-                        onValueChange={handleSessionChange}
-                        >
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select Session" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {allSessions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                        </SelectContent>
-                        </Select>
-                    </div>
-                )}
-            </CardHeader>
-            <CardContent className="pt-0 p-4 md:p-6">
-                {isLoading ? (
-                    <div className="flex justify-center items-center h-96">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                    </div>
-                ) : (
-                <Tabs defaultValue="profile" className="w-full">
-                <TabsList className="w-full justify-start print-hidden overflow-x-auto whitespace-rap">
-                    <TabsTrigger value="profile">Profile</TabsTrigger>
-                    <TabsTrigger value="results">Exam Results</TabsTrigger>
-                    <TabsTrigger value="attendance">Attendance</TabsTrigger>
-                    <TabsTrigger value="fees">Fee Information</TabsTrigger>
-                </TabsList>
-                <TabsContent value="profile" className="mt-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Personal Information</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="overflow-x-auto">
-                                <Table>
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell className="font-medium w-1/3 md:w-1/4">Name</TableCell>
-                                            <TableCell>{student.name}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="font-medium">Roll Number</TableCell>
-                                            <TableCell>{student.rollNumber}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="font-medium">Session</TableCell>
-                                            <TableCell>{student.session}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="font-medium">Class</TableCell>
-                                            <TableCell>{`${student.class}-${student.section}`}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="font-medium">Date of Birth</TableCell>
-                                            <TableCell>{new Date(student.dob).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="font-medium">Father's Name</TableCell>
-                                            <TableCell>{student.fatherName}</TableCell>
-                                        </TableRow>
-                                         <TableRow>
-                                            <TableCell className="font-medium">Parent's Phone</TableCell>
-                                            <TableCell>{student.parentPhone || 'N/A'}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="font-medium">Address</TableCell>
-                                            <TableCell>{student.address}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell className="font-medium">Email</TableCell>
-                                            <TableCell>{student.email}</TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="results" className="mt-6">
-                    <ResultCard student={student} ranks={ranks} settings={settings} />
-                </TabsContent>
-                <TabsContent value="attendance" className="mt-6">
-                   <AttendanceHistory attendanceRecords={attendance} />
-                </TabsContent>
-                <TabsContent value="fees" className="mt-6">
-                    <Card>
-                        <CardHeader>
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
-                                <div>
-                                    <CardTitle>Fee Payment Details</CardTitle>
-                                    <CardDescription>A summary of your fee structure and payment history for session {student.session}.</CardDescription>
-                                </div>
-                                <Button onClick={() => setIsFeeHistoryOpen(true)}>
-                                    <Download className="mr-2 h-4 w-4" />
-                                    View & Download Full Receipt
-                                </Button>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-center">
-                                <Card className="p-4">
-                                    <CardTitle className="text-sm text-muted-foreground">Annual Fees</CardTitle>
-                                    <p className="text-xl md:text-2xl font-bold">Rs{feeDetails.totalFees.toFixed(2)}</p>
-                                </Card>
-                                 <Card className="p-4">
-                                    <CardTitle className="text-sm text-muted-foreground">Previous Dues</CardTitle>
-                                    <p className="text-xl md:text-2xl font-bold">Rs{feeDetails.previousDues.toFixed(2)}</p>
-                                </Card>
-                                <Card className="p-4">
-                                    <CardTitle className="text-sm text-muted-foreground">Total Paid</CardTitle>
-                                    <p className="text-xl md:text-2xl font-bold text-green-600">Rs{feeDetails.totalPaid.toFixed(2)}</p>
-                                </Card>
-                                <Card className="p-4">
-                                    <CardTitle className="text-sm text-muted-foreground">Balance Due</CardTitle>
-                                    <p className={cn("text-xl md:text-2xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>Rs{feeDetails.due.toFixed(2)}</p>
-                                </Card>
-                                <Card className="p-4">
-                                    <CardTitle className="text-sm text-muted-foreground">Payment Plan</CardTitle>
-                                    <p className="text-xl md:text-2xl font-bold capitalize">{feeDetails.paymentPlan}</p>
-                                </Card>
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold mb-2">Recent Payments</h3>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Date</TableHead>
-                                            <TableHead className="hidden sm:table-cell">Period</TableHead>
-                                            <TableHead className="text-right">Amount (Rs)</TableHead>
-                                            <TableHead className="text-right print-hidden">Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {student.payments && student.payments.length > 0 ? (
-                                            student.payments.filter(p => p.amount > 0).slice(0, 5).map(payment => (
-                                                <TableRow key={payment.id}>
-                                                    <TableCell>{new Date(payment.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</TableCell>
-                                                    <TableCell className="hidden sm:table-cell">{getPaymentPeriod(payment)}</TableCell>
-                                                    <TableCell className="text-right">Rs{payment.amount.toFixed(2)}</TableCell>
-                                                    <TableCell className="text-right print-hidden">
-                                                        <Button variant="outline" size="sm" onClick={() => handlePrintReceipt(payment)}>
-                                                            <Download className="mr-2 h-4 w-4" />
-                                                            Receipt
-                                                        </Button>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))
-                                        ) : (
-                                            <TableRow>
-                                                <TableCell colSpan={4} className="text-center text-muted-foreground">No payments recorded yet.</TableCell>
-                                            </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-                </Tabs>
-                )}
-            </CardContent>
+              </CardHeader>
             </Card>
-        </div>
+          </header>
+        )}
+
+        <Tabs defaultValue="dashboard" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 print-hidden">
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="fees">Fees</TabsTrigger>
+            <TabsTrigger value="results">Results</TabsTrigger>
+            <TabsTrigger value="attendance">Attendance</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="dashboard">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mt-6">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Rank</CardTitle>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="h-4 w-4 text-muted-foreground"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 15h16M7 15l1 5M17 15l-1 5M9 9l1 5M15 9l-1 5"/></svg>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{ranks?.['annual'] ? `#${ranks['annual']}` : 'N/A'}</div>
+                        <p className="text-xs text-muted-foreground">in final exams</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Attendance</CardTitle>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="h-4 w-4 text-muted-foreground"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{attendance.filter(a => a.status === 'present').length}/{attendance.length} days</div>
+                        <p className="text-xs text-muted-foreground">Total present</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Fee Due</CardTitle>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="h-4 w-4 text-muted-foreground"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </CardHeader>
+                    <CardContent>
+                        <div className={cn("text-2xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>
+                            Rs{feeDetails.due.toFixed(2)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">Balance for {student.session}</p>
+                    </CardContent>
+                </Card>
+            </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Payments</CardTitle>
+                  <CardDescription>Latest fee payments for the current session.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                   <Table>
+                      <TableHeader>
+                          <TableRow>
+                              <TableHead>Date</TableHead>
+                              <TableHead>Amount</TableHead>
+                              <TableHead>Months</TableHead>
+                              <TableHead className="text-right">Receipt</TableHead>
+                          </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                          {paymentsInSession.slice(0, 5).map((p, i) => (
+                              <TableRow key={i}>
+                                  <TableCell>{format(new Date(p.date), 'PPP')}</TableCell>
+                                  <TableCell>Rs{p.amount.toFixed(2)}</TableCell>
+                                  <TableCell>{p.months?.join(', ') || 'N/A'}</TableCell>
+                                  <TableCell className="text-right">
+                                      <Button variant="outline" size="sm" onClick={() => openReceipt(p)}>View</Button>
+                                  </TableCell>
+                              </TableRow>
+                          ))}
+                          {paymentsInSession.length === 0 && (
+                            <TableRow>
+                                <TableCell colSpan={4} className="text-center">No payments this session.</TableCell>
+                            </TableRow>
+                          )}
+                      </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+               <Card>
+                <CardHeader>
+                  <CardTitle>Fee Structure</CardTitle>
+                  <CardDescription>Fee breakdown for {student.class}-{student.section} in {student.session}.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-2">
+                        {Object.entries(student.feeStructure || {}).map(([key, value]) => (
+                            <div key={key} className="flex justify-between">
+                                <span className="text-muted-foreground capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
+                                <strong>Rs{Number(value).toFixed(2)}</strong>
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="fees">
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Fee Summary</CardTitle>
+                <CardDescription>An overview of your fee status for the session {student.session}.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                  <Card className="p-4">
+                    <CardTitle className="text-sm text-muted-foreground">Annual Fee</CardTitle>
+                    <p className="text-xl md:text-2xl font-bold">Rs{feeDetails.totalAnnualFee.toFixed(2)}</p>
+                  </Card>
+                  <Card className="p-4">
+                    <CardTitle className="text-sm text-muted-foreground">Total Paid</CardTitle>
+                    <p className="text-xl md:text-2xl font-bold">Rs{feeDetails.totalPaid.toFixed(2)}</p>
+                  </Card>
+                  <Card className="p-4">
+                    <CardTitle className="text-sm text-muted-foreground">Balance Due</CardTitle>
+                    <p className={cn("text-xl md:text-2xl font-bold", feeDetails.due > 0 ? 'text-destructive' : 'text-green-600')}>
+                        Rs{feeDetails.due.toFixed(2)}
+                    </p>
+                  </Card>
+                </div>
+                
+                <h3 className="font-semibold text-lg mt-8 mb-4">Payment History for {student.session}</h3>
+                 <ScrollArea className="h-[400px]">
+                  <Table>
+                      <TableHeader>
+                          <TableRow>
+                              <TableHead>Date</TableHead>
+                              <TableHead>Amount</TableHead>
+                              <TableHead>Method</TableHead>
+                              <TableHead>Months</TableHead>
+                              <TableHead className="text-right">Receipt</TableHead>
+                          </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                           {paymentsInSession.map((p, index) => (
+                              <TableRow key={index}>
+                                  <TableCell>{format(new Date(p.date), 'PPP')}</TableCell>
+                                  <TableCell>Rs{p.amount.toFixed(2)}</TableCell>
+                                  <TableCell>{p.method}</TableCell>
+                                  <TableCell>{p.months?.join(', ') || 'N/A'}</TableCell>
+                                  <TableCell className="text-right">
+                                      <Button variant="outline" size="sm" onClick={() => openReceipt(p)}>View</Button>
+                                  </TableCell>
+                              </TableRow>
+                          ))}
+                           {paymentsInSession.length === 0 && (
+                            <TableRow>
+                                <TableCell colSpan={5} className="text-center">No payments found for this session.</TableCell>
+                            </TableRow>
+                          )}
+                      </TableBody>
+                  </Table>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="results">
+            <Card className="mt-6">
+                <CardHeader>
+                    <CardTitle>Exam Results</CardTitle>
+                    <CardDescription>Your performance in various exams throughout the session.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {examTypesWithResults.length > 0 ? (
+                        examTypesWithResults.map(examType => (
+                            <ResultCard 
+                                key={examType} 
+                                student={student} 
+                                examType={examType} 
+                                rank={ranks[examType]} 
+                            />
+                        ))
+                    ) : (
+                        <div className="text-center py-12">
+                            <p className="text-muted-foreground">No exam results available for this session yet.</p>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="attendance">
+            <AttendanceHistory attendanceRecords={attendance} />
+          </TabsContent>
+        </Tabs>
+        
+        <Dialog open={isReceiptOpen} onOpenChange={setIsReceiptOpen}>
+          {selectedPayment && (
+            <DialogContent className="max-w-3xl">
+              <div ref={receiptRef}>
+                <FeeReceipt student={student} payment={selectedPayment} settings={settings} />
+              </div>
+              <DialogFooter className="print-hidden">
+                  <Button onClick={handlePrint}>Print Receipt</Button>
+                  <Button variant="ghost" onClick={() => setIsReceiptOpen(false)}>Close</Button>
+              </DialogFooter>
+            </DialogContent>
+          )}
+        </Dialog>
+
       </div>
-    </>
+    </div>
   );
 }
