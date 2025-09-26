@@ -95,13 +95,10 @@ export async function isHoliday(date: string): Promise<{ isHoliday: boolean; nam
   try {
     const holidayDoc = await firestore.collection('holidays').doc(date).get();
     if (holidayDoc.exists) {
-      console.log("Returining Existing")
       return { isHoliday: true, name: holidayDoc.data()?.name || 'Holiday' };
     }
-    console.log("Returining Non Existing")
     return { isHoliday: false };
   } catch (error) {
-    console.log("Returining Error")
     console.error('Error checking for holiday:', error);
     return { isHoliday: false };
   }
