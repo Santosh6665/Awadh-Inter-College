@@ -91,7 +91,7 @@ export async function getStudentAttendanceHistory(studentId: string): Promise<At
   }
 }
 
-export async function isHoliday(date: string): Promise<{ isHoliday: boolean; name?: string }> {
+export async function checkIfHoliday(date: string): Promise<{ isHoliday: boolean; name?: string }> {
   try {
     const holidayDoc = await firestore.collection('holidays').doc(date).get();
     if (holidayDoc.exists) {

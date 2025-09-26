@@ -21,7 +21,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon, Search, Eye, XCircle, Tent, DoorClosed, Lock } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
-import { getAttendanceByDate, setAttendance, getStudentAttendanceHistory, clearAttendance, isHoliday, getSchoolStatus } from './actions';
+import { getAttendanceByDate, setAttendance, getStudentAttendanceHistory, clearAttendance, checkIfHoliday, getSchoolStatus } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { AttendanceHistoryDialog } from '@/app/admin/dashboard/attendance/attendance-history-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -58,7 +58,7 @@ export function AttendanceManagement({ students, teacher }: { students: Student[
 
   const checkDateStatus = useCallback(async () => {
     setLoading(true);
-    const holidayStatus = {isHoliday: false};
+    const holidayStatus = await checkIfHoliday(formattedDate);
     setIsDateHoliday(holidayStatus.isHoliday);
     setHolidayName(holidayStatus.name || 'Holiday');
 
