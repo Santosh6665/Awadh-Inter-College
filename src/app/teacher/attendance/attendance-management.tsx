@@ -59,6 +59,7 @@ export function AttendanceManagement({ students, teacher }: { students: Student[
   const checkDateStatus = useCallback(async () => {
     setLoading(true);
     const holidayStatus = await isHoliday(formattedDate);
+    console.log("CONSOLE:",holidayStatus);
     setIsDateHoliday(holidayStatus.isHoliday);
     setHolidayName(holidayStatus.name || 'Holiday');
 
