@@ -47,14 +47,10 @@ export function calculateSalary(
       absentDays++;
     } else if (attendanceStatus === 'present') {
       presentDays++;
-      totalPayableDays++;
-    } else {
-      // If not marked present or absent, check if it's a default payable day.
-      if (dayOfWeek === 0 || holidaySet.has(dateStr)) {
-        totalPayableDays++;
-      }
     }
   }
+
+  totalPayableDays = (absentDays?31:30) - absentDays
 
   // Rule: Deduction applies for absent days exceeding the allowed limit.
   const deductionDays = Math.max(0, absentDays - allowedAbsents);
