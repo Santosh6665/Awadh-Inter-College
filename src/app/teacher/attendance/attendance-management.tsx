@@ -35,7 +35,7 @@ type AttendanceData = {
 
 export function AttendanceManagement({ students, teacher }: { students: Student[], teacher: Teacher }) {
   const [date, setDate] = useState<Date>(new Date());
-  const [attendance, setAttendance] = useState<AttendanceData>({});
+  const [attendance, setAttendanceData] = useState<AttendanceData>({});
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
@@ -74,7 +74,7 @@ export function AttendanceManagement({ students, teacher }: { students: Student[
   const fetchAttendance = useCallback(async () => {
     try {
         const data = await getAttendanceByDate(formattedDate);
-        setAttendance(data || {});
+        setAttendanceData(data || {});
     } catch (error) {
         console.error("Failed to fetch attendance:", error);
         toast({
@@ -82,7 +82,7 @@ export function AttendanceManagement({ students, teacher }: { students: Student[
             description: 'Could not fetch attendance data.',
             variant: 'destructive',
         });
-        setAttendance({});
+        setAttendanceData({});
     } finally {
         setLoading(false);
     }
@@ -101,7 +101,7 @@ export function AttendanceManagement({ students, teacher }: { students: Student[
 
   const handleStatusChange = async (studentId: string, status: AttendanceStatus) => {
     const originalAttendance = { ...attendance };
-    setAttendance(prev => ({ ...prev, [studentId]: { status } }));
+    setAttendanceData(prev => ({ ...prev, [studentId]: { status } }));
     
     const result = await setAttendance(studentId, formattedDate, status);
     
@@ -111,13 +111,13 @@ export function AttendanceManagement({ students, teacher }: { students: Student[
         description: result.message,
         variant: 'destructive',
       });
-      setAttendance(originalAttendance);
+      setAttendanceData(originalAttendance);
     }
   };
 
   const handleClearAttendance = async (studentId: string) => {
     const originalAttendance = { ...attendance };
-    setAttendance(prev => {
+    setAttendanceData(prev => {
         const newState = { ...prev };
         delete newState[studentId];
         return newState;
@@ -131,7 +131,7 @@ export function AttendanceManagement({ students, teacher }: { students: Student[
         description: result.message,
         variant: 'destructive',
       });
-      setAttendance(originalAttendance);
+      setAttendanceData(originalAttendance);
     }
   };
   

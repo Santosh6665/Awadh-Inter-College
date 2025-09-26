@@ -33,7 +33,6 @@ export function calculateSalary(
   const actualDaysInMonth = getDaysInMonth(month);
   let absentDays = 0;
   let presentDays = 0;
-  let totalPayableDays = 0;
   
   // Rule: Absences are counted on any day of the month if marked.
   // Iterate through the month to calculate all metrics in one go.
@@ -47,10 +46,10 @@ export function calculateSalary(
       absentDays++;
     } else if (attendanceStatus === 'present') {
       presentDays++;
-    }
+    } 
   }
 
-  totalPayableDays = (absentDays?31:30) - absentDays
+  const totalPayableDays = Math.min(31 - absentDays, 30);
 
   // Rule: Deduction applies for absent days exceeding the allowed limit.
   const deductionDays = Math.max(0, absentDays - allowedAbsents);
